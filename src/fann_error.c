@@ -163,7 +163,6 @@ void fann_error(struct fann_error *errdat, const unsigned int errno, ...)
  */
 void fann_init_error_data(struct fann_error *errdat)
 {
-	errdat->error_value = 0;
 	errdat->errstr = NULL;
 	errdat->errno_f = 0;
 	errdat->error_log = stderr;

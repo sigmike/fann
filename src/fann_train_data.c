@@ -151,19 +151,18 @@ void fann_train_on_file(struct fann *ann, char *filename, unsigned int max_epoch
 /* shuffles training data, randomizing the order
  */
 void fann_shuffle_train_data(struct fann_train_data *train_data) {
-	int dat = train_data->num_data - 1, elem;
-	unsigned int swap;
+	unsigned int dat = 0, elem, swap;
 	fann_type temp;
 
-	for ( ; dat >= 0 ; dat-- ) {
+	for ( ; dat < train_data->num_data ; dat++ ) {
 		swap = (unsigned int)(rand() % train_data->num_data);
 		if ( swap != dat ) {
-			for ( elem = train_data->num_input ; elem >= 0 ; elem-- ) {
+			for ( elem = 0 ; elem < train_data->num_input ; elem++ ) {
 				temp = train_data->input[dat][elem];
 				train_data->input[dat][elem] = train_data->input[swap][elem];
 				train_data->input[swap][elem] = temp;
 			}
-			for ( elem = train_data->num_output ; elem >= 0 ; elem-- ) {
+			for ( elem = 0 ; elem < train_data->num_output ; elem++ ) {
 				temp = train_data->output[dat][elem];
 				train_data->output[dat][elem] = train_data->output[swap][elem];
 				train_data->output[swap][elem] = temp;
@@ -176,7 +175,7 @@ void fann_shuffle_train_data(struct fann_train_data *train_data) {
  */
 struct fann_train_data * fann_merge_train_data(struct fann_train_data *data1, struct fann_train_data *data2) {
 	struct fann_train_data * train_data;
-	int x;
+	unsigned int x;
 
 	if ( (data1->num_input  != data2->num_input) ||
 	     (data1->num_output != data2->num_output) ) {
@@ -198,7 +197,7 @@ struct fann_train_data * fann_merge_train_data(struct fann_train_data *data1, st
 		fann_destroy_train(train_data);
 		return NULL;
 	}
-	for ( x = train_data->num_data - 1 ; x >= 0 ; x-- ) {
+	for ( x = 0 ; x < train_data->num_data ; x++ ) {
 		if ( ((train_data->input[x]  = (fann_type *)calloc(train_data->num_input,  sizeof(fann_type))) == NULL) ||
 		     ((train_data->output[x] = (fann_type *)calloc(train_data->num_output, sizeof(fann_type))) == NULL) ) {
 			fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
@@ -220,7 +219,7 @@ struct fann_train_data * fann_merge_train_data(struct fann_train_data *data1, st
  */
 struct fann_train_data * fann_duplicate_train_data(struct fann_train_data *data) {
 	struct fann_train_data * dest;
-	int x;
+	unsigned int x;
 
 	if ( (dest = malloc(sizeof(struct fann_train_data))) == NULL ) {
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
@@ -240,7 +239,7 @@ struct fann_train_data * fann_duplicate_train_data(struct fann_train_data *data)
 		return NULL;
 	}
 
-	for ( x = dest->num_data - 1 ; x >= 0 ; x-- ) {
+	for ( x = 0 ; x < dest->num_data ; x++ ) {
 		if ( ((dest->input[x]  = (fann_type *)calloc(dest->num_input,  sizeof(fann_type))) == NULL) ||
 		     ((dest->output[x] = (fann_type *)calloc(dest->num_output, sizeof(fann_type))) == NULL) ) {
 			fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
