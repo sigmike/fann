@@ -3,7 +3,7 @@ CFLAGS = -pipe -fsigned-char -ansi -pedantic -Wall -O3 -finline-functions -funro
 ARM-CFLAGS = -pipe -fsigned-char -ansi -pedantic -Wall -O3 -finline-functions -funroll-loops -Werror -Iinclude/ -Xlinker --strip-all -Xlinker -dy
 
 LFLAGS = -lm
-H_FILES = $(wildcard *.h)
+H_FILES = $(wildcard include/*.h)
 C_FILES = $(wildcard *.c)
 
 GCC = gcc
@@ -173,4 +173,4 @@ runtest: test
 	./test/xor_test_fixed
 
 clean:
-	rm -rf $(TEST_RUN_FILES) $(ARM_FILES) $(O_FILES) $(LIBRARIES) *~ test/*~
+	rm -rf $(TEST_RUN_FILES) $(ARM_FILES) $(O_FILES) $(LIBRARIES) *~ test/*~ include/*~ test/*.net test/*fixed*data test/*float*data

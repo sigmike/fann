@@ -64,7 +64,7 @@ int main()
 	
 	printf("Saving network.\n");
 
-	fann_save(ann, "xor_float.net");
+	fann_save(ann, "test/xor_float.net");
 
 	decimal_point = fann_save_to_fixed(ann, "test/xor_fixed.net");
 	fann_save_train_to_fixed(data, "test/xor_fixed.data", decimal_point);
