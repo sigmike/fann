@@ -9,6 +9,7 @@ int main(int argc, char* argv[])
 		train = fann_read_train_from_file(argv[1]);
 		fann_shuffle_train_data(train);
 		fann_save_train(train, argv[1]);
+		return;
 	}
 	
 	if(argc != 3){

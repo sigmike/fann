@@ -69,7 +69,7 @@ void quality_benchmark_jneural(
 	FILE *train_out, FILE *test_out,
 	unsigned int num_input, unsigned int num_neurons_hidden1,
 	unsigned int num_neurons_hidden2, unsigned int num_output,
-	unsigned int seconds_of_training, unsigned int seconds_between_reports)
+	unsigned int seconds_of_training, double seconds_between_reports)
 {
 	float train_error, test_error;
 	unsigned int i;
@@ -138,7 +138,7 @@ void quality_benchmark_fann(bool stepwise, unsigned int training_algorithm,
 	FILE *train_out, FILE *test_out,
 	unsigned int num_input, unsigned int num_neurons_hidden1,
 	unsigned int num_neurons_hidden2, unsigned int num_output,
-	unsigned int seconds_of_training, unsigned int seconds_between_reports)
+	unsigned int seconds_of_training, double seconds_between_reports)
 {
 	float train_error, test_error;
 	unsigned int i, decimal_point, j;
@@ -160,11 +160,15 @@ void quality_benchmark_fann(bool stepwise, unsigned int training_algorithm,
 	fann_set_training_algorithm(ann, training_algorithm);
 	
 	if(stepwise){ 
-		fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
+		fann_set_activation_function_hidden(ann, FANN_SIGMOID_STEPWISE);
 		fann_set_activation_function_output(ann, FANN_SIGMOID_STEPWISE);
 	}else{
-		fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
+		fann_set_activation_function_hidden(ann, FANN_SIGMOID);
 		fann_set_activation_function_output(ann, FANN_SIGMOID);
+	}
+
+	if(training_algorithm == FANN_TRAIN_INCREMENTAL){
+		fann_set_use_tanh_error_function(ann, 0);
 	}
 
 	calibrate_timer();
@@ -205,7 +209,7 @@ void quality_benchmark_fann(bool stepwise, unsigned int training_algorithm,
 		   a fixed point graph */
 		if(filename){
 			/* buffer overflow could occur here */
-			sprintf(fixed_point_file, "%05d_%f_%s_fixed.net", epochs, total_elapsed, filename);
+			sprintf(fixed_point_file, "%08d_%f_%s_fixed.net", epochs, total_elapsed, filename);
 			decimal_point = fann_save_to_fixed(ann, fixed_point_file);
 
 			sprintf(fixed_point_file, "%s_fixed_train_%d", filename, decimal_point);
@@ -228,7 +232,7 @@ void quality_benchmark_lwnn(
 	FILE *train_out, FILE *test_out,
 	unsigned int num_input, unsigned int num_neurons_hidden1,
 	unsigned int num_neurons_hidden2, unsigned int num_output,
-	unsigned int seconds_of_training, unsigned int seconds_between_reports)
+	unsigned int seconds_of_training, double seconds_between_reports)
 {
 	float train_error = 0;
 	float test_error = 0;
@@ -307,7 +311,7 @@ int main(int argc, char* argv[])
 	unsigned int num_neurons_hidden1;
 	unsigned int num_neurons_hidden2;
 	unsigned int seconds_of_training;
-	unsigned int seconds_between_reports;
+	double seconds_between_reports;
 
 	struct fann_train_data *train_data, *test_data;
 	FILE *train_out, *test_out;
@@ -320,7 +324,7 @@ int main(int argc, char* argv[])
 	num_neurons_hidden1 = atoi(argv[6]);
 	num_neurons_hidden2 = atoi(argv[7]);
 	seconds_of_training = atoi(argv[8]);
-	seconds_between_reports = atoi(argv[9]);
+	seconds_between_reports = atof(argv[9]);
 
 	train_data = fann_read_train_from_file(argv[2]);
 	test_data = fann_read_train_from_file(argv[3]);
@@ -376,7 +380,7 @@ int main(int argc, char* argv[])
 			num_neurons_hidden2, train_data->num_output,
 			seconds_of_training, seconds_between_reports);
 	}else if(strcmp(argv[1], "fann_rprop") == 0){
-		quality_benchmark_fann(false, FANN_TRAIN_RPROP, argv[4], train_data, test_data,
+		quality_benchmark_fann(false, FANN_TRAIN_RPROP, NULL, train_data, test_data,
 			train_out, test_out,
 			train_data->num_input, num_neurons_hidden1,
 			num_neurons_hidden2, train_data->num_output,

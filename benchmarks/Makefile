@@ -30,5 +30,11 @@ performance_fixed: performance.cc
 shuffle: shuffle.c
 	$(GCC) $(CFLAGS) $(LFLAGS) $< -o $@ -lfloatfann
 
+two-spirals: two-spirals.c
+	$(GCC) $(CFLAGS) $(LFLAGS) $< -o $@
+
+parity: parity.c
+	$(GCC) $(CFLAGS) $(LFLAGS) $< -o $@
+
 clean: 
 	rm -rf $(TARGETS) *.net *.out *_fixed_test_* *_fixed_train_* *~
