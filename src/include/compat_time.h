@@ -42,6 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
     #define WIN32_LEAN_AND_MEAN
     #include <windows.h>
 #else
+#ifndef _INC_WINDOWS
     #define VOID void
     #define WINAPI __stdcall
     #define OUT
@@ -72,6 +73,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
     WINBASEAPI VOID WINAPI
     GetSystemTimeAsFileTime(OUT LPFILETIME lpSystemTimeAsFileTime);
+#endif /* _INC_WINDOWS */
 #endif /* USE_WINDOWS_H */
 
 #include <time.h>

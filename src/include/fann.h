@@ -266,7 +266,7 @@ FANN_EXTERNAL void FANN_API fann_train_on_data(struct fann *ann, struct fann_tra
    If the callback returns -1, then the training is terminated, otherwise
    it continues until the normal stop criteria.
 */
-FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann, struct fann_train_data *data, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (*callback)(unsigned int epochs, float error));
+FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann, struct fann_train_data *data, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (FANN_API *callback)(unsigned int epochs, float error));
 
 /* Does the same as train_on_data, but reads the data directly from a file.
  */
@@ -275,7 +275,7 @@ FANN_EXTERNAL void FANN_API fann_train_on_file(struct fann *ann, char *filename,
 /* Does the same as train_on_data_callback, but
    reads the data directly from a file.
  */
-FANN_EXTERNAL void FANN_API fann_train_on_file_callback(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (*callback)(unsigned int epochs, float error));
+FANN_EXTERNAL void FANN_API fann_train_on_file_callback(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (FANN_API *callback)(unsigned int epochs, float error));
 
 /* shuffles training data, randomizing the order
  */

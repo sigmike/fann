@@ -2,14 +2,8 @@
 Fann win32 dll readme:
 
 Rebuilding the fann win32 dll's require Microsoft Visual Studio C++ 2003/7.1.
-The prebuilt dll's and import libraries in win32/bin can be used by previous
-versions.
-
-A command line version of the VS C++ 2003/7.1 compiler can be downloaded
-from Microsoft at http://msdn.microsoft.com/visualc/vctoolkit2003/. A link
-to the Microsoft Windows Platform SDK is provided on the same web page.
-See instructions at the end of the readme file for further instructions on
-rebuilding the fann win32 dll's on a command line.
+The build process places dll's and import libraries in win32/bin. Once built the
+dll's can be used by earlier compilers and other development tools.
 
 
 Project configurations:
@@ -44,9 +38,9 @@ Application usage:
 
 To use a dll in an application include one of the doublefann.h, fixedfann.h
 or floatfann.h header files in the source code and depending on the
-number format selected and the settings (debug, realease, single or
+number format selected and the settings (debug, release, single or
 multithreaded) in the application link with the matching import library.
-When executing the application make sure the required dll is in search
+When executing the application make sure the required dll is in the search
 path. For example copy the dll to the same directory as the application or
 add win32/bin to the search path (for example on WinXP use the System
 applet Configuration Manager and select Advanced and Environment Variables).
