@@ -1,3 +1,16 @@
+libfann (1.0.6) stable; urgency=low
+	* Customize error output
+	* Error checking when allocating memory
+	* Debian package
+	* RPM package
+	* Added pkg-config
+	* Deallocate correctly in case of an error
+	* Renamed fann_get_error to fann_get_MSE (keeping old one for now)
+	* Renamed fann_reset_error to fann_reset_MSE (keeping old one for now)
+	* Rearanged some code for easy access by the newly created fann php module 
+	
+ -- Steffen Nissen <lukesky@diku.dk> 
+
 libfann (1.0.5) stable; urgency=low
 	* Added a new constructor
 	* Added a callback function for output during training
