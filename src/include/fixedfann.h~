@@ -1,0 +1,11 @@
+#ifndef __fixedfann_h__
+#define __fixedfann_h__
+
+typedef int fann_type;
+#define FIXEDFANN
+#define FANNPRINTF "%d"
+#define FANNSCANF "%d"
+
+#include "fann.h"
+
+#endif

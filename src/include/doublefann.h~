@@ -1,0 +1,11 @@
+#ifndef __doublefann_h__
+#define __doublefann_h__
+
+typedef double fann_type;
+#define DOUBLEFANN
+#define FANNPRINTF "%.20e"
+#define FANNSCANF "%le"
+
+#include "fann.h"
+
+#endif

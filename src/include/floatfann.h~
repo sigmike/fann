@@ -1,0 +1,11 @@
+#ifndef __floatfann_h__
+#define __floatfann_h__
+
+typedef float fann_type;
+#define FLOATFANN
+#define FANNPRINTF "%.20e"
+#define FANNSCANF "%f"
+
+#include "fann.h"
+
+#endif
