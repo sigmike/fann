@@ -8,6 +8,7 @@ libfann (1.0.6) stable; urgency=low
 	* Renamed fann_get_error to fann_get_MSE (keeping old one for now)
 	* Renamed fann_reset_error to fann_reset_MSE (keeping old one for now)
 	* Rearanged some code for easy access by the newly created fann php module 
+	* Defined more activation functions and documented the old (in fann_activation.h)
 	
  -- Steffen Nissen <lukesky@diku.dk> 
 

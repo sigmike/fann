@@ -880,9 +880,9 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 				case FANN_SIGMOID:
 				case FANN_SIGMOID_STEPWISE:
 					if(layer_it == last_layer-1){
-						neuron_it->value = fann_sigmoid_stepwise(o1, o2, o3, o4, o5, o6, r1, r2, r3, r4, r5, r6, neuron_value, multiplier);
+						neuron_it->value = fann_stepwise(o1, o2, o3, o4, o5, o6, r1, r2, r3, r4, r5, r6, neuron_value, multiplier);
 					}else{
-						neuron_it->value = fann_sigmoid_stepwise(h1, h2, h3, h4, h5, h6, r1, r2, r3, r4, r5, r6, neuron_value, multiplier);
+						neuron_it->value = fann_stepwise(h1, h2, h3, h4, h5, h6, r1, r2, r3, r4, r5, r6, neuron_value, multiplier);
 					}
 					break;
 #else
@@ -892,9 +892,9 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 					
 				case FANN_SIGMOID_STEPWISE:
 					if(layer_it == last_layer-1){
-						neuron_it->value = fann_sigmoid_stepwise(o1, o2, o3, o4, o5, o6, r1, r2, r3, r4, r5, r6, neuron_value, 1);
+						neuron_it->value = fann_stepwise(o1, o2, o3, o4, o5, o6, r1, r2, r3, r4, r5, r6, neuron_value, 1);
 					}else{
-						neuron_it->value = fann_sigmoid_stepwise(h1, h2, h3, h4, h5, h6, r1, r2, r3, r4, r5, r6, neuron_value, 1);
+						neuron_it->value = fann_stepwise(h1, h2, h3, h4, h5, h6, r1, r2, r3, r4, r5, r6, neuron_value, 1);
 					}
 					break;
 #endif

@@ -35,6 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "fann_data.h"
 #include "fann_internal.h"
+#include "fann_activation.h"
 
 #ifndef __fann_h__
 #define __fann_h__
@@ -119,15 +120,6 @@ int fann_save_to_fixed(struct fann *ann, const char *configuration_file);
 /* Set the learning rate.
  */
 void fann_set_learning_rate(struct fann *ann, float learning_rate);
-
-/* The possible activation functions.
-   Threshold can not be used, when training the network.
-   FANN_SIGMOID_STEPWISE is a stepwise linear function,
-   which is faster but a bit less precise than FANN_SIGMOID
- */
-#define FANN_SIGMOID 1
-#define FANN_THRESHOLD 2
-#define FANN_SIGMOID_STEPWISE 3 /* (default) */
 
 /* Set the activation function for the hidden layers.
  */

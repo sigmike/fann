@@ -1,6 +1,6 @@
 * Implement quickprop training
 * Implement rprop training.
-* More advanced activation functions.
+* Implement the activation functions defined in fann_activation.h
 * More checks to see if train data is properly formatted in the file (some have experienced nasty problems because a number was missing in one line).
 * Make it easy to use in windows compilers as Borland C++ and MS Visual C++.
 * Good reference manual.

@@ -66,24 +66,18 @@ struct fann_train_data* fann_read_train_from_fd(FILE *file, char *filename);
 
 #define fann_abs(value) (((value) > 0) ? (value) : -(value))
 
-/* sigmoid as a stepwise linear function */
-#define fann_linear(v1, r1, v2, r2, value) ((((r2-r1) * (value-v1))/(v2-v1)) + r1)
-#define fann_sigmoid_stepwise(v1, v2, v3, v4, v5, v6, r1, r2, r3, r4, r5, r6, value, multiplier) (value < v5 ? (value < v3 ? (value < v2 ? (value < v1 ? 0 : fann_linear(v1, r1, v2, r2, value)) : fann_linear(v2, r2, v3, r3, value)) : (value < v4 ? fann_linear(v3, r3, v4, r4, value) : fann_linear(v4, r4, v5, r5, value))) : (value < v6 ? fann_linear(v5, r5, v6, r6, value) : multiplier))
-
 #ifdef FIXEDFANN
 
 #define fann_mult(x,y) ((x*y) >> decimal_point)
 #define fann_div(x,y) (((x) << decimal_point)/y)
 #define fann_random_weight() (fann_type)(fann_rand(-multiplier/10,multiplier/10))
 /* sigmoid calculated with use of floats, only as reference */
-#define fann_sigmoid(steepness, value) ((fann_type)(0.5+((1.0/(1.0 + exp(-2.0 * ((float)steepness/multiplier) * ((float)value/multiplier))))*multiplier)))
+
 #else
 
 #define fann_mult(x,y) (x*y)
 #define fann_div(x,y) (x/y)
 #define fann_random_weight() (fann_rand(-0.1,0.1))
-#define fann_sigmoid(steepness, value) (1.0/(1.0 + exp(-2.0 * steepness * value)))
-#define fann_sigmoid_derive(steepness, value) ((2.0 * steepness * value * (1.0 - value)) + 0.01) /* the plus is a trick to the derived function, to avoid getting stuck on flat spots */
 
 #endif
 
