@@ -33,7 +33,7 @@ struct fann_neuron
 #ifdef __GNUC__
 }__attribute__((packed));
 #else
-}
+};
 #endif
 
 /* A single layer in the neural network.
