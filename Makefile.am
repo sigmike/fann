@@ -3,7 +3,7 @@ SUBDIRS = src
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = fann.pc
 
-EXTRA_DIST = benchmarks doc examples python MSVC++
+EXTRA_DIST = benchmarks doc examples python MSVC++ src/include/config.h
 
 dist-hook:
 	rm -rf `find $(distdir) -name "*~" -o -name ".#*"`
