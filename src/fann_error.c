@@ -26,6 +26,11 @@
 #include "fann.h"
 #include "fann_errno.h"
 
+#ifdef _MSC_VER
+#define vsnprintf _vsnprintf
+#define snprintf _snprintf
+#endif
+
 /* resets the last error number
  */
 void fann_reset_errno(struct fann_error *errdat)

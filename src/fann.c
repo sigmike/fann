@@ -22,12 +22,19 @@
 #include <stdarg.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 #include "config.h"
 #include "fann.h"
 #include "fann_errno.h"
 
-
+#ifdef _MSC_VER
+/* MSVC++6 does not have powf in math.h
+ */
+float powf(float _X, float _Y){
+	return ((float)pow((double)_X, (double)_Y));
+}
+#endif
 
 /* create a neural network.
  */
@@ -43,7 +50,7 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 	int i = 0;
 
 	va_start(layer_sizes, num_layers);
-	for ( i=0 ; i<num_layers ; i++ ) {
+	for ( i=0 ; i<(int)num_layers ; i++ ) {
 		layers[i] = va_arg(layer_sizes, unsigned int);
 	}
 	va_end(layer_sizes);

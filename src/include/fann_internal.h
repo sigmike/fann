@@ -50,7 +50,7 @@ void fann_seed_rand();
 void fann_update_stepwise_hidden(struct fann *ann);
 void fann_update_stepwise_output(struct fann *ann);
 
-void fann_error(struct fann_error *errdat, unsigned int errno, ...);
+void fann_error(struct fann_error *errdat, const unsigned int errno, ...);
 void fann_init_error_data(struct fann_error *errdat);
 
 struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file);

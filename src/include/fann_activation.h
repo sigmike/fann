@@ -119,7 +119,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 /* FANN_SIGMOID_SYMMETRIC */
 #define fann_sigmoid_symmetric(steepness, value) (2.0/(1.0 + exp(-2.0 * steepness * value)) - 1.0)
-#define fann_sigmoid_symmetric_derive(steepness, value) steepness * (1.0 - (value*value))
+#define fann_sigmoid_symmetric_derive(steepness, value) steepness * (1.0f - (value*value))
 
 /* FANN_GAUSSIAN */
 #define fann_gaussian(steepness, value) (exp(-value * steepness * value * steepness))

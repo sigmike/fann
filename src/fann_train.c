@@ -143,7 +143,7 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 				for(neuron_it = (layer_it-1)->first_neuron;
 					neuron_it != last_neuron; neuron_it++){
 					neuron_value = neuron_it->value;
-					neuron_value = fann_clip(neuron_value, 0.01, 0.99);
+					neuron_value = fann_clip(neuron_value, 0.01f, 0.99f);
 					*delta_it *= (fann_type)fann_sigmoid_derive(activation_hidden_steepness, neuron_value);
 #ifdef DEBUGTRAIN
 					printf("delta3[%d] = "FANNPRINTF" *= fann_sigmoid_derive(%f, %f) * %f\n", (delta_it - delta_begin), *delta_it, activation_hidden_steepness, neuron_value, learning_rate);
@@ -156,7 +156,7 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 				for(neuron_it = (layer_it-1)->first_neuron;
 					neuron_it != last_neuron; neuron_it++){
 					neuron_value = neuron_it->value;
-					neuron_value = fann_clip(neuron_value, -0.98, 0.98);
+					neuron_value = fann_clip(neuron_value, -0.98f, 0.98f);
 					*delta_it *= (fann_type)fann_sigmoid_symmetric_derive(activation_hidden_steepness, neuron_value);
 #ifdef DEBUGTRAIN
 					printf("delta3[%d] = "FANNPRINTF" *= fann_sigmoid_symmetric_derive(%f, %f) * %f\n", (delta_it - delta_begin), *delta_it, activation_hidden_steepness, neuron_value, learning_rate);
