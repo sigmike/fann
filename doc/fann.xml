@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.12 2004/03/31 07:33:12 tadpole9 Exp $ -->
+<!-- $Id: fann.xml,v 1.13 2004/03/31 17:08:09 looksirdroids Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -3079,7 +3079,7 @@ fann_destroy(ann2);
     <title id="php.title">PHP Extension</title>
     <para>These functions allow you to interact with the FANN library from PHP.</para>
     <para>This extension requires the 
-    <ulink url="http://fann.sf.net/">FANN</ulink>library, version 1.0.6 or later.</para>
+    <ulink url="http://fann.sf.net/">FANN</ulink>library, version 1.1.0 or later.</para>
     <para>The following activation functions are supported: 
     <itemizedlist>
       <listitem>
@@ -3782,6 +3782,28 @@ else
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
+    </section>
+  </chapter>
+  <chapter id="python">
+    <title id="python.title">Python Bindings</title>
+    <para>These functions allow you to interact with the FANN library from Python.</para>
+    <para>This extension requires the 
+    <ulink url="http://fann.sf.net/">FANN</ulink> library, version 1.1.0 or later.</para>
+  <para>This python binding is provided by Vincenzo Di Massa (hawk.it@tiscalinet.it)</para>
+    <section id="python.install">
+      <title id="python.install.title">Python Install</title>
+      <para>
+Make sure to make and install the fann library first.
+Make sure that you have swig and python development files installed.
+Perhaps change the include directory of python.
+Then run 'make' to compile.
+      </para>
+      <para>
+Copy the generated _fann.so and fann.py files to pyhon modules or into working directory.
+      </para>
+      <para>
+After the install, just import fann and all the C functions will be available to your python code.
+      </para>
     </section>
   </chapter>
   <bibliography id="bibliography">
