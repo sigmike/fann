@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.19 2004/07/05 23:05:50 looksirdroids Exp $ -->
+<!-- $Id: fann.xml,v 1.20 2004/07/06 16:46:44 looksirdroids Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -4986,6 +4986,9 @@ After the install, just import fann and all the C functions will be available to
       </author>
       <pubdate>1988</pubdate>
       <title id="bib.fahlman_1988.title">Faster-learning variations on back-propagation</title>
+      <releaseinfo>
+        <ulink url="http://www-2.cs.cmu.edu/afs/cs.cmu.edu/user/sef/www/publications/qp-tr.ps">http://www-2.cs.cmu.edu/afs/cs.cmu.edu/user/sef/www/publications/qp-tr.ps</ulink>
+      </releaseinfo>
       <subtitle>An empirical study</subtitle>
     </biblioentry>
     <biblioentry id="bib.FSF_1999">
