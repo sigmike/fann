@@ -2,28 +2,28 @@ XML = fann.xml
 
 all: html html-single dvi pdf ps rtf tex txt
 
-html:
+html: fann.xml
 	jw -b html -o html $(XML)
 
-html-single:
+html-single: fann.xml
 	jw -u -b html $(XML)
 
-dvi:
+dvi: fann.xml
 	jw -u -b dvi $(XML)
 
-pdf:
+pdf: fann.xml
 	jw -u -b pdf $(XML)
 
-ps:
+ps: fann.xml
 	jw -u -b ps $(XML)
 
-rtf:
+rtf: fann.xml
 	jw -u -b rtf $(XML)
 
-tex:
+tex: fann.xml
 	jw -u -b tex $(XML)
 
-txt:
+txt: fann.xml
 	jw -u -b txt $(XML)
 
 clean:

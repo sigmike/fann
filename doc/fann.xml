@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.5 2004/02/19 06:30:13 tadpole9 Exp $ -->
+<!-- $Id: fann.xml,v 1.6 2004/03/01 21:38:45 looksirdroids Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -56,7 +56,14 @@
       </section>
       <section id="intro.install.deb">
         <title>DEBs</title>
-        <para>Dunno- never used dpkg. Steffen?</para>
+        <para>
+	  DEBs are packages for the <ulink url="http://www.debian.org">Debian</ulink> Linux distribution. 
+	  Two separate packages exists libfann1 and libfann1-dev, where libfann1 is the runtime library and
+	  libfann1-dev is the development library.
+	</para>
+        <para>
+	  After downloading the FANN DEB package, simply run (as root) the following command: <command>dpkg -i $PATH_TO_DEB</command>
+	</para>
       </section>
       <section id="intro.install.win32">
         <title>Windows</title>
@@ -641,11 +648,11 @@ int main()
     <title id="api.title">API Reference</title>
     <para>This is a list of all functions and structures in FANN.</para>
     <section id="api.sec.create_destroy">
-      <title id="api.sec.create_destroy.title">Creation and Destruction</title>
+      <title id="api.sec.create_destroy.title">Creation, Destruction and execution</title>
       <refentry id="api.fann_create">
         <refnamediv>
           <refname>fann_create</refname>
-          <refpurpose>Save an artificial neural network to a file.</refpurpose>
+          <refpurpose>Create a new artificial neural network, and return a pointer to it.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
@@ -670,7 +677,16 @@ int main()
             </methodparam>
           </methodsynopsis>
           <para>
-            <function>fann_create</function> will create a new artificial neural network, and return a pointer to it.
+            <function>fann_create</function> will create a new artificial neural network, and return
+	    a pointer to it.  The <parameter>connection_rate</parameter> controls how many
+	    connections there will be in the network. If the connection rate is set to 1, the
+	    network will be fully connected, but if it is set to 0.5 only half of the connections
+	    will be set.
+	  </para>
+	  <para>
+	    The <parameter>num_layers</parameter> is the number of layers including the input and
+	    output layer. This parameter is followed by one parameter for each layer telling how
+	    many neurons there should be in the layer.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -678,7 +694,7 @@ int main()
       <refentry id="api.fann_create_array">
         <refnamediv>
           <refname>fann_create_array</refname>
-          <refpurpose>Save an artificial neural network to a file.</refpurpose>
+          <refpurpose>Create a new artificial neural network, and return a pointer to it.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
@@ -735,7 +751,7 @@ int main()
       <refentry id="api.fann_run">
         <refnamediv>
           <refname>fann_run</refname>
-          <refpurpose>Run an ANN.</refpurpose>
+          <refpurpose>Run (execute) an ANN.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
@@ -762,7 +778,7 @@ int main()
       <refentry id="api.fann_randomize_weights">
         <refnamediv>
           <refname>fann_randomize_weights</refname>
-          <refpurpose>Give each neuron a random weights.</refpurpose>
+          <refpurpose>Give each connection a random weight.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
@@ -779,7 +795,7 @@ int main()
             </methodparam>
           </methodsynopsis>
           <para>
-	    Randomizes the weight of each neuron in <parameter>ann</parameter>, effectively resetting the network.
+	    Randomizes the weight of each connection in <parameter>ann</parameter>, effectively resetting the network.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -833,16 +849,44 @@ int main()
             </methodparam>
           </methodsynopsis>
           <para>
-            <function>fann_save_fixed</function> will attempt to save <parameter>ann</parameter> to the file located at
-	    <parameter>configuration_file</parameter> as a fixed-point netowrk.
+            <function>fann_save_to_fixed</function> will attempt to save <parameter>ann</parameter> to the file located at
+	    <parameter>configuration_file</parameter> as a fixed-point network.
+
 	  </para>
+	  <para>
+	    This is usefull for training a network in floating points,
+	    and then later executing it in fixed point.
+	  </para>
+	  <para>
+	    The function returns the bit position of the fix point, which
+	    can be used to find out how accurate the fixed point network will be.
+	    A high value indicates high precision, and a low value indicates low
+	    precision.
+	  </para>
+	  <para>
+	    A negative value indicates very low precision, and a very
+	    strong possibility for overflow.
+	    (the actual fix point will be set to 0, since a negative
+	    fix point does not make sence).
+	  </para>
+	  <para>
+	    Generally, a fix point lower than 6 is bad, and should be avoided.
+	    The best way to avoid this, is to have less connections to each neuron,
+	    or just less neurons in each layer.
+	  </para>
+	  <para>
+	    The fixed point use of this network is only intended for use on machines that
+	    have no floating point processor, like an iPAQ. On normal computers the floating
+	    point version is actually faster.
+	  </para>
+
 	  <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
       <refentry id="api.fann_create_from_file">
         <refnamediv>
           <refname>fann_create_from_file</refname>
-          <refpurpose>Load an ANN from a file..</refpurpose>
+          <refpurpose>Load an ANN from a file.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
@@ -855,7 +899,7 @@ int main()
             </methodparam>
           </methodsynopsis>
           <para>
-            <function>fann_create_from_file</function>will attempt to load an artificial neural netowrk from a file.
+            <function>fann_create_from_file</function>will attempt to load an artificial neural network from a file.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -888,7 +932,7 @@ int main()
           </methodsynopsis>
           <para>
 	    <function>fann_train</function> will train one iteration with a set of inputs, and a set of desired
-	    outputs.
+	    outputs. The training will be done by the standard backpropagation algorithm.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -939,7 +983,7 @@ int main()
             </methodparam>
           </methodsynopsis>
           <para>Reads the mean square error from the network.</para>
-          <para>This function appears in FANN &gt;= 1.1.0.</para>
+          <para>This function appears in FANN &gt;= 1.1.0. (before this <function>fann_get_error</function>> is used)</para>
         </refsect1>
       </refentry>
       <refentry id="api.fann_reset_MSE">
@@ -958,7 +1002,7 @@ int main()
             </methodparam>
           </methodsynopsis>
           <para>Resets the mean square error from the network.</para>
-          <para>This function appears in FANN &gt;= 1.1.0.</para>
+          <para>This function appears in FANN &gt;= 1.1.0. (before this <function>fann_reset_error</function> is used)</para>
         </refsect1>
       </refentry>
     </section>
@@ -981,7 +1025,22 @@ int main()
           </methodsynopsis>
           <para>
 	    <function>fann_read_train_from_file</function>will load training data from a file.
+	    The file should be formatted in the following way:
 	  </para>
+          <programlisting>
+<![CDATA[
+   num_train_data num_input num_output
+   inputdata seperated by space
+   outputdata seperated by space
+
+   .
+   .
+   .
+   
+   inputdata seperated by space
+   outputdata seperated by space
+]]>	  
+          </programlisting>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
@@ -1144,6 +1203,12 @@ int main()
             <link linkend="api.fann_train_on_data"><function>fann_train_on_data</function></link>, except that 
 	    <function>fann_train_on_data_callback</function>allows you to specify a function to be called every 
 	    <parameter>epochs_between_reports</parameter>instead of using the default reporting mechanism.
+	    If the callback function returns -1 the training will terminate.
+	  </para>
+	  <para>
+	    The callback function is very usefull in gui application or in other applications which
+	    do not wish to report the progress on standard output. Furthermore the callback function
+	    can be used to stop the training at non standard stop criteria.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.5.</para>
         </refsect1>
@@ -1230,6 +1295,7 @@ int main()
 	    <link linkend="api.fann_train_on_file"><function>fann_train_on_file</function></link>, except that 
 	    <function>fann_train_on_file_callback</function> allows you to specify a function to be called every 
             <parameter>epochs_between_reports</parameter> instead of using the default reporting mechanism.
+	    The callback function works as described in <link linkend="api.fann_train_on_data_callback"><function>fann_train_on_data_callback</function></link>
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.5.</para>
         </refsect1>
@@ -1351,7 +1417,7 @@ int main()
       <refentry id="api.fann_get_activation_function_hidden">
         <refnamediv>
           <refname>fann_get_activation_function_hidden</refname>
-          <refpurpose>Get the activation function of the hidden layer.</refpurpose>
+          <refpurpose>Get the activation function used in the hidden layers.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
@@ -1363,14 +1429,18 @@ int main()
               <parameter>ann</parameter>
             </methodparam>
           </methodsynopsis>
-          <para>Return the activation function of the hidden layer.</para>
+          <para>Return the activation function used in the hidden layers.</para>
+	  <para>
+	    See <link linkend="api.sec.constants.activation.title">Activation Function
+	    Constants</link> for details on the activation functions.
+	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
       <refentry id="api.fann_set_activation_function_hidden">
         <refnamediv>
           <refname>fann_set_activation_function_hidden</refname>
-          <refpurpose>Set the activation function for the hidden layer.</refpurpose>
+          <refpurpose>Set the activation function for the hidden layers.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
@@ -1387,8 +1457,12 @@ int main()
             </methodparam>
           </methodsynopsis>
           <para>
-	    Set the activation function of the hidden layer to 
+	    Set the activation function used in the hidden layers to 
             <parameter>activation_function</parameter>.
+	  </para>
+	  <para>
+	    See <link linkend="api.sec.constants.activation.title">Activation Function
+	    Constants</link> for details on the activation functions.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -1409,6 +1483,10 @@ int main()
             </methodparam>
           </methodsynopsis>
           <para>Return the activation function of the output layer.</para>
+	  <para>
+	    See <link linkend="api.sec.constants.activation.title">Activation Function
+	    Constants</link> for details on the activation functions.
+	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
@@ -1435,6 +1513,10 @@ int main()
 	    Set the activation function of the output layer to 
 	    <parameter>activation_function</parameter>.
 	  </para>
+	  <para>
+	    See <link linkend="api.sec.constants.activation.title">Activation Function
+	    Constants</link> for details on the activation functions.
+	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
@@ -1454,6 +1536,12 @@ int main()
             </methodparam>
           </methodsynopsis>
           <para>Return the steepness of the activation function of the hidden layers.</para>
+	  <para>
+	    The steepness defaults to 0.5 and a larger steepness will make the slope of the
+	    activation function more steep, while a smaller steepness will make the slope less
+	    steep. A large steepness is well suited for classification problems while a small
+	    steepness is well suited for function approximation.
+	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
@@ -1478,8 +1566,14 @@ int main()
           </methodsynopsis>
           <para>
 	    Set the steepness of the activation function of thie hidden layers of 
-	    <parameter>ann</parameter>to 
+	    <parameter>ann</parameter> to 
 	    <parameter>steepness</parameter>.
+	  </para>
+	  <para>
+	    The steepness defaults to 0.5 and a larger steepness will make the slope of the
+	    activation function more steep, while a smaller steepness will make the slope less
+	    steep. A large steepness is well suited for classification problems while a small
+	    steepness is well suited for function approximation.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -1500,6 +1594,12 @@ int main()
             </methodparam>
           </methodsynopsis>
           <para>Return the steepness of the activation function of the hidden layers.</para>
+	  <para>
+	    The steepness defaults to 0.5 and a larger steepness will make the slope of the
+	    activation function more steep, while a smaller steepness will make the slope less
+	    steep. A large steepness is well suited for classification problems while a small
+	    steepness is well suited for function approximation.
+	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
@@ -1525,6 +1625,12 @@ int main()
           <para>
 	    Set the steepness of the activation function of thie hidden layers of 
             <parameter>ann</parameter> to <parameter>steepness</parameter>.
+	  </para>
+	  <para>
+	    The steepness defaults to 0.5 and a larger steepness will make the slope of the
+	    activation function more steep, while a smaller steepness will make the slope less
+	    steep. A large steepness is well suited for classification problems while a small
+	    steepness is well suited for function approximation.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -1588,7 +1694,7 @@ int main()
           </methodsynopsis>
           <para>
 	    Return the total number of neurons in 
-	    <parameter>ann</parameter>.
+	    <parameter>ann</parameter>. This number includes the bias neurons.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -1630,7 +1736,10 @@ int main()
             </methodparam>
           </methodsynopsis>
           <para>
-	    Return the position of the decimal point in <parameter>ann</parameter>.
+	    Return the position of the decimal point in <parameter>ann</parameter>. 
+	  </para>
+          <para>
+	    This function is only available when the ANN is in fixed point mode.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -1652,6 +1761,9 @@ int main()
           </methodsynopsis>
           <para>
 	    Return the multiplier that fix point data in <parameter>ann</parameter>is multiplied with.
+	  </para>
+          <para>
+	    This function is only available when the ANN is in fixed point mode.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -2611,7 +2723,7 @@ int main()
               </methodparam>
             </methodsynopsis>
             <para>
-              <function>fann_create_from_fd</function>will load an ANN from a file descriptor.
+              <function>fann_create_from_fd</function> will load an ANN from a file descriptor.
 	    </para>
             <para>This function appears in FANN &gt;= 1.1.0.</para>
           </refsect1>
@@ -2808,7 +2920,7 @@ int main()
     <section id="api.sec.deprecated">
       <title id="api.sec.deprecated.title">Deprecated Functions</title>
       <section id="api.sec.error.deprecated">
-        <title id="api.sec.error.deprecated.title">Error Handling</title>
+        <title id="api.sec.error.deprecated.title">Mean Square Error</title>
         <refentry id="api.fann_get_error">
           <refnamediv>
             <refname>fann_get_error</refname>
@@ -2833,7 +2945,7 @@ int main()
         </refentry>
         <refentry id="api.fann_reset_error">
           <refnamediv>
-            <refname>fann_get_error</refname>
+            <refname>fann_reset_error</refname>
             <refpurpose>Reset the mean square error of an ANN.</refpurpose>
           </refnamediv>
           <refsect1>
