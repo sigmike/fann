@@ -492,7 +492,6 @@ void fann_seed_rand()
 void fann_error(struct fann *ann, const unsigned int errno, ...)
 {
 	va_list ap;
-	unsigned int flag = 0;
 	char * errstr;
 
 	if(ann != NULL)	ann->errno_f = errno;

@@ -755,9 +755,9 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 #endif
 	
 	/* values used for the stepwise linear sigmoid function */
-	fann_type r1, r2, r3, r4, r5, r6;
-	fann_type h1, h2, h3, h4, h5, h6;
-	fann_type o1, o2, o3, o4, o5, o6;
+	fann_type r1 = 0, r2 = 0, r3 = 0, r4 = 0, r5 = 0, r6 = 0;
+	fann_type h1 = 0, h2 = 0, h3 = 0, h4 = 0, h5 = 0, h6 = 0;
+	fann_type o1 = 0, o2 = 0, o3 = 0, o4 = 0, o5 = 0, o6 = 0;
 	
 #ifdef FIXEDFANN
 	if(activation_function_output == FANN_SIGMOID_STEPWISE ||
