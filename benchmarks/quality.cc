@@ -188,7 +188,7 @@ void quality_benchmark_fann(bool stepwise,
 
 		/* Save the data as fixed point, to allow for drawing of
 		   a fixed point graph */
-		if(connection_rate == 1){
+		if(!stepwise){
 			/* buffer overflow could occur here */
 			sprintf(fixed_point_file, "%05d_%f_%s_fixed", epochs, total_elapsed, filename);
 			decimal_point = fann_save_to_fixed(ann, fixed_point_file);
