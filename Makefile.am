@@ -3,12 +3,19 @@ SUBDIRS = src
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = fann.pc
 
-EXTRA_DIST = benchmarks doc/fann.xml doc/fann_doc_complete_1.0.pdf doc/Makefile doc/style.css examples python MSVC++ src/include/config.h \
+EXTRA_DIST = benchmarks doc/fann.xml doc/fann_doc_complete_1.0.pdf \
+	doc/Makefile doc/style.css examples python MSVC++ src/include/config.h \
 	debian/changelog debian/compat debian/control debian/copyright \
 	debian/docs debian/libfann1-dev.dirs debian/libfann1-dev.examples \
 	debian/libfann1-dev.files debian/libfann1-dev.install \
 	debian/libfann1.dirs debian/libfann1.files debian/libfann1.install \
-	debian/rules 
+	debian/rules win32_dll/makefile win32_dll/readme.txt win32_dll/win32.ncb \
+	win32_dll/win32.sln win32_dll/win32.suo win32_dll/windll.vcproj \
+	win32_dll/examples/examples.ncb win32_dll/examples/examples.sln \
+	win32_dll/examples/examples.suo win32_dll/examples/simple_test.vcproj \
+	win32_dll/examples/simple_train.vcproj win32_dll/examples/xor_test.vcproj \
+	win32_dll/examples/xor_train.vcproj
+
 
 dist-hook:
 	rm -rf `find $(distdir) -name "*~" -o -name ".#*"`
