@@ -27,6 +27,8 @@ runtest: $(TARGETS)
 	@echo Testing network with fixed points
 	./xor_test_fixed
 
+#below this line is only for debugging the fann library
+
 rundebug: $(TARGETS)
 	@echo
 	@echo Training network
@@ -39,3 +41,10 @@ rundebug: $(TARGETS)
 	@echo
 	@echo Testing network with fixed points
 	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_test_fixed
+
+
+DEBUG_TARGETS = xor_train_debug xor_test_debug
+debug: $(DEBUG_TARGETS)
+%_debug: %.c Makefile
+	gcc -O -ggdb -lm -DDEBUG ../src/.libs/floatfann.o $< -o $@
+
