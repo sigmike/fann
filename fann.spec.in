@@ -67,7 +67,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/fixedfann.h
 %{_includedir}/compat_time.h
 %{_includedir}/fann_errno.h
+%{_includedir}/fann_activation.h
 
 %changelog
+* Fri Jan 16 2004 Evan Nemerson <evan@coeus-group.com>
+- Added activation header.
+
 * Mon Jan 10 2004 Evan Nemerson <evan@coeus-group.com>
 - RPM created
