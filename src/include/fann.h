@@ -267,6 +267,27 @@ float fann_get_error(struct fann *ann);
  */
 void fann_reset_error(struct fann *ann);
 
+/* resets the last error number
+ */
+void fann_reset_errno(struct fann *ann);
+
+/* resets the last error string
+ */
+void fann_reset_errstr(struct fann *ann);
+
+/* returns the last error number
+ */
+unsigned int fann_get_errno(struct fann *ann);
+
+/* returns the last errstr.
+ * This function calls fann_reset_errno and fann_reset_errstr
+ */
+char * fann_get_errstr(struct fann *ann);
+
+/* prints the last error to stderr
+ */
+void fann_print_error(struct fann *ann) ;
+
 /* ----- Running ----- */
 
 /* Runs a input through the network, and returns the output.

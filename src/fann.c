@@ -26,6 +26,8 @@
 
 #include "fann.h"
 
+#include "fann_errno.h"
+
 /* create a neural network.
  */
 struct fann * fann_create_array(float connection_rate, float learning_rate, unsigned int num_layers, unsigned int * layers)
@@ -58,6 +60,10 @@ struct fann * fann_create_array(float connection_rate, float learning_rate, unsi
 	multiplier = ann->multiplier;
 #endif
 	fann_initialise_result_array(ann);
+
+	/* Reset the errno/errstr information */
+	fann_reset_errstr(ann);
+	fann_reset_errno(ann);
 	
 	/* determine how many neurons there should be in each layer */
 	i = 0;
@@ -276,7 +282,7 @@ struct fann * fann_create_from_file(const char *configuration_file)
 	FILE *conf = fopen(configuration_file, "r");
 	
 	if(!conf){
-		printf("Unable to open configuration file \"%s\" for reading.\n", configuration_file);
+		fann_error(NULL, FANN_E_CANT_OPEN_CONFIG_R, configuration_file);
 		return NULL;
 	}
 	
@@ -285,25 +291,29 @@ struct fann * fann_create_from_file(const char *configuration_file)
 	
 	/* compares the version information */
 	if(strncmp(read_version, FANN_CONF_VERSION"\n", strlen(FANN_CONF_VERSION"\n")) != 0){
-		printf("Wrong version of configuration file, aborting read of configuration file \"%s\".\n", configuration_file);
+		fann_error(NULL, FANN_E_WRONG_CONFIG_VERSION, configuration_file);
 		return NULL;
 	}
 	
 #ifdef FIXEDFANN
 	if(fscanf(conf, "%u\n", &decimal_point) != 1){
-		printf("Error reading info from configuration file \"%s\".\n", configuration_file);
+		fann_error(NULL, FANN_E_CANT_READ_CONFIG, configuration_file);
 		return NULL;
 	}
 	multiplier = 1 << decimal_point;
 #endif
 	
 	if(fscanf(conf, "%u %f %f %u %u "FANNSCANF" "FANNSCANF"\n", &num_layers, &learning_rate, &connection_rate, &activation_function_hidden, &activation_function_output, &activation_hidden_steepness, &activation_output_steepness) != 7){
-		printf("Error reading info from configuration file \"%s\".\n", configuration_file);
+		fann_error(NULL, FANN_E_CANT_READ_CONFIG, configuration_file);
 		return NULL;
 	}
 	
 	ann = fann_allocate_structure(learning_rate, num_layers);
 	ann->connection_rate = connection_rate;
+
+	/* Reset the errno/errstr information */
+	fann_reset_errstr(ann);
+	fann_reset_errno(ann);
 	
 #ifdef FIXEDFANN
 	ann->decimal_point = decimal_point;
@@ -324,7 +334,7 @@ struct fann * fann_create_from_file(const char *configuration_file)
 	/* determine how many neurons there should be in each layer */
 	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
 		if(fscanf(conf, "%u ", &layer_size) != 1){
-			printf("Error reading neuron info from configuration file \"%s\".\n", configuration_file);
+			fann_error(ann, FANN_E_CANT_READ_NEURON, configuration_file);
 			return ann;
 		}
 		/* we do not allocate room here, but we make sure that
@@ -347,7 +357,7 @@ struct fann * fann_create_from_file(const char *configuration_file)
 	for(neuron_it = ann->first_layer->first_neuron;
 		neuron_it != last_neuron; neuron_it++){
 		if(fscanf(conf, "%u ", &neuron_it->num_connections) != 1){
-			printf("Error reading neuron info from configuration file \"%s\".\n", configuration_file);
+			fann_error(ann, FANN_E_CANT_READ_NEURON, configuration_file);
 			return ann;
 		}
 		ann->total_connections += neuron_it->num_connections;
@@ -361,7 +371,7 @@ struct fann * fann_create_from_file(const char *configuration_file)
 	
 	for(i = 0; i < ann->total_connections; i++){
 		if(fscanf(conf, "(%u "FANNSCANF") ", &input_neuron, &weights[i]) != 2){
-			printf("Error reading connections from configuration file \"%s\".\n", configuration_file);
+			fann_error(ann, FANN_E_CANT_READ_CONNECTIONS, configuration_file);
 			return ann;
 		}
 		connected_neurons[i] = first_neuron+input_neuron;
@@ -651,12 +661,12 @@ struct fann_train_data* fann_read_train_from_file(char *filename)
 	data = (struct fann_train_data *)malloc(sizeof(struct fann_train_data));
 	
 	if(!file){
-		printf("Unable to open train data file \"%s\" for reading.\n", filename);
+		fann_error(NULL, FANN_E_CANT_OPEN_TD_R, filename);
 		return NULL;
 	}
 	
 	if(fscanf(file, "%u %u %u\n", &num_data, &num_input, &num_output) != 3){
-		printf("Error reading info from train data file \"%s\", line: %d.\n", filename, line);
+		fann_error(NULL, FANN_E_CANT_READ_TD, filename, line);
 		return NULL;
 	}
 	line++;
@@ -671,7 +681,7 @@ struct fann_train_data* fann_read_train_from_file(char *filename)
 		data->input[i] = (fann_type *)calloc(num_input, sizeof(fann_type));
 		for(j = 0; j != num_input; j++){
 			if(fscanf(file, FANNSCANF" ", &data->input[i][j]) != 1){
-				printf("Error reading info from train data file \"%s\", line: %d.\n", filename, line);
+				fann_error(NULL, FANN_E_CANT_READ_TD, filename, line);
 				return NULL;
 			}
 		}
@@ -680,7 +690,7 @@ struct fann_train_data* fann_read_train_from_file(char *filename)
 		data->output[i] = (fann_type *)calloc(num_output, sizeof(fann_type));
 		for(j = 0; j != num_output; j++){
 			if(fscanf(file, FANNSCANF" ", &data->output[i][j]) != 1){
-				printf("Error reading info from train data file \"%s\", line: %d.\n", filename, line);
+				fann_error(NULL, FANN_E_CANT_READ_TD, filename, line);
 				return NULL;
 			}
 		}
@@ -1005,4 +1015,47 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 		output[i] = neurons[i].value;
 	}
 	return ann->output;
+}
+
+/* resets the last error number
+ */
+void fann_reset_errno(struct fann *ann)
+{
+	ann->errno = 0;
+}
+
+/* resets the last errstr
+ */
+void fann_reset_errstr(struct fann *ann)
+{
+	if ( ann->errstr != NULL )
+		free(ann->errstr);
+	ann->errstr = NULL;
+}
+
+/* returns the last error number
+ */
+unsigned int fann_get_errno(struct fann *ann)
+{
+	return ann->errno;
+}
+
+/* returns the last errstr
+ */
+char * fann_get_errstr(struct fann *ann)
+{
+	char *errstr = ann->errstr;
+
+	fann_reset_errno(ann);
+	fann_reset_errstr(ann);
+
+	return errstr;
+}
+
+/* prints the last error to stderr
+ */
+void fann_print_error(struct fann *ann) {
+	if ( ann->errno != FANN_E_NO_ERROR ){
+		fputs(ann->errstr, stderr);
+	}
 }

@@ -49,6 +49,8 @@ void fann_initialise_result_array(struct fann *ann);
 void fann_update_stepwise_hidden(struct fann *ann);
 void fann_update_stepwise_output(struct fann *ann);
 
+void fann_error(struct fann *ann, unsigned int errno, ...);
+
 /* called fann_max, in order to not interferre with predefined versions of max */
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))
 #define fann_min(x, y) (((x) < (y)) ? (x) : (y))

@@ -143,6 +143,12 @@ struct fann
 	   the real mean square error is error_value/num_errors
 	 */
 	float error_value;
+
+	/* The type of error that last occured. */
+	unsigned int errno;
+
+	/* A string representation of the last error. */
+	char * errstr;
 };
 
 /* Structure used to store data, for use with training. */

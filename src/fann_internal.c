@@ -22,10 +22,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
+#include <stdarg.h>
 
 #include "compat_time.h"
 #include "fann.h"
 #include "fann_internal.h"
+#include "fann_errno.h"
 
 /* Allocates the main structure and sets some default values.
  */
@@ -128,7 +130,7 @@ void fann_allocate_connections(struct fann *ann)
 	}
 
 	if(connections_so_far != ann->total_connections){
-		printf("ERROR connections_so_far=%d, total_connections=%d\n", connections_so_far, ann->total_connections);
+		fann_error(ann, FANN_E_WRONG_NUM_CONNECTIONS, connections_so_far, ann->total_connections);
 		exit(0);
 	}
 }
@@ -154,7 +156,7 @@ int fann_save_internal(struct fann *ann, const char *configuration_file, unsigne
 
 	FILE *conf = fopen(configuration_file, "w+");
 	if(!conf){
-		printf("Unable to open configuration file \"%s\" for writing.\n", configuration_file);
+		fann_error(ann, FANN_E_CANT_OPEN_CONFIG_W, configuration_file);
 		return -1;
 	}
 
@@ -298,7 +300,7 @@ void fann_save_train_internal(struct fann_train_data* data, char *filename, unsi
 	
 	FILE *file = fopen(filename, "w");
 	if(!file){
-		printf("Unable to open train data file \"%s\" for writing.\n", filename);
+		fann_error(NULL, FANN_E_CANT_OPEN_TD_W, filename);
 		return;
 	}
 	
@@ -441,4 +443,60 @@ void fann_seed_rand()
 		fclose(fp);
 	}
 	srand(foo);
+}
+
+/* Populate the error information
+ */
+void fann_error(struct fann *ann, const unsigned int errno, ...)
+{
+	va_list ap;
+	unsigned int flag = 0;
+	char * errstr;
+
+	errstr = (char *)malloc(FANN_ERRSTR_MAX);
+
+	va_start(ap, errno);
+	switch ( errno ) {
+	case FANN_E_NO_ERROR:
+		break;
+	case FANN_E_CANT_OPEN_CONFIG_R:
+		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unable to open configuration file \"%s\" for reading.\n", ap);
+		break;
+	case FANN_E_CANT_OPEN_CONFIG_W:
+		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unable to open configuration file \"%s\" for writing.\n", ap);
+		break;
+	case FANN_E_WRONG_CONFIG_VERSION:
+		vsnprintf(errstr, FANN_ERRSTR_MAX, "Wrong version of configuration file, aborting read of configuration file \"%s\".\n", ap);
+		break;
+	case FANN_E_CANT_READ_CONFIG:
+		vsnprintf(errstr, FANN_ERRSTR_MAX, "Error reading info from configuration file \"%s\".\n", ap);
+		break;
+	case FANN_E_CANT_READ_NEURON:
+		vsnprintf(errstr, FANN_ERRSTR_MAX, "Error reading neuron info from configuration file \"%s\".\n", ap);
+		break;
+	case FANN_E_CANT_READ_CONNECTIONS:
+		vsnprintf(errstr, FANN_ERRSTR_MAX, "Error reading connections from configuration file \"%s\".\n", ap);
+		break;
+	case FANN_E_WRONG_NUM_CONNECTIONS:
+		vsnprintf(errstr, FANN_ERRSTR_MAX, "ERROR connections_so_far=%d, total_connections=%d\n", ap);
+		break;
+	case FANN_E_CANT_OPEN_TD_W:
+		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unable to open train data file \"%s\" for writing.\n", ap);
+		break;
+	case FANN_E_CANT_OPEN_TD_R:
+		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unable to open train data file \"%s\" for writing.\n", ap);
+		break;
+	case FANN_E_CANT_READ_TD:
+		vsnprintf(errstr, FANN_ERRSTR_MAX, "Error reading info from train data file \"%s\", line: %d.\n", ap);
+		break;
+	default:
+		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unknown error.", ap);
+		break;
+	}
+	va_end(ap);
+
+	if ( ann == NULL )
+	  fprintf(stderr, "FANN Error %d: %s", errstr);
+	else
+	  ann->errstr = errstr;
 }
