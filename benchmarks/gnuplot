@@ -91,6 +91,20 @@ plot "thyroid_fann_train.out" title "fann train" with lines -1, \
  "thyroid_lwnn_test.out" title "lwnn test" with lines 3, \
  "thyroid_jneural_test.out" title "jneural test" with lines 4
 
+set logscale x
+#set output "robot.ps"
+set title "robot"
+plot "robot_fann_train.out" title "fann train" with lines -1, \
+ "robot_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "robot_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "robot_lwnn_train.out" title "lwnn train" with lines 3, \
+ "robot_jneural_train.out" title "jneural train" with lines 4, \
+ "robot_fann_test.out" title "fann test" with lines -1, \
+ "robot_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "robot_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "robot_lwnn_test.out" title "lwnn test" with lines 3, \
+ "robot_jneural_test.out" title "jneural test" with lines 4
+
 set xlabel "Number of neurons in the four layers"
 set ylabel "Nanoseconds per connection"
 

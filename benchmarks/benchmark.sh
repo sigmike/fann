@@ -53,3 +53,10 @@ rm -f *_fixed.net
 ./quality fann_stepwise datasets/thyroid.train datasets/thyroid.test thyroid_fann_stepwise_train.out thyroid_fann_stepwise_test.out 16 8 200 1
 ./quality lwnn datasets/thyroid.train datasets/thyroid.test thyroid_lwnn_train.out thyroid_lwnn_test.out 16 8 200 1
 ./quality jneural datasets/thyroid.train datasets/thyroid.test thyroid_jneural_train.out thyroid_jneural_test.out 16 8 200 1
+
+rm -f *_fixed.net
+./quality fann datasets/robot.train datasets/robot.test robot_fann_train.out robot_fann_test.out 96 0 200 1
+./quality_fixed robot_fann_train.out_fixed_train robot_fann_train.out_fixed_test robot_fann_fixed_train.out robot_fann_fixed_test.out *_fixed.net
+./quality fann_stepwise datasets/robot.train datasets/robot.test robot_fann_stepwise_train.out robot_fann_stepwise_test.out 96 0 200 1
+./quality lwnn datasets/robot.train datasets/robot.test robot_lwnn_train.out robot_lwnn_test.out 96 0 200 1
+./quality jneural datasets/robot.train datasets/robot.test robot_jneural_train.out robot_jneural_test.out 96 0 200 1
