@@ -59,6 +59,7 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 	ann->error_value = 0;
 	ann->errstr = NULL;
 	ann->errno_f = 0;
+	ann->error_log = stderr;
 
 #ifdef FIXEDFANN
 	/* these values are only boring defaults, and should really
@@ -645,7 +646,7 @@ void fann_error(struct fann *ann, const unsigned int errno, ...)
 		break;
 	case FANN_E_CANT_USE_ACTIVATION:
 		snprintf(errstr, FANN_ERRSTR_MAX, "Unable to use the selected activation function.\n");
-	break;
+		break;
 	default:
 		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unknown error.\n", ap);
 		break;
@@ -656,10 +657,9 @@ void fann_error(struct fann *ann, const unsigned int errno, ...)
 		fprintf(stderr, "FANN Error %d: %s", errno, errstr);
 	} else {
 		ann->errstr = errstr;
-		/* TODO automaticly print to stderr if nothing else selected
-		   (other choices are file or just to keep them in the struct)
-		*/
-		fprintf(stderr, "FANN Error %d: %s", errno, errstr);
+		if ( ann->error_log != NULL ) {
+			fprintf(ann->error_log, "FANN Error %d: %s", errno, errstr);
+		}
 	}
 }
 

@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __fann_data_h__
 #define __fann_data_h__
 
+#include <stdio.h>
+
 /* ----- Data structures -----
  * No data within these structures should be altered directly by the user.
  */
@@ -147,6 +149,9 @@ struct fann
 
 	/* The type of error that last occured. */
 	unsigned int errno_f;
+
+	/* Where to log error messages. */
+	FILE *error_log;
 
 	/* A string representation of the last error. */
 	char * errstr;

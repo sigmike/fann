@@ -277,6 +277,10 @@ void fann_reset_errno(struct fann *ann);
  */
 void fann_reset_errstr(struct fann *ann);
 
+/* change where errors are logged to
+ */
+void fann_set_error_log(struct fann *ann, FILE *log);
+
 /* returns the last error number
  */
 unsigned int fann_get_errno(struct fann *ann);

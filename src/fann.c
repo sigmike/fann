@@ -1034,10 +1034,17 @@ char * fann_get_errstr(struct fann *ann)
 	return errstr;
 }
 
-/* prints the last error to stderr
+/* change where errors are logged to
+ */
+void fann_set_error_log(struct fann *ann, FILE *log)
+{
+  ann->error_log = log;
+}
+
+/* prints the last error to the error log (default stderr)
  */
 void fann_print_error(struct fann *ann) {
-	if ( ann->errno_f != FANN_E_NO_ERROR ){
-		fputs(ann->errstr, stderr);
+	if ( (ann->errno_f != FANN_E_NO_ERROR) && (ann->error_log != NULL) ){
+		fputs(ann->errstr, ann->error_log);
 	}
 }
