@@ -286,16 +286,14 @@ struct fann * fann_create_from_file(const char *configuration_file)
 	}
 
 	ann = fann_allocate_structure(learning_rate, num_layers);
+	ann->connection_rate = connection_rate;
+	
 #ifdef FIXEDFANN
 	ann->decimal_point = decimal_point;
 	ann->multiplier = multiplier;
-	ann->activation_function_hidden = activation_function_hidden;
-	ann->activation_function_output = activation_function_output;
-	ann->activation_hidden_steepness = activation_hidden_steepness;
-	ann->activation_output_steepness = activation_output_steepness;
-	ann->connection_rate = connection_rate;
 
-	/* Calculate the parameters for the stepwise linear sigmoid function fixed point.
+	/* Calculate the parameters for the stepwise linear
+	   sigmoid function fixed point.
 	   Using a rewritten sigmoid function.
 	   results 0.005, 0.05, 0.25, 0.75, 0.95, 0.995
 	 */
@@ -305,11 +303,13 @@ struct fann * fann_create_from_file(const char *configuration_file)
 	ann->activation_results[3] = multiplier - (fann_type)(multiplier/4.0+0.5);
 	ann->activation_results[4] = multiplier - (fann_type)(multiplier/20.0+0.5);
 	ann->activation_results[5] = multiplier - (fann_type)(multiplier/200.0+0.5);
+#endif
 
 	fann_set_activation_hidden_steepness(ann, activation_hidden_steepness);
 	fann_set_activation_output_steepness(ann, activation_output_steepness);
-#endif
-
+	fann_set_activation_hidden(ann, activation_function_hidden);
+	fann_set_activation_output(ann, activation_function_output);
+	
 #ifdef DEBUG
 	printf("creating network with learning rate %f\n", learning_rate);
 	printf("input\n");
@@ -429,7 +429,7 @@ void fann_set_activation_output_steepness(struct fann *ann, fann_type steepness)
 #ifdef FIXEDFANN
 	int i;
 #endif
-	ann->activation_hidden_steepness = steepness;
+	ann->activation_output_steepness = steepness;
 #ifdef FIXEDFANN
 	for(i = 0; i < 6; i++){
 		ann->activation_output_values[i] = (fann_type)((((log(ann->multiplier/(float)ann->activation_results[i] -1)*(float)ann->multiplier) / -2.0)*(float)ann->multiplier) / steepness);

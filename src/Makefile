@@ -48,6 +48,8 @@ ARM_FILES = $(ARM_FIXED_O_FILES) $(ARM_FLOAT_O_FILES) $(ARM_DOUBLE_O_FILES) \
 	    test/performance_arm test/performance_fixed_arm
 #	    $(patsubst %_jneural.cc, %_jneural_arm, $(JNEURAL_CC_FILES)) \
 
+ARM_LIBRARIES = libarmfixedfann.a libarmfloatfann.a libarmdoublefann.a
+
 all: $(LIBRARIES)
 
 arm: $(ARM_FILES)
@@ -173,4 +175,4 @@ runtest: test
 	./test/xor_test_fixed
 
 clean:
-	rm -rf $(TEST_RUN_FILES) $(ARM_FILES) $(O_FILES) $(LIBRARIES) *~ test/*~ include/*~ test/*.net test/*fixed*data test/*float*data
+	rm -rf $(TEST_RUN_FILES) $(ARM_FILES) $(O_FILES) $(LIBRARIES) $(ARM_LIBRARIES) *~ test/*~ include/*~ test/*.net test/*fixed*data test/*float*data
