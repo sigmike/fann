@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.6 2004/03/01 21:38:45 looksirdroids Exp $ -->
+<!-- $Id: fann.xml,v 1.7 2004/03/02 04:52:12 tadpole9 Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -49,6 +49,10 @@
 	  RPMs are a simple way to manage packages, and is used on many common Linux distributions such as 
           <ulink url="http://www.redhat.com">Red Hat</ulink>, <ulink url="http://www.mandrake.com/">Mandrake</ulink>,
 	  and <ulink url="http://www.suse.com/">SuSE</ulink>.
+	</para>
+	<para>
+	  Two seperate packages exist; fann, the runtime library, and fann-devel, the development library and
+	  header files.
 	</para>
         <para>
 	  After downloading FANN, simply run (as root) the following command: <command>rpm -ivh $PATH_TO_RPM</command>
@@ -137,7 +141,7 @@ int main()
 	</example>
         <para>
 	  The file xor.data, used to train the xor function:
-	  <literallayout>
+	  <literallayout id="file_contents.xor.data">
 4 2 1
 0 0
 0
@@ -648,7 +652,7 @@ int main()
     <title id="api.title">API Reference</title>
     <para>This is a list of all functions and structures in FANN.</para>
     <section id="api.sec.create_destroy">
-      <title id="api.sec.create_destroy.title">Creation, Destruction and execution</title>
+      <title id="api.sec.create_destroy.title">Creation, Destruction, and Execution</title>
       <refentry id="api.fann_create">
         <refnamediv>
           <refname>fann_create</refname>
@@ -722,6 +726,23 @@ int main()
             <function>fann_create_array</function> will create a new artificial neural network, and return a pointer to
 	    it. It is the same as <function>fann_create</function>, only it accepts an array as its final parameter
 	    instead of variable arguments.
+	  </para>
+	  <para>
+	    <example id="example.api.fann_create_array">
+	      <title id="example.api.fann_create_array.title"><function>fann_create_array</function> example</title>
+	      <programlisting>
+<![CDATA[
+unsigned int neurons_per_layer[3] = {2, 3, 1};
+
+// The following two calls have identical results
+struct fann * ann = fann_create_array(1.0f, 0.7f, 3, neurons_per_layer);
+struct fann * ann2 = fann_create(1.0f, 0.7f, 3, 2, 3, 1);
+
+fann_destroy(ann);
+fann_destroy(ann2);
+]]>
+	      </programlisting>
+	    </example>
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.5.</para>
         </refsect1>
@@ -983,7 +1004,8 @@ int main()
             </methodparam>
           </methodsynopsis>
           <para>Reads the mean square error from the network.</para>
-          <para>This function appears in FANN &gt;= 1.1.0. (before this <function>fann_get_error</function>> is used)</para>
+          <para>This function appears in FANN &gt;= 1.1.0. (before this
+	  <link linkend="api.fann_get_error"><function>fann_get_error</function></link> is used)</para>
         </refsect1>
       </refentry>
       <refentry id="api.fann_reset_MSE">
@@ -1001,8 +1023,13 @@ int main()
               <parameter>ann</parameter>
             </methodparam>
           </methodsynopsis>
-          <para>Resets the mean square error from the network.</para>
-          <para>This function appears in FANN &gt;= 1.1.0. (before this <function>fann_reset_error</function> is used)</para>
+          <para>
+	    Resets the mean square error from the network.
+	  </para>
+          <para>
+	    This function appears in FANN &gt;= 1.1.0. (before this
+	    <link linkend="api.fann_get_error"><function>fann_reset_error</function></link> is used)
+	  </para>
         </refsect1>
       </refentry>
     </section>
@@ -1041,6 +1068,10 @@ int main()
    outputdata seperated by space
 ]]>	  
           </programlisting>
+	  <para>
+	    An example of a <link linkend="file_contents.xor.data">properly formatted file</link> is
+	    provided in the Introduction.
+	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
@@ -1206,9 +1237,10 @@ int main()
 	    If the callback function returns -1 the training will terminate.
 	  </para>
 	  <para>
-	    The callback function is very usefull in gui application or in other applications which
+	    The callback function is very usefull in GUI applications or in other applications which
 	    do not wish to report the progress on standard output. Furthermore the callback function
-	    can be used to stop the training at non standard stop criteria.
+	    can be used to stop the training at non standard stop criteria (see
+	    <xref linkend="adv.train_test" endterm="adv.train_test.title"/>.)
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.5.</para>
         </refsect1>
@@ -1295,7 +1327,8 @@ int main()
 	    <link linkend="api.fann_train_on_file"><function>fann_train_on_file</function></link>, except that 
 	    <function>fann_train_on_file_callback</function> allows you to specify a function to be called every 
             <parameter>epochs_between_reports</parameter> instead of using the default reporting mechanism.
-	    The callback function works as described in <link linkend="api.fann_train_on_data_callback"><function>fann_train_on_data_callback</function></link>
+	    The callback function works as described in
+	    <link linkend="api.fann_train_on_data_callback"><function>fann_train_on_data_callback</function></link>
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.5.</para>
         </refsect1>
@@ -1431,8 +1464,8 @@ int main()
           </methodsynopsis>
           <para>Return the activation function used in the hidden layers.</para>
 	  <para>
-	    See <link linkend="api.sec.constants.activation.title">Activation Function
-	    Constants</link> for details on the activation functions.
+	    See <link linkend="api.sec.constants.activation" endterm="api.sec.constants.activation.title"/>
+	    for details on the activation functions.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -1461,8 +1494,8 @@ int main()
             <parameter>activation_function</parameter>.
 	  </para>
 	  <para>
-	    See <link linkend="api.sec.constants.activation.title">Activation Function
-	    Constants</link> for details on the activation functions.
+	    See <link linkend="api.sec.constants.activation" endterm="api.sec.constants.activation.title"/>
+	    for details on the activation functions.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -1484,8 +1517,8 @@ int main()
           </methodsynopsis>
           <para>Return the activation function of the output layer.</para>
 	  <para>
-	    See <link linkend="api.sec.constants.activation.title">Activation Function
-	    Constants</link> for details on the activation functions.
+	    See <link linkend="api.sec.constants.activation" endterm="api.sec.constants.activation.title"/>
+	    for details on the activation functions.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -1514,8 +1547,8 @@ int main()
 	    <parameter>activation_function</parameter>.
 	  </para>
 	  <para>
-	    See <link linkend="api.sec.constants.activation.title">Activation Function
-	    Constants</link> for details on the activation functions.
+	    See <link linkend="api.sec.constants.activation" endterm="api.sec.constants.activation.title"/>
+	    for details on the activation functions.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
