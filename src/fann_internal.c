@@ -236,7 +236,7 @@ int fann_save_internal_fd(struct fann *ann, FILE *conf, const char *configuratio
 
 		/* The maximum number of bits we shift the fix point, is the number
 		   of bits in a integer, minus one for the sign, one for the minus
-		   in stepwise sigmoid, and minus the bits used for the maximum.
+		   in stepwise, and minus the bits used for the maximum.
 		   This is devided by two, to allow multiplication of two fixed
 		   point numbers.
 		*/
@@ -379,58 +379,92 @@ void fann_save_train_internal_fd(struct fann_train_data* data, FILE *file, char 
 	}
 }
 
-void fann_initialise_result_array(struct fann *ann)
+/* Adjust the steepwise functions (if used) */
+void fann_update_stepwise_hidden(struct fann *ann)
 {
-#ifdef FIXEDFANN
+	unsigned int i = 0;
+#ifndef FIXEDFANN
+	/* For use in stepwise linear activation function.
+	   results 0.005, 0.05, 0.25, 0.75, 0.95, 0.995
+	*/
+	switch(ann->activation_function_hidden){
+		case FANN_SIGMOID:
+		case FANN_SIGMOID_STEPWISE:
+			ann->activation_hidden_results[0] = 0.005;
+			ann->activation_hidden_results[1] = 0.05;
+			ann->activation_hidden_results[2] = 0.25;
+			ann->activation_hidden_results[3] = 0.75;
+			ann->activation_hidden_results[4] = 0.95;
+			ann->activation_hidden_results[5] = 0.995;	
+			break;
+		case FANN_SIGMOID_SYMMETRIC:
+		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+			ann->activation_hidden_results[0] = -0.99;
+			ann->activation_hidden_results[1] = -0.9;
+			ann->activation_hidden_results[2] = -0.5;
+			ann->activation_hidden_results[3] = 0.5;
+			ann->activation_hidden_results[4] = 0.9;
+			ann->activation_hidden_results[5] = 0.99;
+			break;
+		default:
+			/* the actiavation functions which do not have a stepwise function
+			   should not have it calculated */
+			return;
+	}
+#else
 	/* Calculate the parameters for the stepwise linear
 	   sigmoid function fixed point.
 	   Using a rewritten sigmoid function.
 	   results 0.005, 0.05, 0.25, 0.75, 0.95, 0.995
 	*/
-	ann->activation_results[0] = (fann_type)(ann->multiplier/200.0+0.5);
-	ann->activation_results[1] = (fann_type)(ann->multiplier/20.0+0.5);
-	ann->activation_results[2] = (fann_type)(ann->multiplier/4.0+0.5);
-	ann->activation_results[3] = ann->multiplier - (fann_type)(ann->multiplier/4.0+0.5);
-	ann->activation_results[4] = ann->multiplier - (fann_type)(ann->multiplier/20.0+0.5);
-	ann->activation_results[5] = ann->multiplier - (fann_type)(ann->multiplier/200.0+0.5);
-#else
-	/* For use in stepwise linear activation function.
-	   results 0.005, 0.05, 0.25, 0.75, 0.95, 0.995
-	*/
-	ann->activation_results[0] = 0.005;
-	ann->activation_results[1] = 0.05;
-	ann->activation_results[2] = 0.25;
-	ann->activation_results[3] = 0.75;
-	ann->activation_results[4] = 0.95;
-	ann->activation_results[5] = 0.995;	
+	switch(ann->activation_function_hidden){
+		case FANN_SIGMOID:
+		case FANN_SIGMOID_STEPWISE:
+			ann->activation_hidden_results[0] = (fann_type)(ann->multiplier/200.0+0.5);
+			ann->activation_hidden_results[1] = (fann_type)(ann->multiplier/20.0+0.5);
+			ann->activation_hidden_results[2] = (fann_type)(ann->multiplier/4.0+0.5);
+			ann->activation_hidden_results[3] = ann->multiplier - (fann_type)(ann->multiplier/4.0+0.5);
+			ann->activation_hidden_results[4] = ann->multiplier - (fann_type)(ann->multiplier/20.0+0.5);
+			ann->activation_hidden_results[5] = ann->multiplier - (fann_type)(ann->multiplier/200.0+0.5);
+			break;
+		case FANN_SIGMOID_SYMMETRIC:
+		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+			ann->activation_hidden_results[0] = (fann_type)((ann->multiplier/100.0) - ann->multiplier + 0.5);
+			ann->activation_hidden_results[1] = (fann_type)((ann->multiplier/10.0) - ann->multiplier + 0.5);
+			ann->activation_hidden_results[2] = (fann_type)((ann->multiplier/2.0) - ann->multiplier + 0.5);
+			ann->activation_hidden_results[3] = ann->multiplier - (fann_type)(ann->multiplier/2.0+0.5);
+			ann->activation_hidden_results[4] = ann->multiplier - (fann_type)(ann->multiplier/10.0+0.5);
+			ann->activation_hidden_results[5] = ann->multiplier - (fann_type)(ann->multiplier/100.0+0.5);
+			break;
+		default:
+			/* the actiavation functions which do not have a stepwise function
+			   should not have it calculated */
+			return;
+	}			
 #endif
 
-	fann_update_stepwise_hidden(ann);
-	fann_update_stepwise_output(ann);
-}
-
-/* Adjust the steepwise functions (if used) */
-void fann_update_stepwise_hidden(struct fann *ann)
-{
-	unsigned int i = 0;
 	for(i = 0; i < 6; i++){
-#ifdef FIXEDFANN
+#ifndef FIXEDFANN
 		switch(ann->activation_function_hidden){
 			case FANN_SIGMOID:
-			case FANN_SIGMOID_STEPWISE:
-				ann->activation_hidden_values[i] = (fann_type)((((log(ann->multiplier/(float)ann->activation_results[i] -1)*(float)ann->multiplier) / -2.0)*(float)ann->multiplier) / ann->activation_hidden_steepness);
 				break;
-			case FANN_THRESHOLD:
+			case FANN_SIGMOID_STEPWISE:
+				ann->activation_hidden_values[i] = ((log(1.0/ann->activation_hidden_results[i] -1.0) * 1.0/-2.0) * 1.0/ann->activation_hidden_steepness);
+				break;
+			case FANN_SIGMOID_SYMMETRIC:
+			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+				ann->activation_hidden_values[i] = ((log((1.0-ann->activation_hidden_results[i]) / (ann->activation_hidden_results[i]+1.0)) * 1.0/-2.0) * 1.0/ann->activation_hidden_steepness);
 				break;
 		}
 #else
 		switch(ann->activation_function_hidden){
 			case FANN_SIGMOID:
-				break;
 			case FANN_SIGMOID_STEPWISE:
-				ann->activation_hidden_values[i] = ((log(1.0/ann->activation_results[i] -1.0) * 1.0/-2.0) * 1.0/ann->activation_hidden_steepness);
+				ann->activation_hidden_values[i] = (fann_type)((((log(ann->multiplier/(float)ann->activation_hidden_results[i] -1)*(float)ann->multiplier) / -2.0)*(float)ann->multiplier) / ann->activation_hidden_steepness);
 				break;
-			case FANN_THRESHOLD:
+			case FANN_SIGMOID_SYMMETRIC:
+			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+				ann->activation_hidden_values[i] = (fann_type)((((log((ann->multiplier - (float)ann->activation_hidden_results[i])/((float)ann->activation_hidden_results[i] + ann->multiplier))*(float)ann->multiplier) / -2.0)*(float)ann->multiplier) / ann->activation_hidden_steepness);
 				break;
 		}
 #endif
@@ -441,25 +475,88 @@ void fann_update_stepwise_hidden(struct fann *ann)
 void fann_update_stepwise_output(struct fann *ann)
 {
 	unsigned int i = 0;
+#ifndef FIXEDFANN
+	/* For use in stepwise linear activation function.
+	   results 0.005, 0.05, 0.25, 0.75, 0.95, 0.995
+	*/
+	switch(ann->activation_function_output){
+		case FANN_SIGMOID:
+		case FANN_SIGMOID_STEPWISE:
+			ann->activation_output_results[0] = 0.005;
+			ann->activation_output_results[1] = 0.05;
+			ann->activation_output_results[2] = 0.25;
+			ann->activation_output_results[3] = 0.75;
+			ann->activation_output_results[4] = 0.95;
+			ann->activation_output_results[5] = 0.995;	
+			break;
+		case FANN_SIGMOID_SYMMETRIC:
+		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+			ann->activation_output_results[0] = -0.99;
+			ann->activation_output_results[1] = -0.9;
+			ann->activation_output_results[2] = -0.5;
+			ann->activation_output_results[3] = 0.5;
+			ann->activation_output_results[4] = 0.9;
+			ann->activation_output_results[5] = 0.99;
+			break;
+		default:
+			/* the actiavation functions which do not have a stepwise function
+			   should not have it calculated */
+			return;
+	}
+#else
+	/* Calculate the parameters for the stepwise linear
+	   sigmoid function fixed point.
+	   Using a rewritten sigmoid function.
+	   results 0.005, 0.05, 0.25, 0.75, 0.95, 0.995
+	*/
+	switch(ann->activation_function_output){
+		case FANN_SIGMOID:
+		case FANN_SIGMOID_STEPWISE:
+			ann->activation_output_results[0] = (fann_type)(ann->multiplier/200.0+0.5);
+			ann->activation_output_results[1] = (fann_type)(ann->multiplier/20.0+0.5);
+			ann->activation_output_results[2] = (fann_type)(ann->multiplier/4.0+0.5);
+			ann->activation_output_results[3] = ann->multiplier - (fann_type)(ann->multiplier/4.0+0.5);
+			ann->activation_output_results[4] = ann->multiplier - (fann_type)(ann->multiplier/20.0+0.5);
+			ann->activation_output_results[5] = ann->multiplier - (fann_type)(ann->multiplier/200.0+0.5);
+			break;
+		case FANN_SIGMOID_SYMMETRIC:
+		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+			ann->activation_output_results[0] = (fann_type)((ann->multiplier/100.0) - ann->multiplier + 0.5);
+			ann->activation_output_results[1] = (fann_type)((ann->multiplier/10.0) - ann->multiplier + 0.5);
+			ann->activation_output_results[2] = (fann_type)((ann->multiplier/2.0) - ann->multiplier + 0.5);
+			ann->activation_output_results[3] = ann->multiplier - (fann_type)(ann->multiplier/2.0+0.5);
+			ann->activation_output_results[4] = ann->multiplier - (fann_type)(ann->multiplier/10.0+0.5);
+			ann->activation_output_results[5] = ann->multiplier - (fann_type)(ann->multiplier/100.0+0.5);
+			break;
+		default:
+			/* the actiavation functions which do not have a stepwise function
+			   should not have it calculated */
+			return;
+	}			
+#endif
+
 	for(i = 0; i < 6; i++){
-#ifdef FIXEDFANN
+#ifndef FIXEDFANN
 		switch(ann->activation_function_output){
 			case FANN_SIGMOID:
-			case FANN_SIGMOID_STEPWISE:
-				ann->activation_output_values[i] = (fann_type)((((log(ann->multiplier/(float)ann->activation_results[i] -1)*(float)ann->multiplier) / -2.0)*(float)ann->multiplier) / ann->activation_output_steepness);
 				break;
-			case FANN_THRESHOLD:
+			case FANN_SIGMOID_STEPWISE:
+				ann->activation_output_values[i] = ((log(1.0/ann->activation_output_results[i] -1.0) * 1.0/-2.0) * 1.0/ann->activation_output_steepness);
+				break;
+			case FANN_SIGMOID_SYMMETRIC:
+			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+				ann->activation_output_values[i] = ((log((1.0-ann->activation_output_results[i]) / (ann->activation_output_results[i]+1.0)) * 1.0/-2.0) * 1.0/ann->activation_output_steepness);
 				break;
 		}
 #else
 		switch(ann->activation_function_output){
 			case FANN_SIGMOID:
-				break;
 			case FANN_SIGMOID_STEPWISE:
-				ann->activation_output_values[i] = ((log(1.0/ann->activation_results[i] -1.0) * 1.0/-2.0) * 1.0/ann->activation_output_steepness);
-				/* printf("%f -> %f\n", ann->activation_results[i], ann->activation_output_values[i]); */
+				ann->activation_output_values[i] = (fann_type)((((log(ann->multiplier/(float)ann->activation_output_results[i] -1)*(float)ann->multiplier) / -2.0)*(float)ann->multiplier) / ann->activation_output_steepness);
 				break;
-			case FANN_THRESHOLD:
+			case FANN_SIGMOID_SYMMETRIC:
+			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+				ann->activation_output_values[i] = (fann_type)((((log((ann->multiplier - (float)ann->activation_output_results[i])/((float)ann->activation_output_results[i] + ann->multiplier))*(float)ann->multiplier) / -2.0)*(float)ann->multiplier) / ann->activation_output_steepness);
 				break;
 		}
 #endif
@@ -543,6 +640,12 @@ void fann_error(struct fann *ann, const unsigned int errno, ...)
 	case FANN_E_CANT_ALLOCATE_MEM:
 		snprintf(errstr, FANN_ERRSTR_MAX, "Unable to allocate memory.\n");
 		break;
+	case FANN_E_CANT_TRAIN_ACTIVATION:
+		snprintf(errstr, FANN_ERRSTR_MAX, "Unable to train with the selected activation function.\n");
+		break;
+	case FANN_E_CANT_USE_ACTIVATION:
+		snprintf(errstr, FANN_ERRSTR_MAX, "Unable to use the selected activation function.\n");
+	break;
 	default:
 		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unknown error.\n", ap);
 		break;
@@ -553,6 +656,10 @@ void fann_error(struct fann *ann, const unsigned int errno, ...)
 		fprintf(stderr, "FANN Error %d: %s", errno, errstr);
 	} else {
 		ann->errstr = errstr;
+		/* TODO automaticly print to stderr if nothing else selected
+		   (other choices are file or just to keep them in the struct)
+		*/
+		fprintf(stderr, "FANN Error %d: %s", errno, errstr);
 	}
 }
 
@@ -613,12 +720,13 @@ struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file)
 	ann->decimal_point = decimal_point;
 	ann->multiplier = multiplier;
 #endif
-	fann_initialise_result_array(ann);
-	
-	fann_set_activation_hidden_steepness(ann, activation_hidden_steepness);
-	fann_set_activation_output_steepness(ann, activation_output_steepness);
-	fann_set_activation_function_hidden(ann, activation_function_hidden);
-	fann_set_activation_function_output(ann, activation_function_output);
+
+	ann->activation_hidden_steepness = activation_hidden_steepness;
+	ann->activation_output_steepness = activation_output_steepness;
+	ann->activation_function_hidden = activation_function_hidden;
+	ann->activation_function_output = activation_function_output;
+	fann_update_stepwise_hidden(ann);
+	fann_update_stepwise_output(ann);
 	
 #ifdef DEBUG
 	printf("creating network with learning rate %f\n", learning_rate);
@@ -642,7 +750,7 @@ struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file)
 #endif
 	}
 	
-	ann->num_input = ann->first_layer->last_neuron - ann->first_layer->first_neuron -1;
+	ann->num_input = ann->first_layer->last_neuron - ann->first_layer->first_neuron - 1;
 	ann->num_output = ((ann->last_layer-1)->last_neuron - (ann->last_layer-1)->first_neuron) - 1;
 	
 	/* allocate room for the actual neurons */

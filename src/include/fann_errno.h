@@ -62,7 +62,13 @@ enum {
 	FANN_E_CANT_READ_TD,
 
 	/* Unable to allocate memory. */
-	FANN_E_CANT_ALLOCATE_MEM
+	FANN_E_CANT_ALLOCATE_MEM,
+
+	/* Unable to train with the selected activation function */
+	FANN_E_CANT_TRAIN_ACTIVATION,
+
+	/* Unable to use the selected activation function */
+	FANN_E_CANT_USE_ACTIVATION
 };
 
 #ifdef __cplusplus

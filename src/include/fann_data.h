@@ -122,8 +122,9 @@ struct fann
 	   activation_results array, the result is saved, and in the
 	   two values arrays, the values that gives the results are saved.
 	 */
-	fann_type activation_results[6];
+	fann_type activation_hidden_results[6];
 	fann_type activation_hidden_values[6];
+	fann_type activation_output_results[6];
 	fann_type activation_output_values[6];
 
 	/* Total number of connections.

@@ -48,7 +48,6 @@ void fann_save_train_internal_fd(struct fann_train_data* data, FILE *file, char 
 int fann_compare_connections(const void* c1, const void* c2);
 void fann_seed_rand();
 
-void fann_initialise_result_array(struct fann *ann);
 void fann_update_stepwise_hidden(struct fann *ann);
 void fann_update_stepwise_output(struct fann *ann);
 
@@ -61,6 +60,7 @@ struct fann_train_data* fann_read_train_from_fd(FILE *file, char *filename);
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))
 #define fann_min(x, y) (((x) < (y)) ? (x) : (y))
 #define fann_safe_free(x) if(x) free(x)
+#define fann_clip(x, lo, hi) (((x) < (lo)) ? (lo) : (((x) > (hi)) ? (hi) : (x)))
 
 #define fann_rand(min_value, max_value) (((double)(min_value))+(((double)(max_value)-((double)(min_value)))*rand()/(RAND_MAX+1.0)))
 

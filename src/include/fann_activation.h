@@ -34,7 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    span: -inf < y < inf
    y = x*s, d = 1*s
    Can NOT be used in fixed point.
-   NOT implemented yet.
+   (NOT) implemented yet.
 */
 #define FANN_LINEAR 4
 
@@ -103,17 +103,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /* stepwise linear functions used for some of the activation functions */
+
+/* defines used for the stepwise linear functions */
+
 #define fann_linear_func(v1, r1, v2, r2, value) ((((r2-r1) * (value-v1))/(v2-v1)) + r1)
 #define fann_stepwise(v1, v2, v3, v4, v5, v6, r1, r2, r3, r4, r5, r6, value, multiplier) (value < v5 ? (value < v3 ? (value < v2 ? (value < v1 ? 0 : fann_linear_func(v1, r1, v2, r2, value)) : fann_linear_func(v2, r2, v3, r3, value)) : (value < v4 ? fann_linear_func(v3, r3, v4, r4, value) : fann_linear_func(v4, r4, v5, r5, value))) : (value < v6 ? fann_linear_func(v5, r5, v6, r6, value) : multiplier))
 
-#ifdef FIXEDFANN
-#define fann_sigmoid(steepness, value) ((fann_type)(0.5+((1.0/(1.0 + exp(-2.0 * ((float)steepness/multiplier) * ((float)value/multiplier))))*multiplier)))
+/* FANN_LINEAR */
+#define fann_linear(steepness, value) fann_mult(steepness, value)
+#define fann_linear_derive(steepness, value) (steepness)
 
-#else
-
+/* FANN_SIGMOID */
 #define fann_sigmoid(steepness, value) (1.0/(1.0 + exp(-2.0 * steepness * value)))
-#define fann_sigmoid_derive(steepness, value) ((2.0 * steepness * value * (1.0 - value)) + 0.01) /* the plus is a trick to the derived function, to avoid getting stuck on flat spots */
-#endif
+#define fann_sigmoid_derive(steepness, value) (2.0 * steepness * value * (1.0 - value)) /* the plus is a trick to the derived function, to avoid getting stuck on flat spots */
 
+/* FANN_SIGMOID_SYMMETRIC */
+#define fann_sigmoid_symmetric(steepness, value) (2.0/(1.0 + exp(-2.0 * steepness * value)) - 1.0)
+#define fann_sigmoid_symmetric_derive(steepness, value) steepness * (1.0 - (value*value))
+
+/* FANN_GAUSSIAN */
+#define fann_gaussian(steepness, value) (exp(-value * steepness * value * steepness))
 
 #endif

@@ -28,6 +28,8 @@
 
 #include "fann_errno.h"
 
+//#define DEBUGTRAIN
+
 /* create a neural network.
  */
 struct fann * fann_create_array(float connection_rate, float learning_rate, unsigned int num_layers, unsigned int * layers)
@@ -63,7 +65,8 @@ struct fann * fann_create_array(float connection_rate, float learning_rate, unsi
 	decimal_point = ann->decimal_point;
 	multiplier = ann->multiplier;
 #endif
-	fann_initialise_result_array(ann);
+	fann_update_stepwise_hidden(ann);
+	fann_update_stepwise_output(ann);
 
 	/* determine how many neurons there should be in each layer */
 	i = 0;
@@ -439,15 +442,30 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 #endif
 	/* calculate the error and place it in the output layer */
 	delta_it = delta_begin + (last_layer_begin - first_neuron);
+
 	for(; last_layer_begin != last_layer_end; last_layer_begin++){
 		neuron_value = last_layer_begin->value;
-		/* TODO add switch the minute there are other activation functions */
-		*delta_it = fann_sigmoid_derive(activation_output_steepness, neuron_value) * (*desired_output - neuron_value);
+		switch(ann->activation_function_output){
+			case FANN_LINEAR:
+				*delta_it = fann_linear_derive(activation_output_steepness, neuron_value) * (*desired_output - neuron_value);
+				break;
+			case FANN_SIGMOID:
+			case FANN_SIGMOID_STEPWISE:
+				*delta_it = fann_sigmoid_derive(activation_output_steepness, neuron_value) * (*desired_output - neuron_value);
+				break;
+			case FANN_SIGMOID_SYMMETRIC:
+			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+				*delta_it = fann_sigmoid_symmetric_derive(activation_output_steepness, neuron_value) * (*desired_output - neuron_value);
+				break;
+			default:
+				fann_error(ann, FANN_E_CANT_TRAIN_ACTIVATION);
+				return;
+		}
 		
 		ann->error_value += (*desired_output - neuron_value) * (*desired_output - neuron_value);
 		
 #ifdef DEBUGTRAIN
-		printf("delta[%d] = "FANNPRINTF"\n", (delta_it - delta_begin), *delta_it);
+		printf("delta1[%d] = "FANNPRINTF"\n", (delta_it - delta_begin), *delta_it);
 #endif
 		desired_output++;
 		delta_it++;
@@ -467,6 +485,9 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
 				for(i = 0; i < neuron_it->num_connections; i++){
 					*(delta_begin + i + shift_prev_layer) += tmp_delta * neuron_it->weights[i];
+#ifdef DEBUGTRAIN
+					printf("delta2[%d] = "FANNPRINTF" += ("FANNPRINTF" * "FANNPRINTF")\n", (i + shift_prev_layer), *(delta_begin + i + shift_prev_layer), tmp_delta, neuron_it->weights[i]);
+#endif
 				}
 			}
 		}else{
@@ -483,16 +504,45 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 		/* then calculate the actual errors in the previous layer */
 		delta_it = delta_begin + ((layer_it-1)->first_neuron - first_neuron);
 		last_neuron = (layer_it-1)->last_neuron;
-		for(neuron_it = (layer_it-1)->first_neuron;
-			neuron_it != last_neuron; neuron_it++){
-			neuron_value = neuron_it->value;
-			/* TODO add switch the minute there are other activation functions */
-			*delta_it *= fann_sigmoid_derive(activation_hidden_steepness, neuron_value) * learning_rate;
-			
+		
+		switch(ann->activation_function_hidden){
+			case FANN_LINEAR:
+				for(neuron_it = (layer_it-1)->first_neuron;
+					neuron_it != last_neuron; neuron_it++){
+					neuron_value = neuron_it->value;
+					*delta_it *= fann_linear_derive(activation_hidden_steepness, neuron_value) * learning_rate;
+					delta_it++;
+				}
+				break;
+			case FANN_SIGMOID:
+			case FANN_SIGMOID_STEPWISE:
+				for(neuron_it = (layer_it-1)->first_neuron;
+					neuron_it != last_neuron; neuron_it++){
+					neuron_value = neuron_it->value;
+					neuron_value = fann_clip(neuron_value, 0.01, 0.99);
+					*delta_it *= fann_sigmoid_derive(activation_hidden_steepness, neuron_value);
 #ifdef DEBUGTRAIN
-			printf("delta[%d] = "FANNPRINTF"\n", delta_it - delta_begin, *delta_it);
+					printf("delta3[%d] = "FANNPRINTF" *= fann_sigmoid_derive(%f, %f) * %f\n", (delta_it - delta_begin), *delta_it, activation_hidden_steepness, neuron_value, learning_rate);
 #endif
-			delta_it++;
+					delta_it++;
+				}
+				break;
+			case FANN_SIGMOID_SYMMETRIC:
+			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+				for(neuron_it = (layer_it-1)->first_neuron;
+					neuron_it != last_neuron; neuron_it++){
+					neuron_value = neuron_it->value;
+					neuron_value = fann_clip(neuron_value, -0.98, 0.98);
+					*delta_it *= fann_sigmoid_symmetric_derive(activation_hidden_steepness, neuron_value);
+#ifdef DEBUGTRAIN
+					printf("delta3[%d] = "FANNPRINTF" *= fann_sigmoid_symmetric_derive(%f, %f) * %f\n", (delta_it - delta_begin), *delta_it, activation_hidden_steepness, neuron_value, learning_rate);
+#endif
+					delta_it++;
+				}
+				break;
+			default:
+				fann_error(ann, FANN_E_CANT_TRAIN_ACTIVATION);
+				return;
 		}
 	}
 	
@@ -511,7 +561,10 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 				neuron_it != last_neuron; neuron_it++){
 				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
 				for(i = 0; i < neuron_it->num_connections; i++){
-					neuron_it->weights[i] += tmp_delta * neurons[i].value;
+#ifdef DEBUGTRAIN
+					printf("weights[%d] += "FANNPRINTF" = %f * %f\n", i, tmp_delta * neurons[i].value, tmp_delta, neurons[i].value);
+#endif
+					neuron_it->weights[i] += learning_rate * tmp_delta * neurons[i].value;
 				}
 			}
 		}else{
@@ -519,7 +572,7 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 				neuron_it != last_neuron; neuron_it++){
 				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
 				for(i = 0; i < neuron_it->num_connections; i++){
-					neuron_it->weights[i] += tmp_delta * neuron_it->connected_neurons[i]->value;
+					neuron_it->weights[i] += learning_rate * tmp_delta * neuron_it->connected_neurons[i]->value;
 				}
 			}
 		}
@@ -735,7 +788,8 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 {
 	struct fann_neuron *neuron_it, *last_neuron, *neurons, **neuron_pointers;
 	unsigned int activation_function, i, num_connections, num_input, num_output;
-	fann_type neuron_value, *weights, *output;
+	fann_type neuron_value, *output;
+	fann_type *weights;
 	struct fann_layer *layer_it, *last_layer;
 	
 	
@@ -755,26 +809,25 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 #endif
 	
 	/* values used for the stepwise linear sigmoid function */
-	fann_type r1 = 0, r2 = 0, r3 = 0, r4 = 0, r5 = 0, r6 = 0;
+	fann_type rh1 = 0, rh2 = 0, rh3 = 0, rh4 = 0, rh5 = 0, rh6 = 0;
+	fann_type ro1 = 0, ro2 = 0, ro3 = 0, ro4 = 0, ro5 = 0, ro6 = 0;
 	fann_type h1 = 0, h2 = 0, h3 = 0, h4 = 0, h5 = 0, h6 = 0;
 	fann_type o1 = 0, o2 = 0, o3 = 0, o4 = 0, o5 = 0, o6 = 0;
-	
+
+	switch(ann->activation_function_hidden){
 #ifdef FIXEDFANN
-	if(activation_function_output == FANN_SIGMOID_STEPWISE ||
-		activation_function_hidden == FANN_SIGMOID_STEPWISE ||
-		activation_function_output == FANN_SIGMOID ||
-		activation_function_hidden == FANN_SIGMOID){
-#else
-		if(activation_function_output == FANN_SIGMOID_STEPWISE ||
-			activation_function_hidden == FANN_SIGMOID_STEPWISE){
+		case FANN_SIGMOID:
+		case FANN_SIGMOID_SYMMETRIC:
 #endif
-			/* the results */
-			r1 = ann->activation_results[0];
-			r2 = ann->activation_results[1];
-			r3 = ann->activation_results[2];
-			r4 = ann->activation_results[3];
-			r5 = ann->activation_results[4];
-			r6 = ann->activation_results[5];
+		case FANN_SIGMOID_STEPWISE:
+		case FANN_SIGMOID_SYMMETRIC_STEPWISE:			
+			/* the hidden results */
+			rh1 = ann->activation_hidden_results[0];
+			rh2 = ann->activation_hidden_results[1];
+			rh3 = ann->activation_hidden_results[2];
+			rh4 = ann->activation_hidden_results[3];
+			rh5 = ann->activation_hidden_results[4];
+			rh6 = ann->activation_hidden_results[5];
 			
 			/* the hidden parameters */
 			h1 = ann->activation_hidden_values[0];
@@ -783,6 +836,25 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 			h4 = ann->activation_hidden_values[3];
 			h5 = ann->activation_hidden_values[4];
 			h6 = ann->activation_hidden_values[5];
+			break;
+		default:
+			break;
+	}
+			
+	switch(ann->activation_function_output){
+#ifdef FIXEDFANN
+		case FANN_SIGMOID:
+		case FANN_SIGMOID_SYMMETRIC:
+#endif
+		case FANN_SIGMOID_STEPWISE:
+		case FANN_SIGMOID_SYMMETRIC_STEPWISE:			
+			/* the output results */
+			ro1 = ann->activation_output_results[0];
+			ro2 = ann->activation_output_results[1];
+			ro3 = ann->activation_output_results[2];
+			ro4 = ann->activation_output_results[3];
+			ro5 = ann->activation_output_results[4];
+			ro6 = ann->activation_output_results[5];
 			
 			/* the output parameters */
 			o1 = ann->activation_output_values[0];
@@ -791,11 +863,10 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 			o4 = ann->activation_output_values[3];
 			o5 = ann->activation_output_values[4];
 			o6 = ann->activation_output_values[5];
-#ifdef FIXEDFANN /* just to make autoindent happy */
-		}
-#else
+			break;
+		default:
+			break;
 	}
-#endif
 	
 	/* first set the input */
 	num_input = ann->num_input;
@@ -879,28 +950,41 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 #ifdef FIXEDFANN
 				case FANN_SIGMOID:
 				case FANN_SIGMOID_STEPWISE:
+				case FANN_SIGMOID_SYMMETRIC:
+				case FANN_SIGMOID_SYMMETRIC_STEPWISE:
 					if(layer_it == last_layer-1){
-						neuron_it->value = fann_stepwise(o1, o2, o3, o4, o5, o6, r1, r2, r3, r4, r5, r6, neuron_value, multiplier);
+						neuron_it->value = fann_stepwise(o1, o2, o3, o4, o5, o6, ro1, ro2, ro3, ro4, ro5, ro6, neuron_value, multiplier);
 					}else{
-						neuron_it->value = fann_stepwise(h1, h2, h3, h4, h5, h6, r1, r2, r3, r4, r5, r6, neuron_value, multiplier);
+						neuron_it->value = fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, neuron_value, multiplier);
 					}
 					break;
 #else
+				case FANN_LINEAR:
+					neuron_it->value = fann_linear(steepness, neuron_value);
+					break;
+					
 				case FANN_SIGMOID:
 					neuron_it->value = fann_sigmoid(steepness, neuron_value);
 					break;
 					
+				case FANN_SIGMOID_SYMMETRIC:
+					neuron_it->value = fann_sigmoid_symmetric(steepness, neuron_value);
+					break;
+					
 				case FANN_SIGMOID_STEPWISE:
+				case FANN_SIGMOID_SYMMETRIC_STEPWISE:
 					if(layer_it == last_layer-1){
-						neuron_it->value = fann_stepwise(o1, o2, o3, o4, o5, o6, r1, r2, r3, r4, r5, r6, neuron_value, 1);
+						neuron_it->value = fann_stepwise(o1, o2, o3, o4, o5, o6, ro1, ro2, ro3, ro4, ro5, ro6, neuron_value, 1);
 					}else{
-						neuron_it->value = fann_stepwise(h1, h2, h3, h4, h5, h6, r1, r2, r3, r4, r5, r6, neuron_value, 1);
+						neuron_it->value = fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, neuron_value, 1);
 					}
 					break;
 #endif
 				case FANN_THRESHOLD:
 					neuron_it->value = (neuron_value < 0) ? 0 : 1;
 					break;
+				default:
+					fann_error(ann, FANN_E_CANT_USE_ACTIVATION);
 			}
 		}
 	}	
