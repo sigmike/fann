@@ -52,6 +52,8 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 	ann->train_deltas = NULL;
 	ann->num_errors = 0;
 	ann->error_value = 0;
+	ann->errstr = NULL;
+	ann->errno_f = 0;
 
 #ifdef FIXEDFANN
 	/* these values are only boring defaults, and should really
@@ -453,7 +455,11 @@ void fann_error(struct fann *ann, const unsigned int errno, ...)
 	unsigned int flag = 0;
 	char * errstr;
 
-	errstr = (char *)malloc(FANN_ERRSTR_MAX);
+	if(ann != NULL && ann->errstr != NULL){
+		errstr = ann->errstr;
+	}else{
+		errstr = (char *)malloc(FANN_ERRSTR_MAX);
+	}
 
 	va_start(ap, errno);
 	switch ( errno ) {
@@ -489,14 +495,18 @@ void fann_error(struct fann *ann, const unsigned int errno, ...)
 	case FANN_E_CANT_READ_TD:
 		vsnprintf(errstr, FANN_ERRSTR_MAX, "Error reading info from train data file \"%s\", line: %d.\n", ap);
 		break;
+	case FANN_E_CANT_ALLOCATE_MEM:
+		snprintf(errstr, FANN_ERRSTR_MAX, "Unable to allocate memory.\n");
+		break;
 	default:
 		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unknown error.\n", ap);
 		break;
 	}
 	va_end(ap);
 
-	if ( ann == NULL )
-	  fprintf(stderr, "Error: %s\n", errstr);
-	else
-	  ann->errstr = errstr;
+	if ( ann == NULL ) {
+		fprintf(stderr, "FANN Error %d: %s", errno, errstr);
+	} else {
+		ann->errstr = errstr;
+	}
 }

@@ -61,10 +61,6 @@ struct fann * fann_create_array(float connection_rate, float learning_rate, unsi
 #endif
 	fann_initialise_result_array(ann);
 
-	/* Reset the errno/errstr information */
-	fann_reset_errstr(ann);
-	fann_reset_errno(ann);
-	
 	/* determine how many neurons there should be in each layer */
 	i = 0;
 	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
@@ -287,6 +283,11 @@ struct fann * fann_create_from_file(const char *configuration_file)
 	}
 	
 	read_version = (char *)calloc(strlen(FANN_CONF_VERSION"\n"), 1);
+	if(read_version == NULL){
+		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		return NULL;
+	}
+	
 	fread(read_version, 1, strlen(FANN_CONF_VERSION"\n"), conf); /* reads version */
 	
 	/* compares the version information */
@@ -294,6 +295,8 @@ struct fann * fann_create_from_file(const char *configuration_file)
 		fann_error(NULL, FANN_E_WRONG_CONFIG_VERSION, configuration_file);
 		return NULL;
 	}
+
+	free(read_version);
 	
 #ifdef FIXEDFANN
 	if(fscanf(conf, "%u\n", &decimal_point) != 1){
@@ -311,10 +314,6 @@ struct fann * fann_create_from_file(const char *configuration_file)
 	ann = fann_allocate_structure(learning_rate, num_layers);
 	ann->connection_rate = connection_rate;
 
-	/* Reset the errno/errstr information */
-	fann_reset_errstr(ann);
-	fann_reset_errno(ann);
-	
 #ifdef FIXEDFANN
 	ann->decimal_point = decimal_point;
 	ann->multiplier = multiplier;
@@ -395,6 +394,7 @@ void fann_destroy(struct fann *ann)
 	free(ann->first_layer);
 	free(ann->output);
 	if(ann->train_deltas != NULL) free(ann->train_deltas);
+	fann_reset_errstr(ann); /* free ann->errstr if exists */
 	free(ann);
 }
 

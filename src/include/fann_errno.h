@@ -59,7 +59,10 @@ enum {
 	FANN_E_CANT_OPEN_TD_R,
 
 	/* Error reading training data from file. */
-	FANN_E_CANT_READ_TD
+	FANN_E_CANT_READ_TD,
+
+	/* Unable to allocate memory. */
+	FANN_E_CANT_ALLOCATE_MEM
 };
 
 #ifdef __cplusplus
