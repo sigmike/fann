@@ -65,8 +65,8 @@ allow_libtool_libs_with_static_runtimes=no
 fast_install=yes
 
 # The host system.
-host_alias=
-host=i686-pc-linux-gnu
+host_alias=i386-linux
+host=i386-pc-linux-gnu
 
 # An echo program that does not interpret backslashes.
 echo="echo"
@@ -76,10 +76,10 @@ AR="ar"
 AR_FLAGS="cru"
 
 # A C compiler.
-LTCC="gcc"
+LTCC="i386-linux-gcc"
 
 # A language-specific compiler.
-CC="gcc"
+CC="i386-linux-gcc"
 
 # Is the compiler the GNU C compiler?
 with_gcc=yes
@@ -94,7 +94,7 @@ LD="/usr/bin/ld"
 LN_S="ln -s"
 
 # A BSD-compatible nm program.
-NM="/usr/bin/nm -B"
+NM="nm"
 
 # A symbol stripping program
 STRIP="strip"
@@ -6725,8 +6725,8 @@ allow_libtool_libs_with_static_runtimes=no
 fast_install=yes
 
 # The host system.
-host_alias=
-host=i686-pc-linux-gnu
+host_alias=i386-linux
+host=i386-pc-linux-gnu
 
 # An echo program that does not interpret backslashes.
 echo="echo"
@@ -6736,10 +6736,10 @@ AR="ar"
 AR_FLAGS="cru"
 
 # A C compiler.
-LTCC="gcc"
+LTCC="i386-linux-gcc"
 
 # A language-specific compiler.
-CC="g++"
+CC="i386-linux-g++"
 
 # Is the compiler the GNU C compiler?
 with_gcc=yes
@@ -6754,7 +6754,7 @@ LD="/usr/bin/ld"
 LN_S="ln -s"
 
 # A BSD-compatible nm program.
-NM="/usr/bin/nm -B"
+NM="nm"
 
 # A symbol stripping program
 STRIP="strip"
@@ -7024,8 +7024,8 @@ allow_libtool_libs_with_static_runtimes=no
 fast_install=yes
 
 # The host system.
-host_alias=
-host=i686-pc-linux-gnu
+host_alias=i386-linux
+host=i386-pc-linux-gnu
 
 # An echo program that does not interpret backslashes.
 echo="echo"
@@ -7035,10 +7035,10 @@ AR="ar"
 AR_FLAGS="cru"
 
 # A C compiler.
-LTCC="gcc"
+LTCC="i386-linux-gcc"
 
 # A language-specific compiler.
-CC="g77"
+CC="i386-linux-g77"
 
 # Is the compiler the GNU C compiler?
 with_gcc=yes
@@ -7053,7 +7053,7 @@ LD="/usr/bin/ld"
 LN_S="ln -s"
 
 # A BSD-compatible nm program.
-NM="/usr/bin/nm -B"
+NM="nm"
 
 # A symbol stripping program
 STRIP="strip"
