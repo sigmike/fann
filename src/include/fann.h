@@ -260,12 +260,22 @@ void fann_save_train(struct fann_train_data* data, char *filename);
 void fann_save_train_to_fixed(struct fann_train_data* data, char *filename, unsigned int decimal_point);
 
 /* Reads the mean square error from the network.
+   (obsolete will be removed at some point, use fann_get_MSE)
  */
 float fann_get_error(struct fann *ann);
 
+/* Reads the mean square error from the network.
+ */
+float fann_get_MSE(struct fann *ann);
+
 /* Resets the mean square error from the network.
+   (obsolete will be removed at some point, use fann_reset_MSE)
  */
 void fann_reset_error(struct fann *ann);
+
+/* Resets the mean square error from the network.
+ */
+void fann_reset_MSE(struct fann *ann);
 
 /* resets the last error number
  */

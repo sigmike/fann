@@ -54,6 +54,7 @@ void fann_error(struct fann *ann, unsigned int errno, ...);
 /* called fann_max, in order to not interferre with predefined versions of max */
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))
 #define fann_min(x, y) (((x) < (y)) ? (x) : (y))
+#define fann_safe_free(x) if(x) free(x)
 
 #define fann_rand(min_value, max_value) (((double)(min_value))+(((double)(max_value)-((double)(min_value)))*rand()/(RAND_MAX+1.0)))
 

@@ -44,6 +44,11 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 
 	/* allocate and initialize the main network structure */
 	ann = (struct fann *)malloc(sizeof(struct fann));
+	if(ann == NULL){
+		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		return NULL;
+	}
+
 	ann->learning_rate = learning_rate;
 	ann->total_neurons = 0;
 	ann->total_connections = 0;
@@ -74,6 +79,12 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 
 	/* allocate room for the layers */
 	ann->first_layer = (struct fann_layer *)calloc(num_layers, sizeof(struct fann_layer));
+	if(ann->first_layer == NULL){
+		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		free(ann);
+		return NULL;
+	}
+	
 	ann->last_layer = ann->first_layer + num_layers;
 
 	return ann;
@@ -90,6 +101,10 @@ void fann_allocate_neurons(struct fann *ann)
 
 	/* all the neurons is allocated in one long array */
 	neurons = (struct fann_neuron *)calloc(ann->total_neurons, sizeof(struct fann_neuron));
+	if(neurons == NULL){
+		fann_error(ann, FANN_E_CANT_ALLOCATE_MEM);
+		return;
+	}
 	
 	/* clear data, primarily to make the input neurons cleared */
 	memset(neurons, 0, ann->total_neurons * sizeof(struct fann_neuron));
@@ -102,6 +117,10 @@ void fann_allocate_neurons(struct fann *ann)
 	}
 
 	ann->output = (fann_type *)calloc(num_neurons, sizeof(fann_type));
+	if(ann->output == NULL){
+		fann_error(ann, FANN_E_CANT_ALLOCATE_MEM);
+		return;
+	}
 }
 
 /* Allocate room for the connections.
@@ -115,11 +134,20 @@ void fann_allocate_connections(struct fann *ann)
 	unsigned int connections_so_far = 0;
 	
 	weights = (fann_type *)calloc(ann->total_connections, sizeof(fann_type));
+	if(weights == NULL){
+		fann_error(ann, FANN_E_CANT_ALLOCATE_MEM);
+		return;
+	}
 	
 	/* TODO make special cases for all places where the connections
 	   is used, so that it is not needed for fully connected networks.
 	*/
 	connected_neurons = (struct fann_neuron **) calloc(ann->total_connections, sizeof(struct fann_neuron*));
+	if(connected_neurons == NULL){
+		fann_error(ann, FANN_E_CANT_ALLOCATE_MEM);
+		return;
+	}
+	
 
 	last_layer = ann->last_layer;
 	for(layer_it = ann->first_layer+1; layer_it != ann->last_layer; layer_it++){
@@ -133,7 +161,7 @@ void fann_allocate_connections(struct fann *ann)
 
 	if(connections_so_far != ann->total_connections){
 		fann_error(ann, FANN_E_WRONG_NUM_CONNECTIONS, connections_so_far, ann->total_connections);
-		exit(0);
+		return;
 	}
 }
 
@@ -455,10 +483,16 @@ void fann_error(struct fann *ann, const unsigned int errno, ...)
 	unsigned int flag = 0;
 	char * errstr;
 
+	if(ann != NULL)	ann->errno_f = errno;
+	
 	if(ann != NULL && ann->errstr != NULL){
 		errstr = ann->errstr;
 	}else{
 		errstr = (char *)malloc(FANN_ERRSTR_MAX);
+		if(errstr == NULL){
+			fprintf(stderr, "Unable to allocate memory.\n");
+			return;
+		}
 	}
 
 	va_start(ap, errno);
