@@ -6,13 +6,14 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 Author: Mauricio Pereira Maia <mauricio at uaisol.com.br>
-Version: 1.0
+Version: 1.1
 
 
 Version History
 ===============
 
-10 Oct 2004 - First Version released.
+Version 1.0 - 10 Oct 2004 - First Version released.
+Version 1.1 - 12 Nov 2004 - Fixed LoadFromFile bug.
 
 
 Requeriments

@@ -1,3 +1,12 @@
+{*------------------------------------------------------------------------------
+   TFannNetwork encapsulates the Fast Artificial Neural Network.
+
+   fann.sourceforge.net
+
+   @author Maurício Pereira Maia
+   @version 1.1
+
+-------------------------------------------------------------------------------}
 unit FannNetwork;
 
 interface
@@ -8,11 +17,15 @@ interface
 uses
   Windows, Messages, SysUtils, Classes,Fann;
 
-type CardinalArray = array [0..1023] of Cardinal;
-     PCardinalArray = ^CardinalArray;
+type CardinalArray = array [0..1023] of Cardinal; //Array of Cardinal Type
+     PCardinalArray = ^CardinalArray; //Pointer to CardinalArray Type
 
 
 type
+{*------------------------------------------------------------------------------
+  TFannNetwork Component
+-------------------------------------------------------------------------------}
+
   TFannNetwork = class(TComponent)
   private
     ann: PFann;
@@ -38,21 +51,24 @@ type
 
   published
 
-    {** Network Layer Structure. Each line need to have the number of neurons
+    {*------------------------------------------------------------------------------
+     Network Layer Structure. Each line need to have the number of neurons
         of the layer.
         2
         4
         1
         Will make a three layered network with 2 input neurons, 4 hidden neurons
         and 1 output neuron.
-    }
+   -------------------------------------------------------------------------------}
     property Layers: TStrings read PLayers write SetLayers;
 
-    {** Network Learning Rate.
-    }
+    {*------------------------------------------------------------------------------
+     Network Learning Rate.
+    -------------------------------------------------------------------------------}
     property LearningRate: Single read pLearningRate write pLearningRate;
-    {** Network Connection Rate. See the FANN docs for more info.
-    }
+    {*------------------------------------------------------------------------------
+     Network Connection Rate. See the FANN docs for more info.
+    -------------------------------------------------------------------------------}
     property ConnectionRate: Single read pConnectionRate write pConnectionRate;
 end;
 
@@ -60,19 +76,16 @@ procedure Register;
 
 implementation
 
-procedure Register;
+procedure Register; //Register the Component
 begin
   RegisterComponents('FANN', [TFannNetwork]);
 end;
 
-{ TFannNetwork }
 
-
-{** Builds a Fann neural nerwork.
+{*------------------------------------------------------------------------------
+    Builds a Fann neural nerwork.
     Layers property must be set to work.
-
-    @param      none
-}
+-------------------------------------------------------------------------------}
 procedure TFannNetwork.Build;
 var l: PCardinalArray; //Pointer to number of neurons on each layer
     nl: integer; //Number of layers
@@ -86,6 +99,7 @@ begin
 
         GetMem(l,nl*sizeof(Cardinal)); //Alloc mem for the array
 
+
         for i:=0 to nl-1 do
         begin
 
@@ -94,18 +108,20 @@ begin
         end;
 
         ann:=fann_create_array(PConnectionRate,PLearningRate,nl,l[0]);
+        fann_randomize_weights(ann,-0.5,0.5);
+
         pbuilt:=true;
 
         FreeMem(l);
 
 
-
 end;
 
-{** Creates an instance of TFannNetwork
+{*------------------------------------------------------------------------------
+    Creates an instance of TFannNetwork
 
     @param      AOwner Owner Component
-}
+-------------------------------------------------------------------------------}
 constructor TFannNetwork.Create(Aowner: TComponent);
 begin
         inherited Create(Aowner);
@@ -118,10 +134,9 @@ begin
 
 end;
 
-{** Destroys the TFannNetwork object and frees its memory.
-
-    @param      none
-}
+{*------------------------------------------------------------------------------
+    Destroys the TFannNetwork object and frees its memory.
+-------------------------------------------------------------------------------}
 destructor TFannNetwork.Destroy;
 begin
   If pBuilt then fann_destroy(ann);
@@ -130,11 +145,11 @@ begin
   inherited;
 end;
 
-{** Returns the Mean Square Error of the Network.
+{*------------------------------------------------------------------------------
+    Returns the Mean Square Error of the Network.
 
-    @param      none
     @return             Mean Square Error
-}
+-------------------------------------------------------------------------------}
 function TFannNetwork.GetMSE: Single;
 begin
         if not pBuilt then
@@ -144,29 +159,31 @@ begin
 
 end;
 
-{** Loads a network from a file.
+{*------------------------------------------------------------------------------
+    Loads a network from a file.
 
     @param  Filename    File that contains the network
     @see                SavetoFile
-}
+-------------------------------------------------------------------------------}
 procedure TFannNetwork.LoadFromFile(Filename: string);
 begin
 
         If pBuilt then fann_destroy(ann);
 
-        fann_create_from_file(PChar(Filename));
+        ann:=fann_create_from_file(PChar(Filename));
 
         pBuilt:=true;
 
 end;
 
-{** Executes the network.
+{*------------------------------------------------------------------------------
+    Executes the network.
 
     @param  Inputs      Array with the value of each input
     @param  Ouputs      Will receive the output of the network. Need to be
                         allocated before the Run function call with the number
                         of outputs on the network.
-}
+-------------------------------------------------------------------------------}
 procedure TFannNetwork.Run(Inputs: array of fann_type;
   var Outputs: array of fann_type);
 var O: Pfann_type_array;
@@ -186,12 +203,13 @@ begin
 
 end;
 
-{** Saves the current network to the specified file.
+{*------------------------------------------------------------------------------
+    Saves the current network to the specified file.
 
     @param  Filename    Filename of the network
 
     @see                LoadFromFile
-}
+-------------------------------------------------------------------------------}
 procedure TFannNetwork.SaveToFile(FileName: String);
 begin
         if not pBuilt then exit;
@@ -202,14 +220,15 @@ begin
 
 end;
 
-{** Train the network and returns the Mean Square Error.
+{*------------------------------------------------------------------------------
+    Train the network and returns the Mean Square Error.
 
     @param  Input       Array with the value of each input of the network
     @param  Output      Array with the value of each desired output of the network
     @return             Mean Square Error after the training
 
     @see                TrainOnFile
-}
+-------------------------------------------------------------------------------}
 procedure TFannNetwork.SetLayers(const Value: TStrings);
 begin
 
@@ -220,13 +239,14 @@ begin
 
 end;
 
-{** Will train one iteration with a set of inputs, and a set of desired outputs.
+{*------------------------------------------------------------------------------
+    Will train one iteration with a set of inputs, and a set of desired outputs.
 
     @param  Input   Network inputs
     @param  Output  Network Desired Outputs
 
     @see                TrainOnFile
-}
+-------------------------------------------------------------------------------}
 function TFannNetwork.Train(Input, Output: array of fann_type): single;
 begin
 
@@ -240,7 +260,8 @@ begin
         
 end;
 
-{** Trains the network using the data in filename until desirederror is reached
+{*------------------------------------------------------------------------------
+    Trains the network using the data in filename until desired error is reached
     or until maxepochs is surpassed.
 
     @param  FileName    Training Data File.
@@ -248,7 +269,7 @@ end;
     @param  DesiredError Desired Error of the network after the training
 
     @see                Train
-}
+-------------------------------------------------------------------------------}
 procedure TFannNetwork.TrainOnFile(FileName: String; MaxEpochs: Cardinal;
   DesiredError: Single);
 begin
