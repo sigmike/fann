@@ -1,13 +1,26 @@
 This python binding is provided by Vincenzo Di Massa <hawk.it@tiscalinet.it>
+and Gil Megidish <gil@megidish.net>
 
 MAKE
-Make sure to make and install the fann library first.
-Make sure that you have swig and python development files installed.
-Perhaps change the include directory of python.
-Then run 'make' to compile.
+Make sure to make the fann library first. You are required to have
+swig and python development files installed. After you compiled the
+fann library, run make with the apropriate makefile (gnu or msvc.) 
+Running build.bat will create a distribution for Windows platform. For
+that, you will need py2exe installed.
 
-INSTALL
-Copy the generated _fann.so and fann.py files to pyhon modules or into working directory.
+NOTE
+Two makefiles are provided. The GNU makefile will create a shared object
+for use in GNU/cygwin environments. The MSVC makefile will create a dll
+for the official Python distribution. Importing a dll made with cygwin
+in a standard distribution will cause python to hang.
+
+ANOTHER NOTE
+MSVC makefile does not compile fann sources by itself. This is done, as
+of the moment, by compiling them manually. This should go into the setup.py,
+as python supports compilation of C code, using extension tags. Due the
+demand of this release, it has been postponed to a future version. One last
+note, there isn't really a need for libfann.py. It will be removed next
+version.
 
 USAGE
 Just import fann.
