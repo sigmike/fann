@@ -54,7 +54,7 @@ static fann_type fann_activation_derived(unsigned int activation_function,
 #ifndef FIXEDFANN
 /* Trains the network with the backpropagation algorithm.
  */
-void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
+FANN_EXTERNAL void FANN_API fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 {
 	fann_run(ann, input);
 
@@ -68,7 +68,7 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 
 /* Tests the network.
  */
-fann_type *fann_test(struct fann *ann, fann_type *input, fann_type *desired_output)
+FANN_EXTERNAL fann_type * FANN_API fann_test(struct fann *ann, fann_type *input, fann_type *desired_output)
 {
 	fann_type neuron_value;
 	fann_type *output_begin = fann_run(ann, input);
@@ -91,7 +91,7 @@ fann_type *fann_test(struct fann *ann, fann_type *input, fann_type *desired_outp
 #ifdef FIXEDFANN
 		ann->MSE_value += (neuron_diff/(float)ann->multiplier) * (neuron_diff/(float)ann->multiplier);
 #else
-		ann->MSE_value += neuron_diff * neuron_diff;
+		ann->MSE_value += (float)(neuron_diff * neuron_diff);
 #endif
 		
 		desired_output++;
@@ -104,14 +104,14 @@ fann_type *fann_test(struct fann *ann, fann_type *input, fann_type *desired_outp
 /* get the mean square error.
    (obsolete will be removed at some point, use fann_get_MSE)
  */
-float fann_get_error(struct fann *ann)
+FANN_EXTERNAL float FANN_API fann_get_error(struct fann *ann)
 {
 	return fann_get_MSE(ann);
 }
 
 /* get the mean square error.
  */
-float fann_get_MSE(struct fann *ann)
+FANN_EXTERNAL float FANN_API fann_get_MSE(struct fann *ann)
 {
 	if(ann->num_MSE){
 		return ann->MSE_value/(float)ann->num_MSE;
@@ -123,14 +123,14 @@ float fann_get_MSE(struct fann *ann)
 /* reset the mean square error.
    (obsolete will be removed at some point, use fann_reset_MSE)
  */
-void fann_reset_error(struct fann *ann)
+FANN_EXTERNAL void FANN_API fann_reset_error(struct fann *ann)
 {
 	fann_reset_MSE(ann);
 }
 
 /* reset the mean square error.
  */
-void fann_reset_MSE(struct fann *ann)
+FANN_EXTERNAL void FANN_API fann_reset_MSE(struct fann *ann)
 {
 	ann->num_MSE = 0;
 	ann->MSE_value = 0;
@@ -180,7 +180,7 @@ void fann_compute_MSE(struct fann *ann, fann_type *desired_output)
 			neuron_diff /= 2.0;
 		}
 		
-		ann->MSE_value += neuron_diff * neuron_diff;
+		ann->MSE_value += (float)(neuron_diff * neuron_diff);
 
 		if(ann->use_tanh_error_function){
 			if ( neuron_diff < -.9999999 )
@@ -478,7 +478,7 @@ void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data)
 	float epsilon = ann->learning_rate/num_data;
 	float decay = ann->quickprop_decay; /*-0.0001;*/
 	float mu = ann->quickprop_mu; /*1.75;*/
-	float shrink_factor = mu / (1.0 + mu); 
+	float shrink_factor = (float)(mu / (1.0 + mu));
 
 	unsigned int i = ann->total_connections;
 	while(i--){

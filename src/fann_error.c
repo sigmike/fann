@@ -33,14 +33,14 @@
 
 /* resets the last error number
  */
-void fann_reset_errno(struct fann_error *errdat)
+FANN_EXTERNAL void FANN_API fann_reset_errno(struct fann_error *errdat)
 {
 	errdat->errno_f = 0;
 }
 
 /* resets the last errstr
  */
-void fann_reset_errstr(struct fann_error *errdat)
+FANN_EXTERNAL void FANN_API fann_reset_errstr(struct fann_error *errdat)
 {
 	if ( errdat->errstr != NULL )
 		free(errdat->errstr);
@@ -49,14 +49,14 @@ void fann_reset_errstr(struct fann_error *errdat)
 
 /* returns the last error number
  */
-unsigned int fann_get_errno(struct fann_error *errdat)
+FANN_EXTERNAL unsigned int FANN_API fann_get_errno(struct fann_error *errdat)
 {
 	return errdat->errno_f;
 }
 
 /* returns the last errstr
  */
-char * fann_get_errstr(struct fann_error *errdat)
+FANN_EXTERNAL char * FANN_API fann_get_errstr(struct fann_error *errdat)
 {
 	char *errstr = errdat->errstr;
 
@@ -68,14 +68,14 @@ char * fann_get_errstr(struct fann_error *errdat)
 
 /* change where errors are logged to
  */
-void fann_set_error_log(struct fann_error *errdat, FILE *log_file)
+FANN_EXTERNAL void FANN_API fann_set_error_log(struct fann_error *errdat, FILE *log_file)
 {
-  errdat->error_log = log_file;
+	errdat->error_log = log_file;
 }
 
 /* prints the last error to the error log (default stderr)
  */
-void fann_print_error(struct fann_error *errdat) {
+FANN_EXTERNAL void FANN_API fann_print_error(struct fann_error *errdat) {
 	if ( (errdat->errno_f != FANN_E_NO_ERROR) && (errdat->error_log != NULL) ){
 		fputs(errdat->errstr, errdat->error_log);
 	}

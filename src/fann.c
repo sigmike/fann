@@ -30,7 +30,7 @@
 
 /* create a neural network.
  */
-struct fann * fann_create(float connection_rate, float learning_rate,
+FANN_EXTERNAL struct fann * FANN_API fann_create(float connection_rate, float learning_rate,
 	unsigned int num_layers, /* the number of layers, including the input and output layer */
 
 
@@ -56,7 +56,7 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 
 /* create a neural network.
  */
-struct fann * fann_create_array(float connection_rate, float learning_rate, unsigned int num_layers, unsigned int * layers)
+FANN_EXTERNAL struct fann * FANN_API fann_create_array(float connection_rate, float learning_rate, unsigned int num_layers, unsigned int * layers)
 {
 	struct fann_layer *layer_it, *last_layer, *prev_layer;
 	struct fann *ann;
@@ -282,7 +282,7 @@ struct fann * fann_create_array(float connection_rate, float learning_rate, unsi
  
 /* create a neural network with forward connections.
  */
-struct fann * fann_create_forward(float learning_rate,
+FANN_EXTERNAL struct fann * FANN_API fann_create_forward(float learning_rate,
 	unsigned int num_layers, /* the number of layers, including the input and output layer */
 
 
@@ -308,7 +308,7 @@ struct fann * fann_create_forward(float learning_rate,
 
 /* create a neural network with forward connections.
  */
-struct fann * fann_create_forward_array(float learning_rate, unsigned int num_layers, unsigned int * layers)
+FANN_EXTERNAL struct fann * FANN_API fann_create_forward_array(float learning_rate, unsigned int num_layers, unsigned int * layers)
 {
 	struct fann_layer *layer_it, *layer_it2, *last_layer;
 	struct fann *ann;
@@ -425,7 +425,7 @@ struct fann * fann_create_forward_array(float learning_rate, unsigned int num_la
 
 /* runs the network.
  */
-fann_type* fann_run(struct fann *ann, fann_type *input)
+FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 {
 	struct fann_neuron *neuron_it, *last_neuron, *neurons, **neuron_pointers;
 	unsigned int activation_function, i, num_connections, num_neurons, num_input, num_output;
@@ -693,8 +693,9 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 
 /* deallocate the network.
  */
-void fann_destroy(struct fann *ann)
+FANN_EXTERNAL void FANN_API fann_destroy(struct fann *ann)
 {
+	if(ann == NULL) return;
 	fann_safe_free(fann_get_weights(ann));
 	fann_safe_free(fann_get_connections(ann));
 	fann_safe_free(ann->first_layer->first_neuron);
@@ -708,7 +709,7 @@ void fann_destroy(struct fann *ann)
 	fann_safe_free(ann);
 }
 
-void fann_randomize_weights(struct fann *ann, fann_type min_weight, fann_type max_weight)
+FANN_EXTERNAL void FANN_API fann_randomize_weights(struct fann *ann, fann_type min_weight, fann_type max_weight)
 {
 	fann_type *last_weight;
 	fann_type *weights = (ann->first_layer+1)->first_neuron->weights;
@@ -718,7 +719,7 @@ void fann_randomize_weights(struct fann *ann, fann_type min_weight, fann_type ma
 	}
 }
 
-void fann_print_connections(struct fann *ann)
+FANN_EXTERNAL void FANN_API fann_print_connections(struct fann *ann)
 {
 	struct fann_layer *layer_it;
 	struct fann_neuron *neuron_it;
@@ -754,7 +755,7 @@ void fann_print_connections(struct fann *ann)
 
 /* Initialize the weights using Widrow + Nguyen's algorithm.
 */
-void fann_init_weights(struct fann *ann, struct fann_train_data *train_data)
+FANN_EXTERNAL void FANN_API fann_init_weights(struct fann *ann, struct fann_train_data *train_data)
 {
 	fann_type smallest_inp, largest_inp;
 	unsigned int dat = 0, elem, num_neurons_in, num_neurons_out, num_connect, num_hidden_neurons;
@@ -775,8 +776,8 @@ void fann_init_weights(struct fann *ann, struct fann_train_data *train_data)
 	}
 
 	num_hidden_neurons = ann->total_neurons - (ann->num_input + ann->num_output + (ann->last_layer - ann->first_layer));
-	scale_factor = pow((double)(0.7f * (double)num_hidden_neurons),
-				  (double)(1.0f / (double)ann->num_input)) / (double)(largest_inp - smallest_inp);
+	scale_factor = (float)(pow((double)(0.7f * (double)num_hidden_neurons),
+				  (double)(1.0f / (double)ann->num_input)) / (double)(largest_inp - smallest_inp));
 
 #ifdef DEBUG
 	printf("Initializing weights with scale factor %f\n", scale_factor);
@@ -861,11 +862,11 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 	  ann->stagnation_epochs = 12;*/
 
 	/* Variables for use with with Quickprop training (reasonable defaults) */
-	ann->quickprop_decay = -0.0001;
+	ann->quickprop_decay = (float)-0.0001;
 	ann->quickprop_mu = 1.75;
 
 	/* Variables for use with with RPROP training (reasonable defaults) */
-	ann->rprop_increase_factor = 1.2;
+	ann->rprop_increase_factor = (float)1.2;
 	ann->rprop_decrease_factor = 0.5;
 	ann->rprop_delta_min = 0.0;
 	ann->rprop_delta_max = 50.0;

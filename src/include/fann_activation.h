@@ -100,7 +100,7 @@ enum {
 	   y = (x*s) / (1 + |x*s|), d = s*1/((1+|x|)*(1+|x|))
 	   NOT implemented yet.
 	*/
-	FANN_ELLIOT_SYMMETRIC,
+	FANN_ELLIOT_SYMMETRIC
 };
 
 static char const * const FANN_ACTIVATION_NAMES[] = {

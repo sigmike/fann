@@ -34,8 +34,46 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifdef _WIN32
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+/* Modified to compile as ANSI C without include of windows.h
+   If this gives problems with future Windows/MSC versions, then
+   uncomment the USE_WINDOWS_H definition to switch back. */
+/* #define USE_WINDOWS_H */
+#ifdef USE_WINDOWS_H
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
+#else
+    #define VOID void
+    #define WINAPI __stdcall
+    #define OUT
+    #define WINBASEAPI
+
+    typedef long LONG;
+    typedef unsigned long DWORD;
+    typedef __int64 LONGLONG;
+
+    typedef struct _FILETIME {
+        DWORD dwLowDateTime;
+        DWORD dwHighDateTime;
+    } FILETIME, *LPFILETIME;
+
+    typedef union _LARGE_INTEGER {
+        /* Removed unnamed struct,
+           it is not ANSI C compatible*/
+        /* struct {
+            DWORD LowPart;
+            LONG HighPart;
+        }; */
+        struct {
+            DWORD LowPart;
+            LONG HighPart;
+        } u;
+        LONGLONG QuadPart;
+    } LARGE_INTEGER;
+
+    WINBASEAPI VOID WINAPI
+    GetSystemTimeAsFileTime(OUT LPFILETIME lpSystemTimeAsFileTime);
+#endif /* USE_WINDOWS_H */
+
 #include <time.h>
 
 #ifndef __GNUC__
@@ -64,8 +102,11 @@ __inline int gettimeofday(struct timeval *tv, struct timezone *tz)
     if (tv)
     {
         GetSystemTimeAsFileTime(&ft);
-        li.LowPart  = ft.dwLowDateTime;
-        li.HighPart = ft.dwHighDateTime;
+
+        /* The following two lines have been modified to use the named
+           union member. Unnamed members are not ANSI C compatible. */
+        li.u.LowPart  = ft.dwLowDateTime;
+        li.u.HighPart = ft.dwHighDateTime;
         t  = li.QuadPart;       /* In 100-nanosecond intervals */
         t -= EPOCHFILETIME;     /* Offset to the Epoch time */
         t /= 10;                /* In microseconds */

@@ -27,7 +27,7 @@
 #include "fann_errno.h"
 
 /* Prints all of the parameters and options of the ANN */
-void fann_print_parameters(struct fann *ann)
+FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 {
 	struct fann_layer *layer_it;
 	
@@ -45,9 +45,12 @@ void fann_print_parameters(struct fann *ann)
 	printf("Learning rate              : %5.2f\n", ann->learning_rate);
 	printf("Activation function hidden :  %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_hidden]);
 	printf("Activation function output :  %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_output]);
+#ifndef FIXEDFANN
 	printf("Activation steepness hidden: %5.2f\n", ann->activation_steepness_hidden);
 	printf("Activation steepness output: %5.2f\n", ann->activation_steepness_output);
-#ifdef FIXEDFANN
+#else
+	printf("Activation steepness hidden: %d\n", ann->activation_steepness_hidden);
+	printf("Activation steepness output: %d\n", ann->activation_steepness_output);
 	printf("Decimal point              : %2d\n", ann->decimal_point);
 	printf("Multiplier                 : %2d\n", ann->multiplier);
 #endif
@@ -60,112 +63,112 @@ void fann_print_parameters(struct fann *ann)
 	printf("RPROP delta max            : %5.2f\n", ann->rprop_delta_max);
 }
 
-unsigned int fann_get_training_algorithm(struct fann *ann)
+FANN_EXTERNAL unsigned int FANN_API fann_get_training_algorithm(struct fann *ann)
 {
 	return ann->training_algorithm;
 }
 
-void fann_set_training_algorithm(struct fann *ann, unsigned int training_algorithm)
+FANN_EXTERNAL void FANN_API fann_set_training_algorithm(struct fann *ann, unsigned int training_algorithm)
 {
 	ann->training_algorithm = training_algorithm;
 }
 
-void fann_set_learning_rate(struct fann *ann, float learning_rate)
+FANN_EXTERNAL void FANN_API fann_set_learning_rate(struct fann *ann, float learning_rate)
 {
 	ann->learning_rate = learning_rate;
 }
 
-void fann_set_activation_function_hidden(struct fann *ann, unsigned int activation_function)
+FANN_EXTERNAL void FANN_API fann_set_activation_function_hidden(struct fann *ann, unsigned int activation_function)
 {
 	ann->activation_function_hidden = activation_function;
 	fann_update_stepwise_hidden(ann);
 }
 
-void fann_set_activation_function_output(struct fann *ann, unsigned int activation_function)
+FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann, unsigned int activation_function)
 {
 	ann->activation_function_output = activation_function;
 	fann_update_stepwise_output(ann);
 }
 
-void fann_set_activation_steepness_hidden(struct fann *ann, fann_type steepness)
+FANN_EXTERNAL void FANN_API fann_set_activation_steepness_hidden(struct fann *ann, fann_type steepness)
 {
 	ann->activation_steepness_hidden = steepness;
 	fann_update_stepwise_hidden(ann);
 }
 
-void fann_set_activation_steepness_output(struct fann *ann, fann_type steepness)
+FANN_EXTERNAL void FANN_API fann_set_activation_steepness_output(struct fann *ann, fann_type steepness)
 {
 	ann->activation_steepness_output = steepness;
 	fann_update_stepwise_output(ann);
 }
 
-void fann_set_activation_hidden_steepness(struct fann *ann, fann_type steepness)
+FANN_EXTERNAL void FANN_API fann_set_activation_hidden_steepness(struct fann *ann, fann_type steepness)
 {
 	fann_set_activation_steepness_hidden(ann, steepness);
 }
 
-void fann_set_activation_output_steepness(struct fann *ann, fann_type steepness)
+FANN_EXTERNAL void FANN_API fann_set_activation_output_steepness(struct fann *ann, fann_type steepness)
 {
 	fann_set_activation_steepness_output(ann, steepness);
 }
 
-float fann_get_learning_rate(struct fann *ann)
+FANN_EXTERNAL float FANN_API fann_get_learning_rate(struct fann *ann)
 {
 	return ann->learning_rate;
 }
 
-unsigned int fann_get_num_input(struct fann *ann)
+FANN_EXTERNAL unsigned int FANN_API fann_get_num_input(struct fann *ann)
 {
 	return ann->num_input;
 }
 
-unsigned int fann_get_num_output(struct fann *ann)
+FANN_EXTERNAL unsigned int FANN_API fann_get_num_output(struct fann *ann)
 {
 	return ann->num_output;
 }
 
-unsigned int fann_get_activation_function_hidden(struct fann *ann)
+FANN_EXTERNAL unsigned int FANN_API fann_get_activation_function_hidden(struct fann *ann)
 {
 	return ann->activation_function_hidden;
 }
 
-unsigned int fann_get_activation_function_output(struct fann *ann)
+FANN_EXTERNAL unsigned int FANN_API fann_get_activation_function_output(struct fann *ann)
 {
 	return ann->activation_function_output;
 }
 
-fann_type fann_get_activation_hidden_steepness(struct fann *ann)
+FANN_EXTERNAL fann_type FANN_API fann_get_activation_hidden_steepness(struct fann *ann)
 {
 	return ann->activation_steepness_hidden;
 }
 
-fann_type fann_get_activation_output_steepness(struct fann *ann)
+FANN_EXTERNAL fann_type FANN_API fann_get_activation_output_steepness(struct fann *ann)
 {
 	return ann->activation_steepness_output;
 }
 
-fann_type fann_get_activation_steepness_hidden(struct fann *ann)
+FANN_EXTERNAL fann_type FANN_API fann_get_activation_steepness_hidden(struct fann *ann)
 {
 	return ann->activation_steepness_hidden;
 }
 
-fann_type fann_get_activation_steepness_output(struct fann *ann)
+FANN_EXTERNAL fann_type FANN_API fann_get_activation_steepness_output(struct fann *ann)
 {
 	return ann->activation_steepness_output;
 }
 
-unsigned int fann_get_total_neurons(struct fann *ann)
+FANN_EXTERNAL unsigned int FANN_API fann_get_total_neurons(struct fann *ann)
 {
 	/* -1, because there is always an unused bias neuron in the last layer */
 	return ann->total_neurons - 1;
 }
 
-unsigned int fann_get_total_connections(struct fann *ann)
+FANN_EXTERNAL unsigned int FANN_API fann_get_total_connections(struct fann *ann)
 {
 	return ann->total_connections;
 }
 
-fann_type* fann_get_weights(struct fann *ann)
+fann_type * fann_get_weights(struct fann *ann)
 {
 	return (ann->first_layer+1)->first_neuron->weights;
 }
@@ -180,43 +183,43 @@ struct fann_neuron** fann_get_connections(struct fann *ann)
    Makes the error used for calculating the slopes
    higher when the difference is higher.
  */
-void fann_set_use_tanh_error_function(struct fann *ann, unsigned int use_tanh_error_function)
+FANN_EXTERNAL void FANN_API fann_set_use_tanh_error_function(struct fann *ann, unsigned int use_tanh_error_function)
 {
 	ann->use_tanh_error_function = use_tanh_error_function;
 }
 
 /* Decay is used to make the weights do not go so high (default -0.0001). */
-void fann_set_quickprop_decay(struct fann *ann, float quickprop_decay)
+FANN_EXTERNAL void FANN_API fann_set_quickprop_decay(struct fann *ann, float quickprop_decay)
 {
 	ann->quickprop_decay = quickprop_decay;
 }
 	
 /* Mu is a factor used to increase and decrease the stepsize (default 1.75). */
-void fann_set_quickprop_mu(struct fann *ann, float quickprop_mu)
+FANN_EXTERNAL void FANN_API fann_set_quickprop_mu(struct fann *ann, float quickprop_mu)
 {
 	ann->quickprop_mu = quickprop_mu;
 }
 
 /* Tells how much the stepsize should increase during learning (default 1.2). */
-void fann_set_rprop_increase_factor(struct fann *ann, float rprop_increase_factor)
+FANN_EXTERNAL void FANN_API fann_set_rprop_increase_factor(struct fann *ann, float rprop_increase_factor)
 {
 	ann->rprop_increase_factor = rprop_increase_factor;
 }
 
 /* Tells how much the stepsize should decrease during learning (default 0.5). */
-void fann_set_rprop_decrease_factor(struct fann *ann, float rprop_decrease_factor)
+FANN_EXTERNAL void FANN_API fann_set_rprop_decrease_factor(struct fann *ann, float rprop_decrease_factor)
 {
 	ann->rprop_decrease_factor = rprop_decrease_factor;
 }
 
 /* The minimum stepsize (default 0.0). */
-void fann_set_rprop_delta_min(struct fann *ann, float rprop_delta_min)
+FANN_EXTERNAL void FANN_API fann_set_rprop_delta_min(struct fann *ann, float rprop_delta_min)
 {
 	ann->rprop_delta_min = rprop_delta_min;
 }
 
 /* The maximum stepsize (default 50.0). */
-void fann_set_rprop_delta_max(struct fann *ann, float rprop_delta_max)
+FANN_EXTERNAL void FANN_API fann_set_rprop_delta_max(struct fann *ann, float rprop_delta_max)
 {
 	ann->rprop_delta_max = rprop_delta_max;
 }
@@ -225,43 +228,43 @@ void fann_set_rprop_delta_max(struct fann *ann, float rprop_delta_max)
    Makes the error used for calculating the slopes
    higher when the difference is higher.
  */
-unsigned int fann_get_use_tanh_error_function(struct fann *ann)
+FANN_EXTERNAL unsigned int FANN_API fann_get_use_tanh_error_function(struct fann *ann)
 {
 	return ann->use_tanh_error_function;
 }
 
 /* Decay is used to make the weights do not go so high (default -0.0001). */
-float fann_get_quickprop_decay(struct fann *ann)
+FANN_EXTERNAL float FANN_API fann_get_quickprop_decay(struct fann *ann)
 {
 	return ann->quickprop_decay;
 }
 	
 /* Mu is a factor used to increase and decrease the stepsize (default 1.75). */
-float fann_get_quickprop_mu(struct fann *ann)
+FANN_EXTERNAL float FANN_API fann_get_quickprop_mu(struct fann *ann)
 {
 	return ann->quickprop_mu;
 }
 
 /* Tells how much the stepsize should increase during learning (default 1.2). */
-float fann_get_rprop_increase_factor(struct fann *ann)
+FANN_EXTERNAL float FANN_API fann_get_rprop_increase_factor(struct fann *ann)
 {
 	return ann->rprop_increase_factor;
 }
 
 /* Tells how much the stepsize should decrease during learning (default 0.5). */
-float fann_get_rprop_decrease_factor(struct fann *ann)
+FANN_EXTERNAL float FANN_API fann_get_rprop_decrease_factor(struct fann *ann)
 {
 	return ann->rprop_decrease_factor;
 }
 
 /* The minimum stepsize (default 0.0). */
-float fann_get_rprop_delta_min(struct fann *ann)
+FANN_EXTERNAL float FANN_API fann_get_rprop_delta_min(struct fann *ann)
 {
 	return ann->rprop_delta_min;
 }
 
 /* The maximum stepsize (default 50.0). */
-float fann_get_rprop_delta_max(struct fann *ann)
+FANN_EXTERNAL float FANN_API fann_get_rprop_delta_max(struct fann *ann)
 {
 	return ann->rprop_delta_max;
 }
@@ -269,14 +272,14 @@ float fann_get_rprop_delta_max(struct fann *ann)
 #ifdef FIXEDFANN
 /* returns the position of the fix point.
  */
-unsigned int fann_get_decimal_point(struct fann *ann)
+FANN_EXTERNAL unsigned int FANN_API fann_get_decimal_point(struct fann *ann)
 {
 	return ann->decimal_point;
 }
 
 /* returns the multiplier that fix point data is multiplied with.
  */
-unsigned int fann_get_multiplier(struct fann *ann)
+FANN_EXTERNAL unsigned int FANN_API fann_get_multiplier(struct fann *ann)
 {
 	return ann->multiplier;
 }

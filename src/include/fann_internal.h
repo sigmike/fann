@@ -69,7 +69,8 @@ void fann_update_weights_batch(struct fann *ann, unsigned int num_data);
 fann_type* fann_get_weights(struct fann *ann);
 /* get a pointer to the connections */
 struct fann_neuron** fann_get_connections(struct fann *ann);
-	
+
+void fann_clear_train_arrays(struct fann *ann);
 
 /* called fann_max, in order to not interferre with predefined versions of max */
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))
