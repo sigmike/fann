@@ -71,6 +71,7 @@ int main()
 	}
 
 	printf("Cleaning up.\n");
+	fann_destroy_train(data);
 	fann_destroy(ann);
 
 	return ret;
