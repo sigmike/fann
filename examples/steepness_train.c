@@ -88,7 +88,7 @@ int main()
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
 	fann_set_activation_function_output(ann, FANN_SIGMOID_SYMMETRIC);
 
-	fann_set_training_algorithm(ann, FANN_QUICKPROP_TRAIN);
+	fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP);
 	
 	train_on_steepness_file(ann, "xor.data", max_iterations,
 		iterations_between_reports, desired_error, (float)1.0, (float)0.1, (float)20.0);
