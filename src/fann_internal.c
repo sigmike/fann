@@ -490,13 +490,13 @@ void fann_error(struct fann *ann, const unsigned int errno, ...)
 		vsnprintf(errstr, FANN_ERRSTR_MAX, "Error reading info from train data file \"%s\", line: %d.\n", ap);
 		break;
 	default:
-		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unknown error.", ap);
+		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unknown error.\n", ap);
 		break;
 	}
 	va_end(ap);
 
 	if ( ann == NULL )
-	  fprintf(stderr, "FANN Error %d: %s", errstr);
+	  fprintf(stderr, "Error: %s\n", errstr);
 	else
 	  ann->errstr = errstr;
 }
