@@ -1,0 +1,10 @@
+For documentation please see: doc/fann_doc_complete_1.0.pdf
+
+For installation please see INSTALL
+
+For example programs please see:
+src/test/simple_train.c
+src/test/simple_test_float.c
+
+For the newest version of this library please go to:
+http://sourceforge.net/projects/fann/

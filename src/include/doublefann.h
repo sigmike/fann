@@ -25,6 +25,7 @@ typedef double fann_type;
 #define FANNPRINTF "%.20e"
 #define FANNSCANF "%le"
 
+#define FANN_INCLUDE
 #include "fann.h"
 
 #endif

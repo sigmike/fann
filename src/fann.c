@@ -307,8 +307,8 @@ struct fann * fann_create_from_file(const char *configuration_file)
 
 	fann_set_activation_hidden_steepness(ann, activation_hidden_steepness);
 	fann_set_activation_output_steepness(ann, activation_output_steepness);
-	fann_set_activation_hidden(ann, activation_function_hidden);
-	fann_set_activation_output(ann, activation_function_output);
+	fann_set_activation_function_hidden(ann, activation_function_hidden);
+	fann_set_activation_function_output(ann, activation_function_output);
 	
 #ifdef DEBUG
 	printf("creating network with learning rate %f\n", learning_rate);

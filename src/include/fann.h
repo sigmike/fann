@@ -22,12 +22,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    NOT be included directly.
 */
 
+#ifndef FANN_INCLUDE
+#include "floatfann.h"
+#else
+
+
 #include "fann_data.h"
 #include "fann_internal.h"
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
 
 /* ----- Initialisation and configuration ----- */
@@ -169,7 +174,7 @@ void fann_randomize_weights(struct fann *ann, fann_type min_weight, fann_type ma
 /* Train one iteration with a set of inputs, and a set of desired outputs.
  */
 void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output);
-#endif
+#endif /* NOT FIXEDFANN */
 
 /* Test with a set of inputs, and a set of desired outputs.
    This operation updates the mean square error, but does not
@@ -208,7 +213,7 @@ void fann_train_on_data(struct fann *ann, struct fann_train_data *data, unsigned
 /* Does the same as train_on_data, but reads the data directly from a file.
  */
 void fann_train_on_file(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error);
-#endif
+#endif /* NOT FIXEDFANN */
 
 /* Save the training structure to a file.
  */
@@ -242,8 +247,10 @@ unsigned int fann_get_decimal_point(struct fann *ann);
 /* returns the multiplier that fix point data is multiplied with.
  */
 unsigned int fann_get_multiplier(struct fann *ann);
-#endif
+#endif /* FIXEDFANN */
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
+
+#endif /* NOT FANN_INCLUDE */
