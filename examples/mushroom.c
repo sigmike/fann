@@ -55,7 +55,7 @@ int main()
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
 	fann_set_activation_function_output(ann, FANN_SIGMOID_STEPWISE);
 
-	fann_set_training_algorithm(ann, FANN_INCREMENTAL_TRAIN);
+	fann_set_training_algorithm(ann, FANN_TRAIN_INCREMENTAL);
 	
 	fann_train_on_data(ann, train_data, max_iterations, iterations_between_reports, desired_error);
 	

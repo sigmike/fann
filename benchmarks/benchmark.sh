@@ -1,14 +1,17 @@
 #!/bin/sh
 
+date;
+
 max_seconds_training=200;
 secs_between_reports=0.01;
 
 function benchmark_algorithm() {
     ./quality $algo datasets/$prob.train datasets/$prob.test $prob.$algo.train.out $prob.$algo.test.out $n1 $n2 $sec_train $secs_between_reports
+    date;
 }
 
 function benchmark_problem() {
-    rm -f *_fixed.net
+    #rm -f *_fixed.net
     algo="fann_rprop"; benchmark_algorithm;
     #./quality_fixed $prob.$algo.train.out_fixed_train $prob.$algo.train.out_fixed_test $prob.$algo.fixed_train.out $prob.$algo.fixed_test.out *_fixed.net
     algo="fann_rprop_stepwise"; benchmark_algorithm;

@@ -50,9 +50,9 @@ int main()
 
 	printf("Training network.\n");
 
-	fann_set_training_algorithm(ann, FANN_INCREMENTAL_TRAIN);
+	fann_set_training_algorithm(ann, FANN_TRAIN_INCREMENTAL);
 	
-	fann_train_on_data(ann, train_data, 100000, 10, desired_error);
+	fann_train_on_data(ann, train_data, 1000, 10, desired_error);
 	
 	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback);*/
 	printf("Testing network.\n");

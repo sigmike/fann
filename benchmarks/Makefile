@@ -37,4 +37,4 @@ parity: parity.c
 	$(GCC) $(CFLAGS) $(LFLAGS) $< -o $@
 
 clean: 
-	rm -rf $(TARGETS) *.net *.out *_fixed_test_* *_fixed_train_* *~ *ps
+	rm -rf -- $(TARGETS) *.net *.out *fixed_test* *fixed_train* *~ *ps

@@ -62,6 +62,7 @@ void fann_backpropagate_MSE(struct fann *ann);
 void fann_update_weights(struct fann *ann);
 void fann_update_slopes_batch(struct fann *ann);
 void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data);
+void fann_update_weights_irpropm(struct fann *ann, unsigned int num_data);
 void fann_update_weights_batch(struct fann *ann, unsigned int num_data);
 
 

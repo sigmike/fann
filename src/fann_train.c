@@ -551,7 +551,7 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int num_data)
 
 	unsigned int i = ann->total_connections;
 	while(i--){	
-		prev_step = prev_steps[i];
+		prev_step = fann_max(prev_steps[i], 0.001); /* prev_step may not be zero because then the training will stop */
 		slope = train_slopes[i];
 		prev_slope = prev_train_slopes[i];
 		next_step = 0.0;
@@ -565,11 +565,15 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int num_data)
 			slope = 0;
 		}
 
-		if(slope > 0){
+		if(slope < 0){
 			weights[i] -= next_step;
 		}else{
 			weights[i] += next_step;
 		}
+
+		/*if(i == 2){
+			printf("weight=%f, slope=%f, next_step=%f, prev_step=%f\n", weights[i], slope, next_step, prev_step);
+			}*/
 	
 		/* update global data arrays */
 		prev_steps[i] = next_step;

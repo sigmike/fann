@@ -122,10 +122,10 @@ void quality_benchmark_jneural(
 
 		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
 		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);
-		fprintf(stderr, ".");
+		fprintf(stderr, "secs: %8.2f, train: %8.6f, test: %8.6f, epochs: %5d\r", total_elapsed, train_error, test_error, epochs);
 	}
 
-	fprintf(stderr, " epochs: %d, epochs/sec: %f", epochs, epochs/total_elapsed);
+	fprintf(stdout, "\nepochs: %d, epochs/sec: %f\n", epochs, epochs/total_elapsed);
 
 	delete ann;
 }
@@ -203,7 +203,7 @@ void quality_benchmark_fann(bool stepwise, unsigned int training_algorithm,
 
 		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
 		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);
-		fprintf(stderr, ".");
+		fprintf(stderr, "secs: %8.2f, train: %8.6f, test: %8.6f, epochs: %5d\r", total_elapsed, train_error, test_error, epochs);
 
 		/* Save the data as fixed point, to allow for drawing of
 		   a fixed point graph */
@@ -220,7 +220,7 @@ void quality_benchmark_fann(bool stepwise, unsigned int training_algorithm,
 		}
 	}
 
-	fprintf(stderr, " epochs: %d, epochs/sec: %f", epochs, epochs/total_elapsed);
+	fprintf(stdout, "\nepochs: %d, epochs/sec: %f\n", epochs, epochs/total_elapsed);
 
 	fann_destroy(ann);	
 }
@@ -296,10 +296,10 @@ void quality_benchmark_lwnn(
 
 		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
 		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);
-		fprintf(stderr, ".");
+		fprintf(stderr, "secs: %8.2f, train: %8.6f, test: %8.6f, epochs: %5d\r", total_elapsed, train_error, test_error, epochs);
 	}
 
-	fprintf(stderr, " epochs: %d, epochs/sec: %f", epochs, epochs/total_elapsed);
+	fprintf(stdout, "\nepochs: %d, epochs/sec: %f\n", epochs, epochs/total_elapsed);
 
 	net_free(ann);
 }
@@ -341,7 +341,7 @@ int main(int argc, char* argv[])
 		test_out = fopen(argv[5], "w");
 	}
 
-	fprintf(stderr, "Quality test of %s %s ", argv[1], argv[2]);
+	fprintf(stdout, "Quality test of %s %s\n", argv[1], argv[2]);
 
 	if(strcmp(argv[1], "fann_incremental") == 0){
 		quality_benchmark_fann(false, FANN_TRAIN_INCREMENTAL, NULL, train_data, test_data,
@@ -412,8 +412,6 @@ int main(int argc, char* argv[])
 		printf("unrecognized option %s\n", argv[1]);
 	}
 
-	fprintf(stderr, "\n");
-	
 	fann_destroy_train(train_data);
 	fann_destroy_train(test_data);
 

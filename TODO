@@ -38,6 +38,8 @@ Things TODO when releasing a new version (mostly for fann developers)
 
 * Changelog should be updated and timestamp should be set
 
+* CVS branch for release
+
 * PHP Extension should be up-to-date (including documentation)
 
 * Debian packages should be created

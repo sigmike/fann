@@ -111,7 +111,7 @@ float fann_train_epoch_irpropm(struct fann *ann, struct fann_train_data *data)
 		fann_backpropagate_MSE(ann);
 		fann_update_slopes_batch(ann);
 	}
-	fann_update_weights_quickprop(ann, data->num_data);
+	fann_update_weights_irpropm(ann, data->num_data);
 
 	return fann_get_MSE(ann);
 }
