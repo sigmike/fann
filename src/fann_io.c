@@ -63,7 +63,7 @@ int fann_save_internal(struct fann *ann, const char *configuration_file, unsigne
 	int retval;
 	FILE *conf = fopen(configuration_file, "w+");
 	if(!conf){
-		fann_error(NULL, FANN_E_CANT_OPEN_CONFIG_W, configuration_file);
+		fann_error((struct fann_error *)ann, FANN_E_CANT_OPEN_CONFIG_W, configuration_file);
 		return -1;
 	}
 	retval = fann_save_internal_fd(ann, conf, configuration_file, save_as_fixed);
@@ -222,7 +222,7 @@ void fann_save_train_internal(struct fann_train_data* data, char *filename, unsi
 {	
 	FILE *file = fopen(filename, "w");
 	if(!file){
-		fann_error(NULL, FANN_E_CANT_OPEN_TD_W, filename);
+		fann_error((struct fann_error*)data, FANN_E_CANT_OPEN_TD_W, filename);
 		return;
 	}
 	fann_save_train_internal_fd(data, file, filename, save_as_fixed, decimal_point);
