@@ -451,9 +451,9 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 				case FANN_SIGMOID_SYMMETRIC:
 				case FANN_SIGMOID_SYMMETRIC_STEPWISE:
 					if(layer_it == last_layer-1){
-						neuron_it->value = (fann_type)fann_stepwise(o1, o2, o3, o4, o5, o6, ro1, ro2, ro3, ro4, ro5, ro6, neuron_value, multiplier);
+						neuron_it->value = (fann_type)fann_stepwise(o1, o2, o3, o4, o5, o6, ro1, ro2, ro3, ro4, ro5, ro6, neuron_value);
 					}else{
-						neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, neuron_value, multiplier);
+						neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, neuron_value);
 					}
 					break;
 #else
@@ -472,9 +472,9 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 				case FANN_SIGMOID_STEPWISE:
 				case FANN_SIGMOID_SYMMETRIC_STEPWISE:
 					if(layer_it == last_layer-1){
-						neuron_it->value = (fann_type)fann_stepwise(o1, o2, o3, o4, o5, o6, ro1, ro2, ro3, ro4, ro5, ro6, neuron_value, 1);
+						neuron_it->value = (fann_type)fann_stepwise(o1, o2, o3, o4, o5, o6, ro1, ro2, ro3, ro4, ro5, ro6, neuron_value);
 					}else{
-						neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, neuron_value, 1);
+						neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, neuron_value);
 					}
 					break;
 #endif
@@ -544,7 +544,7 @@ void fann_init_weights(struct fann *ann, struct fann_train_data *train_data)
 	}
 
 	num_hidden_neurons = ann->total_neurons - (ann->num_input + ann->num_output + (ann->last_layer - ann->first_layer));
-	scale_factor = powf((float)(0.7f * (float)(ann->total_neurons - (ann->num_input + ann->num_output))),
+	scale_factor = powf((float)(0.7f * (float)num_hidden_neurons),
 				  (float)(1.0f / (float)ann->num_input)) / (float)(largest_inp - smallest_inp);
 
 #ifdef DEBUG
