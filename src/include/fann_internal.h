@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include <math.h>
+#include <stdio.h>
 #include "fann_data.h"
 
 #define FANN_FIX_VERSION "FANN_FIX_1.0"
@@ -40,7 +41,9 @@ void fann_allocate_neurons(struct fann *ann);
 void fann_allocate_connections(struct fann *ann);
 
 int fann_save_internal(struct fann *ann, const char *configuration_file, unsigned int save_as_fixed);
+int fann_save_internal_fd(struct fann *ann, FILE *conf, const char *configuration_file, unsigned int save_as_fixed);
 void fann_save_train_internal(struct fann_train_data* data, char *filename, unsigned int save_as_fixed, unsigned int decimal_point);
+void fann_save_train_internal_fd(struct fann_train_data* data, FILE *file, char *filename, unsigned int save_as_fixed, unsigned int decimal_point);
 
 int fann_compare_connections(const void* c1, const void* c2);
 void fann_seed_rand();
@@ -50,6 +53,9 @@ void fann_update_stepwise_hidden(struct fann *ann);
 void fann_update_stepwise_output(struct fann *ann);
 
 void fann_error(struct fann *ann, unsigned int errno, ...);
+
+struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file);
+struct fann_train_data* fann_read_train_from_fd(FILE *file, char *filename);
 
 /* called fann_max, in order to not interferre with predefined versions of max */
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))

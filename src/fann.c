@@ -275,141 +275,16 @@ struct fann * fann_create(float connection_rate, float learning_rate,
  */
 struct fann * fann_create_from_file(const char *configuration_file)
 {
-	unsigned int num_layers, layer_size, activation_function_hidden, activation_function_output, input_neuron, i;
-#ifdef FIXEDFANN
-	unsigned int decimal_point, multiplier;
-#endif
-	fann_type activation_hidden_steepness, activation_output_steepness;
-	float learning_rate, connection_rate;
-	struct fann_neuron *first_neuron, *neuron_it, *last_neuron, **connected_neurons;
-	fann_type *weights;
-	struct fann_layer *layer_it;
 	struct fann *ann;
-	
-	char *read_version;
 	FILE *conf = fopen(configuration_file, "r");
-	
 	if(!conf){
 		fann_error(NULL, FANN_E_CANT_OPEN_CONFIG_R, configuration_file);
 		return NULL;
 	}
-	
-	read_version = (char *)calloc(strlen(FANN_CONF_VERSION"\n"), 1);
-	if(read_version == NULL){
-		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
-		return NULL;
-	}
-	
-	fread(read_version, 1, strlen(FANN_CONF_VERSION"\n"), conf); /* reads version */
-	
-	/* compares the version information */
-	if(strncmp(read_version, FANN_CONF_VERSION"\n", strlen(FANN_CONF_VERSION"\n")) != 0){
-		fann_error(NULL, FANN_E_WRONG_CONFIG_VERSION, configuration_file);
-		free(read_version);
-		return NULL;
-	}
-
-	free(read_version);
-	
-#ifdef FIXEDFANN
-	if(fscanf(conf, "%u\n", &decimal_point) != 1){
-		fann_error(NULL, FANN_E_CANT_READ_CONFIG, configuration_file);
-		return NULL;
-	}
-	multiplier = 1 << decimal_point;
-#endif
-	
-	if(fscanf(conf, "%u %f %f %u %u "FANNSCANF" "FANNSCANF"\n", &num_layers, &learning_rate, &connection_rate, &activation_function_hidden, &activation_function_output, &activation_hidden_steepness, &activation_output_steepness) != 7){
-		fann_error(NULL, FANN_E_CANT_READ_CONFIG, configuration_file);
-		return NULL;
-	}
-	
-	ann = fann_allocate_structure(learning_rate, num_layers);
-	if(ann == NULL){
-		return NULL;
-	}
-	ann->connection_rate = connection_rate;
-
-#ifdef FIXEDFANN
-	ann->decimal_point = decimal_point;
-	ann->multiplier = multiplier;
-#endif
-	fann_initialise_result_array(ann);
-	
-	fann_set_activation_hidden_steepness(ann, activation_hidden_steepness);
-	fann_set_activation_output_steepness(ann, activation_output_steepness);
-	fann_set_activation_function_hidden(ann, activation_function_hidden);
-	fann_set_activation_function_output(ann, activation_function_output);
-	
-#ifdef DEBUG
-	printf("creating network with learning rate %f\n", learning_rate);
-	printf("input\n");
-#endif
-	
-	/* determine how many neurons there should be in each layer */
-	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
-		if(fscanf(conf, "%u ", &layer_size) != 1){
-			fann_error(ann, FANN_E_CANT_READ_NEURON, configuration_file);
-			fann_destroy(ann);
-			return NULL;
-		}
-		/* we do not allocate room here, but we make sure that
-		   last_neuron - first_neuron is the number of neurons */
-		layer_it->first_neuron = NULL;
-		layer_it->last_neuron = layer_it->first_neuron + layer_size;
-		ann->total_neurons += layer_size;
-#ifdef DEBUG
-		printf("  layer       : %d neurons, 1 bias\n", layer_size);
-#endif
-	}
-	
-	ann->num_input = ann->first_layer->last_neuron - ann->first_layer->first_neuron;
-	ann->num_output = ((ann->last_layer-1)->last_neuron - (ann->last_layer-1)->first_neuron) - 1;
-	
-	/* allocate room for the actual neurons */
-	fann_allocate_neurons(ann);
-	if(ann->errno_f == FANN_E_CANT_ALLOCATE_MEM){
-		fann_destroy(ann);
-		return NULL;
-	}
-	
-	last_neuron = (ann->last_layer-1)->last_neuron;
-	for(neuron_it = ann->first_layer->first_neuron;
-		neuron_it != last_neuron; neuron_it++){
-		if(fscanf(conf, "%u ", &neuron_it->num_connections) != 1){
-			fann_error(ann, FANN_E_CANT_READ_NEURON, configuration_file);
-			fann_destroy(ann);
-			return NULL;
-		}
-		ann->total_connections += neuron_it->num_connections;
-	}
-	
-	fann_allocate_connections(ann);
-	if(ann->errno_f == FANN_E_CANT_ALLOCATE_MEM){
-		fann_destroy(ann);
-		return NULL;
-	}
-	
-	connected_neurons = (ann->first_layer+1)->first_neuron->connected_neurons;
-	weights = (ann->first_layer+1)->first_neuron->weights;
-	first_neuron = ann->first_layer->first_neuron;
-	
-	for(i = 0; i < ann->total_connections; i++){
-		if(fscanf(conf, "(%u "FANNSCANF") ", &input_neuron, &weights[i]) != 2){
-			fann_error(ann, FANN_E_CANT_READ_CONNECTIONS, configuration_file);
-			fann_destroy(ann);
-			return NULL;
-		}
-		connected_neurons[i] = first_neuron+input_neuron;
-	}	
-	
-#ifdef DEBUG
-	printf("output\n");
-#endif
+	ann = fann_create_from_fd(conf, configuration_file);
 	fclose(conf);
 	return ann;
 }
-
 
 /* deallocate the network.
  */
@@ -681,83 +556,18 @@ fann_type *fann_test(struct fann *ann, fann_type *input, fann_type *desired_outp
 
 /* Reads training data from a file.
  */
-struct fann_train_data* fann_read_train_from_file(char *filename)
+struct fann_train_data* fann_read_train_from_file(char *configuration_file)
 {
-	unsigned int num_input, num_output, num_data, i, j;
-	unsigned int line = 1;
 	struct fann_train_data* data;
-	
-	FILE *file = fopen(filename, "r");
-	
-	if(!file){
-		fann_error(NULL, FANN_E_CANT_OPEN_TD_R, filename);
-		return NULL;
-	}
-	
-	data = (struct fann_train_data *)malloc(sizeof(struct fann_train_data));
-	if(data == NULL){
-		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
-		return NULL;
-	}
-	
-	if(fscanf(file, "%u %u %u\n", &num_data, &num_input, &num_output) != 3){
-		fann_error(NULL, FANN_E_CANT_READ_TD, filename, line);
-		fann_destroy_train(data);
-		return NULL;
-	}
-	line++;
-	
-	data->num_data = num_data;
-	data->num_input = num_input;
-	data->num_output = num_output;
-	data->input = (fann_type **)calloc(num_data, sizeof(fann_type *));
-	if(data->input == NULL){
-		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
-		fann_destroy_train(data);
-		return NULL;
-	}
-	
-	data->output = (fann_type **)calloc(num_data, sizeof(fann_type *));
-	if(data->output == NULL){
-		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
-		fann_destroy_train(data);
-		return NULL;
-	}
-	
-	for(i = 0; i != num_data; i++){
-		data->input[i] = (fann_type *)calloc(num_input, sizeof(fann_type));
-		if(data->input[i] == NULL){
-			fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
-			fann_destroy_train(data);
-			return NULL;
-		}
-		
-		for(j = 0; j != num_input; j++){
-			if(fscanf(file, FANNSCANF" ", &data->input[i][j]) != 1){
-				fann_error(NULL, FANN_E_CANT_READ_TD, filename, line);
-				fann_destroy_train(data);
-				return NULL;
-			}
-		}
-		line++;
-		
-		data->output[i] = (fann_type *)calloc(num_output, sizeof(fann_type));
-		if(data->output[i] == NULL){
-			fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
-			fann_destroy_train(data);
-			return NULL;
-		}
+	FILE *file = fopen(configuration_file, "r");
 
-		for(j = 0; j != num_output; j++){
-			if(fscanf(file, FANNSCANF" ", &data->output[i][j]) != 1){
-				fann_error(NULL, FANN_E_CANT_READ_TD, filename, line);
-				fann_destroy_train(data);
-				return NULL;
-			}
-		}
-		line++;
+	if(!file){
+		fann_error(NULL, FANN_E_CANT_OPEN_CONFIG_R, configuration_file);
+		return NULL;
 	}
-	
+
+	data = fann_read_train_from_fd(file, configuration_file);
+	fclose(file);
 	return data;
 }
 
