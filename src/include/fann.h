@@ -121,15 +121,15 @@ FANN_EXTERNAL struct fann * FANN_API fann_create(float connection_rate, float le
 FANN_EXTERNAL struct fann * FANN_API fann_create_array(float connection_rate, float learning_rate,
 	unsigned int num_layers, unsigned int * layers);
 
-/* create a fully connected neural network with forward connections.
+/* create a fully connected neural network with shortcut connections.
  */
-FANN_EXTERNAL struct fann * FANN_API fann_create_forward(float learning_rate,
+FANN_EXTERNAL struct fann * FANN_API fann_create_shortcut(float learning_rate,
 	unsigned int num_layers, /* the number of layers, including the input and output layer */
 	...); /* the number of neurons in each of the layers, starting with the input layer and ending with the output layer */
 
-/* create a neural network with forward connections.
+/* create a neural network with shortcut connections.
  */
-FANN_EXTERNAL struct fann * FANN_API fann_create_forward_array(float learning_rate, unsigned int num_layers, unsigned int * layers);	
+FANN_EXTERNAL struct fann * FANN_API fann_create_shortcut_array(float learning_rate, unsigned int num_layers, unsigned int * layers);	
 	
 /* Runs a input through the network, and returns the output.
  */
@@ -377,17 +377,13 @@ FANN_EXTERNAL fann_type FANN_API fann_get_activation_output_steepness(struct fan
  */
 FANN_EXTERNAL void FANN_API fann_set_activation_output_steepness(struct fann *ann, fann_type steepness);
 
-/* When using this, training is usually faster. (default).
-   Makes the error used for calculating the slopes
-   higher when the difference is higher.
+/* Get the error function used during training. (default FANN_ERRORFUNC_TANH)
  */
-FANN_EXTERNAL void FANN_API fann_set_use_tanh_error_function(struct fann *ann, unsigned int use_tanh_error_function);
+FANN_EXTERNAL void FANN_API fann_set_train_error_function(struct fann *ann, unsigned int train_error_function);
 
-/* When using this, training is usually faster. (default).
-   Makes the error used for calculating the slopes
-   higher when the difference is higher.
+/* Get the error function used during training.
  */
-FANN_EXTERNAL unsigned int FANN_API fann_get_use_tanh_error_function(struct fann *ann);
+FANN_EXTERNAL unsigned int FANN_API fann_get_train_error_function(struct fann *ann);
 
 /* Decay is used to make the weights do not go so high (default -0.0001). */
 FANN_EXTERNAL float FANN_API fann_get_quickprop_decay(struct fann *ann);

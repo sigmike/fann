@@ -3,7 +3,6 @@
 * Implement the activation functions defined in fann_activation.h
 * More checks to see if train data is properly formatted in the file (some have experienced nasty problems because a number was missing in one line).
 * C++ wrapper.
-* DLL.
 * COM Component.
 * Wrappers for other languages.
 * Implement optimal brain damage.
@@ -11,3 +10,38 @@
 * Allow recurrent networks.
 
 If you want to contribute to the library, please contact me at lukesky@diku.dk
+
+Things TODO when releasing a new version (mostly for fann developers)
+
+* No compile warnings
+	cd examples
+	make compiletest
+
+* Everything should compile and install ok
+	./configure && make
+	su
+	make install
+	exit
+	cd examples
+	make runtest
+
+* No memory leaks must exist
+	cd examples
+	rundebug
+
+* Documentation should be updated
+
+* Python bindings should compile and run
+	cd python
+	make
+	python simple_train.py
+
+* Changelog should be updated and timestamp should be set
+
+* PHP Extension should be up-to-date (including documentation)
+
+* Debian packages should be created
+
+* RPM packages should be created
+
+* Windows DLL's should be created

@@ -40,8 +40,8 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("Total neurons and biases   : %2d\n", fann_get_total_neurons(ann));
 	printf("Total connections          : %2d\n", ann->total_connections);
 	printf("Connection rate            : %5.2f\n", ann->connection_rate);
-	printf("Forward connections        : %2d\n", ann->forward_connections);
-	printf("Training algorithm         :  %s\n", FANN_TRAINING_NAMES[ann->training_algorithm]);	
+	printf("Shortcut connections        : %2d\n", ann->shortcut_connections);
+	printf("Training algorithm         :  %s\n", FANN_TRAIN_NAMES[ann->training_algorithm]);	
 	printf("Learning rate              : %5.2f\n", ann->learning_rate);
 	printf("Activation function hidden :  %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_hidden]);
 	printf("Activation function output :  %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_output]);
@@ -54,7 +54,7 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("Decimal point              : %2d\n", ann->decimal_point);
 	printf("Multiplier                 : %2d\n", ann->multiplier);
 #endif
-	printf("Use tanh error function    : %2d\n", ann->use_tanh_error_function);
+	printf("Training error function    :  %s\n", FANN_ERRORFUNC_NAMES[ann->train_error_function]);
 	printf("Quickprop decay            : %9.6f\n", ann->quickprop_decay);
 	printf("Quickprop mu               : %5.2f\n", ann->quickprop_mu);
 	printf("RPROP increase factor      : %5.2f\n", ann->rprop_increase_factor);
@@ -183,9 +183,9 @@ struct fann_neuron** fann_get_connections(struct fann *ann)
    Makes the error used for calculating the slopes
    higher when the difference is higher.
  */
-FANN_EXTERNAL void FANN_API fann_set_use_tanh_error_function(struct fann *ann, unsigned int use_tanh_error_function)
+FANN_EXTERNAL void FANN_API fann_set_train_error_function(struct fann *ann, unsigned int train_error_function)
 {
-	ann->use_tanh_error_function = use_tanh_error_function;
+	ann->train_error_function = train_error_function;
 }
 
 /* Decay is used to make the weights do not go so high (default -0.0001). */
@@ -228,9 +228,9 @@ FANN_EXTERNAL void FANN_API fann_set_rprop_delta_max(struct fann *ann, float rpr
    Makes the error used for calculating the slopes
    higher when the difference is higher.
  */
-FANN_EXTERNAL unsigned int FANN_API fann_get_use_tanh_error_function(struct fann *ann)
+FANN_EXTERNAL unsigned int FANN_API fann_get_train_error_function(struct fann *ann)
 {
-	return ann->use_tanh_error_function;
+	return ann->train_error_function;
 }
 
 /* Decay is used to make the weights do not go so high (default -0.0001). */

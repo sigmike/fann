@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.18 2004/06/24 21:36:02 looksirdroids Exp $ -->
+<!-- $Id: fann.xml,v 1.19 2004/07/05 23:05:50 looksirdroids Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -785,16 +785,16 @@ fann_destroy(ann2);
           <para>This function appears in FANN &gt;= 1.0.5.</para>
         </refsect1>
       </refentry>
-      <refentry id="api.fann_create_forward">
+      <refentry id="api.fann_create_shortcut">
         <refnamediv>
-          <refname>fann_create_forward</refname>
-          <refpurpose>Create a new artificial neural network with forward connections, and return a pointer to it.</refpurpose>
+          <refname>fann_create_shortcut</refname>
+          <refpurpose>Create a new artificial neural network with shortcut connections, and return a pointer to it.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
             <type>struct fann *</type>
-            <methodname>fann_create_forward</methodname>
+            <methodname>fann_create_shortcut</methodname>
             <methodparam>
               <type>float</type>
               <parameter>learning_rate</parameter>
@@ -809,12 +809,12 @@ fann_destroy(ann2);
             </methodparam>
           </methodsynopsis>
           <para>
-            <function>fann_create_forward</function> will create a new artificial neural network, and return
-	    a pointer to it. The network will be fully connected, and will furthermore have all forward 
+            <function>fann_create_shortcut</function> will create a new artificial neural network, and return
+	    a pointer to it. The network will be fully connected, and will furthermore have all shortcut 
 	    connections connected.
 	  </para>
 	  <para>
-            Forward connections are connections that skip layers. A fully connected network with forward
+            Shortcut connections are connections that skip layers. A fully connected network with shortcut
 	    connections, is a network where all neurons are connected to all neurons in later layers. 
 	    Including direct connections from the input layer to the output layer.
 	  </para>
@@ -826,16 +826,16 @@ fann_destroy(ann2);
           <para>This function appears in FANN &gt;= 1.2.0.</para>
         </refsect1>
       </refentry>
-      <refentry id="api.fann_create_forward_array">
+      <refentry id="api.fann_create_shortcut_array">
         <refnamediv>
-          <refname>fann_create_forward_array</refname>
-          <refpurpose>Create a new artificial neural network with forward connections, and return a pointer to it.</refpurpose>
+          <refname>fann_create_shortcut_array</refname>
+          <refpurpose>Create a new artificial neural network with shortcut connections, and return a pointer to it.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
             <type>struct fann *</type>
-            <methodname>fann_create_forward_array</methodname>
+            <methodname>fann_create_shortcut_array</methodname>
             <methodparam>
               <type>float</type>
               <parameter>learning_rate</parameter>
@@ -850,8 +850,8 @@ fann_destroy(ann2);
             </methodparam>
           </methodsynopsis>
           <para>
-            <function>fann_create_forward_array</function> will create a new artificial neural network, and return a pointer to
-	    it. It is the same as <function>fann_create_forward</function>, only it accepts an array as its final parameter
+            <function>fann_create_shortcut_array</function> will create a new artificial neural network, and return a pointer to
+	    it. It is the same as <function>fann_create_shortcut</function>, only it accepts an array as its final parameter
 	    instead of variable arguments.
 	  </para>
           <para>This function appears in FANN &gt;= 1.2.0.</para>
@@ -1691,31 +1691,6 @@ L   2 / N    6 ...cda
 	  <para>
 	    Prints all the parameters of the network, for easy viewing of all the values.
 	  </para>
-          <para>
-	    An example print of a freshly created (2 3 1) ANN is displayd here:
-	    <literallayout class="monospaced" id="api.fann_print_parameters.output">
-Input layer                :  2 neurons, 1 bias
-  Hidden layer             :  3 neurons, 1 bias
-Output layer               :  1 neurons
-Total neurons and biases   :  8
-Total connections          : 13
-Connection rate            :  1.00
-Forward connections        :  0
-Training algorithm         :  FANN_TRAIN_RPROP
-Learning rate              :  0.70
-Activation function hidden :  FANN_SIGMOID_STEPWISE
-Activation function output :  FANN_SIGMOID_STEPWISE
-Activation steepness hidden:  0.50
-Activation steepness output:  0.50
-Use tanh error function    :  1
-Quickprop decay            : -0.000100
-Quickprop mu               :  1.75
-RPROP increase factor      :  1.20
-RPROP decrease factor      :  0.50
-RPROP delta min            :  0.00
-RPROP delta max            : 50.00
-	    </literallayout>
-  	  </para>
           <para>This function appears in FANN &gt;= 1.2.0.</para>
         </refsect1>
       </refentry>
@@ -2030,64 +2005,50 @@ RPROP delta max            : 50.00
           <para>This function appears in FANN &gt;= 1.2.0. and replaces the <methodname>fann_set_activation_output_steepness</methodname> function from FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
-      <refentry id="api.fann_set_use_tanh_error_function">
+      <refentry id="api.fann_set_train_error_function">
         <refnamediv>
-          <refname>fann_set_use_tanh_error_function</refname>
-          <refpurpose>Sets whether the tanh error function is used.</refpurpose>
+          <refname>fann_set_train_error_function</refname>
+          <refpurpose>Sets the training error function to be used.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
             <type>void</type>
-            <methodname>fann_get_use_tanh_error_function</methodname>
+            <methodname>fann_set_train_error_function</methodname>
             <methodparam>
               <type>struct fann *</type>
               <parameter>ann</parameter>
             </methodparam>
             <methodparam>
               <type>unsigned int</type>
-              <parameter>use_tanh_error_function</parameter>
+              <parameter>train_error_function</parameter>
             </methodparam>
           </methodsynopsis>
+          <para>Set the training error function (as described in <link linkend="api.sec.constants.errorfunc">Training Error Functions</link>) of a network.</para>
 	  <para>
-	    If <parameter>use_tanh_error_function</parameter> is zero, the tanh error 
-	    function is not used and if it is one, the tanh error function is used.
-	  </para>
-          <para>
-	    The tanh error function is an error function that makes large deviations 
-	    stand out, by altering the error value used when training the network.
-	    The idea behind this is that it is worse to have 1 output that misses the target
-	    by 100%, than having 10 outputs that misses the target by 10%.
-	  </para>
-	  <para>
-	    The default behavior is to use the tanh error function.
+	    The default training error function is <link linkend="api.sec.constants.errorfunc"><constant>FANN_ERRORFUNC_TANH</constant></link>.
 	  </para>
           <para>This function appears in FANN &gt;= 1.2.0.</para>
         </refsect1>
       </refentry>
-      <refentry id="api.fann_get_use_tanh_error_function">
+      <refentry id="api.fann_get_train_error_function">
         <refnamediv>
-          <refname>fann_get_use_tanh_error_function</refname>
-          <refpurpose>Sees if the tanh error function is used.</refpurpose>
+          <refname>fann_get_train_error_function</refname>
+          <refpurpose>Gets the training error function to be used.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
             <type>unsigned int</type>
-            <methodname>fann_get_use_tanh_error_function</methodname>
+            <methodname>fann_get_train_error_function</methodname>
             <methodparam>
               <type>struct fann *</type>
               <parameter>ann</parameter>
             </methodparam>
           </methodsynopsis>
-          <para>
-	    The tanh error function is an error function that makes large deviations 
-	    stand out, by altering the error value used when training the network.
-	    The idea behind this is that it is worse to have 1 output that misses the target
-	    by 100%, than having 10 outputs that misses the target by 10%.
-	  </para>
+          <para>Get the training error function (as described in <link linkend="api.sec.constants.errorfunc">Training Error Functions</link>) of a network.</para>
 	  <para>
-	    The default behavior is to use this tanh error function.
+	    The default training error function is <link linkend="api.sec.constants.errorfunc"><constant>FANN_ERRORFUNC_TANH</constant></link>.
 	  </para>
           <para>This function appears in FANN &gt;= 1.2.0.</para>
         </refsect1>
@@ -2747,17 +2708,17 @@ RPROP delta max            : 50.00
             <varlistentry>
               <term>
                 <type>unsigned int</type>
-                <varname>forward_connections</varname>
+                <varname>shortcut_connections</varname>
               </term>
               <listitem>
                 <para>
-		  Is 1 if forward connections are used in the ann otherwise 0
-		  Forward connections are connections that skip layers.
-		  A fully connected ann with forward connections is an ann where
+		  Is 1 if shortcut connections are used in the ann otherwise 0
+		  Shortcut connections are connections that skip layers.
+		  A fully connected ann with shortcut connections is an ann where
 		  neurons have connections to all neurons in all later layers.
 		</para>
 		<para>
-		  ANNs with forward connections are created by <link linkend="api.fann_create_forward"><function>fann_create_forward</function></link>.
+		  ANNs with shortcut connections are created by <link linkend="api.fann_create_shortcut"><function>fann_create_shortcut</function></link>.
 		</para>
               </listitem>
             </varlistentry>
@@ -2987,7 +2948,7 @@ RPROP delta max            : 50.00
             <varlistentry>
               <term>
                 <type>unsigned int</type>
-                <varname>use_tanh_error_function</varname>
+                <varname>train_error_function</varname>
               </term>
               <listitem>
                 <para>When using this, training is usually faster.
@@ -3490,6 +3451,50 @@ RPROP delta max            : 50.00
 		  Stepwise linear approximation to symmetric sigmoid. Faster than symmetric sigmoid but a bit less precise.
 		</para>
 		<para> This activation function gives output that is between -1 and 1.</para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
+        </refsect1>
+      </refentry>
+      <refentry id="api.sec.constants.errorfunc">
+        <refnamediv>
+          <refname id="api.sec.constants.errorfunc.title">Training Error Functions</refname>
+          <refpurpose>Constants representing errors functions.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+	  <para>
+	    These constants represent the error functions used when calculating the error during training.
+	  </para>
+	  <para>
+	    The training error function used is chosen by the 
+	    <link linkend="api.fann_set_train_error_function"><function>fann_set_train_error_function</function></link> 
+	    function. The default training error function is <constant>FANN_ERRORFUNC_TANH</constant>.
+	  </para>
+          <variablelist>
+            <title>Constants</title>
+            <varlistentry>
+              <term>FANN_ERRORFUNC_LINEAR</term>
+              <listitem>
+                <para>
+		  The basic linear error function which simply calculates the error as the difference
+		  between the real output and the desired output.
+		</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>FANN_ERRORFUNC_TANH</term>
+              <listitem>
+                <para>
+		  The tanh error function is an error function that makes large deviations 
+		  stand out, by altering the error value used when training the network.
+		  The idea behind this is that it is worse to have 1 output that misses the target
+		  by 100%, than having 10 outputs that misses the target by 10%.
+		</para>
+		<para>
+		  This is the default error function and it is usually better. It can however 
+		  give poor results with high learning rates.
+		</para>
               </listitem>
             </varlistentry>
           </variablelist>

@@ -182,7 +182,7 @@ void fann_compute_MSE(struct fann *ann, fann_type *desired_output)
 		
 		ann->MSE_value += (float)(neuron_diff * neuron_diff);
 
-		if(ann->use_tanh_error_function){
+		if(ann->train_error_function){ /* TODO make switch when more functions */
 			if ( neuron_diff < -.9999999 )
 				neuron_diff = -17.0;
 			else if ( neuron_diff > .9999999 )
@@ -227,9 +227,9 @@ void fann_backpropagate_MSE(struct fann *ann)
 		last_neuron = layer_it->last_neuron;
 
 		/* for each connection in this layer, propagate the error backwards*/
-		if(ann->connection_rate >= 1 && !ann->forward_connections){
+		if(ann->connection_rate >= 1 && !ann->shortcut_connections){
 			/* optimization for fully connected networks */
-			/* but not forward connected networks */
+			/* but not shortcut connected networks */
 			error_prev_layer = error_begin + ((layer_it-1)->first_neuron - first_neuron);
 			for(neuron_it = layer_it->first_neuron;
 				neuron_it != last_neuron; neuron_it++){
@@ -316,9 +316,9 @@ void fann_update_weights(struct fann *ann)
 		printf("layer[%d]\n", layer_it - first_layer);
 #endif
 		last_neuron = layer_it->last_neuron;
-		if(ann->connection_rate >= 1 && !ann->forward_connections){
+		if(ann->connection_rate >= 1 && !ann->shortcut_connections){
 			/* optimization for fully connected networks */
-			/* but not forward connected networks */			
+			/* but not shortcut connected networks */			
 			prev_neurons = (layer_it-1)->first_neuron;
 			for(neuron_it = layer_it->first_neuron;
 				neuron_it != last_neuron; neuron_it++){
@@ -378,9 +378,9 @@ void fann_update_slopes_batch(struct fann *ann)
 		printf("layer[%d]\n", layer_it - first_layer);
 #endif
 		last_neuron = layer_it->last_neuron;
-		if(ann->connection_rate >= 1 && !ann->forward_connections){
+		if(ann->connection_rate >= 1 && !ann->shortcut_connections){
 			/* optimization for fully connected networks */
-			/* but not forward connected networks */			
+			/* but not shortcut connected networks */			
 			prev_neurons = (layer_it-1)->first_neuron;
 			for(neuron_it = layer_it->first_neuron;
 				neuron_it != last_neuron; neuron_it++){

@@ -1,10 +1,10 @@
 libfann (1.2.0) stable; urgency=low
 	* Fixes for better compability with different compilers
-	* Connections that skip layers
+	* Shortcut connections that skip layers
 	* fann_print_connections function
 	* More activation functions
 	* Batch training
-	* RPROP training
+	* RPROP training (default)
 	* Quickprop training
 	* fann_get_training_algorithm and fann_set_training_algorithm functions
 	* fann_test_data function

@@ -71,5 +71,3 @@ rundebug: $(DEBUG_TARGETS)
 	@echo
 	@echo Testing network with fixed points
 	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_test_fixed_debug
-
-

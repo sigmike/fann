@@ -280,9 +280,9 @@ FANN_EXTERNAL struct fann * FANN_API fann_create_array(float connection_rate, fl
 }
 
  
-/* create a neural network with forward connections.
+/* create a neural network with shortcut connections.
  */
-FANN_EXTERNAL struct fann * FANN_API fann_create_forward(float learning_rate,
+FANN_EXTERNAL struct fann * FANN_API fann_create_shortcut(float learning_rate,
 	unsigned int num_layers, /* the number of layers, including the input and output layer */
 
 
@@ -299,16 +299,16 @@ FANN_EXTERNAL struct fann * FANN_API fann_create_forward(float learning_rate,
 	}
 	va_end(layer_sizes);
 
-	ann = fann_create_forward_array(learning_rate, num_layers, layers);
+	ann = fann_create_shortcut_array(learning_rate, num_layers, layers);
 
 	free(layers);
 
 	return ann;
 }
 
-/* create a neural network with forward connections.
+/* create a neural network with shortcut connections.
  */
-FANN_EXTERNAL struct fann * FANN_API fann_create_forward_array(float learning_rate, unsigned int num_layers, unsigned int * layers)
+FANN_EXTERNAL struct fann * FANN_API fann_create_shortcut_array(float learning_rate, unsigned int num_layers, unsigned int * layers)
 {
 	struct fann_layer *layer_it, *layer_it2, *last_layer;
 	struct fann *ann;
@@ -331,7 +331,7 @@ FANN_EXTERNAL struct fann * FANN_API fann_create_forward_array(float learning_ra
 	}
 
 	ann->connection_rate = 1;
-	ann->forward_connections = 1;
+	ann->shortcut_connections = 1;
 #ifdef FIXEDFANN
 	decimal_point = ann->decimal_point;
 	multiplier = ann->multiplier;
@@ -360,7 +360,7 @@ FANN_EXTERNAL struct fann * FANN_API fann_create_forward_array(float learning_ra
 	}
 	
 #ifdef DEBUG
-	printf("creating fully forward connected network with learning rate %f.\n", learning_rate);
+	printf("creating fully shortcut connected network with learning rate %f.\n", learning_rate);
 	printf("input\n");
 	printf("  layer       : %d neurons, 1 bias\n", ann->first_layer->last_neuron - ann->first_layer->first_neuron - 1);
 #endif
@@ -543,7 +543,7 @@ FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 			weights = neuron_it->weights;
 			
 			if(ann->connection_rate >= 1){
-				if(ann->forward_connections){
+				if(ann->shortcut_connections){
 					/* first go through the connections to the previous layers,
 					   then let the normal operation go through the rest.
 					*/
@@ -854,8 +854,8 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 	ann->training_algorithm = FANN_TRAIN_RPROP;
 	ann->num_MSE = 0;
 	ann->MSE_value = 0;
-	ann->forward_connections = 0;
-	ann->use_tanh_error_function = 1;
+	ann->shortcut_connections = 0;
+	ann->train_error_function = FANN_ERRORFUNC_TANH;
 
 	/* variables used for cascade correlation (reasonable defaults) */
 	/*ann->change_fraction = 0.01;

@@ -75,12 +75,12 @@ struct fann
 	 */
 	float connection_rate;
 
-	/* is 1 if forward connections are used in the ann otherwise 0
-	 * Forward connections are connections that skip layers.
-	 * A fully connected ann with forward connections are a ann where
+	/* is 1 if shortcut connections are used in the ann otherwise 0
+	 * Shortcut connections are connections that skip layers.
+	 * A fully connected ann with shortcut connections are a ann where
 	 * neurons have connections to all neurons in all later layers.
 	 */
-	unsigned int forward_connections;
+	unsigned int shortcut_connections;
 
 	/* pointer to the first layer (input layer) in an array af all the layers,
 	 * including the input and outputlayers 
@@ -167,11 +167,9 @@ struct fann
 	 */
 	float MSE_value;
 
-	/* When using this, training is usually faster.
-	   Makes the error used for calculating the slopes
-	   higher when the difference is higher.
+	/* The error function used during training. (default FANN_ERRORFUNC_TANH)
 	 */
-	unsigned int use_tanh_error_function;
+	unsigned int train_error_function;
 	
 	/* Variables for use with Cascade Correlation */
 
@@ -258,11 +256,24 @@ enum {
 	FANN_TRAIN_QUICKPROP
 };
 
-static char const * const FANN_TRAINING_NAMES[] = {
+static char const * const FANN_TRAIN_NAMES[] = {
 	"FANN_TRAIN_INCREMENTAL",
 	"FANN_TRAIN_BATCH",
 	"FANN_TRAIN_RPROP",
 	"FANN_TRAIN_QUICKPROP"
+};
+
+enum {
+	/* Standard linear error function */
+	FANN_ERRORFUNC_LINEAR = 0,
+	/* Tanh error function, usually better but can require
+	   a lower learning rate */
+	FANN_ERRORFUNC_TANH
+};
+
+static char const * const FANN_ERRORFUNC_NAMES[] = {
+	"FANN_ERRORFUNC_LINEAR",
+	"FANN_ERRORFUNC_TANH"
 };
 
 #endif
