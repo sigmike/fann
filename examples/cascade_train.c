@@ -25,63 +25,57 @@ int main()
 {
 	const float learning_rate = (const float)0.7;
 	const float desired_error = (const float)0.001;
-	unsigned int max_out_epochs = 10000;
-	unsigned int max_cand_epochs = 10000;
-	unsigned int max_neurons = 50;
+	unsigned int max_out_epochs = 500;
+	unsigned int max_cand_epochs = 500;
+	unsigned int max_neurons = 20;
 	unsigned int neurons_between_reports = 1;
-	unsigned int i = 0;
-	fann_type *calc_out;
 	struct fann *ann;
 	struct fann_train_data *train_data, *test_data;
 	
 	printf("Reading data.\n");
 
-	train_data = fann_read_train_from_file("../benchmarks/datasets/building.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/building.test");
+	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.test");
+
+	/* this is in range -1 to 1 */
+	/*
+	train_data = fann_read_train_from_file("../benchmarks/datasets/parity4.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/parity4.test");
+	*/
+
+	
+	train_data = fann_read_train_from_file("xor.data");
+	test_data = fann_read_train_from_file("xor.data");
+	
 
 	printf("Creating network.\n");
 
 	ann = fann_create_shortcut(learning_rate, 2, train_data->num_input, train_data->num_output);
-
-	fann_set_activation_function_hidden(ann, FANN_SIGMOID);
-	fann_set_activation_function_output(ann, FANN_SIGMOID);
 	
-	/*fann_print_connections(ann);*/
+	fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP);
+	fann_set_activation_steepness_hidden(ann, 1);
+	fann_set_activation_steepness_output(ann, 1);
+	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
+	fann_set_activation_function_output(ann, FANN_SIGMOID_SYMMETRIC);
+	
 	fann_print_parameters(ann);
+	/*fann_print_connections(ann);*/
 
 	printf("Training network.\n");
 	
-	/*fann_train_on_data(ann, train_data, 300, 1, desired_error);*/
-	printf("\nTrain error: %f, Test error: %f\n\n", fann_test_data(ann, train_data), fann_test_data(ann, test_data));
-
 	fann_cascadetrain_on_data_callback(ann, train_data, desired_error, NULL, max_out_epochs, max_cand_epochs, max_neurons, neurons_between_reports);
 
-	printf("\nTrain error: %f, Test error: %f\n\n", fann_test_data(ann, train_data), fann_test_data(ann, test_data));
+	/*fann_train_on_data(ann, train_data, 300, 1, desired_error);*/
+	/*printf("\nTrain error: %f, Test error: %f\n\n", fann_test_data(ann, train_data), fann_test_data(ann, test_data));*/
 
 	fann_print_connections(ann);
 	/*fann_print_parameters(ann);*/
 
-	/*
-	printf("\nTesting network.\n");
-	
-	for(i = 0; i < test_data->num_data; i++){
-		calc_out = fann_run(ann, test_data->input[i]);
-		printf("XOR test (%f,%f) -> %f, should be %f, difference=%f\n",
-		test_data->input[i][0], test_data->input[i][1], *calc_out, test_data->output[i][0], fann_abs(*calc_out - test_data->output[i][0]));
-	}
-	*/
-	
+	printf("\nTrain error: %f, Test error: %f\n\n", fann_test_data(ann, train_data), fann_test_data(ann, test_data));
+
 	printf("Saving network.\n");
 
 	fann_save(ann, "xor_float.net");
-	
-	/*fann_randomize_weights(ann, -0.1, 0.1);
-	  fann_train_on_data(ann, train_data, max_out_epochs, 1, desired_error);
-	
-	printf("\nTrain error: %f, Test error: %f\n\n", fann_test_data(ann, train_data), fann_test_data(ann, test_data));
-
-	fann_print_connections(ann);
-	fann_print_parameters(ann);*/
 
 	printf("Cleaning up.\n");
 	fann_destroy_train(train_data);

@@ -38,20 +38,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "floatfann.h"
 
 unsigned int num_errors = 0;
+unsigned int num_bit_fail = 0;
 double error_value = 0;
 
 void clear_error()
 {
 	num_errors = 0;
 	error_value = 0;
+	num_bit_fail = 0;
 }
 
 void update_error(fann_type *output, fann_type *desired_output, unsigned int num_output)
 {
 	unsigned int i = 0;
+	double error_val = 0;
 	/* calculate the error */
 	for(i = 0; i < num_output; i++){
-		error_value += (desired_output[i] - output[i]) * (desired_output[i] - output[i]);
+		error_val = (desired_output[i] - output[i]) * (desired_output[i] - output[i]);
+		error_value += error_val;
+
+		if(error_val >= 0.25){
+			num_bit_fail++;
+		}
 	}
 	num_errors++;
 }
@@ -72,7 +80,7 @@ void quality_benchmark_jneural(
 	unsigned int seconds_of_training, double seconds_between_reports)
 {
 	float train_error, test_error;
-	unsigned int i;
+	unsigned int i, train_bit_fail, test_bit_fail;
 	unsigned int epochs = 0;
 	double elapsed = 0;
 	double total_elapsed = 0;
@@ -111,6 +119,7 @@ void quality_benchmark_jneural(
 			update_error(output, train_data->output[i], train_data->num_output);
 		}
 		train_error = mean_error();
+		train_bit_fail = num_bit_fail;
 
 		clear_error();
 		for(i = 0; i != test_data->num_data; i++){
@@ -119,10 +128,11 @@ void quality_benchmark_jneural(
 			update_error(output, test_data->output[i], test_data->num_output);
 		}
 		test_error = mean_error();
+		test_bit_fail = num_bit_fail;
 
 		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
 		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);
-		fprintf(stderr, "secs: %8.2f, train: %8.6f, test: %8.6f, epochs: %5d\r", total_elapsed, train_error, test_error, epochs);
+		fprintf(stderr, "secs: %8.2f, train: %8.6f (%4d), test: %8.6f (%4d), epochs: %5d\r", total_elapsed, train_error, train_bit_fail, test_error, test_bit_fail, epochs);
 	}
 
 	fprintf(stdout, "\nepochs: %d, epochs/sec: %f\n", epochs, epochs/total_elapsed);
@@ -131,7 +141,7 @@ void quality_benchmark_jneural(
 }
 #endif
 
-void quality_benchmark_fann(bool stepwise, unsigned int training_algorithm,
+void quality_benchmark_fann(bool stepwise, int training_algorithm,
 	char *filename,
 	struct fann_train_data *train_data,
 	struct fann_train_data *test_data,
@@ -141,7 +151,7 @@ void quality_benchmark_fann(bool stepwise, unsigned int training_algorithm,
 	unsigned int seconds_of_training, double seconds_between_reports)
 {
 	float train_error, test_error;
-	unsigned int i, decimal_point, j;
+	unsigned int i, decimal_point, j, train_bit_fail, test_bit_fail;
 	unsigned int epochs = 0;
 	double elapsed = 0;
 	double total_elapsed = 0;
@@ -193,6 +203,7 @@ void quality_benchmark_fann(bool stepwise, unsigned int training_algorithm,
 			update_error(output, train_data->output[i], train_data->num_output);
 		}
 		train_error = mean_error();
+		train_bit_fail = num_bit_fail;
 
 		clear_error();
 		for(i = 0; i != test_data->num_data; i++){
@@ -200,10 +211,11 @@ void quality_benchmark_fann(bool stepwise, unsigned int training_algorithm,
 			update_error(output, test_data->output[i], test_data->num_output);
 		}
 		test_error = mean_error();
+		test_bit_fail = num_bit_fail;
 
 		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
 		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);
-		fprintf(stderr, "secs: %8.2f, train: %8.6f, test: %8.6f, epochs: %5d\r", total_elapsed, train_error, test_error, epochs);
+		fprintf(stderr, "secs: %8.2f, train: %8.6f (%4d), test: %8.6f (%4d), epochs: %5d\r", total_elapsed, train_error, train_bit_fail, test_error, test_bit_fail, epochs);
 
 		/* Save the data as fixed point, to allow for drawing of
 		   a fixed point graph */
@@ -225,6 +237,71 @@ void quality_benchmark_fann(bool stepwise, unsigned int training_algorithm,
 	fann_destroy(ann);	
 }
 
+void quality_benchmark_cascade(
+	struct fann_train_data *train_data,
+	struct fann_train_data *test_data,
+	FILE *train_out, FILE *test_out,
+	unsigned int num_input, unsigned int num_output,
+	unsigned int seconds_of_training, double seconds_between_reports)
+{
+	float train_error = 0;
+	float test_error = 0;
+	unsigned int i, train_bit_fail, test_bit_fail;
+	unsigned int epochs = 0;
+	double elapsed = 0;
+	double total_elapsed = 0;
+	fann_type *output;
+	struct fann *ann;
+
+	ann = fann_create_shortcut(0.7, 2, num_input, num_output);
+	fann_set_activation_steepness_hidden(ann, 1);
+	fann_set_activation_steepness_output(ann, 1);
+	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
+	fann_set_activation_function_output(ann, FANN_SIGMOID);
+	calibrate_timer();
+
+	while(total_elapsed < (double)seconds_of_training){
+		/* train */
+		elapsed = 0;
+		start_timer();
+		while(elapsed < (double)seconds_between_reports){
+			fann_cascadetrain_on_data_callback(ann, train_data, 0, NULL, 150, 150, 1, 0);
+
+			elapsed = time_elapsed();
+			epochs++;
+		}
+		stop_timer();
+		total_elapsed += getSecs();
+
+		/* make report */
+		
+		clear_error();
+		for(i = 0; i != train_data->num_data; i++){
+			output = fann_run(ann, train_data->input[i]);
+			update_error(output, train_data->output[i], train_data->num_output);
+		}
+		train_error = mean_error();
+		train_bit_fail = num_bit_fail;
+
+		clear_error();
+		for(i = 0; i != test_data->num_data; i++){
+			output = fann_run(ann, test_data->input[i]);
+			update_error(output, test_data->output[i], test_data->num_output);
+		}
+		test_error = mean_error();
+		test_bit_fail = num_bit_fail;
+		
+
+		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
+		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);
+		fprintf(stderr, "secs: %8.2f, train: %8.6f (%4d), test: %8.6f (%4d), epochs: %5d\r", total_elapsed, train_error, train_bit_fail, test_error, test_bit_fail, epochs);
+	}
+
+	fprintf(stdout, "\nepochs: %d, epochs/sec: %f\n", epochs, epochs/total_elapsed);
+
+	fann_destroy(ann);
+}
+
 #ifdef LWNN
 void quality_benchmark_lwnn(
 	struct fann_train_data *train_data,
@@ -236,7 +313,7 @@ void quality_benchmark_lwnn(
 {
 	float train_error = 0;
 	float test_error = 0;
-	unsigned int i;
+	unsigned int i, train_bit_fail, test_bit_fail;
 	unsigned int epochs = 0;
 	double elapsed = 0;
 	double total_elapsed = 0;
@@ -285,6 +362,7 @@ void quality_benchmark_lwnn(
 			update_error(output, train_data->output[i], train_data->num_output);
 		}
 		train_error = mean_error();
+		train_bit_fail = num_bit_fail;
 
 		clear_error();
 		for(i = 0; i != test_data->num_data; i++){
@@ -292,11 +370,12 @@ void quality_benchmark_lwnn(
 			update_error(output, test_data->output[i], test_data->num_output);
 		}
 		test_error = mean_error();
+		test_bit_fail = num_bit_fail;
 		
 
 		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
 		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);
-		fprintf(stderr, "secs: %8.2f, train: %8.6f, test: %8.6f, epochs: %5d\r", total_elapsed, train_error, test_error, epochs);
+		fprintf(stderr, "secs: %8.2f, train: %8.6f (%4d), test: %8.6f (%4d), epochs: %5d\r", total_elapsed, train_error, train_bit_fail, test_error, test_bit_fail, epochs);
 	}
 
 	fprintf(stdout, "\nepochs: %d, epochs/sec: %f\n", epochs, epochs/total_elapsed);
@@ -390,6 +469,11 @@ int main(int argc, char* argv[])
 			train_out, test_out,
 			train_data->num_input, num_neurons_hidden1,
 			num_neurons_hidden2, train_data->num_output,
+			seconds_of_training, seconds_between_reports);
+	}else if(strcmp(argv[1], "fann_cascade") == 0){
+		quality_benchmark_cascade(train_data, test_data,
+			train_out, test_out,
+			train_data->num_input, train_data->num_output,
 			seconds_of_training, seconds_between_reports);
 #ifdef LWNN
 	}else if(strcmp(argv[1], "lwnn") == 0){

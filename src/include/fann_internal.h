@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "fann_data.h"
 
 #define FANN_FIX_VERSION "FANN_FIX_1.1"
@@ -77,7 +78,8 @@ fann_type fann_activation_derived(unsigned int activation_function,
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))
 #define fann_min(x, y) (((x) < (y)) ? (x) : (y))
 #define fann_safe_free(x) {if(x) { free(x); x = NULL; }}
-#define fann_clip(x, lo, hi) (((x) < (lo)) ? (lo) : (((x) > (hi)) ? (hi) : (x)))
+/* #define fann_clip(x, lo, hi) (((x) < (lo)) ? (lo) : (((x) > (hi)) ? (hi) : (x))) */
+#define fann_clip(x, lo, hi) (x)
 
 #define fann_rand(min_value, max_value) (((double)(min_value))+(((double)(max_value)-((double)(min_value)))*rand()/(RAND_MAX+1.0)))
 

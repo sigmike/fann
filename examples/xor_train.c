@@ -66,6 +66,7 @@ int main()
 	fann_init_weights(ann, data);
 
 	fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP);
+
 	fann_train_on_data(ann, data, max_iterations, iterations_between_reports, desired_error);
 	
 	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback);*/

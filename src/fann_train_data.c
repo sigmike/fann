@@ -210,14 +210,16 @@ FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann, struct
 #endif	
 	
 	if(epochs_between_reports && callback == NULL){
-		printf("Max epochs %8d. Desired error: %.10f\n", max_epochs, desired_error);
+		printf("Max epochs %8d. Desired error: %.10f.\n", max_epochs, desired_error);
 	}
 
 	/* some training algorithms need stuff to be cleared etc. before training starts.
 	 */
 	if(ann->training_algorithm == FANN_TRAIN_RPROP ||
 		ann->training_algorithm == FANN_TRAIN_QUICKPROP){
-		fann_clear_train_arrays(ann);
+		if(ann->prev_train_slopes == NULL){
+			fann_clear_train_arrays(ann);
+		}
 	}
 
 	for(i = 1; i <= max_epochs; i++){
@@ -231,7 +233,7 @@ FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann, struct
 				|| i == 1
 				|| error < desired_error)){
 			if (callback == NULL) {
-				printf("Epochs     %8d. Current error: %.10f\n", i, error);
+				printf("Epochs     %8d. Current error: %.10f. Bit fail %d.\n", i, error, ann->num_bit_fail);
 			} else if((*callback)(i, error) == -1){
 				/* you can break the training by returning -1 */
 				break;

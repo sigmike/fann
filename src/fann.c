@@ -442,7 +442,7 @@ FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 {
 	struct fann_neuron *neuron_it, *last_neuron, *neurons, **neuron_pointers;
 	unsigned int activation_function, i, num_connections, num_input, num_output;
-	fann_type neuron_value, *output;
+	fann_type neuron_sum, *output;
 	fann_type *weights;
 	struct fann_layer *layer_it, *last_layer;
 	
@@ -558,7 +558,7 @@ FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 				continue;
 			}
 			
-			neuron_value = 0;
+			neuron_sum = 0;
 			num_connections = neuron_it->last_con - neuron_it->first_con;
 			weights = ann->weights + neuron_it->first_con;
 			
@@ -568,43 +568,52 @@ FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 				} else {
 					neurons = (layer_it-1)->first_neuron;
 				}
+
 				
+				/* unrolled loop start */
 				i = num_connections & 3; /* same as modulo 4 */
 				switch(i) {
 					case 3:
-						neuron_value += fann_mult(weights[2], neurons[2].value);
+						neuron_sum += fann_mult(weights[2], neurons[2].value);
 					case 2:
-						neuron_value += fann_mult(weights[1], neurons[1].value);
+						neuron_sum += fann_mult(weights[1], neurons[1].value);
 					case 1:
-						neuron_value += fann_mult(weights[0], neurons[0].value);
+						neuron_sum += fann_mult(weights[0], neurons[0].value);
 					case 0:
 						break;
 				}
 				
 				for(;i != num_connections; i += 4){
-					neuron_value +=
+					neuron_sum +=
 						fann_mult(weights[i], neurons[i].value) +
 						fann_mult(weights[i+1], neurons[i+1].value) +
 						fann_mult(weights[i+2], neurons[i+2].value) +
 						fann_mult(weights[i+3], neurons[i+3].value);
 				}
+				
+				/*
+				for(i = 0;i != num_connections; i++){
+					neuron_sum += fann_mult(weights[i], neurons[i].value);
+				}
+				*/
+				/* unrolled loop end */
 			} else {
 				neuron_pointers = ann->connections + neuron_it->first_con;
 				
 				i = num_connections & 3; /* same as modulo 4 */
 				switch(i) {
 					case 3:
-						neuron_value += fann_mult(weights[2], neuron_pointers[2]->value);
+						neuron_sum += fann_mult(weights[2], neuron_pointers[2]->value);
 					case 2:
-						neuron_value += fann_mult(weights[1], neuron_pointers[1]->value);
+						neuron_sum += fann_mult(weights[1], neuron_pointers[1]->value);
 					case 1:
-						neuron_value += fann_mult(weights[0], neuron_pointers[0]->value);
+						neuron_sum += fann_mult(weights[0], neuron_pointers[0]->value);
 					case 0:
 						break;
 				}
 				
 				for(;i != num_connections; i += 4){
-					neuron_value +=
+					neuron_sum +=
 						fann_mult(weights[i], neuron_pointers[i]->value) +
 						fann_mult(weights[i+1], neuron_pointers[i+1]->value) +
 						fann_mult(weights[i+2], neuron_pointers[i+2]->value) +
@@ -612,41 +621,43 @@ FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 				}
 			}
 			
+			neuron_it->sum = neuron_sum;
+			
 			switch(activation_function){
 #ifdef FIXEDFANN
 				case FANN_SIGMOID:
 				case FANN_SIGMOID_STEPWISE:
-					neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, 0, multiplier, neuron_value);
+					neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, 0, multiplier, neuron_sum);
 					break;
 				case FANN_SIGMOID_SYMMETRIC:
 				case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-					neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, -multiplier, multiplier, neuron_value);
+					neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, -multiplier, multiplier, neuron_sum);
 					break;
 #else
 				case FANN_LINEAR:
-					neuron_it->value = (fann_type)fann_linear(steepness, neuron_value);
+					neuron_it->value = (fann_type)fann_linear(steepness, neuron_sum);
 					break;
 					
 				case FANN_SIGMOID:
-					neuron_it->value = (fann_type)fann_sigmoid(steepness, neuron_value);
+					neuron_it->value = (fann_type)fann_sigmoid(steepness, neuron_sum);
 					break;
 					
 				case FANN_SIGMOID_SYMMETRIC:
-					neuron_it->value = (fann_type)fann_sigmoid_symmetric(steepness, neuron_value);
+					neuron_it->value = (fann_type)fann_sigmoid_symmetric(steepness, neuron_sum);
 					break;
 					
 				case FANN_SIGMOID_STEPWISE:
-					neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, 0, 1, neuron_value);
+					neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, 0, 1, neuron_sum);
 					break;
 				case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-					neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, -1, 1, neuron_value);
+					neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, -1, 1, neuron_sum);
 					break;
 #endif
 				case FANN_THRESHOLD:
-					neuron_it->value = (fann_type)((neuron_value < 0) ? 0 : 1);
+					neuron_it->value = (fann_type)((neuron_sum < 0) ? 0 : 1);
 					break;
 				case FANN_THRESHOLD_SYMMETRIC:
-					neuron_it->value = (fann_type)((neuron_value < 0) ? -1 : 1);
+					neuron_it->value = (fann_type)((neuron_sum < 0) ? -1 : 1);
 					break;
 				default:
 					fann_error((struct fann_error *)ann, FANN_E_CANT_USE_ACTIVATION);
@@ -690,13 +701,18 @@ FANN_EXTERNAL void FANN_API fann_randomize_weights(struct fann *ann, fann_type m
 	for(;weights != last_weight; weights++){
 		*weights = (fann_type)(fann_rand(min_weight, max_weight));
 	}
+
+	if(ann->prev_train_slopes != NULL){
+		fann_clear_train_arrays(ann);
+	}
 }
 
 FANN_EXTERNAL void FANN_API fann_print_connections(struct fann *ann)
 {
 	struct fann_layer *layer_it;
 	struct fann_neuron *neuron_it;
-	unsigned int i, value;
+	unsigned int i;
+	int value;
 	char *neurons;
 	unsigned int num_neurons = fann_get_total_neurons(ann) - fann_get_num_output(ann);
 	neurons = (char *)malloc(num_neurons+1);
@@ -718,14 +734,23 @@ FANN_EXTERNAL void FANN_API fann_print_connections(struct fann *ann)
 			
 			memset(neurons, (int)'.', num_neurons);
 			for(i = neuron_it->first_con; i < neuron_it->last_con; i++){
+				if(ann->weights[i] < 0){
 #ifdef FIXEDFANN
-				value = (unsigned int)(fann_abs(ann->weights[i]/(double)ann->multiplier)+0.5);
+					value = (int)((ann->weights[i]/(double)ann->multiplier)-0.5);
 #else
-				value = (unsigned int)(fann_abs(ann->weights[i])+0.5);
+					value = (int)((ann->weights[i])-0.5);
 #endif
-				
-				if(value > 25) value = 25;
-				neurons[ann->connections[i] - ann->first_layer->first_neuron] = 'a' + value;
+					if(value < -25) value = -25;
+					neurons[ann->connections[i] - ann->first_layer->first_neuron] = 'a' - value;
+				}else{
+#ifdef FIXEDFANN
+					value = (int)((ann->weights[i]/(double)ann->multiplier)+0.5);
+#else
+					value = (int)((ann->weights[i])+0.5);
+#endif
+					if(value > 25) value = 25;
+					neurons[ann->connections[i] - ann->first_layer->first_neuron] = 'A' + value;
+				}
 			}
 			printf("L %3d / N %4d %s\n", layer_it - ann->first_layer,
 				neuron_it - ann->first_layer->first_neuron, neurons);
@@ -790,6 +815,10 @@ FANN_EXTERNAL void FANN_API fann_init_weights(struct fann *ann, struct fann_trai
 			}
 		}
 	}
+
+	if(ann->prev_train_slopes != NULL){
+		fann_clear_train_arrays(ann);
+	}
 }
 
 /* INTERNAL FUNCTION
@@ -828,13 +857,16 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 	ann->training_algorithm = FANN_TRAIN_RPROP;
 	ann->num_MSE = 0;
 	ann->MSE_value = 0;
+	ann->num_bit_fail = 0;
 	ann->shortcut_connections = 0;
 	ann->train_error_function = FANN_ERRORFUNC_TANH;
 
 	/* variables used for cascade correlation (reasonable defaults) */
-	ann->cascade_change_fraction = 0.001;
-	ann->cascade_stagnation_epochs = 64;
+	ann->cascade_change_fraction = 0.01;
+	ann->cascade_stagnation_epochs = 8;
 	ann->cascade_num_candidates = 8;
+	ann->cascade_weight_multiplier = 1.0;
+	ann->cascade_candidate_limit = 1000.0;
 	ann->cascade_candidate_scores = NULL;
 
 	/* Variables for use with with Quickprop training (reasonable defaults) */
@@ -846,6 +878,7 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 	ann->rprop_decrease_factor = 0.5;
 	ann->rprop_delta_min = 0.0;
 	ann->rprop_delta_max = 50.0;
+	ann->rprop_delta_zero = 0.5;
 
 	fann_init_error_data((struct fann_error *)ann);
 

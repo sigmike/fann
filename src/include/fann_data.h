@@ -33,6 +33,9 @@ struct fann_neuron
 	 */
 	unsigned int first_con;
 	unsigned int last_con;
+	/* The sum of the inputs multiplied with the weights */
+	fann_type sum;
+	/* The value of the activation function applied to the sum */
 	fann_type value;
 #ifdef __GNUC__
 }__attribute__((packed));
@@ -175,6 +178,10 @@ struct fann
 	 */
 	float MSE_value;
 
+	/* The number of outputs which would fail (only valid for classification problems)
+	 */
+	unsigned int num_bit_fail;
+
 	/* The error function used during training. (default FANN_ERRORFUNC_TANH)
 	 */
 	unsigned int train_error_function;
@@ -201,6 +208,14 @@ struct fann
 	 */
 	unsigned int cascade_best_candidate;
 
+	/* The upper limit for a candidate score
+	 */
+	fann_type cascade_candidate_limit;
+
+	/* Scale of copied candidate output weights
+	 */
+	fann_type cascade_weight_multiplier;
+	
 	/* An array consisting of the score of the individual candidates,
 	   which is used to decide which candidate is the best
 	*/
@@ -240,6 +255,9 @@ struct fann
 	/* The maximum stepsize */
 	float rprop_delta_max;
 	
+	/* The initial stepsize */
+	float rprop_delta_zero;
+
 	/* Used to contain the slope errors used during batch training
 	 * Is allocated during first training session,
 	 * which means that if we do not train, it is never allocated.

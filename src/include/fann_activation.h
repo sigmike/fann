@@ -53,7 +53,8 @@ enum {
 	/* Sigmoid activation function.
 	   One of the most used activation functions.
 	   span: 0 < y < 1
-	   y = 1/(1 + exp(-2*s*x)), d = 2*s*y*(1 - y)
+	   y = 1/(1 + exp(-2*s*x))
+	   d = 2*s*y*(1 - y)
 	*/
 	FANN_SIGMOID,
 
@@ -66,7 +67,8 @@ enum {
 	/* Symmetric sigmoid activation function, aka. tanh.
 	   One of the most used activation functions.
 	   span: -1 < y < 1
-	   y = tanh(s*x) = 2/(1 + exp(-2*s*x)) - 1, d = s*(1-(y*y))
+	   y = tanh(s*x) = 2/(1 + exp(-2*s*x)) - 1
+	   d = s*(1-(y*y))
 	*/
 	FANN_SIGMOID_SYMMETRIC,
 	
@@ -78,7 +80,8 @@ enum {
 	/* Gausian activation function.
 	   0 when x = -inf, 1 when x = 0 and 0 when x = inf
 	   span: 0 < y < 1
-	   y = exp(-x*s*x*s), d = -2*x*y*s
+	   y = exp(-x*s*x*s)
+	   d = -2*x*y*s
 	*/
 	FANN_GAUSSIAN,
 
@@ -90,14 +93,16 @@ enum {
 
 	/* Fast (sigmoid like) activation function defined by David Elliott
 	   span: 0 < y < 1
-	   y = ((x*s) / 2) / (1 + |x*s|) + 0.5, d = s*1/(2*(1+|x|)*(1+|x|))
+	   y = ((x*s) / 2) / (1 + |x*s|) + 0.5
+	   d = s*1/(2*(1+|x|)*(1+|x|))
 	   NOT implemented yet.
 	*/
 	FANN_ELLIOT,
 
 	/* Fast (symmetric sigmoid like) activation function defined by David Elliott
 	   span: -1 < y < 1   
-	   y = (x*s) / (1 + |x*s|), d = s*1/((1+|x|)*(1+|x|))
+	   y = (x*s) / (1 + |x*s|)
+	   d = s*1/((1+|x|)*(1+|x|))
 	   NOT implemented yet.
 	*/
 	FANN_ELLIOT_SYMMETRIC
