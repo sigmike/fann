@@ -25,6 +25,7 @@ This package is only needed if you intend to develop and/or compile programs bas
 
 %build
 make
+(cd doc && make html-single)
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -49,7 +50,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libfann.so.@VERSION@
 
 %files devel
-%doc AUTHORS ChangeLog COPYING INSTALL NEWS README TODO
+%doc AUTHORS ChangeLog COPYING INSTALL NEWS README TODO doc/fann.html
 %{_libdir}/pkgconfig/fann.pc
 %{_libdir}/libdoublefann.a
 %{_libdir}/libdoublefann.la
@@ -70,6 +71,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/fann_activation.h
 
 %changelog
+* Fri Mar 30 2004 Evan Nemerson <evan@coeus-group.com>
+- Build and install HTML documentation.
+
 * Fri Jan 16 2004 Evan Nemerson <evan@coeus-group.com>
 - Added activation header.
 
