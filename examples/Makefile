@@ -44,7 +44,11 @@ rundebug: $(TARGETS)
 
 
 DEBUG_TARGETS = xor_train_debug xor_test_debug
-debug: $(DEBUG_TARGETS)
+debug: library $(DEBUG_TARGETS)
+
+library:
+	(cd .. && make)
+
 %_debug: %.c Makefile
 	gcc -O -ggdb -lm -DDEBUG ../src/.libs/floatfann.o $< -o $@
 
