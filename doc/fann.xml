@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.20 2004/07/06 16:46:44 looksirdroids Exp $ -->
+<!-- $Id: fann.xml,v 1.21 2004/11/02 12:18:31 looksirdroids Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -4902,7 +4902,7 @@ else
     <para>These functions allow you to interact with the FANN library from Python.</para>
     <para>This extension requires the 
     <ulink url="http://fann.sf.net/">FANN</ulink> library, version 1.1.0 or later.</para>
-  <para>This python binding is provided by Vincenzo Di Massa (hawk.it@tiscalinet.it)</para>
+  <para>This python binding is provided by Vincenzo Di Massa (hawk.it@tiscalinet.it) and updated by Gil Megidish (gil@megidish.net)</para>
     <section id="python.install">
       <title id="python.install.title">Python Install</title>
       <para>
@@ -4916,6 +4916,47 @@ Copy the generated _fann.so and fann.py files to python modules or into working 
       </para>
       <para>
 After the install, just import fann and all the C functions will be available to your python code.
+      </para>
+    </section>
+  </chapter>
+  <chapter id="delphi">
+    <title id="delphi.title">Delphi Bindings</title>
+    <para>These functions allow you to interact with the FANN library from Delphi.</para>
+    <para>This extension requires the 
+    <ulink url="http://fann.sf.net/">FANN</ulink> library, version 1.2.0 or later.</para>
+    <para>This extension can be downloaded from the 
+    <ulink url="http://fann.sf.net/">FANN</ulink> library download section.</para>
+  <para>This Delphi binding is provided by Maurício Pereira Maia (mauricio@uaisol.com.br)</para>
+    <section id="delphi.install">
+      <title id="delphi.install.title">Delphi Install</title>
+      <para>
+        Make sure to make and install the fann library first.
+
+	Put the file fannfloat.dll in your PATH. (If you want to use the fixed version you should define FIXEDFANN on fann.pas). 
+	Include fann.pas in your project and in your unit uses clause, and have fun!
+	See the XorConsole sample for more details.
+      </para>
+    </section>
+    <section id="delphi.tfann">
+      <title id="delphi.tfann.title">TFannNetwork</title>
+      <para>
+TFannNetwork is a Delphi component that encapsulates the Fann Library.
+You do not have to install TFannNetwork to use Fann on Delphi, 
+but it will make the library more Delphi friendly.
+Currently it has only a small subset of all the library functions, but I 
+hope that will change in the near future.
+      </para>
+      <para>
+To install TFannNetwork you should follow all the previous steps and copy the FannNetwork.pas and Fann.dcr to your Delphi Library PATH. Choose Component/Install Component. In the Unit file name field, click on Browse and point to the fannnetwork.pas file. By default Delphi will install in the Borland User Components package, it might be changed using Package file name field or Into new package page. Click on Ok. A confirmation dialog will be shown asking if you want to build the package. Click on Yes. You have just installed TFannNetwork, now close the package window (Don't forget to put Yes when it ask if you want to save the package). See the FannNetwork.pas file or the Xor Sample.
+      </para>
+    </section>
+    <section id="delphi.problems">
+      <title id="delphi.problems.title">Known Problems</title>
+      <para>
+If you are getting in trouble to use your own compiled FANN DLL with Delphi that might be
+because of the C++ naming mangle that changes between C++ compilers. 
+You will need to make a TDUMP on your dll and changes all the name directives on fann.pas to 
+the correct function names on your dll.
       </para>
     </section>
   </chapter>
