@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.9 2004/03/11 10:40:24 tadpole9 Exp $ -->
+<!-- $Id: fann.xml,v 1.10 2004/03/19 10:37:48 looksirdroids Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -1007,7 +1007,7 @@ fann_destroy(ann2);
             </methodparam>
             <methodparam>
               <type>fann_type *</type>
-              <parameter>desired_error</parameter>
+              <parameter>desired_output</parameter>
             </methodparam>
           </methodsynopsis>
           <para>
