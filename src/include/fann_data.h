@@ -58,6 +58,20 @@ struct fann_layer
  */
 struct fann
 {
+	/* the total error value.
+	   the real mean square error is error_value/num_errors
+	 */
+	float error_value;
+
+	/* The type of error that last occured. */
+	unsigned int errno_f;
+
+	/* Where to log error messages. */
+	FILE *error_log;
+
+	/* A string representation of the last error. */
+	char * errstr;
+
 	/* the learning rate of the network */
 	float learning_rate;
 
@@ -141,30 +155,30 @@ struct fann
 	/* the number of data used to calculate the error.
 	 */
 	unsigned int num_errors;
-
-	/* the total error value.
-	   the real mean square error is error_value/num_errors
-	 */
-	float error_value;
-
-	/* The type of error that last occured. */
-	unsigned int errno_f;
-
-	/* Where to log error messages. */
-	FILE *error_log;
-
-	/* A string representation of the last error. */
-	char * errstr;
 };
 
 /* Structure used to store data, for use with training. */
 struct fann_train_data
 {
+	float error_value;
+	unsigned int errno_f;
+	FILE *error_log;
+	char *errstr;
+
 	unsigned int num_data;
 	unsigned int num_input;
 	unsigned int num_output;
 	fann_type **input;
 	fann_type **output;
+};
+
+/* Structure used to store error-related information */
+struct fann_error
+{
+	float error_value;
+	unsigned int errno_f;
+	FILE *error_log;
+	char * errstr;
 };
 
 #endif

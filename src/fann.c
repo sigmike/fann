@@ -428,7 +428,7 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 	if(ann->train_deltas == NULL){
 		ann->train_deltas = (fann_type *)calloc(ann->total_neurons, sizeof(fann_type));
 		if(ann->train_deltas == NULL){
-			fann_error(ann, FANN_E_CANT_ALLOCATE_MEM);
+			fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
 			return;
 		}
 	}
@@ -458,7 +458,7 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 				*delta_it = fann_sigmoid_symmetric_derive(activation_output_steepness, neuron_value) * (*desired_output - neuron_value);
 				break;
 			default:
-				fann_error(ann, FANN_E_CANT_TRAIN_ACTIVATION);
+				fann_error((struct fann_error *)ann, FANN_E_CANT_TRAIN_ACTIVATION);
 				return;
 		}
 		
@@ -541,7 +541,7 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 				}
 				break;
 			default:
-				fann_error(ann, FANN_E_CANT_TRAIN_ACTIVATION);
+				fann_error((struct fann_error *)ann, FANN_E_CANT_TRAIN_ACTIVATION);
 				return;
 		}
 	}
@@ -984,7 +984,7 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 					neuron_it->value = (neuron_value < 0) ? 0 : 1;
 					break;
 				default:
-					fann_error(ann, FANN_E_CANT_USE_ACTIVATION);
+					fann_error((struct fann_error *)ann, FANN_E_CANT_USE_ACTIVATION);
 			}
 		}
 	}	
@@ -1001,51 +1001,51 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 
 /* resets the last error number
  */
-void fann_reset_errno(struct fann *ann)
+void fann_reset_errno(struct fann_error *errdat)
 {
-	ann->errno_f = 0;
+	errdat->errno_f = 0;
 }
 
 /* resets the last errstr
  */
-void fann_reset_errstr(struct fann *ann)
+void fann_reset_errstr(struct fann_error *errdat)
 {
-	if ( ann->errstr != NULL )
-		free(ann->errstr);
-	ann->errstr = NULL;
+	if ( errdat->errstr != NULL )
+		free(errdat->errstr);
+	errdat->errstr = NULL;
 }
 
 /* returns the last error number
  */
-unsigned int fann_get_errno(struct fann *ann)
+unsigned int fann_get_errno(struct fann_error *errdat)
 {
-	return ann->errno_f;
+	return errdat->errno_f;
 }
 
 /* returns the last errstr
  */
-char * fann_get_errstr(struct fann *ann)
+char * fann_get_errstr(struct fann_error *errdat)
 {
-	char *errstr = ann->errstr;
+	char *errstr = errdat->errstr;
 
-	fann_reset_errno(ann);
-	fann_reset_errstr(ann);
+	fann_reset_errno(errdat);
+	fann_reset_errstr(errdat);
 
 	return errstr;
 }
 
 /* change where errors are logged to
  */
-void fann_set_error_log(struct fann *ann, FILE *log)
+void fann_set_error_log(struct fann_error *errdat, FILE *log)
 {
-  ann->error_log = log;
+  errdat->error_log = log;
 }
 
 /* prints the last error to the error log (default stderr)
  */
-void fann_print_error(struct fann *ann) {
-	if ( (ann->errno_f != FANN_E_NO_ERROR) && (ann->error_log != NULL) ){
-		fputs(ann->errstr, ann->error_log);
+void fann_print_error(struct fann_error *errdat) {
+	if ( (errdat->errno_f != FANN_E_NO_ERROR) && (errdat->error_log != NULL) ){
+		fputs(errdat->errstr, errdat->error_log);
 	}
 }
 
@@ -1087,6 +1087,8 @@ struct fann_train_data * fann_merge_train_data(struct fann_train_data *data1, st
 
 	train_data = (struct fann_train_data *)malloc(sizeof(struct fann_train_data));
 
+	fann_init_error_data((struct fann_error *)train_data);
+
 	train_data->num_data = data1->num_data + data2->num_data;
 	train_data->num_input = data1->num_input;
 	train_data->num_output = data1->num_output;
@@ -1125,6 +1127,8 @@ struct fann_train_data * fann_duplicate_train_data(struct fann_train_data *data)
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
 		return NULL;
 	}
+
+	fann_init_error_data((struct fann_error *)dest);
 
 	dest->num_data = data->num_data;
 	dest->num_input = data->num_input;

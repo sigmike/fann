@@ -283,28 +283,28 @@ void fann_reset_MSE(struct fann *ann);
 
 /* resets the last error number
  */
-void fann_reset_errno(struct fann *ann);
+void fann_reset_errno(struct fann_error *errdat);
 
 /* resets the last error string
  */
-void fann_reset_errstr(struct fann *ann);
+void fann_reset_errstr(struct fann_error *errdat);
 
 /* change where errors are logged to
  */
-void fann_set_error_log(struct fann *ann, FILE *log);
+void fann_set_error_log(struct fann_error *errdat, FILE *log);
 
 /* returns the last error number
  */
-unsigned int fann_get_errno(struct fann *ann);
+unsigned int fann_get_errno(struct fann_error *errdat);
 
 /* returns the last errstr.
  * This function calls fann_reset_errno and fann_reset_errstr
  */
-char * fann_get_errstr(struct fann *ann);
+char * fann_get_errstr(struct fann_error *errdat);
 
 /* prints the last error to stderr
  */
-void fann_print_error(struct fann *ann) ;
+void fann_print_error(struct fann_error *errdat);
 
 /* ----- Running ----- */
 
