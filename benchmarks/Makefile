@@ -16,13 +16,13 @@ LWNNDIR = ../libraries/lwneuralnet-0.6/source/
 all: $(TARGETS)
 
 quality: quality.cc
-	$(G++) $(CFLAGS) $(LFLAGS) -I$(JNEURALDIR)include/ -L$(JNEURALDIR) -I$(LWNNDIR) -L$(LWNNDIR) $< -o $@ -lfloatfann # -llwneuralnet -ljneural -lfl
+	$(G++) $(CFLAGS) $(LFLAGS) -I$(JNEURALDIR)include/ -L$(JNEURALDIR) -I$(LWNNDIR) -L$(LWNNDIR) $< -o $@ -lfann -llwneuralnet -ljneural -lfl
 
 quality_fixed: quality_fixed.c
 	$(GCC) $(CFLAGS) $(LFLAGS) $< -o $@ -lfixedfann
 
 performance: performance.cc
-	$(G++) $(CFLAGS) $(LFLAGS) -I$(JNEURALDIR)include/ -L$(JNEURALDIR) -I$(LWNNDIR) -L$(LWNNDIR) $< -o $@ -lfloatfann # -llwneuralnet -ljneural -lfl
+	$(G++) $(CFLAGS) $(LFLAGS) -I$(JNEURALDIR)include/ -L$(JNEURALDIR) -I$(LWNNDIR) -L$(LWNNDIR) $< -o $@ -lfloatfann -llwneuralnet -ljneural -lfl
 
 performance_fixed: performance.cc
 	$(G++) $(CFLAGS) $(LFLAGS) -DFIXEDFANN $< -o $@ -lfixedfann

@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 //uncomment lines below to benchmark the libraries
 
-//#define JNEURAL
-//#define LWNN
+#define JNEURAL
+#define LWNN
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -139,7 +139,7 @@ void quality_benchmark_fann(bool stepwise,
 	unsigned int seconds_of_training, unsigned int seconds_between_reports)
 {
 	float train_error, test_error;
-	unsigned int i, decimal_point;
+	unsigned int i, decimal_point, j;
 	unsigned int epochs = 0;
 	double elapsed = 0;
 	double total_elapsed = 0;
@@ -156,13 +156,13 @@ void quality_benchmark_fann(bool stepwise,
 	}
 
 	if(stepwise){
-		fann_set_activation_function_hidden(ann, FANN_SIGMOID_STEPWISE);
+		fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
 		fann_set_activation_function_output(ann, FANN_SIGMOID_STEPWISE);
 	}else{
-		fann_set_activation_function_hidden(ann, FANN_SIGMOID);
+		fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
 		fann_set_activation_function_output(ann, FANN_SIGMOID);
 	}
-	
+
 	calibrate_timer();
 
 	while(total_elapsed < (double)seconds_of_training){
