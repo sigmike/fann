@@ -1,0 +1,13 @@
+This python binding is provided by Vincenzo Di Massa <hawk.it@tiscalinet.it>
+
+MAKE
+Make sure to make and install the fann library first.
+Make sure that you have swig and python development files installed.
+Perhaps change the include directory of python.
+Then run 'make' to compile.
+
+INSTALL
+Copy the generated _fann.so and fann.py files to pyhon modules or into working directory.
+
+USAGE
+Just import fann.
