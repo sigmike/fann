@@ -4,7 +4,7 @@
 GCC=gcc
 
 TARGETS = xor_train xor_test xor_test_fixed simple_train steepness_train simple_test robot mushroom
-DEBUG_TARGETS = xor_train_debug xor_test_debug xor_test_fixed_debug
+DEBUG_TARGETS = xor_train_debug xor_test_debug xor_test_fixed_debug cascade_train_debug
 
 all: $(TARGETS)
 
@@ -54,20 +54,20 @@ compiletest:
 debug: $(DEBUG_TARGETS)
 
 %_debug: %.c Makefile ../src/*c ../src/include/*h
-	$(GCC) -O3 -ggdb -lm -DDEBUG -Wall -ansi -I../src/ -I../src/include/ ../src/floatfann.c $< -o $@
+	$(GCC) -ggdb -lm -DDEBUG -Wall -ansi -I../src/ -I../src/include/ ../src/floatfann.c $< -o $@
 
-%_fixed_debug: %.c Makefile
+%_fixed_debug: %.c Makefile ../src/*c ../src/include/*h
 	$(GCC) -O3 -ggdb -lm -DDEBUG -Wall -ansi -DFIXEDFANN -I../src/ -I../src/include/ ../src/fixedfann.c $< -o $@
 
 rundebug: $(DEBUG_TARGETS)
 	@echo
 	@echo Training network
-	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_train_debug
+	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high --db-attach=yes ./xor_train_debug
 
 	@echo
 	@echo Testing network with floats
-	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_test_debug
+	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high --db-attach=yes ./xor_test_debug
 
 	@echo
 	@echo Testing network with fixed points
-	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_test_fixed_debug
+	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high --db-attach=yes ./xor_test_fixed_debug

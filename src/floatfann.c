@@ -27,3 +27,4 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "fann_train_data.c"
 #include "fann_options.c"
 #include "fann_error.c"
+#include "fann_cascade.c"

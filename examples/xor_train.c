@@ -70,6 +70,8 @@ int main()
 	
 	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback);*/
 
+	fann_print_connections(ann);
+	fann_print_parameters(ann);		
 
 	printf("Testing network.\n");
 

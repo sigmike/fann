@@ -28,9 +28,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 struct fann_neuron
 {
-	fann_type *weights;
-	struct fann_neuron **connected_neurons;
-	unsigned int num_connections;
+	/* Index to the first and last connection
+	   (actually the last is a past end index)
+	 */
+	unsigned int first_con;
+	unsigned int last_con;
 	fann_type value;
 #ifdef __GNUC__
 }__attribute__((packed));
@@ -103,6 +105,12 @@ struct fann
 	/* Number of output neurons (not calculating bias) */
 	unsigned int num_output;
 
+	/* The weight array */
+	fann_type *weights;
+
+	/* The connection array */
+	struct fann_neuron **connections;
+	
 	/* Used to contain the errors used during training
 	 * Is allocated during first training session,
 	 * which means that if we do not train, it is never allocated.
@@ -175,14 +183,40 @@ struct fann
 
 	/* The error must change by at least this
 	   fraction of its old value to count as a
-	   significant change. NOT IMPLEMENTED YET
+	   significant change.
 	*/
-	/* float change_fraction; */
+	float cascade_change_fraction;
 
 	/* No change in this number of epochs will cause
-	   stagnation. NOT IMPLEMENTED YET
+	   stagnation.
 	*/
-	/* unsigned int stagnation_epochs; */
+	unsigned int cascade_stagnation_epochs;
+
+	/* The number of candidate neurons used during cascade correlation
+	   training.
+	*/
+	unsigned int cascade_num_candidates;
+
+	/* The current best candidate, which will be installed.
+	 */
+	unsigned int cascade_best_candidate;
+
+	/* An array consisting of the score of the individual candidates,
+	   which is used to decide which candidate is the best
+	*/
+	fann_type *cascade_candidate_scores;
+
+	/* The number of allocated neurons during cascade correlation algorithms.
+	   This number might be higher than the actual number of neurons to avoid
+	   allocating new space too often.
+	 */
+	unsigned int total_neurons_allocated;
+
+	/* The number of allocated connections during cascade correlation algorithms.
+	   This number might be higher than the actual number of neurons to avoid
+	   allocating new space too often.
+	 */
+	unsigned int total_connections_allocated;
 
 	/* Variables for use with Quickprop training */
 

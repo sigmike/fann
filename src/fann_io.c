@@ -112,8 +112,8 @@ int fann_save_internal_fd(struct fann *ann, FILE *conf, const char *configuratio
 			for(neuron_it = layer_it->first_neuron; neuron_it != layer_it->last_neuron; neuron_it++){
 				/* look at all connections to each neurons, and see how high a value we can get */
 				current_max_value = 0;
-				for(i = 0; i != neuron_it->num_connections; i++){
-					current_max_value += fann_abs(neuron_it->weights[i]);
+				for(i = neuron_it->first_con; i != neuron_it->last_con; i++){
+					current_max_value += fann_abs(ann->weights[i]);
 				}
 
 				if(current_max_value > max_possible_value){
@@ -173,13 +173,13 @@ int fann_save_internal_fd(struct fann *ann, FILE *conf, const char *configuratio
 	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
 		/* the number of connections to each neuron */
 		for(neuron_it = layer_it->first_neuron; neuron_it != layer_it->last_neuron; neuron_it++){
-			fprintf(conf, "%u ", neuron_it->num_connections);
+			fprintf(conf, "%u ", neuron_it->last_con - neuron_it->first_con);
 		}
 		fprintf(conf, "\n");
 	}
 
-	connected_neurons = (ann->first_layer+1)->first_neuron->connected_neurons;
-	weights = (ann->first_layer+1)->first_neuron->weights;
+	connected_neurons = ann->connections;
+	weights = ann->weights;
 	first_neuron = ann->first_layer->first_neuron;
 	
 	/* Now save all the connections.
@@ -288,7 +288,7 @@ void fann_save_train_internal_fd(struct fann_train_data* data, FILE *file, char 
  */
 struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file)
 {
-	unsigned int num_layers, layer_size, activation_function_hidden, activation_function_output, input_neuron, i, shortcut_connections;
+	unsigned int num_layers, layer_size, activation_function_hidden, activation_function_output, input_neuron, i, shortcut_connections, num_connections;
 #ifdef FIXEDFANN
 	unsigned int decimal_point, multiplier;
 #endif
@@ -368,12 +368,20 @@ struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file)
 		layer_it->last_neuron = layer_it->first_neuron + layer_size;
 		ann->total_neurons += layer_size;
 #ifdef DEBUG
-		printf("  layer       : %d neurons, 1 bias\n", layer_size);
+		if(ann->shortcut_connections && layer_it != ann->first_layer){
+			printf("  layer       : %d neurons, 0 bias\n", layer_size);
+		} else {
+			printf("  layer       : %d neurons, 1 bias\n", layer_size-1);
+		}
 #endif
 	}
 	
 	ann->num_input = ann->first_layer->last_neuron - ann->first_layer->first_neuron - 1;
-	ann->num_output = ((ann->last_layer-1)->last_neuron - (ann->last_layer-1)->first_neuron) - 1;
+	ann->num_output = ((ann->last_layer-1)->last_neuron - (ann->last_layer-1)->first_neuron);
+	if(!ann->shortcut_connections){
+		/* one too many (bias) in the output layer */
+		ann->num_output--;
+	}
 	
 	/* allocate room for the actual neurons */
 	fann_allocate_neurons(ann);
@@ -385,12 +393,14 @@ struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file)
 	last_neuron = (ann->last_layer-1)->last_neuron;
 	for(neuron_it = ann->first_layer->first_neuron;
 		neuron_it != last_neuron; neuron_it++){
-		if(fscanf(conf, "%u ", &neuron_it->num_connections) != 1){
+		if(fscanf(conf, "%u ", &num_connections) != 1){
 			fann_error((struct fann_error *)ann, FANN_E_CANT_READ_NEURON, configuration_file);
 			fann_destroy(ann);
 			return NULL;
 		}
-		ann->total_connections += neuron_it->num_connections;
+		neuron_it->first_con = ann->total_connections;
+		ann->total_connections += num_connections;
+		neuron_it->last_con = ann->total_connections;		
 	}
 	
 	fann_allocate_connections(ann);
@@ -399,8 +409,8 @@ struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file)
 		return NULL;
 	}
 	
-	connected_neurons = (ann->first_layer+1)->first_neuron->connected_neurons;
-	weights = (ann->first_layer+1)->first_neuron->weights;
+	connected_neurons = ann->connections;
+	weights = ann->weights;
 	first_neuron = ann->first_layer->first_neuron;
 	
 	for(i = 0; i < ann->total_connections; i++){

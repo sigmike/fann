@@ -314,6 +314,10 @@ FANN_EXTERNAL void FANN_API fann_save_train(struct fann_train_data* data, char *
  */
 FANN_EXTERNAL void FANN_API fann_save_train_to_fixed(struct fann_train_data* data, char *filename, unsigned int decimal_point);
 
+/* ----- Implemented in fann_cascade.c Used to train the ANN with cascade correlation ----- */
+void fann_cascadetrain_on_data_callback(struct fann *ann, struct fann_train_data *data, float desired_error, int (*callback)(unsigned int epochs, float error), unsigned int max_out_epochs, unsigned int max_cand_epochs, unsigned int max_neurons, unsigned int neurons_between_reports);
+
+	
 /* ----- Implemented in fann_options.c Get and set options for the ANNs ----- */
 
 /* Prints all of the parameters and options of the ANN */

@@ -60,23 +60,23 @@ void fann_compute_MSE(struct fann *ann, fann_type *desired_output);
 void fann_update_output_weights(struct fann *ann);
 void fann_backpropagate_MSE(struct fann *ann);
 void fann_update_weights(struct fann *ann);
-void fann_update_slopes_batch(struct fann *ann);
-void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data);
-void fann_update_weights_irpropm(struct fann *ann, unsigned int num_data);
-void fann_update_weights_batch(struct fann *ann, unsigned int num_data);
-
-
-/* get a pointer to the weights */
-fann_type* fann_get_weights(struct fann *ann);
-/* get a pointer to the connections */
-struct fann_neuron** fann_get_connections(struct fann *ann);
+void fann_update_slopes_batch(struct fann *ann, struct fann_layer *layer_begin, struct fann_layer *layer_end);
+void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data, struct fann_layer *layer_begin, struct fann_layer *layer_end);
+void fann_update_weights_batch(struct fann *ann, unsigned int num_data, struct fann_layer *layer_begin, struct fann_layer *layer_end);
+void fann_update_weights_irpropm(struct fann *ann, unsigned int num_data, struct fann_layer *layer_begin, struct fann_layer *layer_end);
 
 void fann_clear_train_arrays(struct fann *ann);
+
+fann_type fann_activation(struct fann *ann, unsigned int is_output_layer,
+	fann_type value);
+
+fann_type fann_activation_derived(unsigned int activation_function,
+	fann_type steepness, fann_type value);
 
 /* called fann_max, in order to not interferre with predefined versions of max */
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))
 #define fann_min(x, y) (((x) < (y)) ? (x) : (y))
-#define fann_safe_free(x) if(x) free(x)
+#define fann_safe_free(x) {if(x) { free(x); x = NULL; }}
 #define fann_clip(x, lo, hi) (((x) < (lo)) ? (lo) : (((x) > (hi)) ? (hi) : (x)))
 
 #define fann_rand(min_value, max_value) (((double)(min_value))+(((double)(max_value)-((double)(min_value)))*rand()/(RAND_MAX+1.0)))

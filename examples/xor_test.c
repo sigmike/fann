@@ -43,6 +43,9 @@ int main()
 		return 0;
 	}
 
+	fann_print_connections(ann);
+	fann_print_parameters(ann);	
+
 	printf("Testing network.\n");
 
 #ifdef FIXEDFANN

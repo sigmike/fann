@@ -33,14 +33,19 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	
 	printf("Input layer                : %2d neurons, 1 bias\n", ann->num_input);
 	for(layer_it = ann->first_layer+1; layer_it != ann->last_layer-1; layer_it++){
-		printf("  Hidden layer             : %2d neurons, 1 bias\n",
-			layer_it->last_neuron - layer_it->first_neuron - 1);
+		if(ann->shortcut_connections){
+			printf("  Hidden layer             : %2d neurons, 0 bias\n",
+				layer_it->last_neuron - layer_it->first_neuron);
+		} else {
+			printf("  Hidden layer             : %2d neurons, 1 bias\n",
+				layer_it->last_neuron - layer_it->first_neuron - 1);
+		}
 	}
 	printf("Output layer               : %2d neurons\n", ann->num_output);
 	printf("Total neurons and biases   : %2d\n", fann_get_total_neurons(ann));
 	printf("Total connections          : %2d\n", ann->total_connections);
 	printf("Connection rate            : %5.2f\n", ann->connection_rate);
-	printf("Shortcut connections        : %2d\n", ann->shortcut_connections);
+	printf("Shortcut connections       : %2d\n", ann->shortcut_connections);
 	printf("Training algorithm         :  %s\n", FANN_TRAIN_NAMES[ann->training_algorithm]);	
 	printf("Learning rate              : %5.2f\n", ann->learning_rate);
 	printf("Activation function hidden :  %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_hidden]);
@@ -159,25 +164,18 @@ FANN_EXTERNAL fann_type FANN_API fann_get_activation_steepness_output(struct fan
 
 FANN_EXTERNAL unsigned int FANN_API fann_get_total_neurons(struct fann *ann)
 {
-	/* -1, because there is always an unused bias neuron in the last layer */
-	return ann->total_neurons - 1;
+	if(ann->shortcut_connections){
+		return ann->total_neurons;
+	} else {
+		/* -1, because there is always an unused bias neuron in the last layer */
+		return ann->total_neurons - 1;
+	}
 }
 
 FANN_EXTERNAL unsigned int FANN_API fann_get_total_connections(struct fann *ann)
 {
 	return ann->total_connections;
 }
-
-fann_type * fann_get_weights(struct fann *ann)
-{
-	return (ann->first_layer+1)->first_neuron->weights;
-}
-
-struct fann_neuron** fann_get_connections(struct fann *ann)
-{
-	return (ann->first_layer+1)->first_neuron->connected_neurons;
-}
-
 
 /* When using this, training is usually faster. (default ).
    Makes the error used for calculating the slopes
