@@ -190,7 +190,7 @@ void quality_benchmark_fann(bool stepwise,
 		   a fixed point graph */
 		if(!stepwise){
 			/* buffer overflow could occur here */
-			sprintf(fixed_point_file, "%05d_%f_%s_fixed", epochs, total_elapsed, filename);
+			sprintf(fixed_point_file, "%05d_%f_%s_fixed.net", epochs, total_elapsed, filename);
 			decimal_point = fann_save_to_fixed(ann, fixed_point_file);
 
 			sprintf(fixed_point_file, "%s_fixed_train_%d", filename, decimal_point);

@@ -136,7 +136,7 @@ void performance_benchmark_fann_thres(FILE *out, fann_type *input,
 
 #endif
 
-void performance_benchmark_fann(FILE *out, fann_type *input,
+void performance_benchmark_fann(bool stepwise, FILE *out, fann_type *input,
 	unsigned int num_neurons, unsigned int seconds_per_test)
 {
 	unsigned int i, total_connections;
@@ -144,34 +144,15 @@ void performance_benchmark_fann(FILE *out, fann_type *input,
 
 	struct fann *ann = fann_create(1, 0.7, 4,
 		num_neurons, num_neurons, num_neurons, num_neurons);
-	
-	total_connections = (num_neurons+1) * num_neurons * 3;
-		
-	start_timer();
-	
-	for(i = 0; time_elapsed() < (double)seconds_per_test; i++){
-		output = fann_run(ann, input);
+
+	if(stepwise){
+		fann_set_activation_function_hidden(ann, FANN_SIGMOID_STEPWISE);
+		fann_set_activation_function_output(ann, FANN_SIGMOID_STEPWISE);
+	}else{
+		fann_set_activation_function_hidden(ann, FANN_SIGMOID);
+		fann_set_activation_function_output(ann, FANN_SIGMOID);
 	}
 
-	stop_timer();
-
-	fprintf(out, "%d %.20e\n", num_neurons, getNanoPerN(i)/total_connections);
-	fprintf(stderr, "%d ", num_neurons);
-	fann_destroy(ann);	
-}
-
-void performance_benchmark_fann_stepwise(FILE *out, fann_type *input,
-	unsigned int num_neurons, unsigned int seconds_per_test)
-{
-	unsigned int i, total_connections;
-	fann_type *output;
-
-	struct fann *ann = fann_create(1, 0.7, 4,
-		num_neurons, num_neurons, num_neurons, num_neurons);
-
-	fann_set_activation_function_hidden(ann, FANN_SIGMOID_STEPWISE);
-	fann_set_activation_function_output(ann, FANN_SIGMOID_STEPWISE);
-	
 	total_connections = (num_neurons+1) * num_neurons * 3;
 		
 	start_timer();
@@ -233,14 +214,14 @@ int main(int argc, char* argv[])
 			  num_neurons, seconds_per_test);
 		}else if(strcmp(argv[1], "fann") == 0){
 #endif
-			performance_benchmark_fann(out, input,
+			performance_benchmark_fann(false, out, input,
 				num_neurons, seconds_per_test);
 #ifndef FIXEDFANN
 		}else if(strcmp(argv[1], "fann_noopt") == 0){
 			performance_benchmark_fann_noopt(out, input,
 				num_neurons, seconds_per_test);
 		}else if(strcmp(argv[1], "fann_stepwise") == 0){
-			performance_benchmark_fann_stepwise(out, input,
+			performance_benchmark_fann(true, out, input,
 				num_neurons, seconds_per_test);
 		}else if(strcmp(argv[1], "fann_thres") == 0){
 			performance_benchmark_fann_thres(out, input,
