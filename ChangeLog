@@ -1,3 +1,7 @@
+libfann (1.2.0) stable; urgency=low
+	* Fixes for better compability with different compilers
+	* Connections that skip layers
+	
 libfann (1.1.0) stable; urgency=low
 	* Error checking when allocating memory
 	* Debian package

@@ -102,7 +102,9 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 		last_neuron = layer_it->last_neuron;
 		
 		/* for each connection in this layer, propagate the error backwards*/
-		if(ann->connection_rate == 1){ /* optimization for fully connected networks */
+		if(ann->connection_rate >= 1 && !ann->forward_connections){
+			/* optimization for fully connected networks */
+			/* but not forward connected networks */
 			shift_prev_layer = (layer_it-1)->first_neuron - first_neuron;
 			for(neuron_it = layer_it->first_neuron;
 				neuron_it != last_neuron; neuron_it++){
@@ -179,7 +181,9 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 		printf("layer[%d]\n", layer_it - first_layer);
 #endif
 		last_neuron = layer_it->last_neuron;
-		if(ann->connection_rate == 1){ /* optimization for fully connected networks */
+		if(ann->connection_rate >= 1 && !ann->forward_connections){
+			/* optimization for fully connected networks */
+			/* but not forward connected networks */			
 			neurons = (layer_it-1)->first_neuron;
 			for(neuron_it = layer_it->first_neuron;
 				neuron_it != last_neuron; neuron_it++){
@@ -194,9 +198,9 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 		}else{
 			for(neuron_it = layer_it->first_neuron;
 				neuron_it != last_neuron; neuron_it++){
-				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
+				tmp_delta = *(delta_begin + (neuron_it - first_neuron)) * learning_rate;
 				for(i = neuron_it->num_connections ; i-- ; ){
-					neuron_it->weights[i] += learning_rate * tmp_delta * neuron_it->connected_neurons[i]->value;
+					neuron_it->weights[i] += tmp_delta * neuron_it->connected_neurons[i]->value;
 				}
 			}
 		}

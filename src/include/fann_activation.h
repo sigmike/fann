@@ -61,13 +61,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    One of the most used activation functions.
    span: -1 < y < 1
    y = tanh(s*x) = 2/(1 + exp(-2*s*x)) - 1, d = s*(1-(y*y))
-   NOT implemented yet.
 */
 #define FANN_SIGMOID_SYMMETRIC 5
 	
 /* Stepwise linear approximation to symmetric sigmoid.
    Faster than symmetric sigmoid but a bit less precise.
-   NOT implemented yet.
 */
 #define FANN_SIGMOID_SYMMETRIC_STEPWISE 6
 

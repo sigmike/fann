@@ -221,7 +221,7 @@ struct fann_train_data * fann_duplicate_train_data(struct fann_train_data *data)
 	struct fann_train_data * dest;
 	unsigned int x;
 
-	if ( (dest = malloc(sizeof(struct fann_train_data))) == NULL ) {
+	if ( (dest = (struct fann_train_data *)malloc(sizeof(struct fann_train_data))) == NULL ) {
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
 		return NULL;
 	}

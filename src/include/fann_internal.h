@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include "fann_data.h"
 
-#define FANN_FIX_VERSION "FANN_FIX_1.0"
-#define FANN_FLO_VERSION "FANN_FLO_1.0"
+#define FANN_FIX_VERSION "FANN_FIX_1.1"
+#define FANN_FLO_VERSION "FANN_FLO_1.1"
 
 #ifdef FIXEDFANN
 #define FANN_CONF_VERSION FANN_FIX_VERSION

@@ -77,7 +77,18 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 */
 struct fann * fann_create_array(float connection_rate, float learning_rate,
 	unsigned int num_layers, unsigned int * layers);
+	
 
+/* create a neural network with forward connections.
+ */
+struct fann * fann_create_forward(float learning_rate,
+	unsigned int num_layers, /* the number of layers, including the input and output layer */
+	...); /* the number of neurons in each of the layers, starting with the input layer and ending with the output layer */
+
+/* create a neural network with forward connections.
+ */
+struct fann * fann_create_forward_array(float learning_rate, unsigned int num_layers, unsigned int * layers);	
+	
 /* Runs a input through the network, and returns the output.
  */
 fann_type* fann_run(struct fann *ann, fann_type *input);
@@ -95,7 +106,8 @@ void fann_randomize_weights(struct fann *ann, fann_type min_weight, fann_type ma
 */
 void fann_init_weights(struct fann *ann, struct fann_train_data * train_data);
 
-
+/* print out which connections there are in the ann */
+void fann_print_connections(struct fann *ann);	
 	
 /* ----- Implemented in fann_io.c Saving and loading of ANNs ----- */
 
@@ -316,7 +328,7 @@ unsigned int fann_get_multiplier(struct fann *ann);
 	
 /* change where errors are logged to
  */
-void fann_set_error_log(struct fann_error *errdat, FILE *log);
+void fann_set_error_log(struct fann_error *errdat, FILE *log_file);
 
 /* returns the last error number
  */

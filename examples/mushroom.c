@@ -29,7 +29,6 @@ int print_callback(unsigned int epochs, float error)
 
 int main()
 {
-	fann_type *calc_out;
 	const float connection_rate = 1;
 	const float learning_rate = (const float)0.4;
 	const unsigned int num_layers = 3;
@@ -41,7 +40,6 @@ int main()
 	struct fann_train_data *train_data, *test_data;
 	
 	unsigned int i = 0;
-	unsigned int decimal_point;
 
 	printf("Creating network.\n");
 

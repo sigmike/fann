@@ -75,6 +75,13 @@ struct fann
 	 */
 	float connection_rate;
 
+	/* is 1 if forward connections are used in the ann otherwise 0
+	 * Forward connections are connections that skip layers.
+	 * A fully connected ann with forward connections are a ann where
+	 * neurons have connections to all neurons in all later layers.
+	 */
+	unsigned int forward_connections;
+
 	/* pointer to the first layer (input layer) in an array af all the layers,
 	 * including the input and outputlayers 
 	 */

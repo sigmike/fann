@@ -68,9 +68,9 @@ char * fann_get_errstr(struct fann_error *errdat)
 
 /* change where errors are logged to
  */
-void fann_set_error_log(struct fann_error *errdat, FILE *log)
+void fann_set_error_log(struct fann_error *errdat, FILE *log_file)
 {
-  errdat->error_log = log;
+  errdat->error_log = log_file;
 }
 
 /* prints the last error to the error log (default stderr)
@@ -106,49 +106,49 @@ void fann_error(struct fann_error *errdat, const unsigned int errno, ...)
 	case FANN_E_NO_ERROR:
 		break;
 	case FANN_E_CANT_OPEN_CONFIG_R:
-		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unable to open configuration file \"%s\" for reading.\n", ap);
+		vsprintf(errstr, "Unable to open configuration file \"%s\" for reading.\n", ap);
 		break;
 	case FANN_E_CANT_OPEN_CONFIG_W:
-		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unable to open configuration file \"%s\" for writing.\n", ap);
+		vsprintf(errstr, "Unable to open configuration file \"%s\" for writing.\n", ap);
 		break;
 	case FANN_E_WRONG_CONFIG_VERSION:
-		vsnprintf(errstr, FANN_ERRSTR_MAX, "Wrong version of configuration file, aborting read of configuration file \"%s\".\n", ap);
+		vsprintf(errstr, "Wrong version of configuration file, aborting read of configuration file \"%s\".\n", ap);
 		break;
 	case FANN_E_CANT_READ_CONFIG:
-		vsnprintf(errstr, FANN_ERRSTR_MAX, "Error reading info from configuration file \"%s\".\n", ap);
+		vsprintf(errstr, "Error reading info from configuration file \"%s\".\n", ap);
 		break;
 	case FANN_E_CANT_READ_NEURON:
-		vsnprintf(errstr, FANN_ERRSTR_MAX, "Error reading neuron info from configuration file \"%s\".\n", ap);
+		vsprintf(errstr, "Error reading neuron info from configuration file \"%s\".\n", ap);
 		break;
 	case FANN_E_CANT_READ_CONNECTIONS:
-		vsnprintf(errstr, FANN_ERRSTR_MAX, "Error reading connections from configuration file \"%s\".\n", ap);
+		vsprintf(errstr, "Error reading connections from configuration file \"%s\".\n", ap);
 		break;
 	case FANN_E_WRONG_NUM_CONNECTIONS:
-		vsnprintf(errstr, FANN_ERRSTR_MAX, "ERROR connections_so_far=%d, total_connections=%d\n", ap);
+		vsprintf(errstr, "ERROR connections_so_far=%d, total_connections=%d\n", ap);
 		break;
 	case FANN_E_CANT_OPEN_TD_W:
-		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unable to open train data file \"%s\" for writing.\n", ap);
+		vsprintf(errstr, "Unable to open train data file \"%s\" for writing.\n", ap);
 		break;
 	case FANN_E_CANT_OPEN_TD_R:
-		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unable to open train data file \"%s\" for writing.\n", ap);
+		vsprintf(errstr, "Unable to open train data file \"%s\" for writing.\n", ap);
 		break;
 	case FANN_E_CANT_READ_TD:
-		vsnprintf(errstr, FANN_ERRSTR_MAX, "Error reading info from train data file \"%s\", line: %d.\n", ap);
+		vsprintf(errstr, "Error reading info from train data file \"%s\", line: %d.\n", ap);
 		break;
 	case FANN_E_CANT_ALLOCATE_MEM:
-		snprintf(errstr, FANN_ERRSTR_MAX, "Unable to allocate memory.\n");
+		sprintf(errstr, "Unable to allocate memory.\n");
 		break;
 	case FANN_E_CANT_TRAIN_ACTIVATION:
-		snprintf(errstr, FANN_ERRSTR_MAX, "Unable to train with the selected activation function.\n");
+		sprintf(errstr, "Unable to train with the selected activation function.\n");
 		break;
 	case FANN_E_CANT_USE_ACTIVATION:
-		snprintf(errstr, FANN_ERRSTR_MAX, "Unable to use the selected activation function.\n");
+		sprintf(errstr, "Unable to use the selected activation function.\n");
 		break;
 	case FANN_E_TRAIN_DATA_MISMATCH:
-		snprintf(errstr, FANN_ERRSTR_MAX, "Training data must be of equivalent structure.");
+		sprintf(errstr, "Training data must be of equivalent structure.");
 		break;
 	default:
-		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unknown error.\n", ap);
+		vsprintf(errstr, "Unknown error.\n", ap);
 		break;
 	}
 	va_end(ap);

@@ -149,18 +149,18 @@ int fann_save_internal_fd(struct fann *ann, FILE *conf, const char *configuratio
 		/* save the decimal_point on a seperate line */
 		fprintf(conf, "%u\n", decimal_point);
 		
-		/* save the number layers "num_layers learning_rate connection_rate activation_function_hidden activation_function_output activation_hidden_steepness activation_output_steepness" */	
-		fprintf(conf, "%u %f %f %u %u %d %d\n", ann->last_layer - ann->first_layer, ann->learning_rate, ann->connection_rate, ann->activation_function_hidden, ann->activation_function_output, (int)(ann->activation_hidden_steepness * fixed_multiplier), (int)(ann->activation_output_steepness * fixed_multiplier));
+		/* save the number layers "num_layers learning_rate connection_rate forward_connections activation_function_hidden activation_function_output activation_hidden_steepness activation_output_steepness" */	
+		fprintf(conf, "%u %f %f %u %u %u %d %d\n", ann->last_layer - ann->first_layer, ann->learning_rate, ann->connection_rate, ann->forward_connections, ann->activation_function_hidden, ann->activation_function_output, (int)(ann->activation_hidden_steepness * fixed_multiplier), (int)(ann->activation_output_steepness * fixed_multiplier));
 	}else{
-		/* save the number layers "num_layers learning_rate connection_rate activation_function_hidden activation_function_output activation_hidden_steepness activation_output_steepness" */	
-		fprintf(conf, "%u %f %f %u %u "FANNPRINTF" "FANNPRINTF"\n", ann->last_layer - ann->first_layer, ann->learning_rate, ann->connection_rate, ann->activation_function_hidden, ann->activation_function_output, ann->activation_hidden_steepness, ann->activation_output_steepness);
+		/* save the number layers "num_layers learning_rate connection_rate forward_connections activation_function_hidden activation_function_output activation_hidden_steepness activation_output_steepness" */	
+		fprintf(conf, "%u %f %f %u %u %u "FANNPRINTF" "FANNPRINTF"\n", ann->last_layer - ann->first_layer, ann->learning_rate, ann->connection_rate, ann->forward_connections, ann->activation_function_hidden, ann->activation_function_output, ann->activation_hidden_steepness, ann->activation_output_steepness);
 	}
 #else
 	/* save the decimal_point on a seperate line */
 	fprintf(conf, "%u\n", ann->decimal_point);
 	
-	/* save the number layers "num_layers learning_rate connection_rate activation_function_hidden activation_function_output activation_hidden_steepness activation_output_steepness" */	
-	fprintf(conf, "%u %f %f %u %u "FANNPRINTF" "FANNPRINTF"\n", ann->last_layer - ann->first_layer, ann->learning_rate, ann->connection_rate, ann->activation_function_hidden, ann->activation_function_output, ann->activation_hidden_steepness, ann->activation_output_steepness);	
+	/* save the number layers "num_layers learning_rate connection_rate forward_connections activation_function_hidden activation_function_output activation_hidden_steepness activation_output_steepness" */	
+	fprintf(conf, "%u %f %f %u %u %u "FANNPRINTF" "FANNPRINTF"\n", ann->last_layer - ann->first_layer, ann->learning_rate, ann->connection_rate, ann->forward_connections, ann->activation_function_hidden, ann->activation_function_output, ann->activation_hidden_steepness, ann->activation_output_steepness);	
 #endif
 
 	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
@@ -278,7 +278,7 @@ void fann_save_train_internal_fd(struct fann_train_data* data, FILE *file, char 
  */
 struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file)
 {
-	unsigned int num_layers, layer_size, activation_function_hidden, activation_function_output, input_neuron, i;
+	unsigned int num_layers, layer_size, activation_function_hidden, activation_function_output, input_neuron, i, forward_connections;
 #ifdef FIXEDFANN
 	unsigned int decimal_point, multiplier;
 #endif
@@ -316,7 +316,7 @@ struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file)
 	multiplier = 1 << decimal_point;
 #endif
 	
-	if(fscanf(conf, "%u %f %f %u %u "FANNSCANF" "FANNSCANF"\n", &num_layers, &learning_rate, &connection_rate, &activation_function_hidden, &activation_function_output, &activation_hidden_steepness, &activation_output_steepness) != 7){
+	if(fscanf(conf, "%u %f %f %u %u %u "FANNSCANF" "FANNSCANF"\n", &num_layers, &learning_rate, &connection_rate, &forward_connections, &activation_function_hidden, &activation_function_output, &activation_hidden_steepness, &activation_output_steepness) != 8){
 		fann_error(NULL, FANN_E_CANT_READ_CONFIG, configuration_file);
 		return NULL;
 	}
@@ -326,6 +326,7 @@ struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file)
 		return NULL;
 	}
 	ann->connection_rate = connection_rate;
+	ann->forward_connections = forward_connections;
 
 #ifdef FIXEDFANN
 	ann->decimal_point = decimal_point;

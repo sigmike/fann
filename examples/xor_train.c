@@ -56,8 +56,6 @@ int main()
 
 	data = fann_read_train_from_file("xor.data");
 
-	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
-	fann_set_activation_function_output(ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
 	fann_init_weights(ann, data);
 	
 	fann_train_on_data(ann, data, max_iterations, iterations_between_reports, desired_error);

@@ -1,16 +1,18 @@
 # This makefile is on purpose not made with configure, to show how to use the library
 # The make file requires that the fann library is installed (see ../README)
 
+GCC=gcc
+
 TARGETS = xor_train xor_test xor_test_fixed simple_train steepness_train simple_test
 DEBUG_TARGETS = xor_train_debug xor_test_debug xor_test_fixed_debug
 
 all: $(TARGETS)
 
 %: %.c Makefile
-	gcc -O3 -lm -lfann $< -o $@
+	$(GCC) -O3 -lm -lfann $< -o $@
 
 %_fixed: %.c Makefile
-	gcc -O3 -lm -lfixedfann -DFIXEDFANN $< -o $@
+	$(GCC) -O3 -lm -lfixedfann -DFIXEDFANN $< -o $@
 
 clean:
 	rm -f $(TARGETS) $(DEBUG_TARGETS) xor_fixed.data xor_float.net xor_fixed.net
@@ -43,25 +45,30 @@ rundebugtest: $(DEBUG_TARGETS)
 	@echo Testing network with fixed points
 	./xor_test_fixed_debug
 
+#compiletest is used to test whether the library will compile easily in other compilers
+compiletest:
+	gcc -O3 -ggdb -lm -DDEBUG -Wall -Wformat-security -Wfloat-equal -Wshadow -Wpointer-arith -Wcast-qual -Wsign-compare -pedantic -ansi -I../src/ -I../src/include/ ../src/floatfann.c xor_train.c -o xor_train
+	g++ -O3 -ggdb -lm -DDEBUG -Wall -Wformat-security -Wfloat-equal -Wpointer-arith -Wcast-qual -Wsign-compare -pedantic -ansi -I../src/ -I../src/include/ ../src/floatfann.c xor_train.c -o xor_train
+
 debug: $(DEBUG_TARGETS)
 
 %_debug: %.c Makefile ../src/*c ../src/include/*h
-	gcc -O -ggdb -lm -DDEBUG -I../src/ -I../src/include/ ../src/floatfann.c $< -o $@
+	$(GCC) -O3 -ggdb -lm -DDEBUG -Wall -ansi -I../src/ -I../src/include/ ../src/floatfann.c $< -o $@
 
 %_fixed_debug: %.c Makefile
-	gcc -O -ggdb -lm -DDEBUG -DFIXEDFANN -I../src/ -I../src/include/ ../src/fixedfann.c $< -o $@
+	$(GCC) -O3 -ggdb -lm -DDEBUG -Wall -ansi -DFIXEDFANN -I../src/ -I../src/include/ ../src/fixedfann.c $< -o $@
 
-rundebug: $(TARGETS)
+rundebug: $(DEBUG_TARGETS)
 	@echo
 	@echo Training network
-	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_train
+	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_train_debug
 
 	@echo
 	@echo Testing network with floats
-	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_test
+	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_test_debug
 
 	@echo
 	@echo Testing network with fixed points
-	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_test_fixed
+	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_test_fixed_debug
 
 
