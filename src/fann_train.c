@@ -107,7 +107,7 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 			for(neuron_it = layer_it->first_neuron;
 				neuron_it != last_neuron; neuron_it++){
 				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
-				for(i = 0; i < neuron_it->num_connections; i++){
+				for(i = neuron_it->num_connections ; i-- ; ){
 					*(delta_begin + i + shift_prev_layer) += tmp_delta * neuron_it->weights[i];
 #ifdef DEBUGTRAIN
 					printf("delta2[%d] = "FANNPRINTF" += ("FANNPRINTF" * "FANNPRINTF")\n", (i + shift_prev_layer), *(delta_begin + i + shift_prev_layer), tmp_delta, neuron_it->weights[i]);
@@ -118,7 +118,7 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 			for(neuron_it = layer_it->first_neuron;
 				neuron_it != last_neuron; neuron_it++){
 				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
-				for(i = 0; i < neuron_it->num_connections; i++){
+				for(i = neuron_it->num_connections ; i-- ; ){
 					*(delta_begin + (neuron_it->connected_neurons[i] - first_neuron)) +=
 						tmp_delta * neuron_it->weights[i];
 				}
@@ -183,19 +183,19 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 			neurons = (layer_it-1)->first_neuron;
 			for(neuron_it = layer_it->first_neuron;
 				neuron_it != last_neuron; neuron_it++){
-				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
-				for(i = 0; i < neuron_it->num_connections; i++){
+				tmp_delta = *(delta_begin + (neuron_it - first_neuron)) * learning_rate;
+				for(i = neuron_it->num_connections ; i-- ; ){
 #ifdef DEBUGTRAIN
 					printf("weights[%d] += "FANNPRINTF" = %f * %f\n", i, tmp_delta * neurons[i].value, tmp_delta, neurons[i].value);
 #endif
-					neuron_it->weights[i] += learning_rate * tmp_delta * neurons[i].value;
+					neuron_it->weights[i] += tmp_delta * neurons[i].value;
 				}
 			}
 		}else{
 			for(neuron_it = layer_it->first_neuron;
 				neuron_it != last_neuron; neuron_it++){
 				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
-				for(i = 0; i < neuron_it->num_connections; i++){
+				for(i = neuron_it->num_connections ; i-- ; ){
 					neuron_it->weights[i] += learning_rate * tmp_delta * neuron_it->connected_neurons[i]->value;
 				}
 			}
