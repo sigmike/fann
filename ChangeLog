@@ -15,7 +15,7 @@ libfann (1.1.0) stable; urgency=low
 	* Rearanged files for easier development
 	* Added MSVC++ project files
 	
- -- Steffen Nissen <lukesky@diku.dk> 
+ -- Steffen Nissen <lukesky@diku.dk> Wed, 31 Mar 2004 21:19:32 +0200
 
 libfann (1.0.5) stable; urgency=low
 	* Added a new constructor
