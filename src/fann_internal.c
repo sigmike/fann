@@ -642,7 +642,7 @@ struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file)
 #endif
 	}
 	
-	ann->num_input = ann->first_layer->last_neuron - ann->first_layer->first_neuron;
+	ann->num_input = ann->first_layer->last_neuron - ann->first_layer->first_neuron -1;
 	ann->num_output = ((ann->last_layer-1)->last_neuron - (ann->last_layer-1)->first_neuron) - 1;
 	
 	/* allocate room for the actual neurons */
