@@ -561,23 +561,12 @@ void fann_clear_train_arrays(struct fann *ann)
 /* INTERNAL FUNCTION
    Update weights for batch training
  */
-void fann_update_weights_batch(struct fann *ann, unsigned int num_data, struct fann_layer *layer_begin, struct fann_layer *layer_end)
+void fann_update_weights_batch(struct fann *ann, unsigned int num_data, unsigned int first_weight, unsigned int past_end)
 {
 	fann_type *train_slopes = ann->train_slopes;
 	fann_type *weights = ann->weights;
 	const float epsilon = ann->learning_rate/num_data;
-	unsigned int i, past_end;
-
-   	if(layer_begin == NULL){
-		layer_begin = ann->first_layer+1;
-	}
-
-	if(layer_end == NULL){
-		layer_end = ann->last_layer-1;
-	}
-
-	i = layer_begin->first_neuron->first_con;
-	past_end = (layer_end->last_neuron - 1)->last_con;
+	unsigned int i = first_weight;
 
 	for(;i != past_end; i++){
 		weights[i] += train_slopes[i] * epsilon;
@@ -588,7 +577,7 @@ void fann_update_weights_batch(struct fann *ann, unsigned int num_data, struct f
 /* INTERNAL FUNCTION
    The quickprop training algorithm
  */
-void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data, struct fann_layer *layer_begin, struct fann_layer *layer_end)
+void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data, unsigned int first_weight, unsigned int past_end)
 {
 	fann_type *train_slopes = ann->train_slopes;
 	fann_type *weights = ann->weights;
@@ -602,18 +591,7 @@ void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data, stru
 	float mu = ann->quickprop_mu; /*1.75;*/
 	float shrink_factor = (float)(mu / (1.0 + mu));
 
-	unsigned int i, past_end;
-
-   	if(layer_begin == NULL){
-		layer_begin = ann->first_layer+1;
-	}
-
-	if(layer_end == NULL){
-		layer_end = ann->last_layer-1;
-	}
-
-	i = layer_begin->first_neuron->first_con;
-	past_end = (layer_end->last_neuron - 1)->last_con;
+	unsigned int i = first_weight;
 
 	for(;i != past_end; i++){
 		w = weights[i];
@@ -666,7 +644,7 @@ void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data, stru
 /* INTERNAL FUNCTION
    The iRprop- algorithm
 */
-void fann_update_weights_irpropm(struct fann *ann, unsigned int num_data, struct fann_layer *layer_begin, struct fann_layer *layer_end)
+void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight, unsigned int past_end)
 {
 	fann_type *train_slopes = ann->train_slopes;
 	fann_type *weights = ann->weights;
@@ -681,18 +659,7 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int num_data, struct
 	float delta_min = ann->rprop_delta_min;/*0.0;*/
 	float delta_max = ann->rprop_delta_max;/*50.0;*/
 
-	unsigned int i, past_end;
-
-   	if(layer_begin == NULL){
-		layer_begin = ann->first_layer+1;
-	}
-
-	if(layer_end == NULL){
-		layer_end = ann->last_layer-1;
-	}
-
-	i = layer_begin->first_neuron->first_con;
-	past_end = (layer_end->last_neuron - 1)->last_con;
+	unsigned int i = first_weight;
 
 	for(;i != past_end; i++){
 		prev_step = fann_max(prev_steps[i], (fann_type)0.001); /* prev_step may not be zero because then the training will stop */

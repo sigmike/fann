@@ -833,7 +833,7 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 
 	/* variables used for cascade correlation (reasonable defaults) */
 	ann->cascade_change_fraction = 0.001;
-	ann->cascade_stagnation_epochs = 32;
+	ann->cascade_stagnation_epochs = 64;
 	ann->cascade_num_candidates = 8;
 	ann->cascade_candidate_scores = NULL;
 

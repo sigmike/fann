@@ -61,9 +61,9 @@ void fann_update_output_weights(struct fann *ann);
 void fann_backpropagate_MSE(struct fann *ann);
 void fann_update_weights(struct fann *ann);
 void fann_update_slopes_batch(struct fann *ann, struct fann_layer *layer_begin, struct fann_layer *layer_end);
-void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data, struct fann_layer *layer_begin, struct fann_layer *layer_end);
-void fann_update_weights_batch(struct fann *ann, unsigned int num_data, struct fann_layer *layer_begin, struct fann_layer *layer_end);
-void fann_update_weights_irpropm(struct fann *ann, unsigned int num_data, struct fann_layer *layer_begin, struct fann_layer *layer_end);
+void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data, unsigned int first_weight, unsigned int past_end);
+void fann_update_weights_batch(struct fann *ann, unsigned int num_data, unsigned int first_weight, unsigned int past_end);
+void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight, unsigned int past_end);
 
 void fann_clear_train_arrays(struct fann *ann);
 

@@ -35,7 +35,7 @@ int main()
 	const unsigned int num_neurons_hidden = 32;
 	const float desired_error = (const float)0.0001;
 	const unsigned int max_iterations = 300;
-	const unsigned int iterations_between_reports = 1;
+	const unsigned int iterations_between_reports = 10;
 	struct fann *ann;
 	struct fann_train_data *train_data, *test_data;
 	
@@ -55,7 +55,7 @@ int main()
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
 	fann_set_activation_function_output(ann, FANN_SIGMOID_STEPWISE);
 
-	fann_set_training_algorithm(ann, FANN_TRAIN_INCREMENTAL);
+	/*fann_set_training_algorithm(ann, FANN_TRAIN_INCREMENTAL);*/
 	
 	fann_train_on_data(ann, train_data, max_iterations, iterations_between_reports, desired_error);
 	

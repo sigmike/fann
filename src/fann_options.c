@@ -31,41 +31,44 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 {
 	struct fann_layer *layer_it;
 	
-	printf("Input layer                : %2d neurons, 1 bias\n", ann->num_input);
+	printf("Input layer                :%4d neurons, 1 bias\n", ann->num_input);
 	for(layer_it = ann->first_layer+1; layer_it != ann->last_layer-1; layer_it++){
 		if(ann->shortcut_connections){
-			printf("  Hidden layer             : %2d neurons, 0 bias\n",
+			printf("  Hidden layer             :%4d neurons, 0 bias\n",
 				layer_it->last_neuron - layer_it->first_neuron);
 		} else {
-			printf("  Hidden layer             : %2d neurons, 1 bias\n",
+			printf("  Hidden layer             :%4d neurons, 1 bias\n",
 				layer_it->last_neuron - layer_it->first_neuron - 1);
 		}
 	}
-	printf("Output layer               : %2d neurons\n", ann->num_output);
-	printf("Total neurons and biases   : %2d\n", fann_get_total_neurons(ann));
-	printf("Total connections          : %2d\n", ann->total_connections);
-	printf("Connection rate            : %5.2f\n", ann->connection_rate);
-	printf("Shortcut connections       : %2d\n", ann->shortcut_connections);
-	printf("Training algorithm         :  %s\n", FANN_TRAIN_NAMES[ann->training_algorithm]);	
-	printf("Learning rate              : %5.2f\n", ann->learning_rate);
-	printf("Activation function hidden :  %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_hidden]);
-	printf("Activation function output :  %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_output]);
+	printf("Output layer               :%4d neurons\n", ann->num_output);
+	printf("Total neurons and biases   :%4d\n", fann_get_total_neurons(ann));
+	printf("Total connections          :%4d\n", ann->total_connections);
+	printf("Connection rate            :  %5.2f\n", ann->connection_rate);
+	printf("Shortcut connections       :%4d\n", ann->shortcut_connections);
+	printf("Training algorithm         :   %s\n", FANN_TRAIN_NAMES[ann->training_algorithm]);	
+	printf("Learning rate              :  %5.2f\n", ann->learning_rate);
+	printf("Activation function hidden :   %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_hidden]);
+	printf("Activation function output :   %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_output]);
 #ifndef FIXEDFANN
-	printf("Activation steepness hidden: %5.2f\n", ann->activation_steepness_hidden);
-	printf("Activation steepness output: %5.2f\n", ann->activation_steepness_output);
+	printf("Activation steepness hidden:  %5.2f\n", ann->activation_steepness_hidden);
+	printf("Activation steepness output:  %5.2f\n", ann->activation_steepness_output);
 #else
-	printf("Activation steepness hidden: %d\n", ann->activation_steepness_hidden);
-	printf("Activation steepness output: %d\n", ann->activation_steepness_output);
-	printf("Decimal point              : %2d\n", ann->decimal_point);
-	printf("Multiplier                 : %2d\n", ann->multiplier);
+	printf("Activation steepness hidden:  %d\n", ann->activation_steepness_hidden);
+	printf("Activation steepness output:  %d\n", ann->activation_steepness_output);
+	printf("Decimal point              :%4d\n", ann->decimal_point);
+	printf("Multiplier                 :%4d\n", ann->multiplier);
 #endif
-	printf("Training error function    :  %s\n", FANN_ERRORFUNC_NAMES[ann->train_error_function]);
-	printf("Quickprop decay            : %9.6f\n", ann->quickprop_decay);
-	printf("Quickprop mu               : %5.2f\n", ann->quickprop_mu);
-	printf("RPROP increase factor      : %5.2f\n", ann->rprop_increase_factor);
-	printf("RPROP decrease factor      : %5.2f\n", ann->rprop_decrease_factor);
-	printf("RPROP delta min            : %5.2f\n", ann->rprop_delta_min);
-	printf("RPROP delta max            : %5.2f\n", ann->rprop_delta_max);
+	printf("Training error function    :   %s\n", FANN_ERRORFUNC_NAMES[ann->train_error_function]);
+	printf("Quickprop decay            :  %9.6f\n", ann->quickprop_decay);
+	printf("Quickprop mu               :  %5.2f\n", ann->quickprop_mu);
+	printf("RPROP increase factor      :  %5.2f\n", ann->rprop_increase_factor);
+	printf("RPROP decrease factor      :  %5.2f\n", ann->rprop_decrease_factor);
+	printf("RPROP delta min            :  %5.2f\n", ann->rprop_delta_min);
+	printf("RPROP delta max            :  %5.2f\n", ann->rprop_delta_max);
+	printf("Cascade change fraction    :  %9.6f\n", ann->cascade_change_fraction);
+	printf("Cascade stagnation epochs  :%4d\n", ann->cascade_stagnation_epochs);
+	printf("Cascade no. of candidates  :%4d\n", ann->cascade_num_candidates);
 }
 
 FANN_EXTERNAL unsigned int FANN_API fann_get_training_algorithm(struct fann *ann)
