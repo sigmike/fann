@@ -1,4 +1,4 @@
-<!-- $Id: fann.xml,v 1.3 2004/02/16 09:50:45 tadpole9 Exp $ -->
+<!-- $Id: fann.xml,v 1.4 2004/02/16 22:11:09 tadpole9 Exp $ -->
 <?xml version='1.0' encoding='ISO-8859-1' ?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
@@ -1012,7 +1012,7 @@ int main()
      <title>Description</title>
      <methodsynopsis>
       <type>unsigned int</type><methodname>fann_get_errno</methodname>
-      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>struct fann_error *</type><parameter>errdat</parameter></methodparam>
      </methodsynopsis>
      <para>
       Returns the numerical representation of the last error. The error codes are defined
@@ -1030,7 +1030,7 @@ int main()
      <title>Description</title>
      <methodsynopsis>
       <type>char *</type><methodname>fann_get_errstr</methodname>
-      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>struct fann_error *</type><parameter>errdat</parameter></methodparam>
      </methodsynopsis>
      <para>
       Returns the last error.
@@ -1052,7 +1052,7 @@ int main()
      <title>Description</title>
      <methodsynopsis>
       <type>void</type><methodname>fann_reset_errno</methodname>
-      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>struct fann_error *</type><parameter>errdat</parameter></methodparam>
      </methodsynopsis>
      <para>
       Reset the last error number.
@@ -1069,7 +1069,7 @@ int main()
      <title>Description</title>
      <methodsynopsis>
       <type>void</type><methodname>fann_reset_errstr</methodname>
-      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>struct fann_error *</type><parameter>errdat</parameter></methodparam>
      </methodsynopsis>
      <para>
       Reset the last error string.
@@ -1086,7 +1086,7 @@ int main()
      <title>Description</title>
      <methodsynopsis>
       <type>void</type><methodname>fann_set_error_log</methodname>
-      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>struct fann_error *</type><parameter>errdat</parameter></methodparam>
       <methodparam><type>FILE *</type><parameter>log</parameter></methodparam>
      </methodsynopsis>
      <para>
@@ -1293,7 +1293,7 @@ int main()
       <title>Description</title>
       <methodsynopsis>
        <type>void</type><methodname>fann_error</methodname>
-       <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+       <methodparam><type>struct fann_error *</type><parameter>errdat</parameter></methodparam>
        <methodparam><type>unsigned int</type><parameter>errno</parameter></methodparam>
        <methodparam><parameter>...</parameter></methodparam>
       </methodsynopsis>
