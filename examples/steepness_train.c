@@ -26,7 +26,7 @@ void train_on_steepness_file(struct fann *ann, char *filename,
 	float steepness_step, float steepness_end)
 {
 	float error;
-	unsigned int i, j;
+	unsigned int i;
 
 	struct fann_train_data *data = fann_read_train_from_file(filename);
 	if(epochs_between_reports){
@@ -34,17 +34,11 @@ void train_on_steepness_file(struct fann *ann, char *filename,
 			max_epochs, desired_error);
 	}
 
-	fann_set_activation_hidden_steepness(ann, steepness_start);
-	fann_set_activation_output_steepness(ann, steepness_start);
+	fann_set_activation_steepness_hidden(ann, steepness_start);
+	fann_set_activation_steepness_output(ann, steepness_start);
 	for(i = 1; i <= max_epochs; i++){
 		/* train */
-		fann_reset_MSE(ann);
-
-		for(j = 0; j != data->num_data; j++){
-			fann_train(ann, data->input[j], data->output[j]);
-		}
-
-		error = fann_get_MSE(ann);
+		error = fann_train_epoch(ann, data);
 
 		/* print current output */
 		if(epochs_between_reports &&
@@ -59,8 +53,8 @@ void train_on_steepness_file(struct fann *ann, char *filename,
 			steepness_start += steepness_step;
 			if(steepness_start <= steepness_end){
 				printf("Steepness: %f\n", steepness_start);
-				fann_set_activation_hidden_steepness(ann, steepness_start);
-				fann_set_activation_output_steepness(ann, steepness_start);
+				fann_set_activation_steepness_hidden(ann, steepness_start);
+				fann_set_activation_steepness_output(ann, steepness_start);
 			}else{
 				break;
 			}
@@ -76,8 +70,8 @@ int main()
 	const unsigned int num_input = 2;
 	const unsigned int num_output = 1;
 	const unsigned int num_layers = 3;
-	const unsigned int num_neurons_hidden = 4;
-	const float desired_error = (const float)0.0001;
+	const unsigned int num_neurons_hidden = 2;
+	const float desired_error = (const float)0.001;
 	const unsigned int max_iterations = 500000;
 	const unsigned int iterations_between_reports = 1000;
 	unsigned int i;
@@ -88,14 +82,19 @@ int main()
 	struct fann *ann = fann_create(connection_rate,
 		learning_rate, num_layers,
 		num_input, num_neurons_hidden, num_output);
-
+	
 	data = fann_read_train_from_file("xor.data");
 	
-	train_on_steepness_file(ann, "xor.data", max_iterations,
-		iterations_between_reports, desired_error, (float)0.5, (float)0.1, (float)20.0);
+	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
+	fann_set_activation_function_output(ann, FANN_SIGMOID_SYMMETRIC);
 
-	fann_set_activation_function_hidden(ann, FANN_THRESHOLD);
-	fann_set_activation_function_output(ann, FANN_THRESHOLD);
+	fann_set_training_algorithm(ann, FANN_QUICKPROP_TRAIN);
+	
+	train_on_steepness_file(ann, "xor.data", max_iterations,
+		iterations_between_reports, desired_error, (float)1.0, (float)0.1, (float)20.0);
+
+	fann_set_activation_function_hidden(ann, FANN_THRESHOLD_SYMMETRIC);
+	fann_set_activation_function_output(ann, FANN_THRESHOLD_SYMMETRIC);
 
 	for(i = 0; i != data->num_data; i++){
 		calc_out = fann_run(ann, data->input[i]);

@@ -21,9 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "fixedfann.h"
 
-#include "fann.h"
-#include "fann_internal.h"
-
 #include "fann.c"
 #include "fann_io.c"
 #include "fann_train.c"

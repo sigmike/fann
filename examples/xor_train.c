@@ -31,11 +31,11 @@ int main()
 {
 	fann_type *calc_out;
 	const float connection_rate = 1;
-	const float learning_rate = (const float)0.4;
+	const float learning_rate = (const float)0.7;
 	const unsigned int num_input = 2;
 	const unsigned int num_output = 1;
 	const unsigned int num_layers = 3;
-	const unsigned int num_neurons_hidden = 6;
+	const unsigned int num_neurons_hidden = 2;
 	const float desired_error = (const float)0.001;
 	const unsigned int max_iterations = 300000;
 	const unsigned int iterations_between_reports = 1000;
@@ -56,8 +56,16 @@ int main()
 
 	data = fann_read_train_from_file("xor.data");
 
-	fann_init_weights(ann, data);
+
+	fann_set_activation_steepness_hidden(ann, 1.0);
+	fann_set_activation_steepness_output(ann, 1.0);
 	
+	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
+	fann_set_activation_function_output(ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
+	
+	fann_init_weights(ann, data);
+
+	/* fann_set_training_algorithm(ann, FANN_QUICKPROP_TRAIN); */
 	fann_train_on_data(ann, data, max_iterations, iterations_between_reports, desired_error);
 	
 	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback);*/

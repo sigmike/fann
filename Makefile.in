@@ -576,7 +576,7 @@ dist-hook:
 	rm -rf `find $(distdir)/benchmarks -name CVS`
 	(cd $(distdir)/python && make clean)
 	rm -rf `find $(distdir)/python -name CVS`
-	zip -r $(distdir).zip $(distdir)
+	zip -9 -r $(distdir).zip $(distdir)
 	tar chojf $(distdir).tar.bz2 $(distdir)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

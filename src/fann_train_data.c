@@ -82,26 +82,138 @@ void fann_destroy_train(struct fann_train_data *data)
 
 #ifndef FIXEDFANN
 
+float fann_train_epoch_quickprop(struct fann *ann, struct fann_train_data *data)
+{
+	unsigned int i;
+
+	if(ann->prev_train_slopes == NULL){
+		fann_clear_train_arrays(ann);
+	}
+	
+	fann_reset_MSE(ann);
+	
+	for(i = 0; i < data->num_data; i++){
+		fann_run(ann, data->input[i]);
+		fann_compute_MSE(ann, data->output[i]);
+		fann_backpropagate_MSE(ann);
+		fann_update_slopes_batch(ann);
+	}
+	fann_update_weights_quickprop(ann, data->num_data);
+
+	return fann_get_MSE(ann);
+}
+
+float fann_train_epoch_irpropm(struct fann *ann, struct fann_train_data *data)
+{
+	unsigned int i;
+
+	if(ann->prev_train_slopes == NULL){
+		fann_clear_train_arrays(ann);
+	}
+	
+	fann_reset_MSE(ann);
+	
+	for(i = 0; i < data->num_data; i++){
+		fann_run(ann, data->input[i]);
+		fann_compute_MSE(ann, data->output[i]);
+		fann_backpropagate_MSE(ann);
+		fann_update_slopes_batch(ann);
+	}
+	fann_update_weights_quickprop(ann, data->num_data);
+
+	return fann_get_MSE(ann);
+}
+
+float fann_train_epoch_batch(struct fann *ann, struct fann_train_data *data)
+{
+	unsigned int i;
+	fann_reset_MSE(ann);
+	
+	for(i = 0; i < data->num_data; i++){
+		fann_run(ann, data->input[i]);
+		fann_compute_MSE(ann, data->output[i]);
+		fann_backpropagate_MSE(ann);
+		fann_update_slopes_batch(ann);
+	}
+	fann_update_weights_batch(ann, data->num_data);
+
+	return fann_get_MSE(ann);
+}
+
+float fann_train_epoch_incremental(struct fann *ann, struct fann_train_data *data)
+{
+	unsigned int i;
+	fann_reset_MSE(ann);
+	
+	for(i = 0; i != data->num_data; i++){
+		fann_train(ann, data->input[i], data->output[i]);
+	}
+
+	return fann_get_MSE(ann);
+}
+
+/* Train for one epoch with the selected training algorithm
+ */
+float fann_train_epoch(struct fann *ann, struct fann_train_data *data)
+{
+	switch(ann->training_algorithm){
+		case FANN_QUICKPROP_TRAIN:
+			return fann_train_epoch_quickprop(ann, data);
+			break;
+		case FANN_RPROP_TRAIN:
+			return fann_train_epoch_irpropm(ann, data);
+			break;
+		case FANN_BATCH_TRAIN:
+			return fann_train_epoch_batch(ann, data);
+			break;
+		case FANN_INCREMENTAL_TRAIN:
+			return fann_train_epoch_incremental(ann, data);
+			break;
+		default:
+			return 0.0;
+	}
+}
+
 /* Train directly on the training data.
  */
 void fann_train_on_data_callback(struct fann *ann, struct fann_train_data *data, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (*callback)(unsigned int epochs, float error))
 {
 	float error;
-	unsigned int i, j;
+	unsigned int i;
+
+#ifdef DEBUG
+	printf("Training with ");
+	switch(ann->training_algorithm){
+		case FANN_QUICKPROP_TRAIN:
+			printf("FANN_QUICKPROP_TRAIN");
+			break;
+		case FANN_RPROP_TRAIN:
+			printf("FANN_RPROP_TRAIN");
+			break;
+		case FANN_BATCH_TRAIN:
+			printf("FANN_BATCH_TRAIN");
+			break;
+		case FANN_INCREMENTAL_TRAIN:
+			printf("FANN_INCREMENTAL_TRAIN");
+			break;
+	}
+	printf("\n");
+#endif	
 	
 	if(epochs_between_reports && callback == NULL){
 		printf("Max epochs %8d. Desired error: %.10f\n", max_epochs, desired_error);
 	}
-	
+
+	/* some training algorithms need stuff to be cleared etc. before training starts.
+	 */
+	if(ann->training_algorithm == FANN_RPROP_TRAIN ||
+		ann->training_algorithm == FANN_QUICKPROP_TRAIN){
+		fann_clear_train_arrays(ann);
+	}
+
 	for(i = 1; i <= max_epochs; i++){
 		/* train */
-		fann_reset_MSE(ann);
-		
-		for(j = 0; j != data->num_data; j++){
-			fann_train(ann, data->input[j], data->output[j]);
-		}
-		
-		error = fann_get_MSE(ann);
+		error = fann_train_epoch(ann, data);
 		
 		/* print current output */
 		if(epochs_between_reports &&

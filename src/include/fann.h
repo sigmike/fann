@@ -48,8 +48,6 @@ extern "C" {
 #ifndef NULL
 #define NULL 0
 #endif /* NULL */
-
-
 	
 /* ----- Implemented in fann.c Creation, running and destruction of ANNs ----- */
 	
@@ -77,7 +75,6 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 */
 struct fann * fann_create_array(float connection_rate, float learning_rate,
 	unsigned int num_layers, unsigned int * layers);
-	
 
 /* create a neural network with forward connections.
  */
@@ -153,6 +150,11 @@ int fann_save_to_fixed(struct fann *ann, const char *configuration_file);
 /* Train one iteration with a set of inputs, and a set of desired outputs.
  */
 void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output);
+
+/* Train one epoch with a set of training data.
+ */
+float fann_train_epoch(struct fann *ann, struct fann_train_data *data);
+	
 #endif /* NOT FIXEDFANN */
 
 /* Test with a set of inputs, and a set of desired outputs.
@@ -253,6 +255,14 @@ void fann_save_train_to_fixed(struct fann_train_data* data, char *filename, unsi
 
 /* ----- Implemented in fann_options.c Get and set options for the ANNs ----- */
 
+/* Get the training algorithm.
+ */
+unsigned int fann_get_training_algorithm(struct fann *ann);
+
+/* Set the training algorithm.
+ */
+void fann_set_training_algorithm(struct fann *ann, unsigned int training_algorithm);
+
 /* Get the learning rate.
  */
 float fann_get_learning_rate(struct fann *ann);
@@ -279,22 +289,93 @@ void fann_set_activation_function_output(struct fann *ann, unsigned int activati
 
 /* Get the steepness parameter for the sigmoid function used in the hidden layers.
  */
-fann_type fann_get_activation_hidden_steepness(struct fann *ann);
+fann_type fann_get_activation_steepness_hidden(struct fann *ann);
 	
 /* Set the steepness of the sigmoid function used in the hidden layers.
    Only usefull if sigmoid function is used in the hidden layers (default 0.5).
  */
-void fann_set_activation_hidden_steepness(struct fann *ann, fann_type steepness);
+void fann_set_activation_steepness_hidden(struct fann *ann, fann_type steepness);
 
 /* Get the steepness parameter for the sigmoid function used in the output layer.
  */
-fann_type fann_get_activation_output_steepness(struct fann *ann);
+fann_type fann_get_activation_steepness_output(struct fann *ann);
 	
 /* Set the steepness of the sigmoid function used in the output layer.
    Only usefull if sigmoid function is used in the output layer (default 0.5).
  */
+void fann_set_activation_steepness_output(struct fann *ann, fann_type steepness);
+
+/* OBSOLETE use fann_get_activation_steepness_hidden
+   Get the steepness parameter for the sigmoid function used in the hidden layers.
+ */
+fann_type fann_get_activation_hidden_steepness(struct fann *ann);
+	
+/* OBSOLETE use fann_set_activation_steepness_hidden
+   Set the steepness of the sigmoid function used in the hidden layers.
+   Only usefull if sigmoid function is used in the hidden layers (default 0.5).
+ */
+void fann_set_activation_hidden_steepness(struct fann *ann, fann_type steepness);
+
+/* OBSOLETE use fann_get_activation_steepness_output
+  Get the steepness parameter for the sigmoid function used in the output layer.
+ */
+fann_type fann_get_activation_output_steepness(struct fann *ann);
+	
+/* OBSOLETE use fann_set_activation_steepness_output
+  Set the steepness of the sigmoid function used in the output layer.
+   Only usefull if sigmoid function is used in the output layer (default 0.5).
+ */
 void fann_set_activation_output_steepness(struct fann *ann, fann_type steepness);
 
+/* When using this, training is usually faster. (default ).
+   Makes the error used for calculating the slopes
+   higher when the difference is higher.
+ */
+void fann_set_use_tanh_error_function(struct fann *ann, unsigned int use_tanh_error_function);
+
+/* Decay is used to make the weights do not go so high (default -0.0001). */
+void fann_set_quickprop_decay(struct fann *ann, float quickprop_decay);
+	
+/* Mu is a factor used to increase and decrease the stepsize (default 1.75). */
+void fann_set_quickprop_mu(struct fann *ann, float quickprop_mu);
+
+/* Tells how much the stepsize should increase during learning (default 1.2). */
+void fann_set_rprop_increase_factor(struct fann *ann, float rprop_increase_factor);
+
+/* Tells how much the stepsize should decrease during learning (default 0.5). */
+void fann_set_rprop_decrease_factor(struct fann *ann, float rprop_decrease_factor);
+
+/* The minimum stepsize (default 0.0). */
+void fann_set_rprop_delta_min(struct fann *ann, float rprop_delta_min);
+
+/* The maximum stepsize (default 50.0). */
+void fann_set_rprop_delta_max(struct fann *ann, float rprop_delta_max);
+
+/* When using this, training is usually faster. (default ).
+   Makes the error used for calculating the slopes
+   higher when the difference is higher.
+ */
+unsigned int fann_get_use_tanh_error_function(struct fann *ann);
+
+/* Decay is used to make the weights do not go so high (default -0.0001). */
+float fann_get_quickprop_decay(struct fann *ann);
+	
+/* Mu is a factor used to increase and decrease the stepsize (default 1.75). */
+float fann_get_quickprop_mu(struct fann *ann);
+
+/* Tells how much the stepsize should increase during learning (default 1.2). */
+float fann_get_rprop_increase_factor(struct fann *ann);
+
+/* Tells how much the stepsize should decrease during learning (default 0.5). */
+float fann_get_rprop_decrease_factor(struct fann *ann);
+
+/* The minimum stepsize (default 0.0). */
+float fann_get_rprop_delta_min(struct fann *ann);
+
+/* The maximum stepsize (default 50.0). */
+float fann_get_rprop_delta_max(struct fann *ann);
+	
+	
 /* Get the number of input neurons.
  */
 unsigned int fann_get_num_input(struct fann *ann);
@@ -321,8 +402,6 @@ unsigned int fann_get_decimal_point(struct fann *ann);
  */
 unsigned int fann_get_multiplier(struct fann *ann);
 #endif /* FIXEDFANN */
-	
-
 	
 /* ----- Implemented in fann_error.c Access error information about the ANN ----- */
 	

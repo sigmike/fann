@@ -3,7 +3,12 @@ SUBDIRS = src
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = fann.pc
 
-EXTRA_DIST = benchmarks doc examples python MSVC++ src/include/config.h
+EXTRA_DIST = benchmarks doc examples python MSVC++ src/include/config.h \
+	debian/changelog debian/compat debian/control debian/copyright \
+	debian/docs debian/libfann1-dev.dirs debian/libfann1-dev.examples \
+	debian/libfann1-dev.files debian/libfann1-dev.install \
+	debian/libfann1.dirs debian/libfann1.files debian/libfann1.install \
+	debian/rules 
 
 dist-hook:
 	rm -rf `find $(distdir) -name "*~" -o -name ".#*"`

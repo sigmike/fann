@@ -177,7 +177,7 @@ struct fann * fann_create_array(float connection_rate, float learning_rate, unsi
 			printf("  layer       : %d neurons, 1 bias\n", prev_layer_size-1);
 #endif
 		}
-	}else{
+	} else {
 		/* make connections for a network, that are not fully connected */
 		
 		/* generally, what we do is first to connect all the input
@@ -437,15 +437,15 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 	/* store some variabels local for fast access */
 #ifndef FIXEDFANN
 	fann_type steepness;
-	const fann_type activation_output_steepness = ann->activation_output_steepness;
-	const fann_type activation_hidden_steepness = ann->activation_hidden_steepness;
+	const fann_type activation_steepness_output = ann->activation_steepness_output;
+	const fann_type activation_steepness_hidden = ann->activation_steepness_hidden;
 #endif
 	
 	unsigned int activation_function_output = ann->activation_function_output;
 	unsigned int activation_function_hidden = ann->activation_function_hidden;
 	struct fann_neuron *first_neuron = ann->first_layer->first_neuron;
 #ifdef FIXEDFANN
-	unsigned int multiplier = ann->multiplier;
+	int multiplier = ann->multiplier;
 	unsigned int decimal_point = ann->decimal_point;
 #endif
 	
@@ -463,20 +463,20 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 		case FANN_SIGMOID_STEPWISE:
 		case FANN_SIGMOID_SYMMETRIC_STEPWISE:			
 			/* the hidden results */
-			rh1 = ann->activation_hidden_results[0];
-			rh2 = ann->activation_hidden_results[1];
-			rh3 = ann->activation_hidden_results[2];
-			rh4 = ann->activation_hidden_results[3];
-			rh5 = ann->activation_hidden_results[4];
-			rh6 = ann->activation_hidden_results[5];
+			rh1 = ann->activation_results_hidden[0];
+			rh2 = ann->activation_results_hidden[1];
+			rh3 = ann->activation_results_hidden[2];
+			rh4 = ann->activation_results_hidden[3];
+			rh5 = ann->activation_results_hidden[4];
+			rh6 = ann->activation_results_hidden[5];
 			
 			/* the hidden parameters */
-			h1 = ann->activation_hidden_values[0];
-			h2 = ann->activation_hidden_values[1];
-			h3 = ann->activation_hidden_values[2];
-			h4 = ann->activation_hidden_values[3];
-			h5 = ann->activation_hidden_values[4];
-			h6 = ann->activation_hidden_values[5];
+			h1 = ann->activation_values_hidden[0];
+			h2 = ann->activation_values_hidden[1];
+			h3 = ann->activation_values_hidden[2];
+			h4 = ann->activation_values_hidden[3];
+			h5 = ann->activation_values_hidden[4];
+			h6 = ann->activation_values_hidden[5];
 			break;
 		default:
 			break;
@@ -490,20 +490,20 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 		case FANN_SIGMOID_STEPWISE:
 		case FANN_SIGMOID_SYMMETRIC_STEPWISE:			
 			/* the output results */
-			ro1 = ann->activation_output_results[0];
-			ro2 = ann->activation_output_results[1];
-			ro3 = ann->activation_output_results[2];
-			ro4 = ann->activation_output_results[3];
-			ro5 = ann->activation_output_results[4];
-			ro6 = ann->activation_output_results[5];
+			ro1 = ann->activation_results_output[0];
+			ro2 = ann->activation_results_output[1];
+			ro3 = ann->activation_results_output[2];
+			ro4 = ann->activation_results_output[3];
+			ro5 = ann->activation_results_output[4];
+			ro6 = ann->activation_results_output[5];
 			
 			/* the output parameters */
-			o1 = ann->activation_output_values[0];
-			o2 = ann->activation_output_values[1];
-			o3 = ann->activation_output_values[2];
-			o4 = ann->activation_output_values[3];
-			o5 = ann->activation_output_values[4];
-			o6 = ann->activation_output_values[5];
+			o1 = ann->activation_values_output[0];
+			o2 = ann->activation_values_output[1];
+			o3 = ann->activation_values_output[2];
+			o4 = ann->activation_values_output[3];
+			o5 = ann->activation_values_output[4];
+			o6 = ann->activation_values_output[5];
 			break;
 		default:
 			break;
@@ -530,7 +530,7 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 		((layer_it-1)->last_neuron-1)->value = 1;
 		
 		steepness = (layer_it == last_layer-1) ? 
-			activation_output_steepness : activation_hidden_steepness;
+			activation_steepness_output : activation_steepness_hidden;
 #endif
 		
 		activation_function = (layer_it == last_layer-1) ?
@@ -672,6 +672,9 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 				case FANN_THRESHOLD:
 					neuron_it->value = (fann_type)((neuron_value < 0) ? 0 : 1);
 					break;
+				case FANN_THRESHOLD_SYMMETRIC:
+					neuron_it->value = (fann_type)((neuron_value < 0) ? -1 : 1);
+					break;
 				default:
 					fann_error((struct fann_error *)ann, FANN_E_CANT_USE_ACTIVATION);
 			}
@@ -692,12 +695,12 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
  */
 void fann_destroy(struct fann *ann)
 {
-	fann_safe_free((ann->first_layer+1)->first_neuron->weights);
-	fann_safe_free((ann->first_layer+1)->first_neuron->connected_neurons);
+	fann_safe_free(fann_get_weights(ann));
+	fann_safe_free(fann_get_connections(ann));
 	fann_safe_free(ann->first_layer->first_neuron);
 	fann_safe_free(ann->first_layer);
 	fann_safe_free(ann->output);
-	fann_safe_free(ann->train_deltas);
+	fann_safe_free(ann->train_errors);
 	fann_safe_free(ann->errstr);
 	fann_safe_free(ann);
 }
@@ -831,14 +834,37 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 		return NULL;
 	}
 
+	ann->errno_f = 0;
+	ann->error_log = NULL;
+	ann->errstr = NULL;
 	ann->learning_rate = learning_rate;
 	ann->total_neurons = 0;
 	ann->total_connections = 0;
 	ann->num_input = 0;
 	ann->num_output = 0;
-	ann->train_deltas = NULL;
+	ann->train_errors = NULL;
+	ann->train_slopes = NULL;
+	ann->prev_steps = NULL;
+	ann->prev_train_slopes = NULL;
+	ann->training_algorithm = FANN_RPROP_TRAIN;
 	ann->num_errors = 0;
+	ann->error_value = 0;
 	ann->forward_connections = 0;
+	ann->use_tanh_error_function = 1;
+
+	/* variables used for cascade correlation (reasonable defaults) */
+	/*ann->change_fraction = 0.01;
+	  ann->stagnation_epochs = 12;*/
+
+	/* Variables for use with with Quickprop training (reasonable defaults) */
+	ann->quickprop_decay = -0.0001;
+	ann->quickprop_mu = 1.75;
+
+	/* Variables for use with with RPROP training (reasonable defaults) */
+	ann->rprop_increase_factor = 1.2;
+	ann->rprop_decrease_factor = 0.5;
+	ann->rprop_delta_min = 0.0;
+	ann->rprop_delta_max = 50.0;
 
 	fann_init_error_data((struct fann_error *)ann);
 
@@ -852,11 +878,11 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 	ann->activation_function_hidden = FANN_SIGMOID_STEPWISE;
 	ann->activation_function_output = FANN_SIGMOID_STEPWISE;
 #ifdef FIXEDFANN
-	ann->activation_hidden_steepness = ann->multiplier/2;
-	ann->activation_output_steepness = ann->multiplier/2;
+	ann->activation_steepness_hidden = ann->multiplier/2;
+	ann->activation_steepness_output = ann->multiplier/2;
 #else
-	ann->activation_hidden_steepness = 0.5;
-	ann->activation_output_steepness = 0.5;
+	ann->activation_steepness_hidden = 0.5;
+	ann->activation_steepness_output = 0.5;
 #endif
 
 	/* allocate room for the layers */

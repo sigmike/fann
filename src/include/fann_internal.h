@@ -56,6 +56,21 @@ void fann_init_error_data(struct fann_error *errdat);
 struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file);
 struct fann_train_data* fann_read_train_from_fd(FILE *file, char *filename);
 
+void fann_compute_MSE(struct fann *ann, fann_type *desired_output);
+void fann_update_output_weights(struct fann *ann);
+void fann_backpropagate_MSE(struct fann *ann);
+void fann_update_weights(struct fann *ann);
+void fann_update_slopes_batch(struct fann *ann);
+void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data);
+void fann_update_weights_batch(struct fann *ann, unsigned int num_data);
+
+
+/* get a pointer to the weights */
+fann_type* fann_get_weights(struct fann *ann);
+/* get a pointer to the connections */
+struct fann_neuron** fann_get_connections(struct fann *ann);
+	
+
 /* called fann_max, in order to not interferre with predefined versions of max */
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))
 #define fann_min(x, y) (((x) < (y)) ? (x) : (y))

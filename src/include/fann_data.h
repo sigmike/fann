@@ -103,11 +103,11 @@ struct fann
 	/* Number of output neurons (not calculating bias) */
 	unsigned int num_output;
 
-	/* Used to contain the error deltas used during training
+	/* Used to contain the errors used during training
 	 * Is allocated during first training session,
 	 * which means that if we do not train, it is never allocated.
 	 */
-	fann_type *train_deltas;
+	fann_type *train_errors;
 
 	/* Used to choose which activation function to use
 	   
@@ -119,8 +119,12 @@ struct fann
 	unsigned int activation_function_hidden, activation_function_output;
 
 	/* Parameters for the activation function */
-	fann_type activation_hidden_steepness;
-	fann_type activation_output_steepness;
+	fann_type activation_steepness_hidden;
+	fann_type activation_steepness_output;
+
+	/* Training algorithm used when calling fann_train_on_..
+	 */
+	unsigned int training_algorithm;
 
 #ifdef FIXEDFANN
 	/* the decimal_point, used for shifting the fix point
@@ -140,10 +144,10 @@ struct fann
 	   activation_results array, the result is saved, and in the
 	   two values arrays, the values that gives the results are saved.
 	 */
-	fann_type activation_hidden_results[6];
-	fann_type activation_hidden_values[6];
-	fann_type activation_output_results[6];
-	fann_type activation_output_values[6];
+	fann_type activation_results_hidden[6];
+	fann_type activation_values_hidden[6];
+	fann_type activation_results_output[6];
+	fann_type activation_values_output[6];
 
 	/* Total number of connections.
 	 * very usefull, because the actual connections
@@ -162,6 +166,63 @@ struct fann
 	   the real mean square error is error_value/num_errors
 	 */
 	float error_value;
+
+	/* When using this, training is usually faster.
+	   Makes the error used for calculating the slopes
+	   higher when the difference is higher.
+	 */
+	unsigned int use_tanh_error_function;
+	
+	/* Variables for use with Cascade Correlation */
+
+	/* The error must change by at least this
+	   fraction of its old value to count as a
+	   significant change. NOT IMPLEMENTED YET
+	*/
+	/* float change_fraction; */
+
+	/* No change in this number of epochs will cause
+	   stagnation. NOT IMPLEMENTED YET
+	*/
+	/* unsigned int stagnation_epochs; */
+
+	/* Variables for use with Quickprop training */
+
+	/* Decay is used to make the weights not go so high */
+	float quickprop_decay;
+
+	/* Mu is a factor used to increase and decrease the stepsize */
+	float quickprop_mu;
+
+	/* Variables for use with with RPROP training */
+
+	/* Tells how much the stepsize should increase during learning */
+	float rprop_increase_factor;
+
+	/* Tells how much the stepsize should decrease during learning */
+	float rprop_decrease_factor;
+
+	/* The minimum stepsize */
+	float rprop_delta_min;
+
+	/* The maximum stepsize */
+	float rprop_delta_max;
+	
+	/* Used to contain the slope errors used during batch training
+	 * Is allocated during first training session,
+	 * which means that if we do not train, it is never allocated.
+	 */
+	fann_type *train_slopes;
+
+	/* The previous step taken by the quickprop/rprop procedures.
+	   Not allocated if not used.
+	 */
+	fann_type *prev_steps;
+
+	/* The slope values used by the quickprop/rprop procedures.
+	   Not allocated if not used.
+	 */
+	fann_type *prev_train_slopes;
 };
 
 /* Structure used to store data, for use with training. */
@@ -184,6 +245,17 @@ struct fann_error
 	unsigned int errno_f;
 	FILE *error_log;
 	char * errstr;
+};
+
+enum {
+	/* The quickprop training algorithm */
+	FANN_QUICKPROP_TRAIN = 0,
+	/* The iRprop- training algorithm */
+	FANN_RPROP_TRAIN,
+	/* Standard batch training */
+	FANN_BATCH_TRAIN,
+	/* Standard incremental or online training */
+	FANN_INCREMENTAL_TRAIN
 };
 
 #endif

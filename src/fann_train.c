@@ -26,185 +26,43 @@
 #include "fann.h"
 #include "fann_errno.h"
 
+/*#define DEBUGTRAIN*/
+
+/* INTERNAL FUNCTION
+  Calculates the derived of a value, given an activation function
+   and a steepness
+*/
+static fann_type fann_activation_derived(unsigned int activation_function,
+	fann_type steepness, fann_type value)
+{
+	switch(activation_function){
+		case FANN_LINEAR:
+			return (fann_type)fann_linear_derive(steepness, value);
+		case FANN_SIGMOID:
+		case FANN_SIGMOID_STEPWISE:
+			value = fann_clip(value, 0.01f, 0.99f);
+			return (fann_type)fann_sigmoid_derive(steepness, value);
+		case FANN_SIGMOID_SYMMETRIC:
+		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+			value = fann_clip(value, -0.98f, 0.98f);
+			return (fann_type)fann_sigmoid_symmetric_derive(steepness, value);
+		default:
+			return 0;
+	}
+}
+
 #ifndef FIXEDFANN
 /* Trains the network with the backpropagation algorithm.
  */
 void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 {
-	struct fann_neuron *neuron_it, *last_neuron, *neurons;
-	fann_type neuron_value, *delta_it, *delta_begin, tmp_delta;
-	struct fann_layer *layer_it;
-	unsigned int i, shift_prev_layer;
-	
-	/* store some variabels local for fast access */
-	const float learning_rate = ann->learning_rate;
-	const fann_type activation_output_steepness = ann->activation_output_steepness;
-	const fann_type activation_hidden_steepness = ann->activation_hidden_steepness;
-	const struct fann_neuron *first_neuron = ann->first_layer->first_neuron;
-	
-	const struct fann_neuron *last_layer_begin = (ann->last_layer-1)->first_neuron;
-	const struct fann_neuron *last_layer_end = last_layer_begin + ann->num_output;
-	struct fann_layer *first_layer = ann->first_layer;
-	struct fann_layer *last_layer = ann->last_layer;
-	
 	fann_run(ann, input);
-	/* if no room allocated for the delta variabels, allocate it now */
-	if(ann->train_deltas == NULL){
-		ann->train_deltas = (fann_type *)calloc(ann->total_neurons, sizeof(fann_type));
-		if(ann->train_deltas == NULL){
-			fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
-			return;
-		}
-	}
-	delta_begin = ann->train_deltas;
-	
-	/* clear the delta variabels */
-	memset(delta_begin, 0, (ann->total_neurons) * sizeof(fann_type));
-	
-#ifdef DEBUGTRAIN
-	printf("calculate deltas\n");
-#endif
-	/* calculate the error and place it in the output layer */
-	delta_it = delta_begin + (last_layer_begin - first_neuron);
 
-	for(; last_layer_begin != last_layer_end; last_layer_begin++){
-		neuron_value = last_layer_begin->value;
-		switch(ann->activation_function_output){
-			case FANN_LINEAR:
-				*delta_it = (fann_type)fann_linear_derive(activation_output_steepness, neuron_value) * (*desired_output - neuron_value);
-				break;
-			case FANN_SIGMOID:
-			case FANN_SIGMOID_STEPWISE:
-				*delta_it = (fann_type)fann_sigmoid_derive(activation_output_steepness, neuron_value) * (*desired_output - neuron_value);
-				break;
-			case FANN_SIGMOID_SYMMETRIC:
-			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-				*delta_it = (fann_type)fann_sigmoid_symmetric_derive(activation_output_steepness, neuron_value) * (*desired_output - neuron_value);
-				break;
-			default:
-				fann_error((struct fann_error *)ann, FANN_E_CANT_TRAIN_ACTIVATION);
-				return;
-		}
-		
-		ann->error_value += (*desired_output - neuron_value) * (*desired_output - neuron_value);
-		
-#ifdef DEBUGTRAIN
-		printf("delta1[%d] = "FANNPRINTF"\n", (delta_it - delta_begin), *delta_it);
-#endif
-		desired_output++;
-		delta_it++;
-	}
-	ann->num_errors++;
-	
-	
-	/* go through all the layers, from last to first. And propagate the error backwards */
-	for(layer_it = last_layer-1; layer_it != first_layer; --layer_it){
-		last_neuron = layer_it->last_neuron;
-		
-		/* for each connection in this layer, propagate the error backwards*/
-		if(ann->connection_rate >= 1 && !ann->forward_connections){
-			/* optimization for fully connected networks */
-			/* but not forward connected networks */
-			shift_prev_layer = (layer_it-1)->first_neuron - first_neuron;
-			for(neuron_it = layer_it->first_neuron;
-				neuron_it != last_neuron; neuron_it++){
-				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
-				for(i = neuron_it->num_connections ; i-- ; ){
-					*(delta_begin + i + shift_prev_layer) += tmp_delta * neuron_it->weights[i];
-#ifdef DEBUGTRAIN
-					printf("delta2[%d] = "FANNPRINTF" += ("FANNPRINTF" * "FANNPRINTF")\n", (i + shift_prev_layer), *(delta_begin + i + shift_prev_layer), tmp_delta, neuron_it->weights[i]);
-#endif
-				}
-			}
-		}else{
-			for(neuron_it = layer_it->first_neuron;
-				neuron_it != last_neuron; neuron_it++){
-				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
-				for(i = neuron_it->num_connections ; i-- ; ){
-					*(delta_begin + (neuron_it->connected_neurons[i] - first_neuron)) +=
-						tmp_delta * neuron_it->weights[i];
-				}
-			}
-		}
-		
-		/* then calculate the actual errors in the previous layer */
-		delta_it = delta_begin + ((layer_it-1)->first_neuron - first_neuron);
-		last_neuron = (layer_it-1)->last_neuron;
-		
-		switch(ann->activation_function_hidden){
-			case FANN_LINEAR:
-				for(neuron_it = (layer_it-1)->first_neuron;
-					neuron_it != last_neuron; neuron_it++){
-					neuron_value = neuron_it->value;
-					*delta_it *= (fann_type)fann_linear_derive(activation_hidden_steepness, neuron_value) * learning_rate;
-					delta_it++;
-				}
-				break;
-			case FANN_SIGMOID:
-			case FANN_SIGMOID_STEPWISE:
-				for(neuron_it = (layer_it-1)->first_neuron;
-					neuron_it != last_neuron; neuron_it++){
-					neuron_value = neuron_it->value;
-					neuron_value = fann_clip(neuron_value, 0.01f, 0.99f);
-					*delta_it *= (fann_type)fann_sigmoid_derive(activation_hidden_steepness, neuron_value);
-#ifdef DEBUGTRAIN
-					printf("delta3[%d] = "FANNPRINTF" *= fann_sigmoid_derive(%f, %f) * %f\n", (delta_it - delta_begin), *delta_it, activation_hidden_steepness, neuron_value, learning_rate);
-#endif
-					delta_it++;
-				}
-				break;
-			case FANN_SIGMOID_SYMMETRIC:
-			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-				for(neuron_it = (layer_it-1)->first_neuron;
-					neuron_it != last_neuron; neuron_it++){
-					neuron_value = neuron_it->value;
-					neuron_value = fann_clip(neuron_value, -0.98f, 0.98f);
-					*delta_it *= (fann_type)fann_sigmoid_symmetric_derive(activation_hidden_steepness, neuron_value);
-#ifdef DEBUGTRAIN
-					printf("delta3[%d] = "FANNPRINTF" *= fann_sigmoid_symmetric_derive(%f, %f) * %f\n", (delta_it - delta_begin), *delta_it, activation_hidden_steepness, neuron_value, learning_rate);
-#endif
-					delta_it++;
-				}
-				break;
-			default:
-				fann_error((struct fann_error *)ann, FANN_E_CANT_TRAIN_ACTIVATION);
-				return;
-		}
-	}
-	
-#ifdef DEBUGTRAIN
-	printf("\nupdate weights\n");
-#endif
-	
-	for(layer_it = (first_layer+1); layer_it != last_layer; layer_it++){
-#ifdef DEBUGTRAIN
-		printf("layer[%d]\n", layer_it - first_layer);
-#endif
-		last_neuron = layer_it->last_neuron;
-		if(ann->connection_rate >= 1 && !ann->forward_connections){
-			/* optimization for fully connected networks */
-			/* but not forward connected networks */			
-			neurons = (layer_it-1)->first_neuron;
-			for(neuron_it = layer_it->first_neuron;
-				neuron_it != last_neuron; neuron_it++){
-				tmp_delta = *(delta_begin + (neuron_it - first_neuron)) * learning_rate;
-				for(i = neuron_it->num_connections ; i-- ; ){
-#ifdef DEBUGTRAIN
-					printf("weights[%d] += "FANNPRINTF" = %f * %f\n", i, tmp_delta * neurons[i].value, tmp_delta, neurons[i].value);
-#endif
-					neuron_it->weights[i] += tmp_delta * neurons[i].value;
-				}
-			}
-		}else{
-			for(neuron_it = layer_it->first_neuron;
-				neuron_it != last_neuron; neuron_it++){
-				tmp_delta = *(delta_begin + (neuron_it - first_neuron)) * learning_rate;
-				for(i = neuron_it->num_connections ; i-- ; ){
-					neuron_it->weights[i] += tmp_delta * neuron_it->connected_neurons[i]->value;
-				}
-			}
-		}
-	}
+	fann_compute_MSE(ann, desired_output);
+
+	fann_backpropagate_MSE(ann);
+
+	fann_update_weights(ann);
 }
 #endif
 
@@ -216,16 +74,24 @@ fann_type *fann_test(struct fann *ann, fann_type *input, fann_type *desired_outp
 	fann_type *output_begin = fann_run(ann, input);
 	fann_type *output_it;
 	const fann_type *output_end = output_begin + ann->num_output;
-	
+	fann_type neuron_diff;
+
 	/* calculate the error */
 	for(output_it = output_begin;
 		output_it != output_end; output_it++){
 		neuron_value = *output_it;
+
+		neuron_diff = (*desired_output - neuron_value);
+		
+		if(ann->activation_function_output == FANN_SIGMOID_SYMMETRIC ||
+			ann->activation_function_output == FANN_SIGMOID_SYMMETRIC_STEPWISE){
+			neuron_diff /= (fann_type)2;
+		}
 		
 #ifdef FIXEDFANN
-		ann->error_value += ((*desired_output - neuron_value)/(float)ann->multiplier) * ((*desired_output - neuron_value)/(float)ann->multiplier);
+		ann->error_value += (neuron_diff/(float)ann->multiplier) * (neuron_diff/(float)ann->multiplier);
 #else
-		ann->error_value += (*desired_output - neuron_value) * (*desired_output - neuron_value);
+		ann->error_value += neuron_diff * neuron_diff;
 #endif
 		
 		desired_output++;
@@ -270,3 +136,443 @@ void fann_reset_MSE(struct fann *ann)
 	ann->error_value = 0;
 }
 
+/* INTERNAL FUNCTION
+    compute the error at the network output
+	(usually, after forward propagation of a certain input vector, fann_run)
+	the error is a sum of squares for all the output units
+	also increments a counter because MSE is an average of such errors
+
+	After this train_errors in the output layer will be set to:
+	neuron_value_derived * (desired_output - neuron_value)
+ */
+void fann_compute_MSE(struct fann *ann, fann_type *desired_output)
+{
+	fann_type neuron_value, neuron_diff, *error_it = 0, *error_begin = 0;
+	struct fann_neuron *last_layer_begin = (ann->last_layer-1)->first_neuron;
+	const struct fann_neuron *last_layer_end = last_layer_begin + ann->num_output;
+	const struct fann_neuron *first_neuron = ann->first_layer->first_neuron;
+
+	/* if no room allocated for the error variabels, allocate it now */
+	if(ann->train_errors == NULL){
+		ann->train_errors = (fann_type *)calloc(ann->total_neurons, sizeof(fann_type));
+		if(ann->train_errors == NULL){
+			fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
+			return;
+		}
+	}
+	
+	/* clear the error variabels */
+	memset(ann->train_errors, 0, (ann->total_neurons) * sizeof(fann_type));
+	error_begin = ann->train_errors;
+	
+#ifdef DEBUGTRAIN
+	printf("\ncalculate errors\n");
+#endif
+	/* calculate the error and place it in the output layer */
+	error_it = error_begin + (last_layer_begin - first_neuron);
+
+	for(; last_layer_begin != last_layer_end; last_layer_begin++){
+		neuron_value = last_layer_begin->value;
+		neuron_diff = *desired_output - neuron_value;
+
+		if(ann->activation_function_output == FANN_SIGMOID_SYMMETRIC ||
+			ann->activation_function_output == FANN_SIGMOID_SYMMETRIC_STEPWISE){
+			neuron_diff /= 2.0;
+		}
+		
+		ann->error_value += neuron_diff * neuron_diff;
+
+		if(ann->use_tanh_error_function){
+			if ( neuron_diff < -.9999999 )
+				neuron_diff = -17.0;
+			else if ( neuron_diff > .9999999 )
+				neuron_diff = 17.0;
+			else
+				neuron_diff =  log ( (1.0+neuron_diff) / (1.0-neuron_diff) );
+		}
+	
+		*error_it = fann_activation_derived(ann->activation_function_output,
+			ann->activation_steepness_output, neuron_value) * neuron_diff;
+
+		
+		desired_output++;
+		error_it++;
+	}
+	ann->num_errors++;
+}
+
+/* INTERNAL FUNCTION
+   Propagate the error backwards from the output layer.
+
+   After this the train_errors in the hidden layers will be:
+   neuron_value_derived * sum(outgoing_weights * connected_neuron)
+*/
+void fann_backpropagate_MSE(struct fann *ann)
+{
+	fann_type neuron_value, tmp_error;
+	unsigned int i;
+	struct fann_layer *layer_it;
+	struct fann_neuron *neuron_it, *last_neuron;
+	
+	fann_type *error_begin = ann->train_errors;
+	fann_type *error_prev_layer;
+	const fann_type activation_steepness_hidden = ann->activation_steepness_hidden;
+	const struct fann_neuron *first_neuron = ann->first_layer->first_neuron;
+	const struct fann_layer *second_layer = ann->first_layer + 1;
+	struct fann_layer *last_layer = ann->last_layer;
+
+	/* go through all the layers, from last to first.
+	   And propagate the error backwards */
+	for(layer_it = last_layer-1; layer_it > second_layer; --layer_it){
+		last_neuron = layer_it->last_neuron;
+
+		/* for each connection in this layer, propagate the error backwards*/
+		if(ann->connection_rate >= 1 && !ann->forward_connections){
+			/* optimization for fully connected networks */
+			/* but not forward connected networks */
+			error_prev_layer = error_begin + ((layer_it-1)->first_neuron - first_neuron);
+			for(neuron_it = layer_it->first_neuron;
+				neuron_it != last_neuron; neuron_it++){
+				
+				tmp_error = error_begin[neuron_it - first_neuron];
+				for(i = neuron_it->num_connections ; i-- ; ){
+					error_prev_layer[i] += tmp_error * neuron_it->weights[i];
+				}
+			}
+		}else{
+			for(neuron_it = layer_it->first_neuron;
+				neuron_it != last_neuron; neuron_it++){
+				
+				tmp_error = error_begin[neuron_it - first_neuron];
+				for(i = neuron_it->num_connections ; i-- ; ){
+					error_begin[neuron_it->connected_neurons[i] - first_neuron] += tmp_error * neuron_it->weights[i];
+				}
+			}
+		}
+
+		/* then calculate the actual errors in the previous layer */
+		error_prev_layer = error_begin + ((layer_it-1)->first_neuron - first_neuron);
+		last_neuron = (layer_it-1)->last_neuron;
+		
+		switch(ann->activation_function_hidden){
+			case FANN_LINEAR:
+				for(neuron_it = (layer_it-1)->first_neuron;
+					neuron_it != last_neuron; neuron_it++){
+					neuron_value = neuron_it->value;
+					*error_prev_layer *= (fann_type)fann_linear_derive(activation_steepness_hidden, neuron_value);
+					error_prev_layer++;
+				}
+				break;
+			case FANN_SIGMOID:
+			case FANN_SIGMOID_STEPWISE:
+				for(neuron_it = (layer_it-1)->first_neuron;
+					neuron_it != last_neuron; neuron_it++){
+					neuron_value = neuron_it->value;
+					neuron_value = fann_clip(neuron_value, 0.01f, 0.99f);
+					*error_prev_layer *= (fann_type)fann_sigmoid_derive(activation_steepness_hidden, neuron_value);
+					error_prev_layer++;
+				}
+				break;
+			case FANN_SIGMOID_SYMMETRIC:
+			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+				for(neuron_it = (layer_it-1)->first_neuron;
+					neuron_it != last_neuron; neuron_it++){
+					neuron_value = neuron_it->value;
+					neuron_value = fann_clip(neuron_value, -0.98f, 0.98f);
+					*error_prev_layer *= (fann_type)fann_sigmoid_symmetric_derive(activation_steepness_hidden, neuron_value);
+					error_prev_layer++;
+				}
+				break;
+			default:
+				fann_error((struct fann_error *)ann, FANN_E_CANT_TRAIN_ACTIVATION);
+				return;
+		}
+	}
+}
+
+/* INTERNAL FUNCTION
+   Update weights for incremental training
+*/
+void fann_update_weights(struct fann *ann)
+{
+	struct fann_neuron *neuron_it, *last_neuron, *prev_neurons;
+	fann_type tmp_error;
+	struct fann_layer *layer_it;
+	unsigned int i;
+	
+	/* store some variabels local for fast access */
+	const float learning_rate = ann->learning_rate;
+	const struct fann_neuron *first_neuron = ann->first_layer->first_neuron;
+	struct fann_layer *first_layer = ann->first_layer;
+	const struct fann_layer *last_layer = ann->last_layer;
+	fann_type *error_begin = ann->train_errors;	
+
+#ifdef DEBUGTRAIN
+	printf("\nupdate weights\n");
+#endif
+	
+	for(layer_it = (first_layer+1); layer_it != last_layer; layer_it++){
+#ifdef DEBUGTRAIN
+		printf("layer[%d]\n", layer_it - first_layer);
+#endif
+		last_neuron = layer_it->last_neuron;
+		if(ann->connection_rate >= 1 && !ann->forward_connections){
+			/* optimization for fully connected networks */
+			/* but not forward connected networks */			
+			prev_neurons = (layer_it-1)->first_neuron;
+			for(neuron_it = layer_it->first_neuron;
+				neuron_it != last_neuron; neuron_it++){
+				tmp_error = error_begin[neuron_it - first_neuron] * learning_rate;
+				for(i = neuron_it->num_connections ; i-- ; ){
+					neuron_it->weights[i] += tmp_error * prev_neurons[i].value;
+				}
+			}
+		}else{
+			for(neuron_it = layer_it->first_neuron;
+				neuron_it != last_neuron; neuron_it++){
+				tmp_error = error_begin[neuron_it - first_neuron] * learning_rate;
+				for(i = neuron_it->num_connections ; i-- ; ){
+					neuron_it->weights[i] += tmp_error * neuron_it->connected_neurons[i]->value;
+				}
+			}
+		}
+	}
+}
+
+/* INTERNAL FUNCTION
+   Update slopes for batch training
+*/
+void fann_update_slopes_batch(struct fann *ann)
+{
+	struct fann_neuron *neuron_it, *last_neuron, *prev_neurons;
+	fann_type tmp_error, *weights_begin;
+	struct fann_layer *layer_it;
+	unsigned int i;
+	
+	/* store some variabels local for fast access */
+	const struct fann_neuron *first_neuron = ann->first_layer->first_neuron;
+	struct fann_layer *first_layer = ann->first_layer;
+	const struct fann_layer *last_layer = ann->last_layer;
+	fann_type *error_begin = ann->train_errors;
+	fann_type *slope_begin, *neuron_slope;
+
+	/* if no room allocated for the slope variabels, allocate it now */
+	if(ann->train_slopes == NULL){
+		ann->train_slopes = (fann_type *)calloc(ann->total_connections, sizeof(fann_type));
+		if(ann->train_slopes == NULL){
+			fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
+			return;
+		}
+		memset(ann->train_slopes, 0, (ann->total_connections) * sizeof(fann_type));	
+	}
+	
+	slope_begin = ann->train_slopes;
+	weights_begin = fann_get_weights(ann);
+	
+#ifdef DEBUGTRAIN
+	printf("\nupdate slopes\n");
+#endif
+	
+	for(layer_it = (first_layer+1); layer_it != last_layer; layer_it++){
+#ifdef DEBUGTRAIN
+		printf("layer[%d]\n", layer_it - first_layer);
+#endif
+		last_neuron = layer_it->last_neuron;
+		if(ann->connection_rate >= 1 && !ann->forward_connections){
+			/* optimization for fully connected networks */
+			/* but not forward connected networks */			
+			prev_neurons = (layer_it-1)->first_neuron;
+			for(neuron_it = layer_it->first_neuron;
+				neuron_it != last_neuron; neuron_it++){
+				tmp_error = error_begin[neuron_it - first_neuron];
+				neuron_slope = slope_begin + (neuron_it->weights - weights_begin);
+				for(i = neuron_it->num_connections ; i-- ; ){
+					neuron_slope[i] += tmp_error * prev_neurons[i].value;
+				}
+			}
+		}else{
+			for(neuron_it = layer_it->first_neuron;
+				neuron_it != last_neuron; neuron_it++){
+				tmp_error = error_begin[neuron_it - first_neuron];
+				neuron_slope = slope_begin + (neuron_it->weights - weights_begin);
+				for(i = neuron_it->num_connections ; i-- ; ){
+					neuron_slope[i] += tmp_error * neuron_it->connected_neurons[i]->value;
+				}
+			}
+		}
+	}
+}
+
+/* INTERNAL FUNCTION
+   Clears arrays used for training before a new training session.
+   Also creates the arrays that do not exist yet.
+ */
+void fann_clear_train_arrays(struct fann *ann)
+{
+	unsigned int i;
+	
+	/* if no room allocated for the slope variabels, allocate it now */
+	if(ann->train_slopes == NULL){
+		ann->train_slopes = (fann_type *)calloc(ann->total_connections, sizeof(fann_type));
+		if(ann->train_slopes == NULL){
+			fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
+			return;
+		}
+	}
+	memset(ann->train_slopes, 0, (ann->total_connections) * sizeof(fann_type));	
+	/* if no room allocated for the variabels, allocate it now */
+	if(ann->prev_steps == NULL){
+		ann->prev_steps = (fann_type *)calloc(ann->total_connections, sizeof(fann_type));
+		if(ann->prev_steps == NULL){
+			fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
+			return;
+		}
+	}
+	memset(ann->prev_steps, 0, (ann->total_connections) * sizeof(fann_type));	
+	
+	/* if no room allocated for the variabels, allocate it now */
+	if(ann->prev_train_slopes == NULL){
+		ann->prev_train_slopes = (fann_type *)calloc(ann->total_connections, sizeof(fann_type));
+		if(ann->prev_train_slopes == NULL){
+			fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
+			return;
+		}
+	}	
+
+	if(ann->training_algorithm == FANN_RPROP_TRAIN){
+		for(i = 0; i < ann->total_connections; i++){
+			ann->prev_train_slopes[i] = 0.0125;
+		}
+	} else {
+		memset(ann->prev_train_slopes, 0, (ann->total_connections) * sizeof(fann_type));
+	}
+}
+
+/* INTERNAL FUNCTION
+   Update weights for batch training
+ */
+void fann_update_weights_batch(struct fann *ann, unsigned int num_data)
+{
+	fann_type *train_slopes = ann->train_slopes;
+	fann_type *weights = fann_get_weights(ann);
+	const float epsilon = ann->learning_rate/num_data;
+	unsigned int i = ann->total_connections;
+	while(i--){
+		weights[i] += train_slopes[i] * epsilon;
+		train_slopes[i] = 0.0;
+	}
+}
+
+/* INTERNAL FUNCTION
+   The quickprop training algorithm
+ */
+void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data)
+{
+	fann_type *train_slopes = ann->train_slopes;
+	fann_type *weights = fann_get_weights(ann);
+	fann_type *prev_steps = ann->prev_steps;
+	fann_type *prev_train_slopes = ann->prev_train_slopes;
+
+	fann_type w, prev_step, slope, prev_slope, next_step;
+	
+	float epsilon = ann->learning_rate/num_data;
+	float decay = ann->quickprop_decay; /*-0.0001;*/
+	float mu = ann->quickprop_mu; /*1.75;*/
+	float shrink_factor = mu / (1.0 + mu); 
+
+	unsigned int i = ann->total_connections;
+	while(i--){
+		w = weights[i];
+		prev_step = prev_steps[i];
+		slope = train_slopes[i] +  decay * w;
+		prev_slope = prev_train_slopes[i];
+		next_step = 0.0;
+	
+		/* The step must always be in direction opposite to the slope. */
+	
+		if(prev_step > 0.001) {
+			/* If last step was positive...  */
+			if(slope > 0.0) {
+				/*  Add in linear term if current slope is still positive.*/
+				next_step += epsilon * slope;
+			}
+		
+			/*If current slope is close to or larger than prev slope...  */
+			if(slope > (shrink_factor * prev_slope)) {
+				next_step += mu * prev_step;      /* Take maximum size negative step. */
+			} else {
+				next_step += prev_step * slope / (prev_slope - slope); /* Else, use quadratic estimate. */
+			}
+		} else if(prev_step < -0.001){
+			/* If last step was negative...  */  
+			if(slope < 0.0){
+				/*  Add in linear term if current slope is still negative.*/
+				next_step += epsilon * slope;
+			}
+		
+			/* If current slope is close to or more neg than prev slope... */
+			if(slope < (shrink_factor * prev_slope)){
+				next_step += mu * prev_step;      /* Take maximum size negative step. */
+			} else {
+				next_step += prev_step * slope / (prev_slope - slope); /* Else, use quadratic estimate. */
+			}
+		} else {
+			/* Last step was zero, so use only linear term. */
+			next_step += epsilon * slope;
+		}
+
+
+		/* update global data arrays */
+		prev_steps[i] = next_step;
+		weights[i] = w + next_step;
+		prev_train_slopes[i] = slope;
+		train_slopes[i] = 0.0;
+	}
+}
+
+/* INTERNAL FUNCTION
+   The iRprop- algorithm
+*/
+void fann_update_weights_irpropm(struct fann *ann, unsigned int num_data)
+{
+	fann_type *train_slopes = ann->train_slopes;
+	fann_type *weights = fann_get_weights(ann);
+	fann_type *prev_steps = ann->prev_steps;
+	fann_type *prev_train_slopes = ann->prev_train_slopes;
+
+	fann_type prev_step, slope, prev_slope, next_step, same_sign;
+
+	/* These should be set from variables */
+	float increase_factor = ann->rprop_increase_factor;/*1.2;*/
+	float decrease_factor = ann->rprop_decrease_factor;/*0.5;*/
+	float delta_min = ann->rprop_delta_min;/*0.0;*/
+	float delta_max = ann->rprop_delta_max;/*50.0;*/
+
+	unsigned int i = ann->total_connections;
+	while(i--){	
+		prev_step = prev_steps[i];
+		slope = train_slopes[i];
+		prev_slope = prev_train_slopes[i];
+		next_step = 0.0;
+
+		same_sign = prev_slope * slope;
+	
+		if(same_sign > 0.0) {
+			next_step = fann_min(prev_step * increase_factor, delta_max);
+		} else if(same_sign < 0.0) {
+			next_step = fann_max(prev_step * decrease_factor, delta_min);
+			slope = 0;
+		}
+
+		if(slope > 0){
+			weights[i] -= next_step;
+		}else{
+			weights[i] += next_step;
+		}
+	
+		/* update global data arrays */
+		prev_steps[i] = next_step;
+		prev_train_slopes[i] = slope;
+		train_slopes[i] = 0.0;
+	}
+}

@@ -34,8 +34,6 @@ int main()
 	const unsigned int num_layers = 3;
 	const unsigned int num_neurons_hidden = 96;
 	const float desired_error = (const float)0.001;
-	const unsigned int max_iterations = 300000;
-	const unsigned int iterations_between_reports = 10;
 	struct fann *ann;
 	struct fann_train_data *train_data, *test_data;
 	
@@ -52,11 +50,11 @@ int main()
 
 	printf("Training network.\n");
 
-	fann_train_on_data(ann, train_data, max_iterations, iterations_between_reports, desired_error);
+	fann_set_training_algorithm(ann, FANN_INCREMENTAL_TRAIN);
+	
+	fann_train_on_data(ann, train_data, 100000, 10, desired_error);
 	
 	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback);*/
-
-
 	printf("Testing network.\n");
 
 	test_data = fann_read_train_from_file("../benchmarks/datasets/robot.test");

@@ -44,6 +44,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #define FANN_THRESHOLD 2
 
+/* Threshold activation function.
+   x < 0 -> y = 0, x >= 0 -> y = 1
+   Can NOT be used during training.
+*/
+#define FANN_THRESHOLD_SYMMETRIC 11
+
 /* Sigmoid activation function.
    One of the most used activation functions.
    span: 0 < y < 1
