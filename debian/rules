@@ -18,7 +18,7 @@ CFLAGS = -Wall -g
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -O0
 else
-	CFLAGS += -O3
+	CFLAGS += -O2
 endif
 ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
@@ -43,11 +43,6 @@ build-stamp:  config.status
 	dh_testdir
 
 	# Add here commands to compile the package.
-	cp ChangeLog ChangeLog.bak
-	rm -f ChangeLog.gz
-	gzip -9 ChangeLog
-	mv ChangeLog.bak ChangeLog
-
 	cd doc && $(MAKE) html
 
 	$(MAKE)
@@ -88,7 +83,7 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs ChangeLog.gz
+	dh_installchangelogs ChangeLog
 	dh_installdocs
 	dh_installexamples
 #	dh_installmenu

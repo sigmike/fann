@@ -25,6 +25,9 @@ Description: Fast Artificial Neural Network Library, Development files
  faster than other libraries on systems without a floating point
  processor, while the performance was comparable to other highly
  optimized libraries on systems with a floating point processor.
+ .
+ This package contains the header files and static libraries which is
+ needed for developing the libfann applications.
 
 Package: libfann1
 Section: libs
@@ -47,4 +50,5 @@ Description: Fast Artificial Neural Network Library (fann)
  faster than other libraries on systems without a floating point
  processor, while the performance was comparable to other highly
  optimized libraries on systems with a floating point processor.
-
+ . 
+ This package contains the shared libraries.
