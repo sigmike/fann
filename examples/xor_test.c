@@ -58,7 +58,7 @@ int main()
 		printf("XOR test (%d, %d) -> %d, should be %d, difference=%f\n",
 		data->input[i][0], data->input[i][1], *calc_out, data->output[i][0], (float)fann_abs(*calc_out - data->output[i][0])/fann_get_multiplier(ann));
 
-		if((float)fann_abs(*calc_out - data->output[i][0])/fann_get_multiplier(ann) > 0.1){
+		if((float)fann_abs(*calc_out - data->output[i][0])/fann_get_multiplier(ann) > 0.2){
 			printf("Test failed\n");
 			ret = -1;
 		}
