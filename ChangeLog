@@ -1,5 +1,4 @@
 libfann (1.1.0) stable; urgency=low
-	* Customize error output
 	* Error checking when allocating memory
 	* Debian package
 	* RPM package
@@ -9,7 +8,9 @@ libfann (1.1.0) stable; urgency=low
 	* Renamed fann_reset_error to fann_reset_MSE (keeping old one for now)
 	* Rearanged some code for easy access by the newly created fann php module 
 	* Defined more activation functions and documented the old (in fann_activation.h)
+	* Customize error output
 	* Added fann_set_error_log and supporting code
+	* Added python bindings
 	
  -- Steffen Nissen <lukesky@diku.dk> 
 
