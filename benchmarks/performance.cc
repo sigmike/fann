@@ -17,6 +17,11 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+//uncomment lines below to benchmark the libraries
+
+#define JNEURAL
+#define LWNN
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,9 +31,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifndef FIXEDFANN
 
+#ifdef JNEURAL
 #include "nets/backprop.h"
-#include "lwneuralnet.h"
+#endif
 
+#ifdef LWNN
+#include "lwneuralnet.h"
+#endif
+
+#ifdef JNEURAL
 void performance_benchmark_jneural(FILE *out, fann_type *input,
 	unsigned int num_neurons, unsigned int seconds_per_test)
 {
@@ -53,7 +64,9 @@ void performance_benchmark_jneural(FILE *out, fann_type *input,
 
 	delete ann;
 }
+#endif
 
+#ifdef LWNN
 void performance_benchmark_lwnn(FILE *out, fann_type *input,
 	unsigned int num_neurons, unsigned int seconds_per_test)
 {
@@ -79,6 +92,7 @@ void performance_benchmark_lwnn(FILE *out, fann_type *input,
 	net_free(ann);	
 	free(output);
 }
+#endif
 
 void performance_benchmark_fann_noopt(FILE *out, fann_type *input,
 	unsigned int num_neurons, unsigned int seconds_per_test)
@@ -209,10 +223,7 @@ int main(int argc, char* argv[])
 		num_neurons <= num_neurons_last; num_neurons = (int)(num_neurons * multiplier)){
 
 #ifndef FIXEDFANN
-		if(strcmp(argv[1], "lwnn") == 0){
-			performance_benchmark_lwnn(out, input,
-			  num_neurons, seconds_per_test);
-		}else if(strcmp(argv[1], "fann") == 0){
+		if(strcmp(argv[1], "fann") == 0){
 #endif
 			performance_benchmark_fann(false, out, input,
 				num_neurons, seconds_per_test);
@@ -226,9 +237,18 @@ int main(int argc, char* argv[])
 		}else if(strcmp(argv[1], "fann_thres") == 0){
 			performance_benchmark_fann_thres(out, input,
 				num_neurons, seconds_per_test);
+#ifdef LWNN
+		}else if(strcmp(argv[1], "lwnn") == 0){
+			performance_benchmark_lwnn(out, input,
+			  num_neurons, seconds_per_test);
+#endif
+#ifdef JNEURAL
 		}else if(strcmp(argv[1], "jneural") == 0){
 			performance_benchmark_jneural(out, input,
 				num_neurons, seconds_per_test);
+#endif
+		}else{
+			printf("unrecognized option %s\n", argv[1]);
 		}
 #endif
 

@@ -17,13 +17,24 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+//uncomment lines below to benchmark the libraries
+
+#define JNEURAL
+#define LWNN
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef JNEURAL
 #include "nets/backprop.h"
-#include "ctimer.h"
+#endif
+
+#ifdef LWNN
 #include "lwneuralnet.h"
+#endif
+
+#include "ctimer.h"
 #include "floatfann.h"
 
 unsigned int num_errors = 0;
@@ -51,6 +62,7 @@ double mean_error()
 }
 
 
+#ifdef JNEURAL
 void quality_benchmark_jneural(
 	struct fann_train_data *train_data,
 	struct fann_train_data *test_data,
@@ -115,6 +127,7 @@ void quality_benchmark_jneural(
 
 	delete ann;
 }
+#endif
 
 void quality_benchmark_fann(bool stepwise,
 	char *filename,
@@ -204,6 +217,7 @@ void quality_benchmark_fann(bool stepwise,
 	fann_destroy(ann);	
 }
 
+#ifdef LWNN
 void quality_benchmark_lwnn(
 	struct fann_train_data *train_data,
 	struct fann_train_data *test_data,
@@ -279,6 +293,7 @@ void quality_benchmark_lwnn(
 
 	net_free(ann);
 }
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -318,13 +333,7 @@ int main(int argc, char* argv[])
 
 	fprintf(stderr, "Quality test of %s %s ", argv[1], argv[2]);
 
-	if(strcmp(argv[1], "lwnn") == 0){
-		quality_benchmark_lwnn(train_data, test_data,
-			train_out, test_out,
-			train_data->num_input, num_neurons_hidden1,
-			num_neurons_hidden2, train_data->num_output,
-			seconds_of_training, seconds_between_reports);
-	}else if(strcmp(argv[1], "fann") == 0){
+	if(strcmp(argv[1], "fann") == 0){
 		quality_benchmark_fann(false, argv[4], train_data, test_data,
 			train_out, test_out,
 			train_data->num_input, num_neurons_hidden1,
@@ -336,12 +345,25 @@ int main(int argc, char* argv[])
 			train_data->num_input, num_neurons_hidden1,
 			num_neurons_hidden2, train_data->num_output,
 			seconds_of_training, seconds_between_reports);
+#ifdef LWNN
+	}else if(strcmp(argv[1], "lwnn") == 0){
+		quality_benchmark_lwnn(train_data, test_data,
+			train_out, test_out,
+			train_data->num_input, num_neurons_hidden1,
+			num_neurons_hidden2, train_data->num_output,
+			seconds_of_training, seconds_between_reports);
+#endif
+		
+#ifdef JNEURAL
 	}else if(strcmp(argv[1], "jneural") == 0){
 		quality_benchmark_jneural(train_data, test_data,
 			train_out, test_out,
 			train_data->num_input, num_neurons_hidden1,
 			num_neurons_hidden2, train_data->num_output,
 			seconds_of_training, seconds_between_reports);
+#endif
+	}else{
+		printf("unrecognized option %s\n", argv[1]);
 	}
 
 	fprintf(stderr, "\n");
