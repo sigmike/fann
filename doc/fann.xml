@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.16 2004/05/11 11:37:42 looksirdroids Exp $ -->
+<!-- $Id: fann.xml,v 1.17 2004/06/24 10:20:33 tadpole9 Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -875,6 +875,8 @@ fann_destroy(ann2);
 	    This function behaves similarly to <link linkend="api.fann_randomize_weights"><function>fann_randomize_weights</function></link>.
 	    It will use the algorithm developed by Derrick Nguyen and Bernard Widrow
 	    [<link linkend="bib.nguyen_1990" endterm="bib.nguyen_1990.abbrev" />] to set the weights in such a way as to speed up training.
+	    This technique is not always successful, and in some cases can be <emphasis>less</emphasis> efficient than a purely random
+	    initialization.
 	  </para>
 	  <para>
 	    The algorithm requires access to the range of the input data (ie, largest and smallest input), and therefore accepts a second
@@ -3084,6 +3086,69 @@ fann_destroy(ann2);
       This extension supports the same activation functions as the library, a list of which can
       be found in the <link linkend="api.sec.constants.activation" endterm="api.sec.constants.activation.title"/> section.
     </para>
+    <section id="php.install">
+      <title id="php.instal.title">Installation</title>
+
+      <section id="php.install.pear">
+        <title id="php.install.pear.title">Using PEAR</title>
+
+        <para>
+          The easiest way to install FANN-PHP is to use PEAR- if you
+          have a fairly recent version of PHP installed, simply run
+          <command>pear install fann</command>. Note that if there are
+          no stable releases of FANN-PHP, you may have to specify the
+          URI for the package, which can be obtained from <ulink
+          url="http://pecl.php.net/fann">http://pecl.php.net/fann</ulink>.
+        </para>
+        <para>
+          If you cannot install FANN-PHP using PEAR, you can try
+          following the (obsolete) instructions at <ulink
+          url="http://www.cs.utexas.edu/users/UTCS/online-docs/php/pear/faq.install-pecl.html">http://www.cs.utexas.edu/users/UTCS/online-docs/php/pear/faq.install-pecl.html</ulink>.
+        </para>
+	<para>
+	  If you use one of these methods, you'll need to either
+	  dl('fann.so') or add it to your php.ini
+	</para>
+      <para>
+        If you use either of the above methods, you will probably need
+        to be root.
+      </para>
+      </section>
+      <section id="php.install.ext">
+        <title id="php.install.ext.title">Compiling into PHP</title>
+	<para>
+	  Please only use this method if using the methods outlined in
+	  <link linkend="php.install.pear"
+	  endterm="php.install.pear.title"/> have failed.
+	</para>
+        <para>
+          If you wish to compile FANN-PHP into PHP itself, you
+          can. First, uncompress the package into the ext subdirectory
+          of your copy of the PHP source code, and rename the
+          directory to ext/fann (from fann-x.x.x).
+        </para>
+        <para>
+          Next, you must rebuild the configure script- to do so, run
+          <command>./buildconf</command> from the PHP source
+          directory.
+        </para>
+	<para>
+	  From here on, the procedure is similar to when you built PHP
+	  originally- run <command>./configure</command> with your
+	  desired options, plus <parameter>--with-fann</parameter>.
+	</para>
+	<para>
+	  Finally, run <command>make</command> and <command>make
+	  install</command>. Note that you will probably need to be
+	  root for <command>make install</command> to work.
+	</para>
+	<para>
+	  This method may require flex and bison to work- more
+	  information can be obtained at <ulink
+	  url="http://www.php.net/anoncvs.php">http://www.php.net/anoncvs.php</ulink>
+	</para>
+      </section>
+    </section>
     <section id="php.api">
       <title id="php.api.title">API Reference</title>
       <refentry id="function.fann_create">
