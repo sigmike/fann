@@ -72,12 +72,12 @@ void train_on_steepness_file(struct fann *ann, char *filename,
 int main()
 {
 	const float connection_rate = 1;
-	const float learning_rate = 0.7;
+	const float learning_rate = (const float)0.7;
 	const unsigned int num_input = 2;
 	const unsigned int num_output = 1;
 	const unsigned int num_layers = 3;
 	const unsigned int num_neurons_hidden = 4;
-	const float desired_error = 0.0001;
+	const float desired_error = (const float)0.0001;
 	const unsigned int max_iterations = 500000;
 	const unsigned int iterations_between_reports = 1000;
 	unsigned int i;
@@ -92,7 +92,7 @@ int main()
 	data = fann_read_train_from_file("xor.data");
 	
 	train_on_steepness_file(ann, "xor.data", max_iterations,
-		iterations_between_reports, desired_error, 0.5, 0.1, 20.0);
+		iterations_between_reports, desired_error, (float)0.5, (float)0.1, (float)20.0);
 
 	fann_set_activation_function_hidden(ann, FANN_THRESHOLD);
 	fann_set_activation_function_output(ann, FANN_THRESHOLD);

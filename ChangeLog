@@ -12,6 +12,8 @@ libfann (1.1.0) stable; urgency=low
 	* Added fann_set_error_log, fann_shuffle_train_data, fann_merge_train_data, and fann_duplicate_train_data, fann_init_weights
 	* Added python bindings
 	* Created DocBook XML documentation, including API reference
+	* Rearanged files for easier development
+	* Added MSVC++ project files
 	
  -- Steffen Nissen <lukesky@diku.dk> 
 

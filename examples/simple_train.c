@@ -22,12 +22,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 int main()
 {
 	const float connection_rate = 1;
-	const float learning_rate = 0.7;
+	const float learning_rate = (const float)0.7;
 	const unsigned int num_input = 2;
 	const unsigned int num_output = 1;
 	const unsigned int num_layers = 3;
 	const unsigned int num_neurons_hidden = 4;
-	const float desired_error = 0.0001;
+	const float desired_error = (const float)0.0001;
 	const unsigned int max_iterations = 500000;
 	const unsigned int iterations_between_reports = 1000;
 
