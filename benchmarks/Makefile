@@ -5,7 +5,7 @@ G++ = g++
 
 TARGETS = quality quality_fixed performance performance_fixed
 
-CFLAGS = -O3 -finline-functions -funroll-loops -Werror -I../src/include/ 
+CFLAGS = -O3 -finline-functions -funroll-loops -Werror
 
 LFLAGS = -lm
 
@@ -16,16 +16,19 @@ LWNNDIR = ../libraries/lwneuralnet-0.6/source/
 all: $(TARGETS)
 
 quality: quality.cc
-	$(G++) $(CFLAGS) $(LFLAGS) -I$(JNEURALDIR)include/ -L$(JNEURALDIR) -I$(LWNNDIR) -L$(LWNNDIR) $< -o $@ -lfloatfann #-llwneuralnet -ljneural -lfl
+	$(G++) $(CFLAGS) $(LFLAGS) -I$(JNEURALDIR)include/ -L$(JNEURALDIR) -I$(LWNNDIR) -L$(LWNNDIR) $< -o $@ -lfloatfann -llwneuralnet -ljneural -lfl
 
 quality_fixed: quality_fixed.c
 	$(GCC) $(CFLAGS) $(LFLAGS) $< -o $@ -lfixedfann
 
 performance: performance.cc
-	$(G++) $(CFLAGS) $(LFLAGS) -I$(JNEURALDIR)include/ -L$(JNEURALDIR) -I$(LWNNDIR) -L$(LWNNDIR) $< -o $@ -lfloatfann #-llwneuralnet -ljneural -lfl
+	$(G++) $(CFLAGS) $(LFLAGS) -I$(JNEURALDIR)include/ -L$(JNEURALDIR) -I$(LWNNDIR) -L$(LWNNDIR) $< -o $@ -lfloatfann -llwneuralnet -ljneural -lfl
 
 performance_fixed: performance.cc
 	$(G++) $(CFLAGS) $(LFLAGS) -DFIXEDFANN $< -o $@ -lfixedfann
+
+shuffle: shuffle.c
+	$(GCC) $(CFLAGS) $(LFLAGS) $< -o $@ -lfloatfann
 
 clean: 
 	rm -rf $(TARGETS) *.net *.out *_fixed_test_* *_fixed_train_*

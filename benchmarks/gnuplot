@@ -22,6 +22,20 @@ plot "building_fann_train.out" title "fann train" with lines -1, \
  "building_jneural_test.out" title "jneural test" with lines 4
 
 set logscale x
+#set output "cancer.ps"
+set title "cancer"
+plot "cancer_fann_train.out" title "fann train" with lines -1, \
+ "cancer_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "cancer_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "cancer_lwnn_train.out" title "lwnn train" with lines 3, \
+ "cancer_jneural_train.out" title "jneural train" with lines 4, \
+ "cancer_fann_test.out" title "fann test" with lines -1, \
+ "cancer_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "cancer_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "cancer_lwnn_test.out" title "lwnn test" with lines 3, \
+ "cancer_jneural_test.out" title "jneural test" with lines 4
+
+set logscale x
 #set output "card.ps"
 set title "card"
 plot "card_fann_train.out" title "fann train" with lines -1, \
@@ -35,6 +49,34 @@ plot "card_fann_train.out" title "fann train" with lines -1, \
  "card_lwnn_test.out" title "lwnn test" with lines 3, \
  "card_jneural_test.out" title "jneural test" with lines 4
 
+set logscale x
+#set output "diabetes.ps"
+set title "diabetes"
+plot "diabetes_fann_train.out" title "fann train" with lines -1, \
+ "diabetes_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "diabetes_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "diabetes_lwnn_train.out" title "lwnn train" with lines 3, \
+ "diabetes_jneural_train.out" title "jneural train" with lines 4, \
+ "diabetes_fann_test.out" title "fann test" with lines -1, \
+ "diabetes_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "diabetes_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "diabetes_lwnn_test.out" title "lwnn test" with lines 3, \
+ "diabetes_jneural_test.out" title "jneural test" with lines 4
+
+set logscale x
+#set output "flare.ps"
+set title "flare"
+plot "flare_fann_train.out" title "fann train" with lines -1, \
+ "flare_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "flare_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "flare_lwnn_train.out" title "lwnn train" with lines 3, \
+ "flare_jneural_train.out" title "jneural train" with lines 4, \
+ "flare_fann_test.out" title "fann test" with lines -1, \
+ "flare_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "flare_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "flare_lwnn_test.out" title "lwnn test" with lines 3, \
+ "flare_jneural_test.out" title "jneural test" with lines 4
+
 #set output "gene.ps"
 set title "gene"
 plot "gene_fann_train.out" title "fann train" with lines -1, \
@@ -47,6 +89,48 @@ plot "gene_fann_train.out" title "fann train" with lines -1, \
  "gene_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
  "gene_lwnn_test.out" title "lwnn test" with lines 3, \
  "gene_jneural_test.out" title "jneural test" with lines 4
+
+set logscale x
+#set output "glass.ps"
+set title "glass"
+plot "glass_fann_train.out" title "fann train" with lines -1, \
+ "glass_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "glass_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "glass_lwnn_train.out" title "lwnn train" with lines 3, \
+ "glass_jneural_train.out" title "jneural train" with lines 4, \
+ "glass_fann_test.out" title "fann test" with lines -1, \
+ "glass_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "glass_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "glass_lwnn_test.out" title "lwnn test" with lines 3, \
+ "glass_jneural_test.out" title "jneural test" with lines 4
+
+set logscale x
+#set output "heart.ps"
+set title "heart"
+plot "heart_fann_train.out" title "fann train" with lines -1, \
+ "heart_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "heart_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "heart_lwnn_train.out" title "lwnn train" with lines 3, \
+ "heart_jneural_train.out" title "jneural train" with lines 4, \
+ "heart_fann_test.out" title "fann test" with lines -1, \
+ "heart_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "heart_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "heart_lwnn_test.out" title "lwnn test" with lines 3, \
+ "heart_jneural_test.out" title "jneural test" with lines 4
+
+set logscale x
+#set output "horse.ps"
+set title "horse"
+plot "horse_fann_train.out" title "fann train" with lines -1, \
+ "horse_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "horse_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "horse_lwnn_train.out" title "lwnn train" with lines 3, \
+ "horse_jneural_train.out" title "jneural train" with lines 4, \
+ "horse_fann_test.out" title "fann test" with lines -1, \
+ "horse_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "horse_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "horse_lwnn_test.out" title "lwnn test" with lines 3, \
+ "horse_jneural_test.out" title "jneural test" with lines 4
 
 set logscale
 #set output "mushroom.ps"
@@ -62,6 +146,20 @@ plot "mushroom_fann_train.out" title "fann train" with lines -1, \
  "mushroom_lwnn_test.out" title "lwnn test" with lines 3, \
  "mushroom_jneural_test.out" title "jneural test" with lines 4
 set nologscale
+
+set logscale x
+#set output "robot.ps"
+set title "robot"
+plot "robot_fann_train.out" title "fann train" with lines -1, \
+ "robot_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "robot_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "robot_lwnn_train.out" title "lwnn train" with lines 3, \
+ "robot_jneural_train.out" title "jneural train" with lines 4, \
+ "robot_fann_test.out" title "fann test" with lines -1, \
+ "robot_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "robot_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "robot_lwnn_test.out" title "lwnn test" with lines 3, \
+ "robot_jneural_test.out" title "jneural test" with lines 4
 
 set logscale x
 #set output "soybean.ps"
@@ -90,20 +188,6 @@ plot "thyroid_fann_train.out" title "fann train" with lines -1, \
  "thyroid_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
  "thyroid_lwnn_test.out" title "lwnn test" with lines 3, \
  "thyroid_jneural_test.out" title "jneural test" with lines 4
-
-set logscale x
-#set output "robot.ps"
-set title "robot"
-plot "robot_fann_train.out" title "fann train" with lines -1, \
- "robot_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "robot_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "robot_lwnn_train.out" title "lwnn train" with lines 3, \
- "robot_jneural_train.out" title "jneural train" with lines 4, \
- "robot_fann_test.out" title "fann test" with lines -1, \
- "robot_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "robot_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "robot_lwnn_test.out" title "lwnn test" with lines 3, \
- "robot_jneural_test.out" title "jneural test" with lines 4
 
 set xlabel "Number of neurons in the four layers"
 set ylabel "Nanoseconds per connection"
