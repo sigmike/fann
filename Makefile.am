@@ -1,5 +1,8 @@
 SUBDIRS = src
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = fann.pc
+
 EXTRA_DIST = doc examples benchmarks
 
 dist-hook:
