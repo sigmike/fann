@@ -47,8 +47,10 @@ extern "C" {
 #ifndef NULL
 #define NULL 0
 #endif /* NULL */
+
+
 	
-/* ----- Initialisation and configuration ----- */
+/* ----- Implemented in fann.c Creation, running and destruction of ANNs ----- */
 	
 /* Constructs a backpropagation neural network, from an connection rate,
    a learning rate, the number of layers and the number of neurons in each
@@ -75,14 +77,26 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 struct fann * fann_create_array(float connection_rate, float learning_rate,
 	unsigned int num_layers, unsigned int * layers);
 
-/* Constructs a backpropagation neural network from a configuration file.
+/* Runs a input through the network, and returns the output.
  */
-struct fann * fann_create_from_file(const char *configuration_file);
+fann_type* fann_run(struct fann *ann, fann_type *input);
 
 /* Destructs the entire network.
    Be sure to call this function after finished using the network.
  */
 void fann_destroy(struct fann *ann);
+	
+/* Randomize weights (from the beginning the weights are random between -0.1 and 0.1)
+ */
+void fann_randomize_weights(struct fann *ann, fann_type min_weight, fann_type max_weight);
+
+
+	
+/* ----- Implemented in fann_io.c Saving and loading of ANNs ----- */
+
+/* Constructs a backpropagation neural network from a configuration file.
+ */
+struct fann * fann_create_from_file(const char *configuration_file);
 
 /* Save the entire network to a configuration file.
  */
@@ -115,73 +129,8 @@ void fann_save(struct fann *ann, const char *configuration_file);
 */
 int fann_save_to_fixed(struct fann *ann, const char *configuration_file);
 
-/* ----- Some stuff to set options on the network on the fly. ----- */
 
-/* Set the learning rate.
- */
-void fann_set_learning_rate(struct fann *ann, float learning_rate);
-
-/* Set the activation function for the hidden layers.
- */
-void fann_set_activation_function_hidden(struct fann *ann, unsigned int activation_function);
-
-/* Set the activation function for the output layer.
- */
-void fann_set_activation_function_output(struct fann *ann, unsigned int activation_function);
-
-/* Set the steepness of the sigmoid function used in the hidden layers.
-   Only usefull if sigmoid function is used in the hidden layers (default 0.5).
- */
-void fann_set_activation_hidden_steepness(struct fann *ann, fann_type steepness);
-
-/* Set the steepness of the sigmoid function used in the output layer.
-   Only usefull if sigmoid function is used in the output layer (default 0.5).
- */
-void fann_set_activation_output_steepness(struct fann *ann, fann_type steepness);
-
-/* ----- Some stuff to read network options from the network. ----- */
-
-/* Get the learning rate.
- */
-float fann_get_learning_rate(struct fann *ann);
-
-/* Get the number of input neurons.
- */
-unsigned int fann_get_num_input(struct fann *ann);
-
-/* Get the number of output neurons.
- */
-unsigned int fann_get_num_output(struct fann *ann);
-
-/* Get the activation function used in the hidden layers.
- */
-unsigned int fann_get_activation_function_hidden(struct fann *ann);
-
-/* Get the activation function used in the output layer.
- */
-unsigned int fann_get_activation_function_output(struct fann *ann);
-
-/* Get the steepness parameter for the sigmoid function used in the hidden layers.
- */
-fann_type fann_get_activation_hidden_steepness(struct fann *ann);
-
-/* Get the steepness parameter for the sigmoid function used in the output layer.
- */
-fann_type fann_get_activation_output_steepness(struct fann *ann);
-
-/* Get the total number of neurons in the entire network.
- */
-unsigned int fann_get_total_neurons(struct fann *ann);
-
-/* Get the total number of connections in the entire network.
- */
-unsigned int fann_get_total_connections(struct fann *ann);
-
-/* Randomize weights (from the beginning the weights are random between -0.1 and 0.1)
- */
-void fann_randomize_weights(struct fann *ann, fann_type min_weight, fann_type max_weight);
-
-/* ----- Training ----- */
+/* ----- Implemented in fann_train.c Training and testing of ANNs ----- */
 
 #ifndef FIXEDFANN
 /* Train one iteration with a set of inputs, and a set of desired outputs.
@@ -194,6 +143,26 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output);
    change the network in any way.
 */
 fann_type *fann_test(struct fann *ann, fann_type *input, fann_type *desired_output);
+
+/* Reads the mean square error from the network.
+   (obsolete will be removed at some point, use fann_get_MSE)
+ */
+float fann_get_error(struct fann *ann);
+
+/* Reads the mean square error from the network.
+ */
+float fann_get_MSE(struct fann *ann);
+
+/* Resets the mean square error from the network.
+   (obsolete will be removed at some point, use fann_reset_MSE)
+ */
+void fann_reset_error(struct fann *ann);
+
+/* Resets the mean square error from the network.
+ */
+void fann_reset_MSE(struct fann *ann);
+
+/* ----- Implemented in fann_train_data.c Data for training of ANNs ----- */
 
 /* Reads a file that stores training data, in the format:
    num_train_data num_input num_output\n
@@ -235,6 +204,11 @@ void fann_train_on_data_callback(struct fann *ann, struct fann_train_data *data,
  */
 void fann_train_on_file(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error);
 
+/* Does the same as train_on_data_callback, but
+   reads the data directly from a file.
+ */
+void fann_train_on_file_callback(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (*callback)(unsigned int epochs, float error));
+
 /* shuffles training data, randomizing the order
  */
 void fann_shuffle_train_data(struct fann_train_data *train_data);
@@ -247,11 +221,6 @@ struct fann_train_data * fann_merge_train_data(struct fann_train_data *data1, st
  */
 struct fann_train_data * fann_duplicate_train_data(struct fann_train_data *data);
 	
-/* Does the same as train_on_data_callback, but
-   reads the data directly from a file.
- */
-void fann_train_on_file_callback(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (*callback)(unsigned int epochs, float error));
-
 #endif /* NOT FIXEDFANN */
 
 /* Save the training structure to a file.
@@ -263,54 +232,67 @@ void fann_save_train(struct fann_train_data* data, char *filename);
  */
 void fann_save_train_to_fixed(struct fann_train_data* data, char *filename, unsigned int decimal_point);
 
-/* Reads the mean square error from the network.
-   (obsolete will be removed at some point, use fann_get_MSE)
- */
-float fann_get_error(struct fann *ann);
 
-/* Reads the mean square error from the network.
- */
-float fann_get_MSE(struct fann *ann);
 
-/* Resets the mean square error from the network.
-   (obsolete will be removed at some point, use fann_reset_MSE)
- */
-void fann_reset_error(struct fann *ann);
+/* ----- Implemented in fann_options.c Get and set options for the ANNs ----- */
 
-/* Resets the mean square error from the network.
+/* Get the learning rate.
  */
-void fann_reset_MSE(struct fann *ann);
+float fann_get_learning_rate(struct fann *ann);
 
-/* resets the last error number
+/* Set the learning rate.
  */
-void fann_reset_errno(struct fann_error *errdat);
+void fann_set_learning_rate(struct fann *ann, float learning_rate);
 
-/* resets the last error string
+/* Get the activation function used in the hidden layers.
  */
-void fann_reset_errstr(struct fann_error *errdat);
+unsigned int fann_get_activation_function_hidden(struct fann *ann);
 
-/* change where errors are logged to
+/* Set the activation function for the hidden layers.
  */
-void fann_set_error_log(struct fann_error *errdat, FILE *log);
+void fann_set_activation_function_hidden(struct fann *ann, unsigned int activation_function);
 
-/* returns the last error number
+/* Get the activation function used in the output layer.
  */
-unsigned int fann_get_errno(struct fann_error *errdat);
+unsigned int fann_get_activation_function_output(struct fann *ann);
 
-/* returns the last errstr.
- * This function calls fann_reset_errno and fann_reset_errstr
+/* Set the activation function for the output layer.
  */
-char * fann_get_errstr(struct fann_error *errdat);
+void fann_set_activation_function_output(struct fann *ann, unsigned int activation_function);
 
-/* prints the last error to stderr
+/* Get the steepness parameter for the sigmoid function used in the hidden layers.
  */
-void fann_print_error(struct fann_error *errdat);
-
-/* ----- Running ----- */
-
-/* Runs a input through the network, and returns the output.
+fann_type fann_get_activation_hidden_steepness(struct fann *ann);
+	
+/* Set the steepness of the sigmoid function used in the hidden layers.
+   Only usefull if sigmoid function is used in the hidden layers (default 0.5).
  */
-fann_type* fann_run(struct fann *ann, fann_type *input);
+void fann_set_activation_hidden_steepness(struct fann *ann, fann_type steepness);
+
+/* Get the steepness parameter for the sigmoid function used in the output layer.
+ */
+fann_type fann_get_activation_output_steepness(struct fann *ann);
+	
+/* Set the steepness of the sigmoid function used in the output layer.
+   Only usefull if sigmoid function is used in the output layer (default 0.5).
+ */
+void fann_set_activation_output_steepness(struct fann *ann, fann_type steepness);
+
+/* Get the number of input neurons.
+ */
+unsigned int fann_get_num_input(struct fann *ann);
+
+/* Get the number of output neurons.
+ */
+unsigned int fann_get_num_output(struct fann *ann);
+
+/* Get the total number of neurons in the entire network.
+ */
+unsigned int fann_get_total_neurons(struct fann *ann);
+
+/* Get the total number of connections in the entire network.
+ */
+unsigned int fann_get_total_connections(struct fann *ann);
 
 #ifdef FIXEDFANN
 
@@ -322,6 +304,35 @@ unsigned int fann_get_decimal_point(struct fann *ann);
  */
 unsigned int fann_get_multiplier(struct fann *ann);
 #endif /* FIXEDFANN */
+	
+
+	
+/* ----- Implemented in fann_error.c Access error information about the ANN ----- */
+	
+/* change where errors are logged to
+ */
+void fann_set_error_log(struct fann_error *errdat, FILE *log);
+
+/* returns the last error number
+ */
+unsigned int fann_get_errno(struct fann_error *errdat);
+
+/* resets the last error number
+ */
+void fann_reset_errno(struct fann_error *errdat);
+
+/* resets the last error string
+ */
+void fann_reset_errstr(struct fann_error *errdat);
+
+/* returns the last errstr.
+ * This function calls fann_reset_errno and fann_reset_errstr
+ */
+char * fann_get_errstr(struct fann_error *errdat);
+
+/* prints the last error to stderr
+ */
+void fann_print_error(struct fann_error *errdat);
 
 #ifdef __cplusplus
 }

@@ -139,7 +139,7 @@ AM_CFLAGS = -O9 -Wall
 libfloatfann_la_SOURCES = floatfann.c
 libdoublefann_la_SOURCES = doublefann.c
 libfixedfann_la_SOURCES = fixedfann.c
-libfann_la_SOURCES = fann.c fann_internal.c
+libfann_la_SOURCES = fann.c fann_io.c fann_train.c fann_train_data.c fann_options.c fann_error.c
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -153,7 +153,8 @@ am_libdoublefann_la_OBJECTS = doublefann.lo
 libdoublefann_la_OBJECTS = $(am_libdoublefann_la_OBJECTS)
 libfann_la_LDFLAGS =
 libfann_la_LIBADD =
-am_libfann_la_OBJECTS = fann.lo fann_internal.lo
+am_libfann_la_OBJECTS = fann.lo fann_io.lo fann_train.lo \
+	fann_train_data.lo fann_options.lo fann_error.lo
 libfann_la_OBJECTS = $(am_libfann_la_OBJECTS)
 libfixedfann_la_LDFLAGS =
 libfixedfann_la_LIBADD =
@@ -168,7 +169,10 @@ DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/src/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/doublefann.Plo ./$(DEPDIR)/fann.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/fann_internal.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/fann_error.Plo ./$(DEPDIR)/fann_io.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/fann_options.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/fann_train.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/fann_train_data.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/fixedfann.Plo ./$(DEPDIR)/floatfann.Plo
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -243,7 +247,11 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/doublefann.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fann.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fann_internal.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fann_error.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fann_io.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fann_options.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fann_train.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fann_train_data.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fixedfann.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/floatfann.Plo@am__quote@
 

@@ -45,7 +45,6 @@ int fann_save_internal_fd(struct fann *ann, FILE *conf, const char *configuratio
 void fann_save_train_internal(struct fann_train_data* data, char *filename, unsigned int save_as_fixed, unsigned int decimal_point);
 void fann_save_train_internal_fd(struct fann_train_data* data, FILE *file, char *filename, unsigned int save_as_fixed, unsigned int decimal_point);
 
-int fann_compare_connections(const void* c1, const void* c2);
 void fann_seed_rand();
 
 void fann_update_stepwise_hidden(struct fann *ann);

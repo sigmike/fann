@@ -20,5 +20,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /* Easy way to allow for build of multiple binaries */
 
 #include "doublefann.h"
-#include "fann.c"
+
 #include "fann.h"
+#include "fann_internal.h"
+
+#include "fann.c"
+#include "fann_io.c"
+#include "fann_train.c"
+#include "fann_train_data.c"
+#include "fann_options.c"
+#include "fann_error.c"

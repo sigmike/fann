@@ -21,14 +21,35 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <sys/time.h>
+#include <time.h>
 
 #include "config.h"
-
 #include "fann.h"
-
 #include "fann_errno.h"
 
-//#define DEBUGTRAIN
+
+
+/* create a neural network.
+ */
+struct fann * fann_create(float connection_rate, float learning_rate,
+	unsigned int num_layers, /* the number of layers, including the input and output layer */
+
+
+	...) /* the number of neurons in each of the layers, starting with the input layer and ending with the output layer */
+{
+	va_list layer_sizes;
+	unsigned int layers[num_layers];
+	int i = 0;
+
+	va_start(layer_sizes, num_layers);
+	for ( i=0 ; i<num_layers ; i++ ) {
+		layers[i] = va_arg(layer_sizes, unsigned int);
+	}
+	va_end(layer_sizes);
+
+	return fann_create_array(connection_rate, learning_rate, num_layers, layers);
+}
 
 /* create a neural network.
  */
@@ -255,533 +276,6 @@ struct fann * fann_create_array(float connection_rate, float learning_rate, unsi
 	return ann;
 }
 
-struct fann * fann_create(float connection_rate, float learning_rate,
-	unsigned int num_layers, /* the number of layers, including the input and output layer */
-
-
-	...) /* the number of neurons in each of the layers, starting with the input layer and ending with the output layer */
-{
-	va_list layer_sizes;
-	unsigned int layers[num_layers];
-	int i = 0;
-
-	va_start(layer_sizes, num_layers);
-	for ( i=0 ; i<num_layers ; i++ ) {
-		layers[i] = va_arg(layer_sizes, unsigned int);
-	}
-	va_end(layer_sizes);
-
-	return fann_create_array(connection_rate, learning_rate, num_layers, layers);
-}
-
-/* Create a network from a configuration file.
- */
-struct fann * fann_create_from_file(const char *configuration_file)
-{
-	struct fann *ann;
-	FILE *conf = fopen(configuration_file, "r");
-	if(!conf){
-		fann_error(NULL, FANN_E_CANT_OPEN_CONFIG_R, configuration_file);
-		return NULL;
-	}
-	ann = fann_create_from_fd(conf, configuration_file);
-	fclose(conf);
-	return ann;
-}
-
-/* deallocate the network.
- */
-void fann_destroy(struct fann *ann)
-{
-	fann_safe_free((ann->first_layer+1)->first_neuron->weights);
-	fann_safe_free((ann->first_layer+1)->first_neuron->connected_neurons);
-	fann_safe_free(ann->first_layer->first_neuron);
-	fann_safe_free(ann->first_layer);
-	fann_safe_free(ann->output);
-	fann_safe_free(ann->train_deltas);
-	fann_safe_free(ann->errstr);
-	fann_safe_free(ann);
-}
-
-/* Save the network.
- */
-void fann_save(struct fann *ann, const char *configuration_file)
-{
-	fann_save_internal(ann, configuration_file, 0);
-}
-
-/* Save the network as fixed point data.
- */
-int fann_save_to_fixed(struct fann *ann, const char *configuration_file)
-{
-	return fann_save_internal(ann, configuration_file, 1);
-}
-
-void fann_set_learning_rate(struct fann *ann, float learning_rate)
-{
-	ann->learning_rate = learning_rate;
-}
-
-void fann_set_activation_function_hidden(struct fann *ann, unsigned int activation_function)
-{
-	ann->activation_function_hidden = activation_function;
-	fann_update_stepwise_hidden(ann);
-}
-
-void fann_set_activation_function_output(struct fann *ann, unsigned int activation_function)
-{
-	ann->activation_function_output = activation_function;
-	fann_update_stepwise_output(ann);
-}
-
-void fann_set_activation_hidden_steepness(struct fann *ann, fann_type steepness)
-{
-	ann->activation_hidden_steepness = steepness;
-	fann_update_stepwise_hidden(ann);
-}
-
-void fann_set_activation_output_steepness(struct fann *ann, fann_type steepness)
-{
-	ann->activation_output_steepness = steepness;
-	fann_update_stepwise_output(ann);
-}
-
-float fann_get_learning_rate(struct fann *ann)
-{
-	return ann->learning_rate;
-}
-
-unsigned int fann_get_num_input(struct fann *ann)
-{
-	return ann->num_input;
-}
-
-unsigned int fann_get_num_output(struct fann *ann)
-{
-	return ann->num_output;
-}
-
-unsigned int fann_get_activation_function_hidden(struct fann *ann)
-{
-	return ann->activation_function_hidden;
-}
-
-unsigned int fann_get_activation_function_output(struct fann *ann)
-{
-	return ann->activation_function_output;
-}
-
-fann_type fann_get_activation_hidden_steepness(struct fann *ann)
-{
-	return ann->activation_hidden_steepness;
-}
-
-fann_type fann_get_activation_output_steepness(struct fann *ann)
-{
-	return ann->activation_output_steepness;
-}
-
-unsigned int fann_get_total_neurons(struct fann *ann)
-{
-	/* -1, because there is always an unused bias neuron in the last layer */
-	return ann->total_neurons - 1;
-}
-
-unsigned int fann_get_total_connections(struct fann *ann)
-{
-	return ann->total_connections;
-}
-
-void fann_randomize_weights(struct fann *ann, fann_type min_weight, fann_type max_weight)
-{
-	fann_type *last_weight;
-	fann_type *weights = (ann->first_layer+1)->first_neuron->weights;
-	last_weight = weights + ann->total_connections;
-	for(;weights != last_weight; weights++){
-		*weights = (fann_type)(fann_rand(min_weight, max_weight));
-	}
-}
-
-#ifndef FIXEDFANN
-/* Trains the network with the backpropagation algorithm.
- */
-void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
-{
-	struct fann_neuron *neuron_it, *last_neuron, *neurons;
-	fann_type neuron_value, *delta_it, *delta_begin, tmp_delta;
-	struct fann_layer *layer_it;
-	unsigned int i, shift_prev_layer;
-	
-	/* store some variabels local for fast access */
-	const float learning_rate = ann->learning_rate;
-	const fann_type activation_output_steepness = ann->activation_output_steepness;
-	const fann_type activation_hidden_steepness = ann->activation_hidden_steepness;
-	const struct fann_neuron *first_neuron = ann->first_layer->first_neuron;
-	
-	const struct fann_neuron *last_layer_begin = (ann->last_layer-1)->first_neuron;
-	const struct fann_neuron *last_layer_end = last_layer_begin + ann->num_output;
-	struct fann_layer *first_layer = ann->first_layer;
-	struct fann_layer *last_layer = ann->last_layer;
-	
-	fann_run(ann, input);
-	/* if no room allocated for the delta variabels, allocate it now */
-	if(ann->train_deltas == NULL){
-		ann->train_deltas = (fann_type *)calloc(ann->total_neurons, sizeof(fann_type));
-		if(ann->train_deltas == NULL){
-			fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
-			return;
-		}
-	}
-	delta_begin = ann->train_deltas;
-	
-	/* clear the delta variabels */
-	memset(delta_begin, 0, (ann->total_neurons) * sizeof(fann_type));
-	
-#ifdef DEBUGTRAIN
-	printf("calculate deltas\n");
-#endif
-	/* calculate the error and place it in the output layer */
-	delta_it = delta_begin + (last_layer_begin - first_neuron);
-
-	for(; last_layer_begin != last_layer_end; last_layer_begin++){
-		neuron_value = last_layer_begin->value;
-		switch(ann->activation_function_output){
-			case FANN_LINEAR:
-				*delta_it = fann_linear_derive(activation_output_steepness, neuron_value) * (*desired_output - neuron_value);
-				break;
-			case FANN_SIGMOID:
-			case FANN_SIGMOID_STEPWISE:
-				*delta_it = fann_sigmoid_derive(activation_output_steepness, neuron_value) * (*desired_output - neuron_value);
-				break;
-			case FANN_SIGMOID_SYMMETRIC:
-			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-				*delta_it = fann_sigmoid_symmetric_derive(activation_output_steepness, neuron_value) * (*desired_output - neuron_value);
-				break;
-			default:
-				fann_error((struct fann_error *)ann, FANN_E_CANT_TRAIN_ACTIVATION);
-				return;
-		}
-		
-		ann->error_value += (*desired_output - neuron_value) * (*desired_output - neuron_value);
-		
-#ifdef DEBUGTRAIN
-		printf("delta1[%d] = "FANNPRINTF"\n", (delta_it - delta_begin), *delta_it);
-#endif
-		desired_output++;
-		delta_it++;
-	}
-	ann->num_errors++;
-	
-	
-	/* go through all the layers, from last to first. And propagate the error backwards */
-	for(layer_it = last_layer-1; layer_it != first_layer; --layer_it){
-		last_neuron = layer_it->last_neuron;
-		
-		/* for each connection in this layer, propagate the error backwards*/
-		if(ann->connection_rate == 1){ /* optimization for fully connected networks */
-			shift_prev_layer = (layer_it-1)->first_neuron - first_neuron;
-			for(neuron_it = layer_it->first_neuron;
-				neuron_it != last_neuron; neuron_it++){
-				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
-				for(i = 0; i < neuron_it->num_connections; i++){
-					*(delta_begin + i + shift_prev_layer) += tmp_delta * neuron_it->weights[i];
-#ifdef DEBUGTRAIN
-					printf("delta2[%d] = "FANNPRINTF" += ("FANNPRINTF" * "FANNPRINTF")\n", (i + shift_prev_layer), *(delta_begin + i + shift_prev_layer), tmp_delta, neuron_it->weights[i]);
-#endif
-				}
-			}
-		}else{
-			for(neuron_it = layer_it->first_neuron;
-				neuron_it != last_neuron; neuron_it++){
-				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
-				for(i = 0; i < neuron_it->num_connections; i++){
-					*(delta_begin + (neuron_it->connected_neurons[i] - first_neuron)) +=
-						tmp_delta * neuron_it->weights[i];
-				}
-			}
-		}
-		
-		/* then calculate the actual errors in the previous layer */
-		delta_it = delta_begin + ((layer_it-1)->first_neuron - first_neuron);
-		last_neuron = (layer_it-1)->last_neuron;
-		
-		switch(ann->activation_function_hidden){
-			case FANN_LINEAR:
-				for(neuron_it = (layer_it-1)->first_neuron;
-					neuron_it != last_neuron; neuron_it++){
-					neuron_value = neuron_it->value;
-					*delta_it *= fann_linear_derive(activation_hidden_steepness, neuron_value) * learning_rate;
-					delta_it++;
-				}
-				break;
-			case FANN_SIGMOID:
-			case FANN_SIGMOID_STEPWISE:
-				for(neuron_it = (layer_it-1)->first_neuron;
-					neuron_it != last_neuron; neuron_it++){
-					neuron_value = neuron_it->value;
-					neuron_value = fann_clip(neuron_value, 0.01, 0.99);
-					*delta_it *= fann_sigmoid_derive(activation_hidden_steepness, neuron_value);
-#ifdef DEBUGTRAIN
-					printf("delta3[%d] = "FANNPRINTF" *= fann_sigmoid_derive(%f, %f) * %f\n", (delta_it - delta_begin), *delta_it, activation_hidden_steepness, neuron_value, learning_rate);
-#endif
-					delta_it++;
-				}
-				break;
-			case FANN_SIGMOID_SYMMETRIC:
-			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-				for(neuron_it = (layer_it-1)->first_neuron;
-					neuron_it != last_neuron; neuron_it++){
-					neuron_value = neuron_it->value;
-					neuron_value = fann_clip(neuron_value, -0.98, 0.98);
-					*delta_it *= fann_sigmoid_symmetric_derive(activation_hidden_steepness, neuron_value);
-#ifdef DEBUGTRAIN
-					printf("delta3[%d] = "FANNPRINTF" *= fann_sigmoid_symmetric_derive(%f, %f) * %f\n", (delta_it - delta_begin), *delta_it, activation_hidden_steepness, neuron_value, learning_rate);
-#endif
-					delta_it++;
-				}
-				break;
-			default:
-				fann_error((struct fann_error *)ann, FANN_E_CANT_TRAIN_ACTIVATION);
-				return;
-		}
-	}
-	
-#ifdef DEBUGTRAIN
-	printf("\nupdate weights\n");
-#endif
-	
-	for(layer_it = (first_layer+1); layer_it != last_layer; layer_it++){
-#ifdef DEBUGTRAIN
-		printf("layer[%d]\n", layer_it - first_layer);
-#endif
-		last_neuron = layer_it->last_neuron;
-		if(ann->connection_rate == 1){ /* optimization for fully connected networks */
-			neurons = (layer_it-1)->first_neuron;
-			for(neuron_it = layer_it->first_neuron;
-				neuron_it != last_neuron; neuron_it++){
-				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
-				for(i = 0; i < neuron_it->num_connections; i++){
-#ifdef DEBUGTRAIN
-					printf("weights[%d] += "FANNPRINTF" = %f * %f\n", i, tmp_delta * neurons[i].value, tmp_delta, neurons[i].value);
-#endif
-					neuron_it->weights[i] += learning_rate * tmp_delta * neurons[i].value;
-				}
-			}
-		}else{
-			for(neuron_it = layer_it->first_neuron;
-				neuron_it != last_neuron; neuron_it++){
-				tmp_delta = *(delta_begin + (neuron_it - first_neuron));
-				for(i = 0; i < neuron_it->num_connections; i++){
-					neuron_it->weights[i] += learning_rate * tmp_delta * neuron_it->connected_neurons[i]->value;
-				}
-			}
-		}
-	}
-}
-#endif
-
-/* Tests the network.
- */
-fann_type *fann_test(struct fann *ann, fann_type *input, fann_type *desired_output)
-{
-	fann_type neuron_value;
-	fann_type *output_begin = fann_run(ann, input);
-	fann_type *output_it;
-	const fann_type *output_end = output_begin + ann->num_output;
-	
-	/* calculate the error */
-	for(output_it = output_begin;
-		output_it != output_end; output_it++){
-		neuron_value = *output_it;
-		
-#ifdef FIXEDFANN
-		ann->error_value += ((*desired_output - neuron_value)/(float)ann->multiplier) * ((*desired_output - neuron_value)/(float)ann->multiplier);
-#else
-		ann->error_value += (*desired_output - neuron_value) * (*desired_output - neuron_value);
-#endif
-		
-		desired_output++;
-	}
-	ann->num_errors++;
-	
-	return output_begin;
-}
-
-/* Reads training data from a file.
- */
-struct fann_train_data* fann_read_train_from_file(char *configuration_file)
-{
-	struct fann_train_data* data;
-	FILE *file = fopen(configuration_file, "r");
-
-	if(!file){
-		fann_error(NULL, FANN_E_CANT_OPEN_CONFIG_R, configuration_file);
-		return NULL;
-	}
-
-	data = fann_read_train_from_fd(file, configuration_file);
-	fclose(file);
-	return data;
-}
-
-/* Save training data to a file
- */
-void fann_save_train(struct fann_train_data* data, char *filename)
-{
-	fann_save_train_internal(data, filename, 0, 0);
-}
-
-/* Save training data to a file in fixed point algebra.
-   (Good for testing a network in fixed point)
-*/
-void fann_save_train_to_fixed(struct fann_train_data* data, char *filename, unsigned int decimal_point)
-{
-	fann_save_train_internal(data, filename, 1, decimal_point);
-}
-
-/* deallocate the train data structure.
- */
-void fann_destroy_train(struct fann_train_data *data)
-{
-	unsigned int i;
-	if(data->input){
-		for(i = 0; i != data->num_data; i++){
-			fann_safe_free(data->input[i]);
-		}
-	}
-
-	if(data->output){
-		for(i = 0; i != data->num_data; i++){
-			fann_safe_free(data->output[i]);
-		}
-	}
-	
-	fann_safe_free(data->input);
-	fann_safe_free(data->output);
-	fann_safe_free(data);
-}
-
-#ifndef FIXEDFANN
-
-/* Train directly on the training data.
- */
-void fann_train_on_data_callback(struct fann *ann, struct fann_train_data *data, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (*callback)(unsigned int epochs, float error))
-{
-	float error;
-	unsigned int i, j;
-	
-	if(epochs_between_reports && callback == NULL){
-		printf("Max epochs %8d. Desired error: %.10f\n", max_epochs, desired_error);
-	}
-	
-	for(i = 1; i <= max_epochs; i++){
-		/* train */
-		fann_reset_MSE(ann);
-		
-		for(j = 0; j != data->num_data; j++){
-			fann_train(ann, data->input[j], data->output[j]);
-		}
-		
-		error = fann_get_MSE(ann);
-		
-		/* print current output */
-		if(epochs_between_reports &&
-			(i % epochs_between_reports == 0
-				|| i == max_epochs
-				|| i == 1
-				|| error < desired_error)){
-			if (callback == NULL) {
-				printf("Epochs     %8d. Current error: %.10f\n", i, error);
-			} else if((*callback)(i, error) == -1){
-				/* you can break the training by returning -1 */
-				break;
-			}
-		}
-		
-		if(error < desired_error){
-			break;
-		}
-	}
-}
-
-void fann_train_on_data(struct fann *ann, struct fann_train_data *data, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error)
-{
-	fann_train_on_data_callback(ann, data, max_epochs, epochs_between_reports, desired_error, NULL);
-}
-
-
-/* Wrapper to make it easy to train directly on a training data file.
- */
-void fann_train_on_file_callback(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (*callback)(unsigned int epochs, float error))
-{
-	struct fann_train_data *data = fann_read_train_from_file(filename);
-	if(data == NULL){
-		return;
-	}
-	fann_train_on_data_callback(ann, data, max_epochs, epochs_between_reports, desired_error, callback);
-	fann_destroy_train(data);
-}
-
-void fann_train_on_file(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error)
-{
-	fann_train_on_file_callback(ann, filename, max_epochs, epochs_between_reports, desired_error, NULL);
-}
-
-
-#endif
-
-/* get the mean square error.
-   (obsolete will be removed at some point, use fann_get_MSE)
- */
-float fann_get_error(struct fann *ann)
-{
-	return fann_get_MSE(ann);
-}
-
-/* get the mean square error.
- */
-float fann_get_MSE(struct fann *ann)
-{
-	if(ann->num_errors){
-		return ann->error_value/(float)ann->num_errors;
-	}else{
-		return 0;
-	}
-}
-
-/* reset the mean square error.
-   (obsolete will be removed at some point, use fann_reset_MSE)
- */
-void fann_reset_error(struct fann *ann)
-{
-	fann_reset_MSE(ann);
-}
-
-/* reset the mean square error.
- */
-void fann_reset_MSE(struct fann *ann)
-{
-	ann->num_errors = 0;
-	ann->error_value = 0;
-}
-
-#ifdef FIXEDFANN
-/* returns the position of the fix point.
- */
-unsigned int fann_get_decimal_point(struct fann *ann)
-{
-	return ann->decimal_point;
-}
-
-/* returns the multiplier that fix point data is multiplied with.
- */
-unsigned int fann_get_multiplier(struct fann *ann)
-{
-	return ann->multiplier;
-}
-
-#endif
-
 /* runs the network.
  */
 fann_type* fann_run(struct fann *ann, fann_type *input)
@@ -999,157 +493,188 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 	return ann->output;
 }
 
-/* resets the last error number
+/* deallocate the network.
  */
-void fann_reset_errno(struct fann_error *errdat)
+void fann_destroy(struct fann *ann)
 {
-	errdat->errno_f = 0;
+	fann_safe_free((ann->first_layer+1)->first_neuron->weights);
+	fann_safe_free((ann->first_layer+1)->first_neuron->connected_neurons);
+	fann_safe_free(ann->first_layer->first_neuron);
+	fann_safe_free(ann->first_layer);
+	fann_safe_free(ann->output);
+	fann_safe_free(ann->train_deltas);
+	fann_safe_free(ann->errstr);
+	fann_safe_free(ann);
 }
 
-/* resets the last errstr
- */
-void fann_reset_errstr(struct fann_error *errdat)
+void fann_randomize_weights(struct fann *ann, fann_type min_weight, fann_type max_weight)
 {
-	if ( errdat->errstr != NULL )
-		free(errdat->errstr);
-	errdat->errstr = NULL;
-}
-
-/* returns the last error number
- */
-unsigned int fann_get_errno(struct fann_error *errdat)
-{
-	return errdat->errno_f;
-}
-
-/* returns the last errstr
- */
-char * fann_get_errstr(struct fann_error *errdat)
-{
-	char *errstr = errdat->errstr;
-
-	fann_reset_errno(errdat);
-	fann_reset_errstr(errdat);
-
-	return errstr;
-}
-
-/* change where errors are logged to
- */
-void fann_set_error_log(struct fann_error *errdat, FILE *log)
-{
-  errdat->error_log = log;
-}
-
-/* prints the last error to the error log (default stderr)
- */
-void fann_print_error(struct fann_error *errdat) {
-	if ( (errdat->errno_f != FANN_E_NO_ERROR) && (errdat->error_log != NULL) ){
-		fputs(errdat->errstr, errdat->error_log);
+	fann_type *last_weight;
+	fann_type *weights = (ann->first_layer+1)->first_neuron->weights;
+	last_weight = weights + ann->total_connections;
+	for(;weights != last_weight; weights++){
+		*weights = (fann_type)(fann_rand(min_weight, max_weight));
 	}
 }
 
-/* shuffles training data, randomizing the order
+/* INTERNAL FUNCTION
+   Allocates the main structure and sets some default values.
  */
-void fann_shuffle_train_data(struct fann_train_data *train_data) {
-	int dat = train_data->num_data - 1, elem;
-	unsigned int swap;
-	fann_type temp;
-
-	for ( ; dat >= 0 ; dat-- ) {
-		swap = (unsigned int)(rand() % train_data->num_data);
-		if ( swap != dat ) {
-			for ( elem = train_data->num_input ; elem >= 0 ; elem-- ) {
-				temp = train_data->input[dat][elem];
-				train_data->input[dat][elem] = train_data->input[swap][elem];
-				train_data->input[swap][elem] = temp;
-			}
-			for ( elem = train_data->num_output ; elem >= 0 ; elem-- ) {
-				temp = train_data->output[dat][elem];
-				train_data->output[dat][elem] = train_data->output[swap][elem];
-				train_data->output[swap][elem] = temp;
-			}
-		}
-	}
-}
-
-/* merges training data into a single struct.
- */
-struct fann_train_data * fann_merge_train_data(struct fann_train_data *data1, struct fann_train_data *data2) {
-	struct fann_train_data * train_data;
-	int x;
-
-	if ( (data1->num_input  != data2->num_input) ||
-	     (data1->num_output != data2->num_output) ) {
-		fann_error(NULL, FANN_E_TRAIN_DATA_MISMATCH);
+struct fann * fann_allocate_structure(float learning_rate, unsigned int num_layers)
+{
+	struct fann *ann;
+	
+	if(num_layers < 2){
+#ifdef DEBUG
+		printf("less than 2 layers - ABORTING.\n");
+#endif
 		return NULL;
 	}
 
-	train_data = (struct fann_train_data *)malloc(sizeof(struct fann_train_data));
-
-	fann_init_error_data((struct fann_error *)train_data);
-
-	train_data->num_data = data1->num_data + data2->num_data;
-	train_data->num_input = data1->num_input;
-	train_data->num_output = data1->num_output;
-
-	if ( ((train_data->input  = (fann_type **)calloc(train_data->num_data, sizeof(fann_type *))) == NULL) ||
-	     ((train_data->output = (fann_type **)calloc(train_data->num_data, sizeof(fann_type *))) == NULL) ) {
-		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
-		fann_destroy_train(train_data);
-		return NULL;
-	}
-	for ( x = train_data->num_data - 1 ; x >= 0 ; x-- ) {
-		if ( ((train_data->input[x]  = (fann_type *)calloc(train_data->num_input,  sizeof(fann_type))) == NULL) ||
-		     ((train_data->output[x] = (fann_type *)calloc(train_data->num_output, sizeof(fann_type))) == NULL) ) {
-			fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
-			fann_destroy_train(train_data);
-			return NULL;
-		}
-		memcpy(train_data->input[x],
-		       ( x < data1->num_data ) ? data1->input[x]  : data2->input[x - data1->num_data],
-		       train_data->num_input  * sizeof(fann_type));
-		memcpy(train_data->output[x],
-		       ( x < data1->num_data ) ? data1->output[x] : data2->output[x - data1->num_data],
-		       train_data->num_output * sizeof(fann_type));
-	}
-
-	return train_data;
-}
-
-/* return a copy of a fann_train_data struct
- */
-struct fann_train_data * fann_duplicate_train_data(struct fann_train_data *data) {
-	struct fann_train_data * dest;
-	int x;
-
-	if ( (dest = malloc(sizeof(struct fann_train_data))) == NULL ) {
+	/* allocate and initialize the main network structure */
+	ann = (struct fann *)malloc(sizeof(struct fann));
+	if(ann == NULL){
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
 		return NULL;
 	}
 
-	fann_init_error_data((struct fann_error *)dest);
+	ann->learning_rate = learning_rate;
+	ann->total_neurons = 0;
+	ann->total_connections = 0;
+	ann->num_input = 0;
+	ann->num_output = 0;
+	ann->train_deltas = NULL;
+	ann->num_errors = 0;
 
-	dest->num_data = data->num_data;
-	dest->num_input = data->num_input;
-	dest->num_output = data->num_output;
+	fann_init_error_data((struct fann_error *)ann);
 
-	if ( ((dest->input  = (fann_type **)calloc(dest->num_data, sizeof(fann_type *))) == NULL) ||
-	     ((dest->output = (fann_type **)calloc(dest->num_data, sizeof(fann_type *))) == NULL) ) {
+#ifdef FIXEDFANN
+	/* these values are only boring defaults, and should really
+	   never be used, since the real values are always loaded from a file. */
+	ann->decimal_point = 8;
+	ann->multiplier = 256;
+#endif
+	
+	ann->activation_function_hidden = FANN_SIGMOID_STEPWISE;
+	ann->activation_function_output = FANN_SIGMOID_STEPWISE;
+#ifdef FIXEDFANN
+	ann->activation_hidden_steepness = ann->multiplier/2;
+	ann->activation_output_steepness = ann->multiplier/2;
+#else
+	ann->activation_hidden_steepness = 0.5;
+	ann->activation_output_steepness = 0.5;
+#endif
+
+	/* allocate room for the layers */
+	ann->first_layer = (struct fann_layer *)calloc(num_layers, sizeof(struct fann_layer));
+	if(ann->first_layer == NULL){
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
-		fann_destroy_train(dest);
+		free(ann);
 		return NULL;
 	}
+	
+	ann->last_layer = ann->first_layer + num_layers;
 
-	for ( x = dest->num_data - 1 ; x >= 0 ; x-- ) {
-		if ( ((dest->input[x]  = (fann_type *)calloc(dest->num_input,  sizeof(fann_type))) == NULL) ||
-		     ((dest->output[x] = (fann_type *)calloc(dest->num_output, sizeof(fann_type))) == NULL) ) {
-			fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
-			fann_destroy_train(dest);
-			return NULL;
-		}
-		memcpy(dest->input[x],  data->input[x],  dest->num_input  * sizeof(fann_type));
-		memcpy(dest->output[x], data->output[x], dest->num_output * sizeof(fann_type));
-	}
-	return dest;
+	return ann;
 }
+
+/* INTERNAL FUNCTION
+   Allocates room for the neurons.
+ */
+void fann_allocate_neurons(struct fann *ann)
+{
+	struct fann_layer *layer_it;
+	struct fann_neuron *neurons;
+	unsigned int num_neurons_so_far = 0;
+	unsigned int num_neurons = 0;
+
+	/* all the neurons is allocated in one long array */
+	neurons = (struct fann_neuron *)calloc(ann->total_neurons, sizeof(struct fann_neuron));
+	if(neurons == NULL){
+		fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
+		return;
+	}
+	
+	/* clear data, primarily to make the input neurons cleared */
+	memset(neurons, 0, ann->total_neurons * sizeof(struct fann_neuron));
+	
+	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
+		num_neurons = layer_it->last_neuron - layer_it->first_neuron;
+		layer_it->first_neuron = neurons+num_neurons_so_far;
+		layer_it->last_neuron = layer_it->first_neuron+num_neurons;
+		num_neurons_so_far += num_neurons;
+	}
+
+	ann->output = (fann_type *)calloc(num_neurons, sizeof(fann_type));
+	if(ann->output == NULL){
+		fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
+		return;
+	}
+}
+
+/* INTERNAL FUNCTION
+   Allocate room for the connections.
+ */
+void fann_allocate_connections(struct fann *ann)
+{
+	struct fann_layer *layer_it, *last_layer;
+	struct fann_neuron *neuron_it, *last_neuron;
+	fann_type *weights;
+	struct fann_neuron **connected_neurons = NULL;
+	unsigned int connections_so_far = 0;
+	
+	weights = (fann_type *)calloc(ann->total_connections, sizeof(fann_type));
+	if(weights == NULL){
+		fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
+		return;
+	}
+	
+	/* TODO make special cases for all places where the connections
+	   is used, so that it is not needed for fully connected networks.
+	*/
+	connected_neurons = (struct fann_neuron **) calloc(ann->total_connections, sizeof(struct fann_neuron*));
+	if(connected_neurons == NULL){
+		fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
+		return;
+	}
+	
+
+	last_layer = ann->last_layer;
+	for(layer_it = ann->first_layer+1; layer_it != ann->last_layer; layer_it++){
+		last_neuron = layer_it->last_neuron-1;
+		for(neuron_it = layer_it->first_neuron; neuron_it != last_neuron; neuron_it++){
+			neuron_it->weights = weights+connections_so_far;
+			neuron_it->connected_neurons = connected_neurons+connections_so_far;
+			connections_so_far += neuron_it->num_connections;
+		}
+	}
+
+	if(connections_so_far != ann->total_connections){
+		fann_error((struct fann_error *)ann, FANN_E_WRONG_NUM_CONNECTIONS, connections_so_far, ann->total_connections);
+		return;
+	}
+}
+
+/* INTERNAL FUNCTION
+   Seed the random function.
+ */
+void fann_seed_rand()
+{
+	FILE *fp = fopen("/dev/urandom", "r");
+	unsigned int foo;
+	struct timeval t;
+	if(!fp){
+		gettimeofday(&t, NULL);
+		foo = t.tv_usec;
+#ifdef DEBUG
+		printf("unable to open /dev/urandom\n");
+#endif
+	}else{
+		fread(&foo, sizeof(foo), 1, fp);
+		fclose(fp);
+	}
+	srand(foo);
+}
+
+
+

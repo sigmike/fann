@@ -1,8 +1,8 @@
 #!/bin/sh
 
-aclocal
+aclocal-1.7
 libtoolize --force
-autoheader
-autoconf
-automake --add-missing --copy
+autoheader2.50
+autoconf2.50
+automake-1.7 --add-missing --copy
 ./configure $@
