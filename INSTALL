@@ -1,0 +1,9 @@
+See doc/fann_doc_users_guide_1.0.pdf for install info
+
+Otherwise just type:
+
+cd src
+make runtest
+
+
+And all the libraries should be made and tested
