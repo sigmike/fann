@@ -2,7 +2,7 @@ SUBDIRS = include
 
 lib_LTLIBRARIES = libfloatfann.la libdoublefann.la libfixedfann.la libfann.la
 
-AM_LDFLAGS = -version-info 1:5:0
+AM_LDFLAGS = -version-info 2:0:1
 AM_CFLAGS = -O9 -Wall
 
 libfloatfann_la_SOURCES = floatfann.c

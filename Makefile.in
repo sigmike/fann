@@ -134,7 +134,7 @@ SUBDIRS = src
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = fann.pc
 
-EXTRA_DIST = doc examples benchmarks
+EXTRA_DIST = doc examples benchmarks python
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -565,6 +565,7 @@ dist-hook:
 	rm -rf `find $(distdir)/doc -name CVS`
 	rm -rf `find $(distdir)/examples -name CVS`
 	rm -rf `find $(distdir)/benchmarks -name CVS`
+	rm -rf `find $(distdir)/python -name CVS`
 	zip -r $(distdir).zip $(distdir)
 	tar chojf $(distdir).tar.bz2 $(distdir)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
