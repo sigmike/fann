@@ -1,7 +1,8 @@
 libfann (1.0.3) stable; urgency=low
-	* Added FANN_SIGMOID_STEPWISE activation function (much faster)
+	* Added FANN_SIGMOID_STEPWISE activation function (faster)
 	* Moved files around and altered some files for easyer benchmarking
 	* Added a benchmark pdf file, benchmarking the new behavior.
+	* Better compability with non gnu compilers (should work off the shelf)
 	
  -- Steffen Nissen <lukesky@diku.dk>  Tue, 09 Dec 2003 23:30:45 +0100
 	

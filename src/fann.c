@@ -1,20 +1,20 @@
 /*
-Fast Artificial Neural Network Library (fann)
-Copyright (C) 2003 Steffen Nissen (lukesky@diku.dk)
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  Fast Artificial Neural Network Library (fann)
+  Copyright (C) 2003 Steffen Nissen (lukesky@diku.dk)
+  
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+  
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include <stdio.h>
@@ -46,15 +46,15 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 	unsigned int decimal_point;
 	unsigned int multiplier;
 #endif
-
+	
 	if(connection_rate > 1){
 		connection_rate = 1;
 	}
-
+	
 	/* seed random */
 	fann_seed_rand();
 	
-  	/* allocate the general structure */
+	/* allocate the general structure */
 	ann = fann_allocate_structure(learning_rate, num_layers);
 	ann->connection_rate = connection_rate;
 #ifdef FIXEDFANN
@@ -62,7 +62,7 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 	multiplier = ann->multiplier;
 #endif
 	fann_initialise_result_array(ann);
-
+	
 	/* determine how many neurons there should be in each layer */
 	va_start(layer_sizes, num_layers);
 	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
@@ -70,14 +70,14 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 		   last_neuron - first_neuron is the number of neurons */
 		layer_it->first_neuron = NULL;
 		layer_it->last_neuron = layer_it->first_neuron + va_arg(layer_sizes, unsigned int) +1; /* +1 for bias */
-
+		
 		ann->total_neurons += layer_it->last_neuron - layer_it->first_neuron;
 	}
 	va_end(layer_sizes);
 	
 	ann->num_output = (ann->last_layer-1)->last_neuron - (ann->last_layer-1)->first_neuron -1;
 	ann->num_input = ann->first_layer->last_neuron - ann->first_layer->first_neuron -1;
-
+	
 	/* allocate room for the actual neurons */
 	fann_allocate_neurons(ann);
 	
@@ -86,7 +86,7 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 	printf("input\n");
 	printf("  layer       : %d neurons, 1 bias\n", ann->first_layer->last_neuron - ann->first_layer->first_neuron - 1);
 #endif
-
+	
 	num_neurons_in = ann->num_input;
 	for(layer_it = ann->first_layer+1; layer_it != ann->last_layer; layer_it++){
 		num_neurons_out = layer_it->last_neuron - layer_it->first_neuron - 1;
@@ -98,26 +98,26 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 		max_connections = num_neurons_in * num_neurons_out; /* not calculating bias */
 		num_connections = fann_max(min_connections,
 			(unsigned int)(0.5+(connection_rate * max_connections)) + num_neurons_out);
-
+		
 		ann->total_connections += num_connections;
-
+		
 		connections_per_neuron = num_connections/num_neurons_out;
 		allocated_connections = 0;
 		/* Now split out the connections on the different neurons */
 		for(i = 0; i != num_neurons_out; i++){
 			layer_it->first_neuron[i].num_connections = connections_per_neuron;
 			allocated_connections += connections_per_neuron;
-
+			
 			if(allocated_connections < (num_connections*(i+1))/num_neurons_out){
 				layer_it->first_neuron[i].num_connections++;
 				allocated_connections++;
 			}
 		}
-
+		
 		/* used in the next run of the loop */
 		num_neurons_in = num_neurons_out;
 	}
-
+	
 	fann_allocate_connections(ann);
 	
 	if(connection_rate == 1){
@@ -134,7 +134,7 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 					*/
 					neuron_it->connected_neurons[i] = prev_layer->first_neuron+i;
 				}
-
+				
 			}
 			prev_layer_size = layer_it->last_neuron - layer_it->first_neuron;
 			prev_layer = layer_it;
@@ -144,7 +144,7 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 		}
 	}else{
 		/* make connections for a network, that are not fully connected */
-
+		
 		/* generally, what we do is first to connect all the input
 		   neurons to a output neuron, respecting the number of
 		   available input neurons for each output neuron. Then
@@ -152,17 +152,17 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 		   rest of the connections to input neurons, that they are
 		   not allready connected to.
 		*/
-
+		
 		/* first clear all the connections, because we want to
 		   be able to see which connections are allready connected */
 		memset((ann->first_layer+1)->first_neuron->connected_neurons, 0, ann->total_connections * sizeof(struct fann_neuron*));
-
+		
 		for(layer_it = ann->first_layer+1;
 			layer_it != ann->last_layer; layer_it++){
-
+			
 			num_neurons_out = layer_it->last_neuron - layer_it->first_neuron - 1;
 			num_neurons_in = (layer_it-1)->last_neuron - (layer_it-1)->first_neuron - 1;
-
+			
 			/* first connect the bias neuron */
 			bias_neuron = (layer_it-1)->last_neuron-1;
 			last_neuron = layer_it->last_neuron-1;
@@ -177,7 +177,7 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 			last_neuron = (layer_it-1)->last_neuron - 1;
 			for(neuron_it = (layer_it-1)->first_neuron;
 				neuron_it != last_neuron; neuron_it++){
-
+				
 				/* random neuron in the output layer that has space
 				   for more connections */
 				do {
@@ -185,7 +185,7 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 					random_neuron = layer_it->first_neuron + random_number;
 					/* checks the last space in the connections array for room */
 				}while(random_neuron->connected_neurons[random_neuron->num_connections-1]);
-
+				
 				/* find an empty space in the connection array and connect */
 				for(i = 0; i < random_neuron->num_connections; i++){
 					if(random_neuron->connected_neurons[i] == NULL){
@@ -195,7 +195,7 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 					}
 				}
 			}
-
+			
 			/* then connect the rest of the unconnected neurons */
 			last_neuron = layer_it->last_neuron - 1;
 			for(neuron_it = layer_it->first_neuron;
@@ -204,12 +204,12 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 				for(i = 0; i < neuron_it->num_connections; i++){
 					/* continue if allready connected */
 					if(neuron_it->connected_neurons[i] != NULL) continue;
-
+					
 					do {
 						found_connection = 0;
 						random_number = (int) (0.5+fann_rand(0, num_neurons_in-1));
 						random_neuron = (layer_it-1)->first_neuron + random_number;
-
+						
 						/* check to see if this connection is allready there */
 						for(j = 0; j < i; j++){
 							if(random_neuron == neuron_it->connected_neurons[j]){
@@ -219,19 +219,19 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 						}
 						
 					}while(found_connection);
-
+					
 					/* we have found a neuron that is not allready
 					   connected to us, connect it */
 					neuron_it->connected_neurons[i] = random_neuron;
 					neuron_it->weights[i] = fann_random_weight();
 				}
 			}
-
+			
 #ifdef DEBUG
 			printf("  layer       : %d neurons, 1 bias\n", num_neurons_out);
 #endif
 		}
-
+		
 		/* TODO it would be nice to have the randomly created connections sorted
 		   for smoother memory access.
 		*/
@@ -240,7 +240,7 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 #ifdef DEBUG
 	printf("output\n");
 #endif
-
+	
 	return ann;
 }
 
@@ -262,7 +262,7 @@ struct fann * fann_create_from_file(const char *configuration_file)
 	
 	char *read_version;
 	FILE *conf = fopen(configuration_file, "r");
-
+	
 	if(!conf){
 		printf("Unable to open configuration file \"%s\" for reading.\n", configuration_file);
 		return NULL;
@@ -276,7 +276,7 @@ struct fann * fann_create_from_file(const char *configuration_file)
 		printf("Wrong version of configuration file, aborting read of configuration file \"%s\".\n", configuration_file);
 		return NULL;
 	}
-
+	
 #ifdef FIXEDFANN
 	if(fscanf(conf, "%u\n", &decimal_point) != 1){
 		printf("Error reading info from configuration file \"%s\".\n", configuration_file);
@@ -284,21 +284,21 @@ struct fann * fann_create_from_file(const char *configuration_file)
 	}
 	multiplier = 1 << decimal_point;
 #endif
-
+	
 	if(fscanf(conf, "%u %f %f %u %u "FANNSCANF" "FANNSCANF"\n", &num_layers, &learning_rate, &connection_rate, &activation_function_hidden, &activation_function_output, &activation_hidden_steepness, &activation_output_steepness) != 7){
 		printf("Error reading info from configuration file \"%s\".\n", configuration_file);
 		return NULL;
 	}
-
+	
 	ann = fann_allocate_structure(learning_rate, num_layers);
 	ann->connection_rate = connection_rate;
-
+	
 #ifdef FIXEDFANN
 	ann->decimal_point = decimal_point;
 	ann->multiplier = multiplier;
 #endif
 	fann_initialise_result_array(ann);
-
+	
 	fann_set_activation_hidden_steepness(ann, activation_hidden_steepness);
 	fann_set_activation_output_steepness(ann, activation_output_steepness);
 	fann_set_activation_function_hidden(ann, activation_function_hidden);
@@ -308,7 +308,7 @@ struct fann * fann_create_from_file(const char *configuration_file)
 	printf("creating network with learning rate %f\n", learning_rate);
 	printf("input\n");
 #endif
-
+	
 	/* determine how many neurons there should be in each layer */
 	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
 		if(fscanf(conf, "%u ", &layer_size) != 1){
@@ -324,13 +324,13 @@ struct fann * fann_create_from_file(const char *configuration_file)
 		printf("  layer       : %d neurons, 1 bias\n", layer_size);
 #endif
 	}
-
+	
 	ann->num_input = ann->first_layer->last_neuron - ann->first_layer->first_neuron;
 	ann->num_output = ((ann->last_layer-1)->last_neuron - (ann->last_layer-1)->first_neuron) - 1;
-
+	
 	/* allocate room for the actual neurons */
 	fann_allocate_neurons(ann);
-
+	
 	last_neuron = (ann->last_layer-1)->last_neuron;
 	for(neuron_it = ann->first_layer->first_neuron;
 		neuron_it != last_neuron; neuron_it++){
@@ -340,13 +340,13 @@ struct fann * fann_create_from_file(const char *configuration_file)
 		}
 		ann->total_connections += neuron_it->num_connections;
 	}
-
+	
 	fann_allocate_connections(ann);
-
+	
 	connected_neurons = (ann->first_layer+1)->first_neuron->connected_neurons;
 	weights = (ann->first_layer+1)->first_neuron->weights;
 	first_neuron = ann->first_layer->first_neuron;
-
+	
 	for(i = 0; i < ann->total_connections; i++){
 		if(fscanf(conf, "(%u "FANNSCANF") ", &input_neuron, &weights[i]) != 2){
 			printf("Error reading connections from configuration file \"%s\".\n", configuration_file);
@@ -354,7 +354,7 @@ struct fann * fann_create_from_file(const char *configuration_file)
 		}
 		connected_neurons[i] = first_neuron+input_neuron;
 	}	
-
+	
 #ifdef DEBUG
 	printf("output\n");
 #endif
@@ -484,7 +484,7 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 	fann_type neuron_value, *delta_it, *delta_begin, tmp_delta;
 	struct fann_layer *layer_it;
 	unsigned int i, shift_prev_layer;
-
+	
 	/* store some variabels local for fast access */
 	const float learning_rate = ann->learning_rate;
 	const fann_type activation_output_steepness = ann->activation_output_steepness;
@@ -495,7 +495,7 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 	const struct fann_neuron *last_layer_end = last_layer_begin + ann->num_output;
 	struct fann_layer *first_layer = ann->first_layer;
 	struct fann_layer *last_layer = ann->last_layer;
-
+	
 	fann_run(ann, input);
 	/* if no room allocated for the delta variabels, allocate it now */
 	if(ann->train_deltas == NULL){
@@ -515,9 +515,9 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 		neuron_value = last_layer_begin->value;
 		/* TODO add switch the minute there are other activation functions */
 		*delta_it = fann_sigmoid_derive(activation_output_steepness, neuron_value) * (*desired_output - neuron_value);
-
+		
 		ann->error_value += (*desired_output - neuron_value) * (*desired_output - neuron_value);
-
+		
 #ifdef DEBUGTRAIN
 		printf("delta[%d] = "FANNPRINTF"\n", (delta_it - delta_begin), *delta_it);
 #endif
@@ -525,12 +525,12 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 		delta_it++;
 	}
 	ann->num_errors++;
-
+	
 	
 	/* go through all the layers, from last to first. And propagate the error backwards */
 	for(layer_it = last_layer-1; layer_it != first_layer; --layer_it){
 		last_neuron = layer_it->last_neuron;
-
+		
 		/* for each connection in this layer, propagate the error backwards*/
 		if(ann->connection_rate == 1){ /* optimization for fully connected networks */
 			shift_prev_layer = (layer_it-1)->first_neuron - first_neuron;
@@ -551,7 +551,7 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 				}
 			}
 		}
-
+		
 		/* then calculate the actual errors in the previous layer */
 		delta_it = delta_begin + ((layer_it-1)->first_neuron - first_neuron);
 		last_neuron = (layer_it-1)->last_neuron;
@@ -567,11 +567,11 @@ void fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
 			delta_it++;
 		}
 	}
-
+	
 #ifdef DEBUGTRAIN
 	printf("\nupdate weights\n");
 #endif
-
+	
 	for(layer_it = (first_layer+1); layer_it != last_layer; layer_it++){
 #ifdef DEBUGTRAIN
 		printf("layer[%d]\n", layer_it - first_layer);
@@ -612,17 +612,17 @@ fann_type *fann_test(struct fann *ann, fann_type *input, fann_type *desired_outp
 	for(output_it = output_begin;
 		output_it != output_end; output_it++){
 		neuron_value = *output_it;
-
+		
 #ifdef FIXEDFANN
 		ann->error_value += ((*desired_output - neuron_value)/(float)ann->multiplier) * ((*desired_output - neuron_value)/(float)ann->multiplier);
 #else
 		ann->error_value += (*desired_output - neuron_value) * (*desired_output - neuron_value);
 #endif
-
+		
 		desired_output++;
 	}
 	ann->num_errors++;
-
+	
 	return output_begin;
 }
 
@@ -635,7 +635,7 @@ struct fann_train_data* fann_read_train_from_file(char *filename)
 	struct fann_train_data* data;
 	
 	FILE *file = fopen(filename, "r");
-
+	
 	data = (struct fann_train_data *)malloc(sizeof(struct fann_train_data));
 	
 	if(!file){
@@ -648,7 +648,7 @@ struct fann_train_data* fann_read_train_from_file(char *filename)
 		return NULL;
 	}
 	line++;
-
+	
 	data->num_data = num_data;
 	data->num_input = num_input;
 	data->num_output = num_output;
@@ -674,7 +674,7 @@ struct fann_train_data* fann_read_train_from_file(char *filename)
 		}
 		line++;
 	}
-
+	
 	return data;
 }
 
@@ -687,7 +687,7 @@ void fann_save_train(struct fann_train_data* data, char *filename)
 
 /* Save training data to a file in fixed point algebra.
    (Good for testing a network in fixed point)
- */
+*/
 void fann_save_train_to_fixed(struct fann_train_data* data, char *filename, unsigned int decimal_point)
 {
 	fann_save_train_internal(data, filename, 1, decimal_point);
@@ -714,7 +714,7 @@ void fann_train_on_data(struct fann *ann, struct fann_train_data *data, unsigned
 {
 	float error;
 	unsigned int i, j;
-
+	
 	if(epochs_between_reports){
 		printf("Max epochs %8d. Desired error: %.10f\n", max_epochs, desired_error);
 	}
@@ -722,13 +722,13 @@ void fann_train_on_data(struct fann *ann, struct fann_train_data *data, unsigned
 	for(i = 1; i <= max_epochs; i++){
 		/* train */
 		fann_reset_error(ann);
-
+		
 		for(j = 0; j != data->num_data; j++){
 			fann_train(ann, data->input[j], data->output[j]);
 		}
-
+		
 		error = fann_get_error(ann);
-
+		
 		/* print current output */
 		if(epochs_between_reports &&
 			(i % epochs_between_reports == 0
@@ -737,7 +737,7 @@ void fann_train_on_data(struct fann *ann, struct fann_train_data *data, unsigned
 				|| error < desired_error)){
 			printf("Epochs     %8d. Current error: %.10f\n", i, error);
 		}
-
+		
 		if(error < desired_error){
 			break;
 		}
@@ -799,15 +799,15 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 	unsigned int activation_function, i, num_connections, num_input, num_output;
 	fann_type neuron_value, *weights, *output;
 	struct fann_layer *layer_it, *last_layer;
-
-
+	
+	
 	/* store some variabels local for fast access */
 #ifndef FIXEDFANN
 	fann_type steepness;
 	const fann_type activation_output_steepness = ann->activation_output_steepness;
 	const fann_type activation_hidden_steepness = ann->activation_hidden_steepness;
 #endif
-
+	
 	unsigned int activation_function_output = ann->activation_function_output;
 	unsigned int activation_function_hidden = ann->activation_function_hidden;
 	struct fann_neuron *first_neuron = ann->first_layer->first_neuron;
@@ -817,33 +817,48 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 #endif
 	
 	/* values used for the stepwise linear sigmoid function */
-
-	/* TODO do not extract these variabels when not needed */
+	fann_type r1, r2, r3, r4, r5, r6;
+	fann_type h1, h2, h3, h4, h5, h6;
+	fann_type o1, o2, o3, o4, o5, o6;
 	
-	/* the results */
-	fann_type r1 = ann->activation_results[0];
-	fann_type r2 = ann->activation_results[1];
-	fann_type r3 = ann->activation_results[2];
-	fann_type r4 = ann->activation_results[3];
-	fann_type r5 = ann->activation_results[4];
-	fann_type r6 = ann->activation_results[5];
-
-	/* the hidden parameters */
-	fann_type h1 = ann->activation_hidden_values[0];
-	fann_type h2 = ann->activation_hidden_values[1];
-	fann_type h3 = ann->activation_hidden_values[2];
-	fann_type h4 = ann->activation_hidden_values[3];
-	fann_type h5 = ann->activation_hidden_values[4];
-	fann_type h6 = ann->activation_hidden_values[5];
-
-	/* the output parameters */
-	fann_type o1 = ann->activation_output_values[0];
-	fann_type o2 = ann->activation_output_values[1];
-	fann_type o3 = ann->activation_output_values[2];
-	fann_type o4 = ann->activation_output_values[3];
-	fann_type o5 = ann->activation_output_values[4];
-	fann_type o6 = ann->activation_output_values[5];
-
+#ifdef FIXEDFANN
+	if(activation_function_output == FANN_SIGMOID_STEPWISE ||
+		activation_function_hidden == FANN_SIGMOID_STEPWISE ||
+		activation_function_output == FANN_SIGMOID ||
+		activation_function_hidden == FANN_SIGMOID){
+#else
+		if(activation_function_output == FANN_SIGMOID_STEPWISE ||
+			activation_function_hidden == FANN_SIGMOID_STEPWISE){
+#endif
+			/* the results */
+			r1 = ann->activation_results[0];
+			r2 = ann->activation_results[1];
+			r3 = ann->activation_results[2];
+			r4 = ann->activation_results[3];
+			r5 = ann->activation_results[4];
+			r6 = ann->activation_results[5];
+			
+			/* the hidden parameters */
+			h1 = ann->activation_hidden_values[0];
+			h2 = ann->activation_hidden_values[1];
+			h3 = ann->activation_hidden_values[2];
+			h4 = ann->activation_hidden_values[3];
+			h5 = ann->activation_hidden_values[4];
+			h6 = ann->activation_hidden_values[5];
+			
+			/* the output parameters */
+			o1 = ann->activation_output_values[0];
+			o2 = ann->activation_output_values[1];
+			o3 = ann->activation_output_values[2];
+			o4 = ann->activation_output_values[3];
+			o5 = ann->activation_output_values[4];
+			o6 = ann->activation_output_values[5];
+#ifdef FIXEDFANN /* just to make autoindent happy */
+		}
+#else
+	}
+#endif
+	
 	/* first set the input */
 	num_input = ann->num_input;
 	for(i = 0; i != num_input; i++){
@@ -857,13 +872,13 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 	
 	last_layer = ann->last_layer;
 	for(layer_it = ann->first_layer+1; layer_it != last_layer; layer_it++){
-
+		
 #ifdef FIXEDFANN
 		((layer_it-1)->last_neuron-1)->value = multiplier;
 #else
 		/* set the bias neuron */
 		((layer_it-1)->last_neuron-1)->value = 1;
-
+		
 		steepness = (layer_it == last_layer-1) ? 
 			activation_output_steepness : activation_hidden_steepness;
 #endif
@@ -878,7 +893,7 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 			weights = neuron_it->weights;
 			if(ann->connection_rate == 1){
 				neurons = (layer_it-1)->first_neuron;
-						
+				
 				i = num_connections & 3; /* same as modulo 4 */
 				switch(i) {
 					case 3:
@@ -900,7 +915,7 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 				}
 			}else{
 				neuron_pointers = neuron_it->connected_neurons;
-
+				
 				i = num_connections & 3; /* same as modulo 4 */
 				switch(i) {
 					case 3:
@@ -921,7 +936,7 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 						fann_mult(weights[i+3], neuron_pointers[i+3]->value);
 				}
 			}
-
+			
 			switch(activation_function){
 #ifdef FIXEDFANN
 				case FANN_SIGMOID:
@@ -945,14 +960,13 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 					}
 					break;
 #endif
-
 				case FANN_THRESHOLD:
 					neuron_it->value = (neuron_value < 0) ? 0 : 1;
 					break;
 			}
 		}
 	}	
-
+	
 	/* set the output */
 	output = ann->output;
 	num_output = ann->num_output;
