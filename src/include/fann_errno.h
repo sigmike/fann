@@ -68,7 +68,10 @@ enum {
 	FANN_E_CANT_TRAIN_ACTIVATION,
 
 	/* Unable to use the selected activation function */
-	FANN_E_CANT_USE_ACTIVATION
+	FANN_E_CANT_USE_ACTIVATION,
+
+	/* Irreconcilable differences between two fann_train_data structures */
+	FANN_E_TRAIN_DATA_MISMATCH
 };
 
 #ifdef __cplusplus

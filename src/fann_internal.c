@@ -647,6 +647,9 @@ void fann_error(struct fann *ann, const unsigned int errno, ...)
 	case FANN_E_CANT_USE_ACTIVATION:
 		snprintf(errstr, FANN_ERRSTR_MAX, "Unable to use the selected activation function.\n");
 		break;
+	case FANN_E_TRAIN_DATA_MISMATCH:
+		snprintf(errstr, FANN_ERRSTR_MAX, "Training data must be of equivalent structure.");
+		break;
 	default:
 		vsnprintf(errstr, FANN_ERRSTR_MAX, "Unknown error.\n", ap);
 		break;

@@ -1048,3 +1048,104 @@ void fann_print_error(struct fann *ann) {
 		fputs(ann->errstr, ann->error_log);
 	}
 }
+
+/* shuffles training data, randomizing the order
+ */
+void fann_shuffle_train_data(struct fann_train_data *train_data) {
+	int dat = train_data->num_data - 1, elem;
+	unsigned int swap;
+	fann_type temp;
+
+	for ( ; dat >= 0 ; dat-- ) {
+		swap = (unsigned int)(rand() % train_data->num_data);
+		if ( swap != dat ) {
+			for ( elem = train_data->num_input ; elem >= 0 ; elem-- ) {
+				temp = train_data->input[dat][elem];
+				train_data->input[dat][elem] = train_data->input[swap][elem];
+				train_data->input[swap][elem] = temp;
+			}
+			for ( elem = train_data->num_output ; elem >= 0 ; elem-- ) {
+				temp = train_data->output[dat][elem];
+				train_data->output[dat][elem] = train_data->output[swap][elem];
+				train_data->output[swap][elem] = temp;
+			}
+		}
+	}
+}
+
+/* merges training data into a single struct.
+ */
+struct fann_train_data * fann_merge_train_data(struct fann_train_data *data1, struct fann_train_data *data2) {
+	struct fann_train_data * train_data;
+	int x;
+
+	if ( (data1->num_input  != data2->num_input) ||
+	     (data1->num_output != data2->num_output) ) {
+		fann_error(NULL, FANN_E_TRAIN_DATA_MISMATCH);
+		return NULL;
+	}
+
+	train_data = (struct fann_train_data *)malloc(sizeof(struct fann_train_data));
+
+	train_data->num_data = data1->num_data + data2->num_data;
+	train_data->num_input = data1->num_input;
+	train_data->num_output = data1->num_output;
+
+	if ( ((train_data->input  = (fann_type **)calloc(train_data->num_data, sizeof(fann_type *))) == NULL) ||
+	     ((train_data->output = (fann_type **)calloc(train_data->num_data, sizeof(fann_type *))) == NULL) ) {
+		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		fann_destroy_train(train_data);
+		return NULL;
+	}
+	for ( x = train_data->num_data - 1 ; x >= 0 ; x-- ) {
+		if ( ((train_data->input[x]  = (fann_type *)calloc(train_data->num_input,  sizeof(fann_type))) == NULL) ||
+		     ((train_data->output[x] = (fann_type *)calloc(train_data->num_output, sizeof(fann_type))) == NULL) ) {
+			fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+			fann_destroy_train(train_data);
+			return NULL;
+		}
+		memcpy(train_data->input[x],
+		       ( x < data1->num_data ) ? data1->input[x]  : data2->input[x - data1->num_data],
+		       train_data->num_input  * sizeof(fann_type));
+		memcpy(train_data->output[x],
+		       ( x < data1->num_data ) ? data1->output[x] : data2->output[x - data1->num_data],
+		       train_data->num_output * sizeof(fann_type));
+	}
+
+	return train_data;
+}
+
+/* return a copy of a fann_train_data struct
+ */
+struct fann_train_data * fann_duplicate_train_data(struct fann_train_data *data) {
+	struct fann_train_data * dest;
+	int x;
+
+	if ( (dest = malloc(sizeof(struct fann_train_data))) == NULL ) {
+		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		return NULL;
+	}
+
+	dest->num_data = data->num_data;
+	dest->num_input = data->num_input;
+	dest->num_output = data->num_output;
+
+	if ( ((dest->input  = (fann_type **)calloc(dest->num_data, sizeof(fann_type *))) == NULL) ||
+	     ((dest->output = (fann_type **)calloc(dest->num_data, sizeof(fann_type *))) == NULL) ) {
+		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		fann_destroy_train(dest);
+		return NULL;
+	}
+
+	for ( x = dest->num_data - 1 ; x >= 0 ; x-- ) {
+		if ( ((dest->input[x]  = (fann_type *)calloc(dest->num_input,  sizeof(fann_type))) == NULL) ||
+		     ((dest->output[x] = (fann_type *)calloc(dest->num_output, sizeof(fann_type))) == NULL) ) {
+			fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+			fann_destroy_train(dest);
+			return NULL;
+		}
+		memcpy(dest->input[x],  data->input[x],  dest->num_input  * sizeof(fann_type));
+		memcpy(dest->output[x], data->output[x], dest->num_output * sizeof(fann_type));
+	}
+	return dest;
+}

@@ -234,6 +234,18 @@ void fann_train_on_data_callback(struct fann *ann, struct fann_train_data *data,
 /* Does the same as train_on_data, but reads the data directly from a file.
  */
 void fann_train_on_file(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error);
+
+/* shuffles training data, randomizing the order
+ */
+void fann_shuffle_train_data(struct fann_train_data *train_data);
+
+/* merges training data into a single struct.
+ */
+struct fann_train_data * fann_merge_train_data(struct fann_train_data *data1, struct fann_train_data *data2);
+
+/* return a copy of a fann_train_data struct
+ */
+struct fann_train_data * fann_duplicate_train_data(struct fann_train_data *data);
 	
 /* Does the same as train_on_data_callback, but
    reads the data directly from a file.
