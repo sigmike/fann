@@ -1,7 +1,12 @@
-1.0.1	2003-10-03
+1.0.2	2003-11-13
+	* Added configure script
+	* Moved files around, to make the transition to configure more easy
+	* Removed other versions of documentation than pdf
+	
+1.0.1	2003-11-03
 	* Bugfix concerning steepness parameter
 	* Moved some files around
 	* Added the changelog
 	
-1.0	2003-10-01
+1.0	2003-11-01
 	* Initial release of full functioning library

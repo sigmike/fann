@@ -267,12 +267,12 @@ struct fann * fann_create_from_file(const char *configuration_file)
 		return NULL;
 	}
 	
-	read_version = (char *)calloc(strlen(FANN_VERSION"\n"), 1);
-	fread(read_version, 1, strlen(FANN_VERSION"\n"), conf); /* reads version */
+	read_version = (char *)calloc(strlen(FANN_CONF_VERSION"\n"), 1);
+	fread(read_version, 1, strlen(FANN_CONF_VERSION"\n"), conf); /* reads version */
 	
 	/* compares the version information */
-	if(strncmp(read_version, FANN_VERSION"\n", strlen(FANN_VERSION"\n")) != 0){
-		printf("Wrong version, aborting read of configuration file \"%s\".\n", configuration_file);
+	if(strncmp(read_version, FANN_CONF_VERSION"\n", strlen(FANN_CONF_VERSION"\n")) != 0){
+		printf("Wrong version of configuration file, aborting read of configuration file \"%s\".\n", configuration_file);
 		return NULL;
 	}
 

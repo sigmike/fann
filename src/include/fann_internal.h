@@ -29,9 +29,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define FANN_FLO_VERSION "FANN_FLO_1.0"
 
 #ifdef FIXEDFANN
-#define FANN_VERSION FANN_FIX_VERSION
+#define FANN_CONF_VERSION FANN_FIX_VERSION
 #else
-#define FANN_VERSION FANN_FLO_VERSION
+#define FANN_CONF_VERSION FANN_FLO_VERSION
 #endif
 
 struct fann * fann_allocate_structure(float learning_rate, unsigned int num_layers);
