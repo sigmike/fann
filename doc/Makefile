@@ -28,7 +28,7 @@ txt: fann.xml
 
 clean:
 	rm -rf \
-		html \
+		html html-single dvi pdf ps rtf tex txt \
 		fann.html \
 		fann.dvi \
 		fann.pdf \
