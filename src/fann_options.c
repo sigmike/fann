@@ -26,6 +26,7 @@
 #include "fann.h"
 #include "fann_errno.h"
 
+/* Prints all of the parameters and options of the ANN */
 void fann_print_parameters(struct fann *ann)
 {
 	struct fann_layer *layer_it;
