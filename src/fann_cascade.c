@@ -109,7 +109,7 @@ void fann_update_weights_special_quickprop(struct fann *ann, unsigned int num_da
 
 void fann_print_connections_raw(struct fann *ann)
 {
-	int i;
+	unsigned int i;
 	for(i = 0; i < ann->total_connections_allocated; i++){
 		if(i == ann->total_connections){
 			printf("* ");
@@ -351,7 +351,7 @@ int fann_reallocate_neurons(struct fann *ann, unsigned int total_neurons)
 	}
 
 	/* Also allocate room for more train_errors */
-	ann->train_errors = realloc(ann->train_errors, total_neurons * sizeof(fann_type));
+	ann->train_errors = (fann_type *)realloc(ann->train_errors, total_neurons * sizeof(fann_type));
 	if(ann->train_errors == NULL){
 		fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
 		return -1;
@@ -677,7 +677,7 @@ struct fann_layer *fann_add_layer(struct fann *ann, struct fann_layer *layer)
 	int i;
 
 	/* allocate the layer */
-	struct fann_layer *layers = realloc(ann->first_layer, num_layers * sizeof(struct fann_layer));
+	struct fann_layer *layers = (struct fann_layer *)realloc(ann->first_layer, num_layers * sizeof(struct fann_layer));
 	if(layers == NULL){
 		fann_error((struct fann_error *)ann, FANN_E_CANT_ALLOCATE_MEM);
 		return NULL;
@@ -731,7 +731,7 @@ void fann_add_candidate_neuron(struct fann *ann, struct fann_layer *layer)
 	unsigned int num_connections_out = (ann->last_layer-1)->last_neuron - (layer+1)->first_neuron;
 	unsigned int num_connections_move = num_connections_out + num_connections_in;
 
-	int i, candidate_con, candidate_output_weight;
+	unsigned int i, candidate_con, candidate_output_weight;
 
 	struct fann_layer *layer_it;
 	struct fann_neuron *neuron_it, *neuron_place, *candidate;
@@ -783,7 +783,7 @@ void fann_add_candidate_neuron(struct fann *ann, struct fann_layer *layer)
 #ifdef CASCADE_DEBUG	
 		printf("move weight[%d ... %d] -> weight[%d ... %d]\n", neuron_it->first_con, neuron_it->last_con-1, neuron_it->first_con + num_connections_move - 1, neuron_it->last_con + num_connections_move - 2);
 #endif
-		for(i = neuron_it->last_con - 1; i >= (int)neuron_it->first_con; i--){
+		for(i = neuron_it->last_con - 1; i >= neuron_it->first_con; i--){
 #ifdef CASCADE_DEBUG	
 			printf("move weight[%d] = weight[%d]\n", i + num_connections_move - 1, i);
 #endif

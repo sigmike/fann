@@ -38,12 +38,12 @@ FANN_EXTERNAL struct fann * FANN_API fann_create(float connection_rate, float le
 {
 	struct fann *ann;
 	va_list layer_sizes;
+	int i;
 	unsigned int *layers = (unsigned int *)calloc(num_layers, sizeof(unsigned int));
 	if(layers == NULL){
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
 		return NULL;
 	}
-	int i = 0;
 
 	va_start(layer_sizes, num_layers);
 	for ( i=0 ; i<(int)num_layers ; i++ ) {
@@ -299,6 +299,7 @@ FANN_EXTERNAL struct fann * FANN_API fann_create_shortcut(float learning_rate,
 	...) /* the number of neurons in each of the layers, starting with the input layer and ending with the output layer */
 {
 	struct fann *ann;
+	int i;
 	va_list layer_sizes;
 	unsigned int *layers = (unsigned int *)calloc(num_layers, sizeof(unsigned int));
 	if(layers == NULL){
@@ -306,7 +307,6 @@ FANN_EXTERNAL struct fann * FANN_API fann_create_shortcut(float learning_rate,
 		return NULL;
 	}
 	
-	int i = 0;
 
 	va_start(layer_sizes, num_layers);
 	for ( i=0 ; i<(int)num_layers ; i++ ) {
@@ -702,9 +702,11 @@ FANN_EXTERNAL void FANN_API fann_randomize_weights(struct fann *ann, fann_type m
 		*weights = (fann_type)(fann_rand(min_weight, max_weight));
 	}
 
+#ifndef FIXEDFANN
 	if(ann->prev_train_slopes != NULL){
 		fann_clear_train_arrays(ann);
 	}
+#endif
 }
 
 FANN_EXTERNAL void FANN_API fann_print_connections(struct fann *ann)
@@ -816,9 +818,11 @@ FANN_EXTERNAL void FANN_API fann_init_weights(struct fann *ann, struct fann_trai
 		}
 	}
 
+#ifndef FIXEDFANN
 	if(ann->prev_train_slopes != NULL){
 		fann_clear_train_arrays(ann);
 	}
+#endif
 }
 
 /* INTERNAL FUNCTION

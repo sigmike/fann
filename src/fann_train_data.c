@@ -213,15 +213,6 @@ FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann, struct
 		printf("Max epochs %8d. Desired error: %.10f.\n", max_epochs, desired_error);
 	}
 
-	/* some training algorithms need stuff to be cleared etc. before training starts.
-	 */
-	if(ann->training_algorithm == FANN_TRAIN_RPROP ||
-		ann->training_algorithm == FANN_TRAIN_QUICKPROP){
-		if(ann->prev_train_slopes == NULL){
-			fann_clear_train_arrays(ann);
-		}
-	}
-
 	for(i = 1; i <= max_epochs; i++){
 		/* train */
 		error = fann_train_epoch(ann, data);

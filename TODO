@@ -1,4 +1,8 @@
+Stuff for the next release
 * Implement cascade correlation.
+* More flexible use of training data
+* Save everything in save file
+
 * Implement SuperSAB
 * Implement the activation functions defined in fann_activation.h
 * More checks to see if train data is properly formatted in the file (some have experienced nasty problems because a number was missing in one line).
