@@ -455,12 +455,18 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 #ifdef FIXEDFANN
 				case FANN_SIGMOID:
 				case FANN_SIGMOID_STEPWISE:
+					if(layer_it == last_layer-1){
+						neuron_it->value = (fann_type)fann_stepwise(o1, o2, o3, o4, o5, o6, ro1, ro2, ro3, ro4, ro5, ro6, 0, multiplier, neuron_value);
+					}else{
+						neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, 0, multiplier, neuron_value);
+					}
+					break;
 				case FANN_SIGMOID_SYMMETRIC:
 				case FANN_SIGMOID_SYMMETRIC_STEPWISE:
 					if(layer_it == last_layer-1){
-						neuron_it->value = (fann_type)fann_stepwise(o1, o2, o3, o4, o5, o6, ro1, ro2, ro3, ro4, ro5, ro6, neuron_value);
+						neuron_it->value = (fann_type)fann_stepwise(o1, o2, o3, o4, o5, o6, ro1, ro2, ro3, ro4, ro5, ro6, -multiplier, multiplier, neuron_value);
 					}else{
-						neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, neuron_value);
+						neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, -multiplier, multiplier, neuron_value);
 					}
 					break;
 #else
@@ -477,11 +483,17 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
 					break;
 					
 				case FANN_SIGMOID_STEPWISE:
+					if(layer_it == last_layer-1){
+						neuron_it->value = (fann_type)fann_stepwise(o1, o2, o3, o4, o5, o6, ro1, ro2, ro3, ro4, ro5, ro6, 0, 1, neuron_value);
+					}else{
+						neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, 0, 1, neuron_value);
+					}
+					break;
 				case FANN_SIGMOID_SYMMETRIC_STEPWISE:
 					if(layer_it == last_layer-1){
-						neuron_it->value = (fann_type)fann_stepwise(o1, o2, o3, o4, o5, o6, ro1, ro2, ro3, ro4, ro5, ro6, neuron_value);
+						neuron_it->value = (fann_type)fann_stepwise(o1, o2, o3, o4, o5, o6, ro1, ro2, ro3, ro4, ro5, ro6, -1, 1, neuron_value);
 					}else{
-						neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, neuron_value);
+						neuron_it->value = (fann_type)fann_stepwise(h1, h2, h3, h4, h5, h6, rh1, rh2, rh3, rh4, rh5, rh6, -1, 1, neuron_value);
 					}
 					break;
 #endif

@@ -107,7 +107,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /* defines used for the stepwise linear functions */
 
 #define fann_linear_func(v1, r1, v2, r2, value) ((((r2-r1) * (value-v1))/(v2-v1)) + r1)
-#define fann_stepwise(v1, v2, v3, v4, v5, v6, r1, r2, r3, r4, r5, r6, value) (value < v5 ? (value < v3 ? (value < v2 ? (value < v1 ? r1 : fann_linear_func(v1, r1, v2, r2, value)) : fann_linear_func(v2, r2, v3, r3, value)) : (value < v4 ? fann_linear_func(v3, r3, v4, r4, value) : fann_linear_func(v4, r4, v5, r5, value))) : (value < v6 ? fann_linear_func(v5, r5, v6, r6, value) : r6))
+#define fann_stepwise(v1, v2, v3, v4, v5, v6, r1, r2, r3, r4, r5, r6, min, max, value) (value < v5 ? (value < v3 ? (value < v2 ? (value < v1 ? min : fann_linear_func(v1, r1, v2, r2, value)) : fann_linear_func(v2, r2, v3, r3, value)) : (value < v4 ? fann_linear_func(v3, r3, v4, r4, value) : fann_linear_func(v4, r4, v5, r5, value))) : (value < v6 ? fann_linear_func(v5, r5, v6, r6, value) : max))
 
 /* FANN_LINEAR */
 #define fann_linear(steepness, value) fann_mult(steepness, value)
