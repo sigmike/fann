@@ -1,7 +1,4 @@
-<!-- $Id: fann.xml,v 1.2 2004/02/14 21:21:18 tadpole9 Exp $ -->
-<!-- To compile this file, use
- jw -b html -o html fann.xml
- -->
+<!-- $Id: fann.xml,v 1.3 2004/02/16 09:50:45 tadpole9 Exp $ -->
 <?xml version='1.0' encoding='ISO-8859-1' ?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
@@ -194,12 +191,104 @@ int main()
   </section>
  </chapter>
 
- <chapter>
-  <title>Artificial Neural Networks</title>
-  <para>A short introduction to Artificial Neural Networks</para>
+ <chapter id="theory">
+  <title>Neural Network Theory</title>
+  <para>
+   This section will briefly explain the theory of neural networks (hereafter known
+   as NN) and artificial neural networks (hereafter known as ANN). For a more in depth
+   explanation of these concepts please consult the literature;
+   <xref linkend="bib.hassoun_1995" endterm="bib.hassoun_1995.abbrev"/> has good coverage
+   of most concepts of ANN and <xref linkend="bib.hertz_1991" endterm="bib.hertz_1991.abbrev"/>
+   describes the mathematics of ANN very thoroughly, while
+   <xref linkend="bib.anderson_1995" endterm="bib.anderson_1995.abbrev"/> has a more
+   psychological and physiological approach to NN and ANN. For the pragmatic I could recommend
+   <xref linkend="bib.tettamanzi_2001" endterm="bib.tettamanzi_2001.abbrev"/>, which has a short
+   and easily understandable introduction to NN and ANN.
+  </para>
 
-  <section>
-   <title>Training</title>
+  <section id="theory.neural_networks">
+   <title>Neural Networks</title>
+
+   <para>
+    The human brain is a highly complicated machine capable of solving very complex problems.
+    Although we have a good understanding of some of the basic operations that drive the brain,
+    we are still far from understanding everything there is to know about the brain. 
+   </para>
+   <para>
+    In order to understand ANN, you will need to have a basic knowledge of how the internals of
+    the brain work. The brain is part of the central nervous system and consists of a very large
+    NN. The NN is actually quite complicated, but I will only include the details needed to
+    understand ANN, in order to simplify the explanation. 
+   </para>
+   <para>
+    The NN is a network consisting of connected neurons. The center of the neuron is called the
+    nucleus. The nucleus is connected to other nucleuses by means of the dendrites and the axon.
+    This connection is called a synaptic connection.
+   </para>
+   <para>
+    The neuron can fire electric pulses through its synaptic connections, which is received at
+    the dendrites of other neurons.
+   </para>
+   <para>
+    When a neuron receives enough electric pulses through its dendrites, it activates and fires a
+    pulse through its axon, which is then received by other neurons. In this way information can
+    propagate through the NN. The synaptic connections change throughout the lifetime of a neuron
+    and the amount of incoming pulses needed to activate a neuron (the threshold) also change. This
+    behavior allows the NN to learn.
+   </para>
+   <para>
+    The human brain consists of around 10^11 neurons which are highly interconnected with around
+    10^15 connections <xref linkend="bib.tettamanzi_2001" endterm="bib.tettamanzi_2001.abbrev"/>.
+    These neurons activates in parallel as an effect to internal and external sources. The brain is
+    connected to the rest of the nervous system, which allows it to receive information by means of
+    the five senses and also allows it to control the muscles.
+   </para>
+  </section>
+
+  <section id="theory.artificial_neural_networks">
+   <title>Artificial Neural Networks</title>
+    <para>
+     It is not possible (at the moment) to make an artificial brain, but it is possible to make
+     simplified artificial neurons and artificial neural networks. These ANNs can be made in many
+     different ways and can try to mimic the brain in many different ways.
+   </para>
+   <para>
+    ANNs are not intelligent, but they are good for recognizing patterns and making simple rules for
+    complex problems. They also have excellent training capabilities which is why they are often used
+    in artificial intelligence research.
+   </para>
+   <para>
+    ANNs are good at generalizing from a set of training data. E.g. this means an ANN given data about
+    a set of animals connected to a fact telling if they are mammals or not, is able to predict whether
+    an animal outside the original set is a mammal from its data. This is a very desirable feature of
+    ANNs, because you do not need to know the characteristics defining a mammal, the ANN will find out
+    by itself.
+   </para>
+  </section>
+
+  <section id="theory.training">
+   <title>Training an ANN</title>
+
+   <para>
+    When training an ANN with a set of input and output data, we wish to adjust the weights in the ANN,
+    to make the ANN give the same outputs as seen in the training data. On the other hand, we do not
+    want to make the ANN too specific, making it give precise results for the training data, but incorrect
+    results for all other data. When this happens, we say that the ANN has been over-fitted.
+   </para>
+   <para>
+    The training process can be seen as an optimization problem, where we wish to minimize the mean square
+    error of the entire set of training data. This problem can be solved in many different ways, ranging
+    from standard optimization heuristics like simulated annealing, through more special optimization
+    techniques like genetic algorithms to specialized gradient descent algorithms like backpropagation. 
+   </para>
+   <para>
+    The most used algorithm is the backpropagation algorithm, but this algorithm has some limitations
+    concerning, the extent of adjustment to the weights in each iteration. This problem has been solved in
+    more advanced algorithms like RPROP
+    <xref linkend="bib.riedmiller_1993" endterm="bib.riedmiller_1993.abbrev"/> and quickprop
+    <xref linkend="bib.fahlman_1988" endterm="bib.fahlman_1988.abbrev"/>, but I will not elaborate further
+    on these algorithms.
+   </para>
   </section>
  </chapter>
 
@@ -355,7 +444,7 @@ int main()
   </section>
 
   <section id="api.sec.train_algo">
-   <title>Training Algorithms</title>
+   <title>Training</title>
 
    <refentry id="api.fann_train">
     <refnamediv>
@@ -435,14 +524,599 @@ int main()
 
   <section id="api.sec.train_data">
    <title>Training Data</title>
+
+   <refentry id="api.fann_read_train_from_file">
+    <refnamediv>
+     <refname>fann_read_train_from_file</refname>
+     <refpurpose>Read training data from a file.</refpurpose>
+    </refnamediv>
+    <refsect1>
+    <title>Description</title>
+     <methodsynopsis>
+      <type>struct fann_train_data *</type><methodname>fann_read_train_from_file</methodname>
+      <methodparam><type>char *</type><parameter>filename</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      <function>fann_read_train_from_file</function> will load training data from a file.
+    </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_destroy_train">
+    <refnamediv>
+     <refname>fann_destroy_train</refname>
+    <refpurpose>Destroy training data.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+     <type>void</type><methodname>fann_destroy_train_data</methodname>
+      <methodparam><type>struct fann_train_data *</type><parameter>train_data</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Destroy the training data stored in <parameter>train_data</parameter>, freeing the associated memory.
+    </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_train_on_data">
+    <refnamediv>
+     <refname>fann_train_on_data</refname>
+    <refpurpose>Train an ANN.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>void</type><methodname>fann_train_on_data</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>struct fann_train_data *</type><parameter>data</parameter></methodparam>
+      <methodparam><type>unsigned int</type><parameter>max_epochs</parameter></methodparam>
+      <methodparam><type>unsigned int</type><parameter>epochs_between_reports</parameter></methodparam>
+      <methodparam><type>float</type><parameter>desired_error</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Trains <parameter>ann</parameter> using <parameter>data</parameter> until <parameter>desired_error</parameter>
+      is reached, or until <parameter>max_epochs</parameter> is surpassed.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_train_on_data_callback">
+    <refnamediv>
+     <refname>fann_train_on_data_callback</refname>
+     <refpurpose>Train an ANN.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>void</type><methodname>fann_train_on_data_callback</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>struct fann_train_data *</type><parameter>data</parameter></methodparam>
+      <methodparam><type>unsigned int</type><parameter>max_epochs</parameter></methodparam>
+      <methodparam><type>unsigned int</type><parameter>epochs_between_reports</parameter></methodparam>
+      <methodparam><type>float</type><parameter>desired_error</parameter></methodparam>
+      <methodparam><type>int</type><parameter>(*callback)(unsigned int epochs, float error)</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Trains <parameter>ann</parameter> using <parameter>data</parameter> until <parameter>desired_error</parameter>
+      is reached, or until <parameter>max_epochs</parameter> is surpassed.
+     </para>
+     <para>
+      This function behaves identically to <link linkend="api.fann_train_on_data"><function>fann_train_on_data</function></link>,
+      except that <function>fann_train_on_data_callback</function> allows you to specify a function to be called every
+      <parameter>epochs_between_reports</parameter> instead of using the default reporting mechanism.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_train_on_file">
+    <refnamediv>
+     <refname>fann_train_on_file</refname>
+     <refpurpose>Train an ANN.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>void</type><methodname>fann_train_on_file</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>char *</type><parameter>filename</parameter></methodparam>
+      <methodparam><type>unsigned int</type><parameter>max_epochs</parameter></methodparam>
+      <methodparam><type>unsigned int</type><parameter>epochs_between_reports</parameter></methodparam>
+      <methodparam><type>float</type><parameter>desired_error</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Trains <parameter>ann</parameter> using the data in <parameter>filename</parameter> until
+      <parameter>desired_error</parameter> is reached, or until <parameter>max_epochs</parameter>
+      is surpassed.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_train_on_file_callback">
+    <refnamediv>
+     <refname>fann_train_on_file_callback</refname>
+     <refpurpose>Train an ANN.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>void</type><methodname>fann_train_on_file_callback</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>char *</type><parameter>filename</parameter></methodparam>
+      <methodparam><type>unsigned int</type><parameter>max_epochs</parameter></methodparam>
+      <methodparam><type>unsigned int</type><parameter>epochs_between_reports</parameter></methodparam>
+      <methodparam><type>float</type><parameter>desired_error</parameter></methodparam>
+      <methodparam><type>int</type><parameter>(*callback)(unsigned int epochs, float error)</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Trains <parameter>ann</parameter> using the data in <parameter>filename</parameter> until
+      <parameter>desired_error</parameter> is reached, or until <parameter>max_epochs</parameter>
+      is surpassed.
+     </para>
+     <para>
+      This function behaves identically to <link linkend="api.fann_train_on_file"><function>fann_train_on_file</function></link>,
+      except that <function>fann_train_on_file_callback</function> allows you to specify a function to be called every
+      <parameter>epochs_between_reports</parameter> instead of using the default reporting mechanism.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_shuffle_train_data">
+    <refnamediv>
+     <refname>fann_shuffle_train_data</refname>
+     <refpurpose>Shuffle the training data.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>void</type><methodname>fann_shuffle_train_data</methodname>
+      <methodparam><type>struct fann_train_data *</type><parameter>data</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      <function>fann_shuffle_train_data</function> will randomize the order of the training data
+      contained in <parameter>data</parameter>.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_merge_train_data">
+    <refnamediv>
+     <refname>fann_merge_train_data</refname>
+     <refpurpose>Merge two sets of training data.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>struct fann_train_data *</type><methodname>fann_merge_train_data</methodname>
+      <methodparam><type>struct fann_train_data *</type><parameter>data1</parameter></methodparam>
+      <methodparam><type>struct fann_train_data *</type><parameter>data2</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      <function>fann_merge_train_data</function> will return a single set of training data which
+      contains all data from <parameter>data1</parameter> and <parameter>data2</parameter>.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_duplicate_train_data">
+    <refnamediv>
+     <refname>fann_duplicate_train_data</refname>
+     <refpurpose>Copies a set of training data.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>struct fann_train_data *</type><methodname>fann_duplicate_train_data</methodname>
+      <methodparam><type>struct fann_train_data *</type><parameter>data</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      <function>fann_duplicate_train_data</function> will return a copy of <parameter>data</parameter>.
+     </para>
+    </refsect1>
+   </refentry>
   </section>
 
   <section id="api.sec.options">
    <title>Options</title>
+
+   <refentry id="api.fann_get_learning_rate">
+    <refnamediv>
+     <refname>fann_get_learning_rate</refname>
+     <refpurpose>Retrieve learning rate from a network.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>float</type><methodname>fann_get_learning_rate</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Return the learning rate for a given network.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_set_learning_rate">
+    <refnamediv>
+     <refname>fann_set_learning_rate</refname>
+     <refpurpose>Set a network's learning rate.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type></type><methodname>fann_set_learning_rate</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>float</type><parameter>learning_rate</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Set the learning rate of a network.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_get_activation_function_hidden">
+    <refnamediv>
+     <refname>fann_get_activation_function_hidden</refname>
+     <refpurpose>Get the activation function of the hidden layer.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>unsigned int</type><methodname>fann_get_activation_function_hidden</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Return the activation function of the hidden layer.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_set_activation_function_hidden">
+    <refnamediv>
+     <refname>fann_set_activation_function_hidden</refname>
+     <refpurpose>Set the activation function for the hidden layer.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type></type><methodname>fann_set_activation_function_hidden</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>unsigned int</type><parameter>activation_function</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Set the activation function of the hidden layer to <parameter>activation_function></parameter>.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_get_activation_function_output">
+    <refnamediv>
+     <refname>fann_get_activation_function_output</refname>
+     <refpurpose>Get the activation function of the output layer.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>unsigned int</type><methodname>fann_get_activation_function_output</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Return the activation function of the output layer.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_set_activation_function_output">
+    <refnamediv>
+     <refname>fann_set_activation_function_output</refname>
+     <refpurpose>Set the activation function for the output layer.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>void</type><methodname>fann_set_activation_function_output</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>unsigned int</type><parameter>activation_function</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Set the activation function of the output layer to <parameter>activation_function></parameter>.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_get_activation_hidden_steepness">
+    <refnamediv>
+     <refname>fann_get_activation_hidden_steepness</refname>
+     <refpurpose>Retrieve the steepness of the activation function of the hidden layers.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>fann_type</type><methodname>fann_get_activation_hidden_steepness</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Return the steepness of the activation function of the hidden layers.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_set_activation_hidden_steepness">
+    <refnamediv>
+     <refname>fann_set_activation_hidden_steepness</refname>
+     <refpurpose>Set the steepness of the activation function of the hidden layers.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>void</type><methodname>fann_set_activation_hidden_steepness</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>fann_type</type><parameter>steepness</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Set the steepness of the activation function of thie hidden layers of
+      <parameter>ann</parameter> to <parameter>steepness</parameter>.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_get_activation_output_steepness">
+    <refnamediv>
+     <refname>fann_get_activation_output_steepness</refname>
+     <refpurpose>Retrieve the steepness of the activation function of the hidden layers.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>fann_type</type><methodname>fann_get_activation_output_steepness</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Return the steepness of the activation function of the hidden layers.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_set_activation_output_steepness">
+    <refnamediv>
+     <refname>fann_set_activation_output_steepness</refname>
+     <refpurpose>Set the steepness of the activation function of the hidden layers.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>void</type><methodname>fann_set_activation_output_steepness</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>fann_type</type><parameter>steepness</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Set the steepness of the activation function of thie hidden layers of
+      <parameter>ann</parameter> to <parameter>steepness</parameter>.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_get_num_input">
+    <refnamediv>
+     <refname>fann_get_num_input</refname>
+     <refpurpose>Get the number of neurons in the input layer.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>unsigned int</type><methodname>fann_get_num_input</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Return the number of neurons in the input layer of <parameter>ann</parameter>.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_get_num_output">
+    <refnamediv>
+     <refname>fann_get_num_output</refname>
+     <refpurpose>Get number of neurons in the output layer.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>unsigned int</type><methodname>fann_get_num_output</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Return the number of neurons in the output layer of <parameter>ann</parameter>.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_get_total_neurons">
+    <refnamediv>
+     <refname>fann_get_total_neurons</refname>
+     <refpurpose>Get the total number of neurons in a network.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>unsigned int</type><methodname>fann_get_total_neurons</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Return the total number of neurons in <parameter>ann</parameter>.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_get_total_connections">
+    <refnamediv>
+     <refname>fann_get_total_connections</refname>
+     <refpurpose>Get the total number of connections in a network.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>unsigned int</type><methodname>fann_get_total_connections</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Return the total number of connections in <parameter>ann</parameter>.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_get_decimal_point">
+    <refnamediv>
+     <refname>fann_get_decimal_point</refname>
+     <refpurpose>Get the position of the decimal point.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>unsigned int</type><methodname>fann_get_decimal_point</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Return the position of the decimal point in <parameter>ann</parameter>.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_get_multiplier">
+    <refnamediv>
+     <refname>fann_get_multiplier</refname>
+     <refpurpose>Get the multiplier.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type></type><methodname>fann_get_multiplier</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Return the multiplier that fix point data in <parameter>ann</parameter> is
+      multiplied with.
+     </para>
+    </refsect1>
+   </refentry>
   </section>
 
   <section id="api.sec.errors">
    <title>Error Handling</title>
+
+   <refentry id="api.fann_get_errno">
+    <refnamediv>
+     <refname>fann_get_errno</refname>
+     <refpurpose>Return the numerical representation of the last error.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>unsigned int</type><methodname>fann_get_errno</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Returns the numerical representation of the last error. The error codes are defined
+      in <!-- What do I put this in??? -->fann_errno.h<!-- /confusion -->.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_get_errstr">
+    <refnamediv>
+     <refname>fann_get_errstr</refname>
+     <refpurpose>Return the last error.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>char *</type><methodname>fann_get_errstr</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Returns the last error.
+     </para>
+     <para>
+      Note: This will reset the network's error- any subsequent calls to
+      <function>fann_get_errno</function> or <function>fann_get_errstr</function>
+      will yield 0 and NULL, respectively.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_reset_errno">
+    <refnamediv>
+     <refname>fann_reset_errno</refname>
+     <refpurpose>Reset the last error number.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>void</type><methodname>fann_reset_errno</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Reset the last error number.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_reset_errstr">
+    <refnamediv>
+     <refname>fann_reset_errstr</refname>
+     <refpurpose>Reset the last error string.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>void</type><methodname>fann_reset_errstr</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Reset the last error string.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_set_error_log">
+    <refnamediv>
+     <refname>fann_set_error_log</refname>
+     <refpurpose>Set the error log to a file descriptor.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>void</type><methodname>fann_set_error_log</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      <methodparam><type>FILE *</type><parameter>log</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Set the error log to <parameter>log</parameter>.
+     </para>
+     <para>
+      The error log defaults to stderr.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_print_error">
+    <refnamediv>
+     <refname>fann_print_error</refname>
+     <refpurpose>Print the last error to the error log.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+     <methodsynopsis>
+      <type>void</type><methodname>fann_print_error_log</methodname>
+      <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+     </methodsynopsis>
+     <para>
+      Prints the network's last error to the error log.
+     </para>
+     <para>
+      The error log defaults to stderr.
+     </para>
+    </refsect1>
+   </refentry>
   </section>
 
   <section id="api.sec.internal">
@@ -530,46 +1204,189 @@ int main()
      </refsect1>
     </refentry>
    </section>
+
+   <section id="api.sec.train_data.internal">
+    <title>Training Data</title>
+
+    <refentry id="api.fann_save_train_internal">
+     <refnamediv>
+      <refname>fann_save_train_internal</refname>
+      <refpurpose>Save training data to a file.</refpurpose>
+     </refnamediv>
+     <refsect1>
+      <title>Description</title>
+      <methodsynopsis>
+       <type>void</type><methodname>fann_save_train_internal</methodname>
+       <methodparam><type>struct fann_train_data *</type><parameter>data</parameter></methodparam>
+       <methodparam><type>char *</type><parameter>filename</parameter></methodparam>
+       <methodparam><type>unsigned int</type><parameter>save_as_fixed</parameter></methodparam>
+       <methodparam><type>unsigned int</type><parameter>decimal_point</parameter></methodparam>
+      </methodsynopsis>
+      <para>
+       Saves the data in <parameter>data</parameter> to <parameter>filename</parameter>.
+       <parameter>save_as_fixed</parameter> is either TRUE or FALSE.
+       <parameter>decimal_point</parameter> tells FANN where the decimal point may be if using
+       fixed point math. (Right?)
+      </para>
+     </refsect1>
+    </refentry>
+
+    <refentry id="api.fann_save_train_internal_fd">
+     <refnamediv>
+      <refname>fann_save_train_internal_fd</refname>
+      <refpurpose>Save training data to a file descriptor.</refpurpose>
+     </refnamediv>
+     <refsect1>
+      <title>Description</title>
+      <methodsynopsis>
+       <type>void</type><methodname>fann_save_train_internal_fd</methodname>
+       <methodparam><type>struct fann_train_data *</type><parameter>data</parameter></methodparam>
+       <methodparam><type>FILE *</type><parameter>file</parameter></methodparam>
+       <methodparam><type>char *</type><parameter>filename</parameter></methodparam>
+       <methodparam><type>unsigned int</type><parameter>save_as_fixed</parameter></methodparam>
+       <methodparam><type>unsigned int</type><parameter>decimal_point</parameter></methodparam>
+      </methodsynopsis>
+      <para>
+       Saves the data in <parameter>data</parameter> to <parameter>file</parameter>.
+       <parameter>save_as_fixed</parameter> is either TRUE or FALSE.
+       <parameter>decimal_point</parameter> tells FANN where the decimal point may be if using
+       fixed point math. (Right?)
+      </para>
+      <para>
+       <parameter>filename</parameter> is used for debugging output only.
+      </para>
+     </refsect1>
+    </refentry>
+
+    <refentry id="api.fann_read_train_from_fd">
+     <refnamediv>
+      <refname>fann_read_train_from_fd</refname>
+      <refpurpose>Read training data from a file descriptor.</refpurpose>
+     </refnamediv>
+     <refsect1>
+      <title>Description</title>
+      <methodsynopsis>
+       <type>struct fann_train_data *</type><methodname>fann_read_train_from_file</methodname>
+       <methodparam><type>FILE *</type><parameter>file</parameter></methodparam>
+       <methodparam><type>char *</type><parameter>filename</parameter></methodparam>
+      </methodsynopsis>
+      <para>
+       <function>fann_read_train_from_file</function> will load training data from the file
+       descriptor <parameter>file</parameter>.
+      </para>
+      <para>
+       <parameter>filename</parameter> is used for debugging output only.
+      </para>
+     </refsect1>
+    </refentry>
+   </section>
+
+   <section id="api.sec.io.errors">
+    <title>Error Handling</title>
+
+    <refentry id="api.fann_error">
+     <refnamediv>
+      <refname>fann_error</refname>
+      <refpurpose>Throw an internal error.</refpurpose>
+     </refnamediv>
+     <refsect1>
+      <title>Description</title>
+      <methodsynopsis>
+       <type>void</type><methodname>fann_error</methodname>
+       <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+       <methodparam><type>unsigned int</type><parameter>errno</parameter></methodparam>
+       <methodparam><parameter>...</parameter></methodparam>
+      </methodsynopsis>
+      <para>
+       This will set the network's error to correspond to <parameter>errno</parameter>.
+       The variable arguments depend (both in type and quantity) on <parameter>errno</parameter>.
+       Possible <parameter>errno</parameter> values are defined in fann_errno.h.
+      </para>
+     </refsect1>
+    </refentry>
+   </section>
+
+   <section id="api.sec.options.internal">
+    <title>Options</title>
+
+    <refentry id="api.fann_update_stepwise_hidden">
+     <refnamediv>
+      <refname>fann_update_stepwise_hidden</refname>
+      <refpurpose>Adjust the stepwise function in the hidden layers.</refpurpose>
+     </refnamediv>
+     <refsect1>
+      <title>Description</title>
+      <methodsynopsis>
+       <type>void</type><methodname>fann_update_stepwise_hidden</methodname>
+       <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      </methodsynopsis>
+      <para>
+       Update the stepwise function in the hidden layers of <parameter>ann</parameter>.
+      </para>
+     </refsect1>
+    </refentry>
+
+    <refentry id="api.fann_update_stepwise_output">
+     <refnamediv>
+      <refname>fann_update_stepwise_output</refname>
+      <refpurpose>Adjust the stepwise functions in the output layers.</refpurpose>
+     </refnamediv>
+     <refsect1>
+      <title>Description</title>
+      <methodsynopsis>
+       <type>void</type><methodname>fann_update_stepwise_output</methodname>
+       <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      </methodsynopsis>
+      <para>
+       Update the stepwise function in the output layers of <parameter>ann</parameter>.
+      </para>
+     </refsect1>
+    </refentry>
+   </section>
   </section>
 
   <section id="api.sec.deprecated">
    <title>Deprecated Functions</title>
 
-   <refentry id="api.fann_get_error">
-    <refnamediv>
-     <refname>fann_get_error</refname>
-     <refpurpose>Return the mean square error of an ANN.</refpurpose>
-    </refnamediv>
-    <refsect1>
-     <title>Description</title>
+   <section id="api.sec.error.deprecated">
+    <title>Error Handling</title>
+
+    <refentry id="api.fann_get_error">
+     <refnamediv>
+      <refname>fann_get_error</refname>
+      <refpurpose>Return the mean square error of an ANN.</refpurpose>
+     </refnamediv>
+     <refsect1>
+      <title>Description</title>
       <methodsynopsis>
        <type>float</type><methodname>fann_get_error</methodname>
        <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
       </methodsynopsis>
-     <para>
-      This function is deprecated and will be removed in a future version. Use
-      <link linkend="api.fann_get_MSE"><function>fann_get_MSE</function></link> instead.
-     </para>
-    </refsect1>
-   </refentry>
+      <para>
+       This function is deprecated and will be removed in a future version. Use
+       <link linkend="api.fann_get_MSE"><function>fann_get_MSE</function></link> instead.
+      </para>
+     </refsect1>
+    </refentry>
 
-   <refentry id="api.fann_reset_error">
-    <refnamediv>
-     <refname>fann_get_error</refname>
-     <refpurpose>Reset the mean square error of an ANN.</refpurpose>
-    </refnamediv>
-    <refsect1>
-     <title>Description</title>
+    <refentry id="api.fann_reset_error">
+     <refnamediv>
+      <refname>fann_get_error</refname>
+      <refpurpose>Reset the mean square error of an ANN.</refpurpose>
+     </refnamediv>
+     <refsect1>
+      <title>Description</title>
       <methodsynopsis>
        <type>void</type><methodname>fann_reset_error</methodname>
        <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
       </methodsynopsis>
-     <para>
-      This function is deprecated and will be removed in a future version. Use
-      <link linkend="api.fann_reset_MSE"><function>fann_reset_MSE</function></link> instead.
-     </para>
-    </refsect1>
-   </refentry>
+      <para>
+       This function is deprecated and will be removed in a future version. Use
+       <link linkend="api.fann_reset_MSE"><function>fann_reset_MSE</function></link> instead.
+      </para>
+     </refsect1>
+    </refentry>
+   </section>
   </section>
  </chapter>
 
@@ -1136,6 +1953,332 @@ else
    </refentry>
   </section>
  </chapter>
+ <bibliography id="bibliography">
+  <title>Bibliography</title>
+
+  <biblioentry id="bib.tettamanzi_2001">
+   <abbrev id="bib.tettamanzi_2001.abbrev">[Tettamanzi and Tomassini, 2001]</abbrev>
+   <author>
+    <firstname>A.</firstname>
+    <surname>Tettamanzi</surname>
+   </author>
+   <author>
+    <firstname>M.</firstname>
+    <surname>Tomassini</surname>
+   </author>
+   <pubdate></pubdate>
+   <title>Soft Computing</title>
+   <publishername>Springer-Verlag</publishername>
+  </biblioentry>
+
+  <biblioentry id="bib.anderson_1995">
+   <abbrev id="bib.anderson_1995.abbrev">[Anderson, 1995]</abbrev>
+   <author>
+    <firstname>J.A.</firstname>
+    <surname>Anderson</surname>
+   </author>
+   <pubdate>1995</pubdate>
+   <title>An Introduction to Neural Networks</title>
+   <publishername>The MIT Press</publishername>
+  </biblioentry>
+
+  <biblioentry id="bib.anguita_1993">
+   <abbrev id="bib.anguita_1993.abbrev">[Anguita, 1993]</abbrev>
+   <author>
+    <firstname>D.</firstname>
+    <surname>Anguita</surname>
+   </author>
+   <title>Matrix back propagation v1.1</title>
+  </biblioentry>
+
+  <biblioentry id="bib.bentley_1982">
+   <abbrev id="bib.bently_1982.abbrev">[Bentley, 1982]</abbrev>
+   <author>
+    <firstname>J.L.</firstname>
+    <surname>Bentley</surname>
+   </author>
+   <pubdate>1982</pubdate>
+   <title>Writing Efficient Programs</title>
+   <publishername>Prentice-Hall</publishername>
+  </biblioentry>
+
+  <biblioentry id="bib.blake_1998">
+   <abbrev id="bib.blake_1998.abbrev">[Blake and Merz, 1998]</abbrev>
+   <author>
+    <firstname>C.</firstname>
+    <surname>Blake</surname>
+   </author>
+   <author>
+    <firstname>C.</firstname>
+    <surname>Merz</surname>
+   </author>
+   <pubdate>1998</pubdate>
+   <title>UCI repository of machine learning databases</title>
+   <releaseinfo><ulink url="http://www.ics.uci.edu/mlearn/MLRepository.html">http://www.ics.uci.edu/mlearn/MLRepository.html</ulink></releaseinfo>
+   <publishername></publishername>
+  </biblioentry>
+
+  <biblioentry id="bib.darrington_2003">
+   <abbrev id="bib.darrington_2003.abbrev">[Darrington, 2003]</abbrev>
+   <author>
+    <firstname>J.</firstname>
+    <surname>Darrington</surname>
+   </author>
+   <pubdate>2003</pubdate>
+   <title>Libann</title>
+   <releaseinfo><ulink url="http://www.nongnu.org/libann/index.html">http://www.nongnu.org/libann/index.html</ulink></releaseinfo>
+  </biblioentry>
+
+  <biblioentry id="bib.fahlman_1988">
+   <abbrev id="bib.fahlman_1988.abbrev">[Falhman, 1988]</abbrev>
+   <author>
+    <firstname>S.E.</firstname>
+    <surname>Fahlman</surname>
+   </author>
+   <pubdate>1988</pubdate>
+   <title>Faster-learning variations on back-propagation</title>
+   <subtitle>An empirical stody</subtitle>
+  </biblioentry>
+
+  <biblioentry id="bib.FSF_1999">
+   <abbrev id="bib.FSF_1999.abbrev">[LGPL]</abbrev>
+   <author>
+    <surname>Free Software Foundation</surname>
+   </author>
+   <pubdate>1999</pubdate>
+   <title>GNU Lesser General Public License</title>
+   <publishername>Free Software Foundation</publishername>
+   <releaseinfo><ulink url="http://www.fsf.org/copyleft/lesser.html">http://www.fsf.org/copyleft/lesser.html</ulink></releaseinfo>
+  </biblioentry>
+
+  <biblioentry id="bib.hassoun_1995">
+   <abbrev id="bib.hassoun_1995.abbrev">[Hassoun, 1995]</abbrev>
+   <author>
+    <firstname>M.H.</firstname>
+    <surname>Hassoun</surname>
+   </author>
+   <pubdate>1995</pubdate>
+   <title>Fundamentals of Artificial Neural Networks</title>
+   <publishername>The MIT Press</publishername>
+  </biblioentry>
+
+  <biblioentry id="bib.heller_2002">
+   <abbrev id="bib.heller_2002.abbrev">[Heller, 2002]</abbrev>
+   <author>
+    <firstname>J.</firstname>
+    <surname>Heller</surname>
+   </author>
+   <pubdate>2002</pubdate>
+   <title>Jet's Neural Library</title>
+   <releaseinfo><ulink url="http://www.voltar.org/jneural/jneural_doc/">http://www.voltar.org/jneural/jneural_doc/</ulink></releaseinfo>
+  </biblioentry>
+
+  <biblioentry id="bib.hertz_1991">
+   <abbrev id="bib.hertz_1991.abbrev">[Hertz et al., 1991]</abbrev>
+   <author>
+    <firstname>J.</firstname>
+    <surname>Hertz</surname>
+   </author>
+   <author>
+    <firstname>A.</firstname>
+    <surname>Krogh</surname>
+   </author>
+   <author>
+    <firstname>R.G.</firstname>
+    <surname>Palmer</surname>
+   </author>
+   <pubdate>1991</pubdate>
+   <title>Introduction to The Theory of Neural Computing</title>
+   <publishername>Addison-Wesley Publishing Company</publishername>
+  </biblioentry>
+
+  <biblioentry id="bib.IDS_2000">
+   <abbrev id="bib.IDS_2000.abbrev">[IDS, 2000]</abbrev>
+   <author>
+    <surname>ID Software</surname>
+   </author>
+   <pubdate>2000</pubdate>
+   <title>Quake III Arena</title>
+   <releaseinfo><ulink url="http://www.idsoftware.com/games/quake/quake3-arena/">http://www.idsoftware.com/games/quake/quake3-arena/</ulink></releaseinfo>
+  </biblioentry>
+
+  <biblioentry id="bib.kaelbling_1996">
+   <abbrev id="bib.kaelbling_1996.abbrev">[Kaelbling, 1996]</abbrev>
+   <author>
+    <firstname>L.P.</firstname>
+    <surname>Kaelbling</surname>
+   </author>
+   <author>
+    <firstname>M.L.</firstname>
+    <surname>Littman</surname>
+   </author>
+   <author>
+    <firstname>A.P.</firstname>
+    <surname>Moore</surname>
+   </author>
+   <pubdate>1996</pubdate>
+   <title>Reinforcement Learning</title>
+   <subtitle>A New Survey</subtitle>
+   <publishername>Journal of Artificial Intelligence Research</publishername>
+   <volumenum>4</volumenum>
+   <pagenums>237-285</pagenums>
+  </biblioentry>
+
+  <biblioentry id="bib.lecun_1990">
+   <abbrev id="bib.lecun_1990.abbrev">[LeCun et al., 1990]</abbrev>
+   <author>
+    <firstname>Y.</firstname>
+    <surname>LeCun</surname>
+   </author>
+   <author>
+    <firstname>J.</firstname>
+    <surname>Denker</surname>
+   </author>
+   <author>
+    <firstname>S.</firstname>
+    <surname>Solla</surname>
+   </author>
+   <author>
+    <firstname>R.E.</firstname>
+    <surname>Howard</surname>
+   </author>
+   <author>
+    <firstname>L.D.</firstname>
+    <surname>Jackel</surname>
+   </author>
+   <pubdate>1990</pubdate>
+   <title>Advances in Neural Information Processing Systems II</title>
+  </biblioentry>
+
+  <biblioentry id="bib.nissen_2003">
+   <abbrev id="bib.nissen_2003.abbrev">[Nissen et al., 2003]</abbrev>
+   <author>
+    <firstname>S.</firstname>
+    <surname>Nissen</surname>
+   </author>
+   <author>
+    <firstname>J.</firstname>
+    <surname>Damkjær</surname>
+   </author>
+   <author>
+    <firstname>J.</firstname>
+    <surname>Hansson</surname>
+   </author>
+   <author>
+    <firstname>S.</firstname>
+    <surname>Larsen</surname>
+   </author>
+   <author>
+    <firstname>S.</firstname>
+    <surname>Jensen</surname>
+   </author>
+   <pubdate>2003</pubdate>
+   <title>Real-time image processing of an ipaq based robot with fuzzy logic (fuzzy)</title>
+   <releaseinfo><ulink url="http://www.hamster.dk/~purple/robot/fuzzy/weblog/">http://www.hamster.dk/~purple/robot/fuzzy/weblog/</ulink></releaseinfo>
+  </biblioentry>
+
+  <biblioentry id="bib.nissen_2002">
+   <abbrev id="bib.nissen_2002.abbrev">[Nissen et al., 2002]</abbrev>
+   <author>
+    <firstname>S.</firstname>
+    <surname>Nissen</surname>
+   </author>
+   <author>
+    <firstname>S.</firstname>
+    <surname>Larsen</surname>
+   </author>
+   <author>
+    <firstname>S.</firstname>
+    <surname>Jensen</surname>
+   </author>
+   <pubdate>2003</pubdate>
+   <title>Real-time image processing of an iPAQ based robot (iBOT)</title>
+   <releaseinfo><ulink url="http://www.hamster.dk/~purple/robot/iBOT/report.pdf">http://www.hamster.dk/~purple/robot/iBOT/report.pdf</ulink></releaseinfo>
+  </biblioentry>
+
+  <biblioentry id="bib.OSDN_2003">
+   <abbrev id="bib.OSDN_2003.abbrev">[OSDN, 2003]</abbrev>
+   <pubdate>2003</pubdate>
+   <title>SourceForge.net</title>
+   <releaseinfo><ulink url="http://sourceforge.net/">http://sourceforge.net/</ulink></releaseinfo>
+  </biblioentry>
+
+  <biblioentry id="bib.pendleton_1993">
+   <abbrev id="bib.pendleton_1993.abbrev">[Pendleton, 1993]</abbrev>
+   <author>
+    <firstname>R.C.</firstname>
+    <surname>Pendleton</surname>
+   </author>
+   <pubdate>1993</pubdate>
+   <title>Doing it Fast</title>
+   <releaseinfo><ulink url="http://www.gameprogrammer.com/4-fixed.html">http://www.gameprogrammer.com/4-fixed.html</ulink></releaseinfo>
+  </biblioentry>
+
+  <biblioentry id="bib.prechelt_1994">
+   <abbrev id="bib.prechelt_1994.abbrev">[Prechelt, 1994]</abbrev>
+   <author>
+    <firstname>L.</firstname>
+    <surname>Prechelt</surname>
+   </author>
+   <pubdate>1994</pubdate>
+   <title>Proben1</title>
+   <subtitle>A set of neural network benchmark problems and benchmarking rules</subtitle>
+  </biblioentry>
+
+  <biblioentry id="bib.riedmiller_1993">
+   <abbrev id="bib.riedmiller_1993.abbrev">[Riedmiller and Braun, 1993]</abbrev>
+   <author>
+    <firstname></firstname>
+    <surname>Riedmiller</surname>
+   </author>
+   <author>
+    <firstname></firstname>
+    <surname>Braun</surname>
+   </author>
+   <pubdate>1993</pubdate>
+   <title>A direct adaptive method for faster backpropagation learning: The RPROP algorithm</title>
+   <pagenums>586-591</pagenums>
+   <releaseinfo><ulink url="http://citeseer.nj.nec.com/riedmiller93direct.html">http://citeseer.nj.nec.com/riedmiller93direct.html</ulink></releaseinfo>
+  </biblioentry>
+
+<!-- TODO:
+
+Sarle, 2002 
+Sarle, W. S. (2002). 
+Neural network faq. 
+
+ftp://ftp.sas.com/pub/neural/FAQ2.html#A_binary. 
+
+Software, 2002 
+Software, W. (2002). 
+Ann++. 
+
+http://savannah.nongnu.org/projects/annpp/. 
+
+Tettamanzi and Tomassini, 2001 
+Tettamanzi, A. and Tomassini, M. (2001). 
+Soft Computing. 
+Springer-Verlag. 
+
+van Rossum, 2003 
+van Rossum, P. (2003). 
+Lightweight neural network. 
+
+http://lwneuralnet.sourceforge.net/. 
+
+van Waveren, 2001 
+van Waveren, J. P. (2001). 
+The quake III arena bot. 
+
+http://www.kbs.twi.tudelft.nl/Publications/MSc/2001-VanWaveren-MSc.html. 
+
+Zell, 2003 
+Zell, A. (2003). 
+Stuttgart neural network simulator. 
+
+http://www-ra.informatik.uni-tuebingen.de/SNNS/.
+-->
+ </bibliography>
 </book>
 
 <!-- Keep this comment at the end of the file
