@@ -1,4 +1,4 @@
-libfann (1.1) stable; urgency=low
+libfann (1.0.3) stable; urgency=low
 	* Added FANN_SIGMOID_STEPWISE activation function (much faster)
 	* Moved files around and altered some files for easyer benchmarking
 	* Added a benchmark pdf file, benchmarking the new behavior.
