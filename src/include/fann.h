@@ -116,6 +116,7 @@ void fann_set_learning_rate(struct fann *ann, float learning_rate);
  */
 #define FANN_SIGMOID 1
 #define FANN_THRESHOLD 2
+#define FANN_SIGMOID_STEPWISE 3
 
 /* Set the activation function for the hidden layers (default SIGMOID).
  */

@@ -46,6 +46,9 @@ int main()
 		num_neurons_hidden,
 		num_output);
 
+	fann_set_activation_function_hidden(ann, FANN_SIGMOID_STEPWISE);
+	fann_set_activation_function_output(ann, FANN_SIGMOID_STEPWISE);
+
 	printf("Training network.\n");
 
 	data = fann_read_train_from_file("xor.data");

@@ -45,6 +45,10 @@ void fann_save_train_internal(struct fann_train_data* data, char *filename, unsi
 int fann_compare_connections(const void* c1, const void* c2);
 void fann_seed_rand();
 
+void fann_initialise_result_array(struct fann *ann);
+void fann_update_stepwise_hidden(struct fann *ann);
+void fann_update_stepwise_output(struct fann *ann);
+
 /* called fann_max, in order to not interferre with predefined versions of max */
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))
 #define fann_min(x, y) (((x) < (y)) ? (x) : (y))
@@ -53,6 +57,10 @@ void fann_seed_rand();
 
 #define fann_abs(value) (((value) > 0) ? (value) : -(value))
 
+/* sigmoid as a stepwise linear function */
+#define fann_linear(v1, r1, v2, r2, value) ((((r2-r1) * (value-v1))/(v2-v1)) + r1)
+#define fann_sigmoid_stepwise(v1, v2, v3, v4, v5, v6, r1, r2, r3, r4, r5, r6, value, multiplier) (value < v5 ? (value < v3 ? (value < v2 ? (value < v1 ? 0 : fann_linear(v1, r1, v2, r2, value)) : fann_linear(v2, r2, v3, r3, value)) : (value < v4 ? fann_linear(v3, r3, v4, r4, value) : fann_linear(v4, r4, v5, r5, value))) : (value < v6 ? fann_linear(v5, r5, v6, r6, value) : multiplier))
+
 #ifdef FIXEDFANN
 
 #define fann_mult(x,y) ((x*y) >> decimal_point)
@@ -60,9 +68,6 @@ void fann_seed_rand();
 #define fann_random_weight() (fann_type)(fann_rand(-multiplier/10,multiplier/10))
 /* sigmoid calculated with use of floats, only as reference */
 #define fann_sigmoid(steepness, value) ((fann_type)(0.5+((1.0/(1.0 + exp(-2.0 * ((float)steepness/multiplier) * ((float)value/multiplier))))*multiplier)))
-/* sigmoid as a stepwise linear function */
-#define fann_linear(v1, r1, v2, r2, value) ((((r2-r1) * (value-v1))/(v2-v1)) + r1)
-#define fann_sigmoid_stepwise(v1, v2, v3, v4, v5, v6, r1, r2, r3, r4, r5, r6, value, multiplier) (value < v5 ? (value < v3 ? (value < v2 ? (value < v1 ? 0 : fann_linear(v1, r1, v2, r2, value)) : fann_linear(v2, r2, v3, r3, value)) : (value < v4 ? fann_linear(v3, r3, v4, r4, value) : fann_linear(v4, r4, v5, r5, value))) : (value < v6 ? fann_linear(v5, r5, v6, r6, value) : multiplier))
 #else
 
 #define fann_mult(x,y) (x*y)

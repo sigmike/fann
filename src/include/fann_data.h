@@ -30,7 +30,11 @@ struct fann_neuron
 	struct fann_neuron **connected_neurons;
 	unsigned int num_connections;
 	fann_type value;
+#ifdef __GNUC__
 }__attribute__((packed));
+#else
+}
+#endif
 
 /* A single layer in the neural network.
  */
@@ -90,7 +94,7 @@ struct fann
 	/* Used to choose which activation function to use
 	   
 	   Sometimes it can be smart, to set the activation function for the hidden neurons
-	   to THRESHOLD and the activation function for the output neurons to SIGMOID,
+	   to FANN_THRESHOLD and the activation function for the output neurons to FANN_SIGMOID,
 	   in this way you get a very fast network, that is still cabable of
 	   producing real valued output.
 	 */
@@ -111,16 +115,16 @@ struct fann
 	   Only used in special cases, since the decimal_point is much faster.
 	*/
 	unsigned int multiplier;
+#endif
 
-	/* When in fixed point, the sigmoid function is calculated as a stepwise linear
-	   function. In the activation_results array, the result is saved, and in the two values arrays,
-	   the values that gives the results are saved.
+	/* When in choosen (or in fixed point), the sigmoid function is
+	   calculated as a stepwise linear function. In the
+	   activation_results array, the result is saved, and in the
+	   two values arrays, the values that gives the results are saved.
 	 */
 	fann_type activation_results[6];
 	fann_type activation_hidden_values[6];
 	fann_type activation_output_values[6];
-
-#endif
 
 	/* Total number of connections.
 	 * very usefull, because the actual connections

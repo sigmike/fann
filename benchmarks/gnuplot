@@ -1,0 +1,118 @@
+set terminal postscript color solid
+set output "allplots.ps"
+
+set nologscale
+set grid
+
+set xlabel "Seconds of training"
+set ylabel "Mean square error"
+
+set logscale x
+#set output "building.ps"
+set title "building"
+plot "building_fann_train.out" title "fann train" with lines -1, \
+ "building_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "building_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "building_lwnn_train.out" title "lwnn train" with lines 3, \
+ "building_jneural_train.out" title "jneural train" with lines 4, \
+ "building_fann_test.out" title "fann test" with lines -1, \
+ "building_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "building_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "building_lwnn_test.out" title "lwnn test" with lines 3, \
+ "building_jneural_test.out" title "jneural test" with lines 4
+
+set logscale x
+#set output "card.ps"
+set title "card"
+plot "card_fann_train.out" title "fann train" with lines -1, \
+ "card_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "card_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "card_lwnn_train.out" title "lwnn train" with lines 3, \
+ "card_jneural_train.out" title "jneural train" with lines 4, \
+ "card_fann_test.out" title "fann test" with lines -1, \
+ "card_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "card_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "card_lwnn_test.out" title "lwnn test" with lines 3, \
+ "card_jneural_test.out" title "jneural test" with lines 4
+
+#set output "gene.ps"
+set title "gene"
+plot "gene_fann_train.out" title "fann train" with lines -1, \
+ "gene_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "gene_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "gene_lwnn_train.out" title "lwnn train" with lines 3, \
+ "gene_jneural_train.out" title "jneural train" with lines 4, \
+ "gene_fann_test.out" title "fann test" with lines -1, \
+ "gene_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "gene_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "gene_lwnn_test.out" title "lwnn test" with lines 3, \
+ "gene_jneural_test.out" title "jneural test" with lines 4
+
+set logscale
+#set output "mushroom.ps"
+set title "mushroom"
+plot "mushroom_fann_train.out" title "fann train" with lines -1, \
+ "mushroom_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "mushroom_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "mushroom_lwnn_train.out" title "lwnn train" with lines 3, \
+ "mushroom_jneural_train.out" title "jneural train" with lines 4, \
+ "mushroom_fann_test.out" title "fann test" with lines -1, \
+ "mushroom_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "mushroom_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "mushroom_lwnn_test.out" title "lwnn test" with lines 3, \
+ "mushroom_jneural_test.out" title "jneural test" with lines 4
+set nologscale
+
+set logscale x
+#set output "soybean.ps"
+set title "soybean"
+plot "soybean_fann_train.out" title "fann train" with lines -1, \
+ "soybean_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "soybean_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "soybean_lwnn_train.out" title "lwnn train" with lines 3, \
+ "soybean_jneural_train.out" title "jneural train" with lines 4, \
+ "soybean_fann_test.out" title "fann test" with lines -1, \
+ "soybean_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "soybean_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "soybean_lwnn_test.out" title "lwnn test" with lines 3, \
+ "soybean_jneural_test.out" title "jneural test" with lines 4
+
+set nologscale
+#set output "thyroid.ps"
+set title "thyroid"
+plot "thyroid_fann_train.out" title "fann train" with lines -1, \
+ "thyroid_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
+ "thyroid_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
+ "thyroid_lwnn_train.out" title "lwnn train" with lines 3, \
+ "thyroid_jneural_train.out" title "jneural train" with lines 4, \
+ "thyroid_fann_test.out" title "fann test" with lines -1, \
+ "thyroid_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
+ "thyroid_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
+ "thyroid_lwnn_test.out" title "lwnn test" with lines 3, \
+ "thyroid_jneural_test.out" title "jneural test" with lines 4
+
+set xlabel "Number of neurons in the four layers"
+set ylabel "Nanoseconds per connection"
+
+set logscale
+#set output "performance.ps"
+set title "Performance"
+plot "fann_performance.out" title "fann" with lines -1, \
+ "fann_stepwise_performance.out" title "fann (stepwise)" with lines 1, \
+ "fann_fixed_performance.out" title "fann (fix)" with lines 2, \
+ "lwnn_performance.out" title "lwnn" with lines 3, \
+ "jneural_performance.out" title "jneural" with lines 4
+
+#set logscale
+#set output "performance_arm.ps"
+#set title "Performance iPAQ"
+#plot "fann_performance_arm.out" title "fann" with lines -1, \
+# "fann_thres_performance_arm.out" title "fann (thres)" with lines 1, \
+# "fann_fixed_performance_arm.out" title "fann (fix)" with lines 2, \
+# "fann_noopt_performance_arm.out" title "fann (noopt)" with lines 5, \
+# "lwnn_performance_arm.out" title "lwnn" with lines 3, \
+# "jneural_performance_arm.out" title "jneural" with lines 4
+
+set output
+set terminal x11
+
