@@ -5,6 +5,13 @@ quality - Program to benchmark the quality of the training algorithms
 benchmark.sh - Shell file that runs a series of benchmarks
 gnuplot - File containing gnuplot commands for displaying graphs
 
+In order to run benchmarks, run:
+make
+./benchmarks.sh
+gnuplot < gnuplot
+
+A file named allplots.ps will display the benchmark graphs.
+
 In order to generate benchmarks against other libraries (jneural and
 lwneuralnet), these libraries need to be installed (they can be
 downloaded from http://voltar-confed.org/jneural/ and
