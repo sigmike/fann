@@ -131,21 +131,21 @@ void fann_update_stepwise_hidden(struct fann *ann)
 	switch(ann->activation_function_hidden){
 		case FANN_SIGMOID:
 		case FANN_SIGMOID_STEPWISE:
-			ann->activation_hidden_results[0] = 0.005;
-			ann->activation_hidden_results[1] = 0.05;
-			ann->activation_hidden_results[2] = 0.25;
-			ann->activation_hidden_results[3] = 0.75;
-			ann->activation_hidden_results[4] = 0.95;
-			ann->activation_hidden_results[5] = 0.995;	
+			ann->activation_hidden_results[0] = (fann_type)0.005;
+			ann->activation_hidden_results[1] = (fann_type)0.05;
+			ann->activation_hidden_results[2] = (fann_type)0.25;
+			ann->activation_hidden_results[3] = (fann_type)0.75;
+			ann->activation_hidden_results[4] = (fann_type)0.95;
+			ann->activation_hidden_results[5] = (fann_type)0.995;	
 			break;
 		case FANN_SIGMOID_SYMMETRIC:
 		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-			ann->activation_hidden_results[0] = -0.99;
-			ann->activation_hidden_results[1] = -0.9;
-			ann->activation_hidden_results[2] = -0.5;
-			ann->activation_hidden_results[3] = 0.5;
-			ann->activation_hidden_results[4] = 0.9;
-			ann->activation_hidden_results[5] = 0.99;
+			ann->activation_hidden_results[0] = (fann_type)-0.99;
+			ann->activation_hidden_results[1] = (fann_type)-0.9;
+			ann->activation_hidden_results[2] = (fann_type)-0.5;
+			ann->activation_hidden_results[3] = (fann_type)0.5;
+			ann->activation_hidden_results[4] = (fann_type)0.9;
+			ann->activation_hidden_results[5] = (fann_type)0.99;
 			break;
 		default:
 			/* the actiavation functions which do not have a stepwise function
@@ -190,11 +190,11 @@ void fann_update_stepwise_hidden(struct fann *ann)
 			case FANN_SIGMOID:
 				break;
 			case FANN_SIGMOID_STEPWISE:
-				ann->activation_hidden_values[i] = ((log(1.0/ann->activation_hidden_results[i] -1.0) * 1.0/-2.0) * 1.0/ann->activation_hidden_steepness);
+				ann->activation_hidden_values[i] = (fann_type)((log(1.0/ann->activation_hidden_results[i] -1.0) * 1.0/-2.0) * 1.0/ann->activation_hidden_steepness);
 				break;
 			case FANN_SIGMOID_SYMMETRIC:
 			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-				ann->activation_hidden_values[i] = ((log((1.0-ann->activation_hidden_results[i]) / (ann->activation_hidden_results[i]+1.0)) * 1.0/-2.0) * 1.0/ann->activation_hidden_steepness);
+				ann->activation_hidden_values[i] = (fann_type)((log((1.0-ann->activation_hidden_results[i]) / (ann->activation_hidden_results[i]+1.0)) * 1.0/-2.0) * 1.0/ann->activation_hidden_steepness);
 				break;
 		}
 #else
@@ -225,21 +225,21 @@ void fann_update_stepwise_output(struct fann *ann)
 	switch(ann->activation_function_output){
 		case FANN_SIGMOID:
 		case FANN_SIGMOID_STEPWISE:
-			ann->activation_output_results[0] = 0.005;
-			ann->activation_output_results[1] = 0.05;
-			ann->activation_output_results[2] = 0.25;
-			ann->activation_output_results[3] = 0.75;
-			ann->activation_output_results[4] = 0.95;
-			ann->activation_output_results[5] = 0.995;	
+			ann->activation_output_results[0] = (fann_type)0.005;
+			ann->activation_output_results[1] = (fann_type)0.05;
+			ann->activation_output_results[2] = (fann_type)0.25;
+			ann->activation_output_results[3] = (fann_type)0.75;
+			ann->activation_output_results[4] = (fann_type)0.95;
+			ann->activation_output_results[5] = (fann_type)0.995;	
 			break;
 		case FANN_SIGMOID_SYMMETRIC:
 		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-			ann->activation_output_results[0] = -0.99;
-			ann->activation_output_results[1] = -0.9;
-			ann->activation_output_results[2] = -0.5;
-			ann->activation_output_results[3] = 0.5;
-			ann->activation_output_results[4] = 0.9;
-			ann->activation_output_results[5] = 0.99;
+			ann->activation_output_results[0] = (fann_type)-0.99;
+			ann->activation_output_results[1] = (fann_type)-0.9;
+			ann->activation_output_results[2] = (fann_type)-0.5;
+			ann->activation_output_results[3] = (fann_type)0.5;
+			ann->activation_output_results[4] = (fann_type)0.9;
+			ann->activation_output_results[5] = (fann_type)0.99;
 			break;
 		default:
 			/* the actiavation functions which do not have a stepwise function
@@ -284,11 +284,11 @@ void fann_update_stepwise_output(struct fann *ann)
 			case FANN_SIGMOID:
 				break;
 			case FANN_SIGMOID_STEPWISE:
-				ann->activation_output_values[i] = ((log(1.0/ann->activation_output_results[i] -1.0) * 1.0/-2.0) * 1.0/ann->activation_output_steepness);
+				ann->activation_output_values[i] = (fann_type)((log(1.0/ann->activation_output_results[i] -1.0) * 1.0/-2.0) * 1.0/ann->activation_output_steepness);
 				break;
 			case FANN_SIGMOID_SYMMETRIC:
 			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-				ann->activation_output_values[i] = ((log((1.0-ann->activation_output_results[i]) / (ann->activation_output_results[i]+1.0)) * 1.0/-2.0) * 1.0/ann->activation_output_steepness);
+				ann->activation_output_values[i] = (fann_type)((log((1.0-ann->activation_output_results[i]) / (ann->activation_output_results[i]+1.0)) * 1.0/-2.0) * 1.0/ann->activation_output_steepness);
 				break;
 		}
 #else
