@@ -31,4 +31,4 @@ shuffle: shuffle.c
 	$(GCC) $(CFLAGS) $(LFLAGS) $< -o $@ -lfloatfann
 
 clean: 
-	rm -rf $(TARGETS) *.net *.out *_fixed_test_* *_fixed_train_*
+	rm -rf $(TARGETS) *.net *.out *_fixed_test_* *_fixed_train_* *~

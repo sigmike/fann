@@ -1,215 +1,284 @@
 set terminal postscript color solid
 set output "allplots.ps"
 
-set nologscale
 set grid
-
-set xlabel "Seconds of training"
-set ylabel "Mean square error"
-
-set logscale x
-#set output "building.ps"
-set title "building"
-plot "building_fann_train.out" title "fann train" with lines -1, \
- "building_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "building_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "building_lwnn_train.out" title "lwnn train" with lines 3, \
- "building_jneural_train.out" title "jneural train" with lines 4, \
- "building_fann_test.out" title "fann test" with lines -1, \
- "building_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "building_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "building_lwnn_test.out" title "lwnn test" with lines 3, \
- "building_jneural_test.out" title "jneural test" with lines 4
-
-set logscale x
-#set output "cancer.ps"
-set title "cancer"
-plot "cancer_fann_train.out" title "fann train" with lines -1, \
- "cancer_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "cancer_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "cancer_lwnn_train.out" title "lwnn train" with lines 3, \
- "cancer_jneural_train.out" title "jneural train" with lines 4, \
- "cancer_fann_test.out" title "fann test" with lines -1, \
- "cancer_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "cancer_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "cancer_lwnn_test.out" title "lwnn test" with lines 3, \
- "cancer_jneural_test.out" title "jneural test" with lines 4
-
-set logscale x
-#set output "card.ps"
-set title "card"
-plot "card_fann_train.out" title "fann train" with lines -1, \
- "card_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "card_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "card_lwnn_train.out" title "lwnn train" with lines 3, \
- "card_jneural_train.out" title "jneural train" with lines 4, \
- "card_fann_test.out" title "fann test" with lines -1, \
- "card_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "card_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "card_lwnn_test.out" title "lwnn test" with lines 3, \
- "card_jneural_test.out" title "jneural test" with lines 4
-
-set logscale x
-#set output "diabetes.ps"
-set title "diabetes"
-plot "diabetes_fann_train.out" title "fann train" with lines -1, \
- "diabetes_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "diabetes_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "diabetes_lwnn_train.out" title "lwnn train" with lines 3, \
- "diabetes_jneural_train.out" title "jneural train" with lines 4, \
- "diabetes_fann_test.out" title "fann test" with lines -1, \
- "diabetes_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "diabetes_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "diabetes_lwnn_test.out" title "lwnn test" with lines 3, \
- "diabetes_jneural_test.out" title "jneural test" with lines 4
-
-set logscale x
-#set output "flare.ps"
-set title "flare"
-plot "flare_fann_train.out" title "fann train" with lines -1, \
- "flare_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "flare_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "flare_lwnn_train.out" title "lwnn train" with lines 3, \
- "flare_jneural_train.out" title "jneural train" with lines 4, \
- "flare_fann_test.out" title "fann test" with lines -1, \
- "flare_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "flare_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "flare_lwnn_test.out" title "lwnn test" with lines 3, \
- "flare_jneural_test.out" title "jneural test" with lines 4
-
-#set output "gene.ps"
-set title "gene"
-plot "gene_fann_train.out" title "fann train" with lines -1, \
- "gene_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "gene_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "gene_lwnn_train.out" title "lwnn train" with lines 3, \
- "gene_jneural_train.out" title "jneural train" with lines 4, \
- "gene_fann_test.out" title "fann test" with lines -1, \
- "gene_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "gene_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "gene_lwnn_test.out" title "lwnn test" with lines 3, \
- "gene_jneural_test.out" title "jneural test" with lines 4
-
-set logscale x
-#set output "glass.ps"
-set title "glass"
-plot "glass_fann_train.out" title "fann train" with lines -1, \
- "glass_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "glass_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "glass_lwnn_train.out" title "lwnn train" with lines 3, \
- "glass_jneural_train.out" title "jneural train" with lines 4, \
- "glass_fann_test.out" title "fann test" with lines -1, \
- "glass_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "glass_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "glass_lwnn_test.out" title "lwnn test" with lines 3, \
- "glass_jneural_test.out" title "jneural test" with lines 4
-
-set logscale x
-#set output "heart.ps"
-set title "heart"
-plot "heart_fann_train.out" title "fann train" with lines -1, \
- "heart_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "heart_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "heart_lwnn_train.out" title "lwnn train" with lines 3, \
- "heart_jneural_train.out" title "jneural train" with lines 4, \
- "heart_fann_test.out" title "fann test" with lines -1, \
- "heart_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "heart_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "heart_lwnn_test.out" title "lwnn test" with lines 3, \
- "heart_jneural_test.out" title "jneural test" with lines 4
-
-set logscale x
-#set output "horse.ps"
-set title "horse"
-plot "horse_fann_train.out" title "fann train" with lines -1, \
- "horse_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "horse_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "horse_lwnn_train.out" title "lwnn train" with lines 3, \
- "horse_jneural_train.out" title "jneural train" with lines 4, \
- "horse_fann_test.out" title "fann test" with lines -1, \
- "horse_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "horse_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "horse_lwnn_test.out" title "lwnn test" with lines 3, \
- "horse_jneural_test.out" title "jneural test" with lines 4
-
-set logscale
-#set output "mushroom.ps"
-set title "mushroom"
-plot "mushroom_fann_train.out" title "fann train" with lines -1, \
- "mushroom_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "mushroom_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "mushroom_lwnn_train.out" title "lwnn train" with lines 3, \
- "mushroom_jneural_train.out" title "jneural train" with lines 4, \
- "mushroom_fann_test.out" title "fann test" with lines -1, \
- "mushroom_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "mushroom_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "mushroom_lwnn_test.out" title "lwnn test" with lines 3, \
- "mushroom_jneural_test.out" title "jneural test" with lines 4
-set nologscale
-
-set logscale x
-#set output "robot.ps"
-set title "robot"
-plot "robot_fann_train.out" title "fann train" with lines -1, \
- "robot_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "robot_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "robot_lwnn_train.out" title "lwnn train" with lines 3, \
- "robot_jneural_train.out" title "jneural train" with lines 4, \
- "robot_fann_test.out" title "fann test" with lines -1, \
- "robot_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "robot_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "robot_lwnn_test.out" title "lwnn test" with lines 3, \
- "robot_jneural_test.out" title "jneural test" with lines 4
-
-set logscale x
-#set output "soybean.ps"
-set title "soybean"
-plot "soybean_fann_train.out" title "fann train" with lines -1, \
- "soybean_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "soybean_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "soybean_lwnn_train.out" title "lwnn train" with lines 3, \
- "soybean_jneural_train.out" title "jneural train" with lines 4, \
- "soybean_fann_test.out" title "fann test" with lines -1, \
- "soybean_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "soybean_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "soybean_lwnn_test.out" title "lwnn test" with lines 3, \
- "soybean_jneural_test.out" title "jneural test" with lines 4
-
-set nologscale
-#set output "thyroid.ps"
-set title "thyroid"
-plot "thyroid_fann_train.out" title "fann train" with lines -1, \
- "thyroid_fann_stepwise_train.out" title "fann (stepwise) train" with lines 1, \
- "thyroid_fann_fixed_train.out" title "fann (fix) train" with lines 2, \
- "thyroid_lwnn_train.out" title "lwnn train" with lines 3, \
- "thyroid_jneural_train.out" title "jneural train" with lines 4, \
- "thyroid_fann_test.out" title "fann test" with lines -1, \
- "thyroid_fann_stepwise_test.out" title "fann (stepwise) test" with lines 1, \
- "thyroid_fann_fixed_test.out" title "fann (fix) test" with lines 2, \
- "thyroid_lwnn_test.out" title "lwnn test" with lines 3, \
- "thyroid_jneural_test.out" title "jneural test" with lines 4
 
 set xlabel "Number of neurons in the four layers"
 set ylabel "Nanoseconds per connection"
 
 set logscale
 #set output "performance.ps"
-set title "Performance"
+set title "Performance of execution"
 plot "fann_performance.out" title "fann" with lines -1, \
  "fann_stepwise_performance.out" title "fann (stepwise)" with lines 1, \
  "fann_fixed_performance.out" title "fann (fix)" with lines 2, \
  "lwnn_performance.out" title "lwnn" with lines 3, \
  "jneural_performance.out" title "jneural" with lines 4
 
-#set logscale
-#set output "performance_arm.ps"
-#set title "Performance iPAQ"
-#plot "fann_performance_arm.out" title "fann" with lines -1, \
-# "fann_thres_performance_arm.out" title "fann (thres)" with lines 1, \
-# "fann_fixed_performance_arm.out" title "fann (fix)" with lines 2, \
-# "fann_noopt_performance_arm.out" title "fann (noopt)" with lines 5, \
-# "lwnn_performance_arm.out" title "lwnn" with lines 3, \
-# "jneural_performance_arm.out" title "jneural" with lines 4
+set nologscale
+
+set xlabel "Seconds of training"
+set ylabel "Mean square error"
+
+#set logscale x
+#set output "building.ps"
+set title "building"
+plot "building.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "building.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "building.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "building.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "building.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "building.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "building.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "building.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "building.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "building.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "building.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "building.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "building.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "building.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "building.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "building.jneural.test.out" title "jneural incremental test" with lines 9
+
+#set logscale x
+#set output "cancer.ps"
+set title "cancer"
+plot "cancer.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "cancer.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "cancer.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "cancer.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "cancer.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "cancer.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "cancer.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "cancer.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "cancer.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "cancer.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "cancer.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "cancer.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "cancer.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "cancer.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "cancer.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "cancer.jneural.test.out" title "jneural incremental test" with lines 9
+
+#set logscale x
+#set output "card.ps"
+set title "card"
+plot "card.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "card.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "card.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "card.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "card.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "card.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "card.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "card.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "card.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "card.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "card.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "card.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "card.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "card.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "card.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "card.jneural.test.out" title "jneural incremental test" with lines 9
+
+#set logscale x
+#set output "diabetes.ps"
+set title "diabetes"
+plot "diabetes.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "diabetes.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "diabetes.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "diabetes.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "diabetes.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "diabetes.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "diabetes.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "diabetes.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "diabetes.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "diabetes.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "diabetes.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "diabetes.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "diabetes.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "diabetes.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "diabetes.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "diabetes.jneural.test.out" title "jneural incremental test" with lines 9
+
+#set logscale x
+#set output "flare.ps"
+set title "flare"
+plot "flare.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "flare.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "flare.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "flare.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "flare.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "flare.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "flare.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "flare.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "flare.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "flare.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "flare.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "flare.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "flare.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "flare.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "flare.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "flare.jneural.test.out" title "jneural incremental test" with lines 9
+
+#set logscale x
+#set output "gene.ps"
+set title "gene"
+plot "gene.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "gene.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "gene.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "gene.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "gene.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "gene.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "gene.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "gene.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "gene.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "gene.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "gene.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "gene.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "gene.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "gene.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "gene.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "gene.jneural.test.out" title "jneural incremental test" with lines 9
+
+#set logscale x
+#set output "glass.ps"
+set title "glass"
+plot "glass.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "glass.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "glass.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "glass.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "glass.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "glass.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "glass.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "glass.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "glass.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "glass.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "glass.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "glass.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "glass.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "glass.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "glass.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "glass.jneural.test.out" title "jneural incremental test" with lines 9
+
+#set logscale x
+#set output "heart.ps"
+set title "heart"
+plot "heart.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "heart.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "heart.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "heart.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "heart.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "heart.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "heart.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "heart.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "heart.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "heart.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "heart.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "heart.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "heart.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "heart.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "heart.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "heart.jneural.test.out" title "jneural incremental test" with lines 9
+
+#set logscale x
+#set output "horse.ps"
+set title "horse"
+plot "horse.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "horse.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "horse.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "horse.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "horse.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "horse.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "horse.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "horse.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "horse.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "horse.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "horse.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "horse.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "horse.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "horse.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "horse.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "horse.jneural.test.out" title "jneural incremental test" with lines 9
+
+#set logscale x
+#set output "mushroom.ps"
+set title "mushroom"
+plot "mushroom.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "mushroom.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "mushroom.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "mushroom.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "mushroom.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "mushroom.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "mushroom.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "mushroom.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "mushroom.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "mushroom.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "mushroom.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "mushroom.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "mushroom.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "mushroom.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "mushroom.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "mushroom.jneural.test.out" title "jneural incremental test" with lines 9
+
+#set logscale x
+#set output "robot.ps"
+set title "robot"
+plot "robot.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "robot.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "robot.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "robot.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "robot.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "robot.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "robot.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "robot.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "robot.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "robot.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "robot.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "robot.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "robot.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "robot.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "robot.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "robot.jneural.test.out" title "jneural incremental test" with lines 9
+
+#set logscale x
+#set output "soybean.ps"
+set title "soybean"
+plot "soybean.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "soybean.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "soybean.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "soybean.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "soybean.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "soybean.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "soybean.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "soybean.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "soybean.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "soybean.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "soybean.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "soybean.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "soybean.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "soybean.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "soybean.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "soybean.jneural.test.out" title "jneural incremental test" with lines 9
+
+#set logscale x
+#set output "thyroid.ps"
+set title "thyroid"
+plot "thyroid.fann_rprop.train.out" title "fann rprop train" with lines -1, \
+ "thyroid.fann_rprop.fixed_train.out" title "fann rprop (fixed) train" with lines 1, \
+ "thyroid.fann_rprop_stepwise.train.out" title "fann rprop (stepwise) train" with lines 2, \
+ "thyroid.fann_quickprop.train.out" title "fann quickprop train" with lines 3, \
+ "thyroid.fann_batch.train.out" title "fann batch train" with lines 4, \
+ "thyroid.fann_incremental.train.out" title "fann incremental train" with lines 5, \
+ "thyroid.lwnn.train.out" title "lwnn incremental train" with lines 8, \
+ "thyroid.jneural.train.out" title "jneural incremental train" with lines 9, \
+ "thyroid.fann_rprop.test.out" title "fann rprop test" with lines -1, \
+ "thyroid.fann_rprop.fixed_test.out" title "fann rprop (fixed) test" with lines 1, \
+ "thyroid.fann_rprop_stepwise.test.out" title "fann rprop (stepwise) test" with lines 2, \
+ "thyroid.fann_quickprop.test.out" title "fann quickprop test" with lines 3, \
+ "thyroid.fann_batch.test.out" title "fann batch test" with lines 4, \
+ "thyroid.fann_incremental.test.out" title "fann incremental test" with lines 5, \
+ "thyroid.lwnn.test.out" title "lwnn incremental test" with lines 8, \
+ "thyroid.jneural.test.out" title "jneural incremental test" with lines 9
 
 set output
 set terminal x11

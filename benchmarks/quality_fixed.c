@@ -48,6 +48,8 @@ int main(int argc, char* argv[])
 		test_out = fopen(argv[4], "w");
 	}
 
+	fprintf(stderr, "Quality test of fixed point ");
+	
 	for(j = 5; j < argc; j++){
 		ann = fann_create_from_file(argv[j]);
 
@@ -76,6 +78,8 @@ int main(int argc, char* argv[])
 
 		fann_destroy(ann);
 	}
+
+	fprintf(stderr, "\n");
 	
 	return 0;
 }

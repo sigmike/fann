@@ -125,11 +125,13 @@ void quality_benchmark_jneural(
 		fprintf(stderr, ".");
 	}
 
+	fprintf(stderr, " epochs: %d, epochs/sec: %f", epochs, epochs/total_elapsed);
+
 	delete ann;
 }
 #endif
 
-void quality_benchmark_fann(bool stepwise,
+void quality_benchmark_fann(bool stepwise, unsigned int training_algorithm,
 	char *filename,
 	struct fann_train_data *train_data,
 	struct fann_train_data *test_data,
@@ -155,9 +157,11 @@ void quality_benchmark_fann(bool stepwise,
 			num_input, num_neurons_hidden1, num_output);
 	}
 
+	fann_set_training_algorithm(ann, training_algorithm);
+	
 	if(stepwise){ 
-		fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
-		fann_set_activation_function_output(ann, FANN_SIGMOID);
+		fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
+		fann_set_activation_function_output(ann, FANN_SIGMOID_STEPWISE);
 	}else{
 		fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
 		fann_set_activation_function_output(ann, FANN_SIGMOID);
@@ -170,11 +174,7 @@ void quality_benchmark_fann(bool stepwise,
 		elapsed = 0;
 		start_timer();
 		while(elapsed < (double)seconds_between_reports){
-			if(stepwise){
-				fann_train_epoch_irpropm(ann, train_data);
-			} else {
-				fann_train_epoch_quickprop(ann, train_data);
-			}
+			fann_train_epoch(ann, train_data);
 
 			elapsed = time_elapsed();
 			epochs++;
@@ -203,7 +203,7 @@ void quality_benchmark_fann(bool stepwise,
 
 		/* Save the data as fixed point, to allow for drawing of
 		   a fixed point graph */
-		if(!stepwise){
+		if(filename){
 			/* buffer overflow could occur here */
 			sprintf(fixed_point_file, "%05d_%f_%s_fixed.net", epochs, total_elapsed, filename);
 			decimal_point = fann_save_to_fixed(ann, fixed_point_file);
@@ -215,6 +215,8 @@ void quality_benchmark_fann(bool stepwise,
 			fann_save_train_to_fixed(test_data, fixed_point_file, decimal_point);
 		}
 	}
+
+	fprintf(stderr, " epochs: %d, epochs/sec: %f", epochs, epochs/total_elapsed);
 
 	fann_destroy(ann);	
 }
@@ -293,6 +295,8 @@ void quality_benchmark_lwnn(
 		fprintf(stderr, ".");
 	}
 
+	fprintf(stderr, " epochs: %d, epochs/sec: %f", epochs, epochs/total_elapsed);
+
 	net_free(ann);
 }
 #endif
@@ -335,14 +339,50 @@ int main(int argc, char* argv[])
 
 	fprintf(stderr, "Quality test of %s %s ", argv[1], argv[2]);
 
-	if(strcmp(argv[1], "fann") == 0){
-		quality_benchmark_fann(false, argv[4], train_data, test_data,
+	if(strcmp(argv[1], "fann_incremental") == 0){
+		quality_benchmark_fann(false, FANN_TRAIN_INCREMENTAL, NULL, train_data, test_data,
 			train_out, test_out,
 			train_data->num_input, num_neurons_hidden1,
 			num_neurons_hidden2, train_data->num_output,
 			seconds_of_training, seconds_between_reports);
-	}else if(strcmp(argv[1], "fann_stepwise") == 0){
-		quality_benchmark_fann(true, NULL, train_data, test_data,
+	}else if(strcmp(argv[1], "fann_incremental_stepwise") == 0){
+		quality_benchmark_fann(true, FANN_TRAIN_INCREMENTAL, NULL, train_data, test_data,
+			train_out, test_out,
+			train_data->num_input, num_neurons_hidden1,
+			num_neurons_hidden2, train_data->num_output,
+			seconds_of_training, seconds_between_reports);
+	}else if(strcmp(argv[1], "fann_quickprop") == 0){
+		quality_benchmark_fann(false, FANN_TRAIN_QUICKPROP, NULL, train_data, test_data,
+			train_out, test_out,
+			train_data->num_input, num_neurons_hidden1,
+			num_neurons_hidden2, train_data->num_output,
+			seconds_of_training, seconds_between_reports);
+	}else if(strcmp(argv[1], "fann_quickprop_stepwise") == 0){
+		quality_benchmark_fann(true, FANN_TRAIN_QUICKPROP, NULL, train_data, test_data,
+			train_out, test_out,
+			train_data->num_input, num_neurons_hidden1,
+			num_neurons_hidden2, train_data->num_output,
+			seconds_of_training, seconds_between_reports);
+	}else if(strcmp(argv[1], "fann_batch") == 0){
+		quality_benchmark_fann(false, FANN_TRAIN_BATCH, NULL, train_data, test_data,
+			train_out, test_out,
+			train_data->num_input, num_neurons_hidden1,
+			num_neurons_hidden2, train_data->num_output,
+			seconds_of_training, seconds_between_reports);
+	}else if(strcmp(argv[1], "fann_batch_stepwise") == 0){
+		quality_benchmark_fann(true, FANN_TRAIN_BATCH, NULL, train_data, test_data,
+			train_out, test_out,
+			train_data->num_input, num_neurons_hidden1,
+			num_neurons_hidden2, train_data->num_output,
+			seconds_of_training, seconds_between_reports);
+	}else if(strcmp(argv[1], "fann_rprop") == 0){
+		quality_benchmark_fann(false, FANN_TRAIN_RPROP, argv[4], train_data, test_data,
+			train_out, test_out,
+			train_data->num_input, num_neurons_hidden1,
+			num_neurons_hidden2, train_data->num_output,
+			seconds_of_training, seconds_between_reports);
+	}else if(strcmp(argv[1], "fann_rprop_stepwise") == 0){
+		quality_benchmark_fann(true, FANN_TRAIN_RPROP, NULL, train_data, test_data,
 			train_out, test_out,
 			train_data->num_input, num_neurons_hidden1,
 			num_neurons_hidden2, train_data->num_output,
