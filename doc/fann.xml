@@ -1,3 +1,4 @@
+<!-- $Id: fann.xml,v 1.2 2004/02/14 21:21:18 tadpole9 Exp $ -->
 <!-- To compile this file, use
  jw -b html -o html fann.xml
  -->
@@ -355,6 +356,81 @@ int main()
 
   <section id="api.sec.train_algo">
    <title>Training Algorithms</title>
+
+   <refentry id="api.fann_train">
+    <refnamediv>
+     <refname>fann_train</refname>
+     <refpurpose>Train an ANN.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+      <methodsynopsis>
+       <type>void</type><methodname>fann_train</methodname>
+       <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+       <methodparam><type>fann_type *</type><parameter>input</parameter></methodparam>
+       <methodparam><type>fann_type *</type><parameter>output</parameter></methodparam>
+      </methodsynopsis>
+     <para>
+      <function>fann_train</function> will train one iteration with a set of inputs, and
+      a set of desired outputs.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_test">
+    <refnamediv>
+     <refname>fann_test</refname>
+     <refpurpose>Tests an ANN.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+      <methodsynopsis>
+       <type>fann_type *</type><methodname>fann_test</methodname>
+       <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+       <methodparam><type>fann_type *</type><parameter>input</parameter></methodparam>
+       <methodparam><type>fann_type *</type><parameter>desired_error</parameter></methodparam>
+      </methodsynopsis>
+     <para>
+      Test with a set of inputs, and a set of desired outputs.
+      This operation updates the mean square error, but does not
+      change the network in any way.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_get_MSE">
+    <refnamediv>
+     <refname>fann_get_MSE</refname>
+     <refpurpose>Return the mean square error of an ANN.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+      <methodsynopsis>
+       <type>float</type><methodname>fann_get_MSE</methodname>
+       <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      </methodsynopsis>
+     <para>
+      Reads the mean square error from the network.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_reset_MSE">
+    <refnamediv>
+     <refname>fann_reset_MSE</refname>
+     <refpurpose>Reset the mean square error of an ANN.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+      <methodsynopsis>
+       <type>void</type><methodname>fann_reset_MSE</methodname>
+       <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      </methodsynopsis>
+     <para>
+      Resets the mean square error from the network.
+     </para>
+    </refsect1>
+   </refentry>
   </section>
 
   <section id="api.sec.train_data">
@@ -369,7 +445,7 @@ int main()
    <title>Error Handling</title>
   </section>
 
-  <section>
+  <section id="api.sec.internal">
    <title>Internal Functions</title>
    <section id="api.sec.create_destroy.internal">
     <title>Creation And Destruction</title>
@@ -409,12 +485,91 @@ int main()
        <methodparam><type>unsigned int</type><parameter>save_as_fixed</parameter></methodparam>
        </methodsynopsis>
       <para>
-       <function>fann_allocate_structure</function> is used internally to create a
-       <type>struct fann</type>.
+       <function>fann_save_internal_fd</function> is used internally to save an ANN to a file.
      </para>
      </refsect1>
     </refentry>
+
+    <refentry id="api.fann_save_internal_fd">
+     <refnamediv>
+     <refname>fann_save_internal_fd</refname>
+      <refpurpose>Save an ANN to a file descriptor.</refpurpose>
+     </refnamediv>
+     <refsect1>
+      <title>Description</title>
+       <methodsynopsis>
+        <type>int</type><methodname>fann_save_internal_fd</methodname>
+        <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+        <methodparam><type>FILE *</type><parameter>conf</parameter></methodparam>
+        <methodparam><type>const char *</type><parameter>configuration_file</parameter></methodparam>
+       <methodparam><type>unsigned int</type><parameter>save_as_fixed</parameter></methodparam>
+       </methodsynopsis>
+      <para>
+       <function>fann_save_internal_fd</function> is used internally to save an ANN to a location pointed to by
+       <parameter>conf</parameter>. <parameter>configuration_file</parameter> is the name of the file, used only
+       for debugging purposes.
+     </para>
+     </refsect1>
+    </refentry>
+
+    <refentry id="api.fann_create_from_fd">
+     <refnamediv>
+     <refname>fann_create_from_fd</refname>
+      <refpurpose>Load an ANN from a file descriptor.</refpurpose>
+     </refnamediv>
+     <refsect1>
+      <title>Description</title>
+       <methodsynopsis>
+        <type>struct fann *</type><methodname>fann_create_from_fd</methodname>
+        <methodparam><type>FILE *</type><parameter>conf</parameter></methodparam>
+        <methodparam><type>const char *</type><parameter>configuration_file</parameter></methodparam>
+       </methodsynopsis>
+      <para>
+       <function>fann_create_from_fd</function> will load an ANN from a file descriptor.
+      </para>
+     </refsect1>
+    </refentry>
    </section>
+  </section>
+
+  <section id="api.sec.deprecated">
+   <title>Deprecated Functions</title>
+
+   <refentry id="api.fann_get_error">
+    <refnamediv>
+     <refname>fann_get_error</refname>
+     <refpurpose>Return the mean square error of an ANN.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+      <methodsynopsis>
+       <type>float</type><methodname>fann_get_error</methodname>
+       <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      </methodsynopsis>
+     <para>
+      This function is deprecated and will be removed in a future version. Use
+      <link linkend="api.fann_get_MSE"><function>fann_get_MSE</function></link> instead.
+     </para>
+    </refsect1>
+   </refentry>
+
+   <refentry id="api.fann_reset_error">
+    <refnamediv>
+     <refname>fann_get_error</refname>
+     <refpurpose>Reset the mean square error of an ANN.</refpurpose>
+    </refnamediv>
+    <refsect1>
+     <title>Description</title>
+      <methodsynopsis>
+       <type>void</type><methodname>fann_reset_error</methodname>
+       <methodparam><type>struct fann *</type><parameter>ann</parameter></methodparam>
+      </methodsynopsis>
+     <para>
+      This function is deprecated and will be removed in a future version. Use
+      <link linkend="api.fann_reset_MSE"><function>fann_reset_MSE</function></link> instead.
+     </para>
+    </refsect1>
+   </refentry>
   </section>
  </chapter>
 
