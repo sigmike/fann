@@ -74,7 +74,7 @@ void fann_update_stepwise_output(struct fann *ann);
 #define fann_div(x,y) (x/y)
 #define fann_random_weight() (fann_rand(-0.1,0.1))
 #define fann_sigmoid(steepness, value) (1.0/(1.0 + exp(-2.0 * steepness * value)))
-#define fann_sigmoid_derive(steepness, value) ((2.0 * steepness * value * (1.0 - value)) + 0.10) /* the plus is to avoid flat spots */
+#define fann_sigmoid_derive(steepness, value) ((2.0 * steepness * value * (1.0 - value)) + 0.01) /* the plus is a trick to the derived function, to avoid getting stuck on flat spots */
 
 #endif
 
