@@ -1,7 +1,7 @@
 # This makefile is on purpose not made with configure, to show how to use the library
 # The make file requires that the fann library is installed (see ../README)
 
-TARGETS = xor_train xor_test xor_test_fixed simple_train steepness_train simple_test 
+TARGETS = xor_train xor_test xor_test_fixed simple_train steepness_train simple_test
 DEBUG_TARGETS = xor_train_debug xor_test_debug xor_test_fixed_debug
 
 all: $(TARGETS)
@@ -45,7 +45,7 @@ rundebugtest: $(DEBUG_TARGETS)
 
 debug: $(DEBUG_TARGETS)
 
-%_debug: %.c Makefile
+%_debug: %.c Makefile ../src/*c ../src/include/*h
 	gcc -O -ggdb -lm -DDEBUG -I../src/ -I../src/include/ ../src/floatfann.c $< -o $@
 
 %_fixed_debug: %.c Makefile

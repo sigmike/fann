@@ -34,7 +34,7 @@ int main()
 	const float learning_rate = (const float)0.7;
 	const unsigned int num_layers = 3;
 	const unsigned int num_neurons_hidden = 96;
-	const float desired_error = (const float)0.0003;
+	const float desired_error = (const float)0.001;
 	const unsigned int max_iterations = 300000;
 	const unsigned int iterations_between_reports = 10;
 	struct fann *ann;
@@ -52,9 +52,6 @@ int main()
 		num_neurons_hidden,
 		train_data->num_output);
 
-	fann_set_activation_function_hidden(ann, FANN_SIGMOID);
-	fann_set_activation_function_output(ann, FANN_SIGMOID);
-	
 	printf("Training network.\n");
 
 	fann_train_on_data(ann, train_data, max_iterations, iterations_between_reports, desired_error);

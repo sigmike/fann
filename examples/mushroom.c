@@ -54,6 +54,9 @@ int main()
 
 	printf("Training network.\n");
 
+	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
+	fann_set_activation_function_output(ann, FANN_SIGMOID_STEPWISE);
+
 	fann_train_on_data(ann, train_data, max_iterations, iterations_between_reports, desired_error);
 	
 	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback);*/
