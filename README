@@ -1,10 +1,21 @@
 For documentation please see: doc/fann_doc_complete_1.0.pdf
 
-For installation please see INSTALL
+For installation do the following:
+type command: ./configure
+type command: make
+Now you would like to be root in order to install
+type command: su
+type command: make install
+type command: exit
+Now you are not root anymore, and you can test the library.
+type command: cd examples
+type command: make runtest
+
+For further installation instructions see: INSTALL
 
 For example programs please see:
-src/test/simple_train.c
-src/test/simple_test_float.c
+examples/simple_train.c
+examples/simple_test_float.c
 
 For the newest version of this library please go to:
 http://sourceforge.net/projects/fann/

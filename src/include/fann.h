@@ -19,16 +19,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 /* This file defines the user interface to the fann library.
    It is included from fixedfann.h, floatfann.h and doublefann.h and should
-   NOT be included directly.
+   NOT be included directly. If included directly it will react as if
+   floatfann.h was included.
 */
 
 #ifndef FANN_INCLUDE
-#include "floatfann.h"
+/* just to allow for inclusion of fann.h in normal stuations where only floats are needed */
+#ifdef FIXEDFANN
+#include "fixedfann.h"
 #else
+#include "floatfann.h"
+#endif /* FIXEDFANN  */
 
+#else
 
 #include "fann_data.h"
 #include "fann_internal.h"
+
+#ifndef __fann_h__
+#define __fann_h__
 
 #ifdef __cplusplus
 extern "C" {
@@ -252,5 +261,7 @@ unsigned int fann_get_multiplier(struct fann *ann);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
+
+#endif /* __fann_h__ */
 
 #endif /* NOT FANN_INCLUDE */
