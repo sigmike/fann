@@ -2,7 +2,7 @@
 # The make file requires that the fann library is installed (see ../README)
 
 TARGETS = xor_train xor_test xor_test_fixed simple_train steepness_train simple_test 
-DEBUG_TARGETS = xor_train_debug xor_test_debug
+DEBUG_TARGETS = xor_train_debug xor_test_debug xor_test_fixed_debug
 
 all: $(TARGETS)
 
@@ -30,6 +30,27 @@ runtest: $(TARGETS)
 
 #below this line is only for debugging the fann library
 
+rundebugtest: $(DEBUG_TARGETS)
+	@echo
+	@echo Training network
+	./xor_train_debug
+
+	@echo
+	@echo Testing network with floats
+	./xor_test_debug
+
+	@echo
+	@echo Testing network with fixed points
+	./xor_test_fixed_debug
+
+debug: $(DEBUG_TARGETS)
+
+%_debug: %.c Makefile
+	gcc -O -ggdb -lm -DDEBUG -I../src/ -I../src/include/ ../src/floatfann.c $< -o $@
+
+%_fixed_debug: %.c Makefile
+	gcc -O -ggdb -lm -DDEBUG -DFIXEDFANN -I../src/ -I../src/include/ ../src/fixedfann.c $< -o $@
+
 rundebug: $(TARGETS)
 	@echo
 	@echo Training network
@@ -43,9 +64,4 @@ rundebug: $(TARGETS)
 	@echo Testing network with fixed points
 	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_test_fixed
 
-
-debug: $(DEBUG_TARGETS)
-
-%_debug: %.c Makefile
-	gcc -O -ggdb -lm -DDEBUG -I../src/ -I../src/include/ ../src/floatfann.c $< -o $@
 
