@@ -5,7 +5,6 @@
 * More advanced error printing.
 * More checks to see if train data is properly formatted in the file (some have experienced nasty problems because a number was missing in one line).
 * Good reference manual.
-* RPM and DEB packaging.
-* pkg-config stuff.
+* DEB packaging.
 * Make it easy to use in windows compilers as Borland C++ and MS Visual C++.
 * Convert existing comments to doxygen-friendly comments.
