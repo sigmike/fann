@@ -80,7 +80,21 @@ extern "C" {
      int FANN_API user_callback(unsigned int epochs, float error)
 */
 
-#ifdef _MSC_VER
+/*
+ The following sets the default for MSVC++ 2003 or later to use
+ the fann dll's. To use a lib or fixedfann.c, floatfann.c or doublefann.c
+ with those compilers FANN_NO_DLL has to be defined before
+ including the fann headers.
+ The default for previous MSVC compilers such as VC++ 6 is not
+ to use dll's. To use dll's FANN_USE_DLL has to be defined before
+ including the fann headers.
+*/
+#if (_MSC_VER > 1300)
+#ifndef FANN_NO_DLL
+#define FANN_USE_DLL
+#endif /* FANN_USE_LIB */
+#endif /* _MSC_VER */
+#if defined(_MSC_VER) && (defined(FANN_USE_DLL) || defined(FANN_DLL_EXPORTS))
 #ifdef FANN_DLL_EXPORTS
 #define FANN_EXTERNAL __declspec(dllexport)
 #else
