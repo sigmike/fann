@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.7 2004/03/02 04:52:12 tadpole9 Exp $ -->
+<!-- $Id: fann.xml,v 1.8 2004/03/05 23:43:43 tadpole9 Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -275,8 +275,8 @@ int main()
 
       <para>
 	The mean square error value is calculated while the ANN is being trained. Some functions are implemented, to use and manipulate this error value. The
-	<link linkend="api.fann_get_error"><function>fann_get_error</function></link> function returns the error value and the
-	<link linkend="api.fann_reset_error"><function>fann_reset_error</function></link> resets the error value. The following explains how the mean square error
+	<link linkend="api.fann_get_MSE"><function>fann_get_MSE</function></link> function returns the error value and the
+	<link linkend="api.fann_reset_MSE"><function>fann_reset_MSE</function></link> resets the error value. The following explains how the mean square error
 	value is calculated, to give an idea of the value's ability to reveal the quality of the training.
       </para>
       <para>
@@ -306,11 +306,11 @@ int main()
 <![CDATA[
 struct fann_train_data *data = fann_read_train_from_file(filename);
 for(i = 1 ; i <= max_epochs ; i++) {
-  fann_reset_error(ann);
+  fann_reset_MSE(ann);
   for (j = 0 ; j != data->num_data ; j++) {
     fann_train(ann, data->input[j], data->output[j]);
   }
-  if ( fann_get_error(ann) < desired_error ) {
+  if ( fann_get_MSE(ann) < desired_error ) {
     break;
   }
 }
@@ -330,11 +330,11 @@ fann_destroy_train(data);
 	<programlisting>
 <![CDATA[
 struct fann_train_data *data = fann_read_train_from_file(filename);
-fann_reset_error(ann);
+fann_reset_MSE(ann);
 for(i = 0 ; i != data->num_data ; i++ ) {
   fann_test(ann, data->input[i], data->output[i]);
 }
-printf("Mean Square Error: %f\n", fann_get_error(ann));
+printf("Mean Square Error: %f\n", fann_get_MSE(ann));
 fann_destroy_train(data);
 ]]>
 	</programlisting>
@@ -821,6 +821,55 @@ fann_destroy(ann2);
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
+      <refentry id="api.fann_init_weights">
+        <refnamediv>
+          <refname>fann_init_weights</refname>
+          <refpurpose>Initialize the weight of each connection.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>struct fann *</type>
+            <methodname>ann</methodname>
+            <methodparam>
+              <type>fann_train_data</type>
+              <parameter>data</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    This function behaves similarly to <link linkend="api.fann_randomize_weights"><function>fann_randomize_weights</function></link>.
+	    It will use the algorithm developed by Derrick Nguyen and Bernard Widrow
+	    [<link linkend="bib.nguyen_1990" endterm="bib.nguyen_1990.abbrev" />] to set the weights in such a way as to speed up training.
+	  </para>
+	  <para>
+	    The algorithm requires access to the range of the input data (ie, largest and smallest input), and therefore accepts a second
+	    argument, <parameter>data</parameter>, which is the training data that will be used to train the network.
+	  </para>
+	  <para>
+	    In tests using the XOR problem, use of this function decreased the number of iterations required to train the network by approximately
+	    25%, but increased the chances of failure to approximately 2.6%. It is therefore recommended to check the mean square error of the
+	    network after training, to make sure it is below the desired error.
+	  </para>
+          <example id="example.fann_randomize_weights">
+	    <title id="example.fann_randomize_weights.title">Checking the network's mean square error to make sure training was successful.</title>
+	    <programlisting>
+<![CDATA[
+while (1) {
+	fann_init_weights(ann, data);
+	fann_train_on_data(ann, data, max_iterations, iterations_between_reports, desired_error);
+	if ( fann_get_MSE(ann) <= desired_error )
+		break;
+}
+]]>
+	    </programlisting>
+          </example>
+	  <para>
+	    In a test of using the XOR problem, this solution still achieved an approximately 15% speed increase. better results should be expected
+	    for more complex problems- the authors of the algorithm claim to have decreased training time of one problem from 2 days to 4 hours.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.1.0.</para>
+        </refsect1>
+      </refentry>
     </section>
     <section id="api.sec.io">
       <title id="api.sec.io.title">Input/Output</title>
@@ -1028,7 +1077,7 @@ fann_destroy(ann2);
 	  </para>
           <para>
 	    This function appears in FANN &gt;= 1.1.0. (before this
-	    <link linkend="api.fann_get_error"><function>fann_reset_error</function></link> is used)
+	    <link linkend="api.fann_reset_error"><function>fann_reset_error</function></link> is used)
 	  </para>
         </refsect1>
       </refentry>
@@ -3894,6 +3943,25 @@ else
       <releaseinfo>
         <ulink url="http://www.hamster.dk/~purple/robot/iBOT/report.pdf">
         http://www.hamster.dk/~purple/robot/iBOT/report.pdf</ulink>
+      </releaseinfo>
+    </biblioentry>
+    <biblioentry id="bib.nguyen_1990">
+      <abbrev id="bib.nguyen_1990.abbrev">Nguyen and Widrow, 1990</abbrev>
+      <title id="bib.nguyen_1990.title">Reinforcement Learning</title>
+      <author>
+        <firstname>Derrick</firstname>
+        <surname>Nguyen</surname>
+      </author>
+      <author>
+        <firstname>Bernard</firstname>
+        <surname>Widrow</surname>
+      </author>
+      <pubdate>1990</pubdate>
+      <publishername>Proc. IJCNN</publishername>
+      <volumenum>3</volumenum>
+      <pagenums>21-26</pagenums>
+      <releaseinfo>
+        <ulink url="http://www.cs.montana.edu/~clemens/nguyen-widrow.pdf">http://www.cs.montana.edu/~clemens/nguyen-widrow.pdf</ulink>
       </releaseinfo>
     </biblioentry>
     <biblioentry id="bib.OSDN_2003">

@@ -676,5 +676,65 @@ void fann_seed_rand()
 	srand(foo);
 }
 
+/* Initialize the weights using Widrow + Nguyen's algorithm.
+*/
+void fann_init_weights(struct fann *ann, struct fann_train_data * train_data)
+{
+	fann_type smallest_inp, largest_inp;
+	unsigned int dat = 0, elem, num_neurons_in, num_neurons_out, num_connect;
+	struct fann_layer *layer_it;
+	struct fann_neuron *neuron_it, *last_neuron, *bias_neuron;
+#ifdef FIXEDFANN
+	unsigned int multiplier = ann->multiplier;
+#endif
 
+	for ( smallest_inp = largest_inp = train_data->input[0][0] ; dat < train_data->num_data ; dat++ ) {
+		for ( elem = 0 ; elem < train_data->num_input ; elem++ ) {
+			if ( train_data->input[dat][elem] < smallest_inp )
+				smallest_inp = train_data->input[dat][elem];
+			if ( train_data->input[dat][elem] > largest_inp )
+				largest_inp = train_data->input[dat][elem];
+		}
+	}
 
+	float scale_factor = powf((float)(0.7f * (float)(ann->total_neurons - (ann->num_input + ann->num_output))),
+				  (float)(1.0f / (float)ann->num_input)) / (float)(largest_inp - smallest_inp);
+
+#ifdef DEBUG
+	printf("Initializing weights with scale factor %f\n", scale_factor);
+#endif
+	for ( layer_it = ann->first_layer+1; layer_it != ann->last_layer ; layer_it++) {
+#ifdef DEBUG
+		printf(" Layer: %x/%x (%d neurons)\n", layer_it, ann->last_layer, layer_it->last_neuron - layer_it->first_neuron);
+#endif
+		num_neurons_out = layer_it->last_neuron - layer_it->first_neuron - 1;
+		num_neurons_in = (layer_it-1)->last_neuron - (layer_it-1)->first_neuron - 1;
+
+		last_neuron = layer_it->last_neuron-1;
+		bias_neuron = (layer_it-1)->last_neuron-1;
+
+		for(neuron_it = layer_it->first_neuron ; neuron_it != last_neuron; neuron_it++) {
+#ifdef DEBUG
+			printf("  Neuron %x/%x (%d connections)\n", neuron_it, last_neuron, neuron_it->num_connections);
+#endif
+			for ( num_connect = 0 ; num_connect < neuron_it->num_connections ; num_connect++ ) {
+#ifdef DEBUG
+				printf("   Connection %d/%d (%x)\n", num_connect, neuron_it->num_connections, neuron_it->connected_neurons[num_connect]);
+#endif
+				if ( bias_neuron == neuron_it->connected_neurons[num_connect] ) {
+#ifdef FIXEDFANN
+					neuron_it->weights[num_connect] = (fann_type)fann_rand(-scale_factor, scale_factor * multiplier);
+#else
+					neuron_it->weights[num_connect] = (fann_type)fann_rand(-scale_factor, scale_factor);
+#endif
+				} else {
+#ifdef FIXEDFANN
+					neuron_it->weights[num_connect] = (fann_type)fann_rand(0, scale_factor * multiplier);
+#else
+					neuron_it->weights[num_connect] = (fann_type)fann_rand(0, scale_factor);
+#endif
+				}
+			}
+		}
+	}
+}

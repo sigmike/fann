@@ -90,6 +90,10 @@ void fann_destroy(struct fann *ann);
  */
 void fann_randomize_weights(struct fann *ann, fann_type min_weight, fann_type max_weight);
 
+/* Initialize the weights using Widrow + Nguyen's algorithm.
+*/
+void fann_init_weights(struct fann *ann, struct fann_train_data * train_data);
+
 
 	
 /* ----- Implemented in fann_io.c Saving and loading of ANNs ----- */

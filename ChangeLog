@@ -9,7 +9,7 @@ libfann (1.1.0) stable; urgency=low
 	* Rearanged some code for easy access by the newly created fann php module 
 	* Defined more activation functions and documented the old (in fann_activation.h)
 	* Customize error output
-	* Added fann_set_error_log, fann_shuffle_train_data, fann_merge_train_data, and fann_duplicate_train_data
+	* Added fann_set_error_log, fann_shuffle_train_data, fann_merge_train_data, and fann_duplicate_train_data, fann_init_weights
 	* Added python bindings
 	* Created DocBook XML documentation, including API reference
 	
