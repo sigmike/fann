@@ -168,7 +168,7 @@ void quality_benchmark_fann(bool stepwise, unsigned int training_algorithm,
 	}
 
 	if(training_algorithm == FANN_TRAIN_INCREMENTAL){
-		fann_set_use_tanh_error_function(ann, 0);
+		fann_set_train_error_function(ann, FANN_ERRORFUNC_LINEAR);
 	}
 
 	calibrate_timer();

@@ -3,7 +3,7 @@
 GCC = gcc
 G++ = g++
 
-TARGETS = quality quality_fixed performance performance_fixed shuffle
+TARGETS = quality quality_fixed performance performance_fixed shuffle parity two-spirals
 
 CFLAGS = -O3 -finline-functions -funroll-loops -Werror
 
@@ -37,4 +37,4 @@ parity: parity.c
 	$(GCC) $(CFLAGS) $(LFLAGS) $< -o $@
 
 clean: 
-	rm -rf $(TARGETS) *.net *.out *_fixed_test_* *_fixed_train_* *~
+	rm -rf $(TARGETS) *.net *.out *_fixed_test_* *_fixed_train_* *~ *ps

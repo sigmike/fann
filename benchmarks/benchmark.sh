@@ -1,6 +1,6 @@
 #!/bin/sh
 
-max_seconds_training=300;
+max_seconds_training=200;
 secs_between_reports=0.01;
 
 function benchmark_algorithm() {
@@ -10,7 +10,7 @@ function benchmark_algorithm() {
 function benchmark_problem() {
     rm -f *_fixed.net
     algo="fann_rprop"; benchmark_algorithm;
-    # ./quality_fixed $prob.$algo.train.out_fixed_train $prob.$algo.train.out_fixed_test $prob.$algo.fixed_train.out $prob.$algo.fixed_test.out *_fixed.net
+    #./quality_fixed $prob.$algo.train.out_fixed_train $prob.$algo.train.out_fixed_test $prob.$algo.fixed_train.out $prob.$algo.fixed_test.out *_fixed.net
     algo="fann_rprop_stepwise"; benchmark_algorithm;
     algo="fann_quickprop"; benchmark_algorithm;
     #algo="fann_quickprop_stepwise"; benchmark_algorithm;
@@ -29,29 +29,11 @@ function benchmark_problem() {
 prob="building"; n1=16; n2=0; sec_train=$max_seconds_training;
 benchmark_problem;
 
-prob="cancer"; n1=8; n2=4; sec_train=$max_seconds_training;
-benchmark_problem;
-
-prob="card"; n1=32; n2=0; sec_train=$max_seconds_training;
-benchmark_problem;
-
 prob="diabetes"; n1=4; n2=0; sec_train=$max_seconds_training;
-benchmark_problem;
-
-prob="flare"; n1=4; n2=0; sec_train=$max_seconds_training;
 benchmark_problem;
 
 prob="gene"; n1=4; n2=2; sec_train=$max_seconds_training;
 benchmark_problem;
-
-#prob="glass"; n1=32; n2=0; sec_train=$max_seconds_training;
-#benchmark_problem;
-
-#prob="heart"; n1=16; n2=8; sec_train=$max_seconds_training;
-#benchmark_problem;
-
-#prob="horse"; n1=4; n2=4; sec_train=$max_seconds_training;
-#benchmark_problem;
 
 prob="mushroom"; n1=32; n2=0; sec_train=$max_seconds_training;
 benchmark_problem;
@@ -60,9 +42,6 @@ prob="parity8"; n1=16; n2=0; sec_train=$max_seconds_training;
 benchmark_problem;
 
 prob="parity13"; n1=26; n2=0; sec_train=$max_seconds_training;
-benchmark_problem;
-
-prob="pumadyn-32nh"; n1=10; n2=0; sec_train=10;
 benchmark_problem;
 
 prob="pumadyn-32fm"; n1=10; n2=0; sec_train=30;
@@ -86,3 +65,4 @@ benchmark_problem;
 ./performance lwnn lwnn_performance.out 1 2048 2 20
 ./performance jneural jneural_performance.out 1 256 2 20
 
+gnuplot < gnuplot
