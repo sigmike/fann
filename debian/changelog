@@ -1,3 +1,9 @@
+libfann1 (1.1.0-2) unstable; urgency=low
+
+  * added docbook-utils to build-depends
+
+ -- Steffen Nissen <lukesky@diku.dk>  Thu,  6 May 2004 16:22:42 +0200
+
 libfann1 (1.1.0-1) unstable; urgency=low
 
   * My first try at a debian package, please report any errors.

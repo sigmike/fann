@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Steffen Nissen <lukesky@diku.dk>
 Build-Depends: debhelper (>= 4.0.0)
 Standards-Version: 3.6.0
+Build-Depends: docbook-utils
 
 Package: libfann1-dev
 Section: libdevel
