@@ -114,11 +114,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define fann_linear_derive(steepness, value) (steepness)
 
 /* FANN_SIGMOID */
-#define fann_sigmoid(steepness, value) (1.0/(1.0 + exp(-2.0 * steepness * value)))
-#define fann_sigmoid_derive(steepness, value) (2.0 * steepness * value * (1.0 - value)) /* the plus is a trick to the derived function, to avoid getting stuck on flat spots */
+#define fann_sigmoid(steepness, value) (1.0f/(1.0f + exp(-2.0f * steepness * value)))
+#define fann_sigmoid_derive(steepness, value) (2.0f * steepness * value * (1.0f - value)) /* the plus is a trick to the derived function, to avoid getting stuck on flat spots */
 
 /* FANN_SIGMOID_SYMMETRIC */
-#define fann_sigmoid_symmetric(steepness, value) (2.0/(1.0 + exp(-2.0 * steepness * value)) - 1.0)
+#define fann_sigmoid_symmetric(steepness, value) (2.0f/(1.0f + exp(-2.0f * steepness * value)) - 1.0f)
 #define fann_sigmoid_symmetric_derive(steepness, value) steepness * (1.0f - (value*value))
 
 /* FANN_GAUSSIAN */
