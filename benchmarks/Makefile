@@ -28,4 +28,4 @@ performance_fixed: performance.cc
 	$(G++) $(CFLAGS) $(LFLAGS) -DFIXEDFANN $< -o $@ -lfixedfann
 
 clean: 
-	rm -rf $(TARGETS)
+	rm -rf $(TARGETS) *.net *.out *_fixed_test_* *_fixed_train_*
