@@ -1,6 +1,7 @@
 libfann (1.2.0) stable; urgency=low
 	* Fixes for better compability with different compilers
 	* Shortcut connections that skip layers
+	* Changed version of safe fileformat
 	* fann_print_connections function
 	* More activation functions
 	* Batch training
