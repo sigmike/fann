@@ -113,23 +113,23 @@ SOURCE=..\src\fann_train.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\fann\src\include\compat_time.h
+SOURCE=..\src\include\compat_time.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\fann\src\include\fann.h
+SOURCE=..\src\include\fann.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\fann\src\include\fann_data.h
+SOURCE=..\src\include\fann_data.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\fann\src\include\fann_internal.h
+SOURCE=..\src\include\fann_internal.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\fann\src\include\floatfann.h
+SOURCE=..\src\include\floatfann.h
 # End Source File
 # End Group
 # End Target
