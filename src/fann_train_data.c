@@ -157,21 +157,35 @@ float fann_train_epoch_incremental(struct fann *ann, struct fann_train_data *dat
 float fann_train_epoch(struct fann *ann, struct fann_train_data *data)
 {
 	switch(ann->training_algorithm){
-		case FANN_QUICKPROP_TRAIN:
+		case FANN_TRAIN_QUICKPROP:
 			return fann_train_epoch_quickprop(ann, data);
 			break;
-		case FANN_RPROP_TRAIN:
+		case FANN_TRAIN_RPROP:
 			return fann_train_epoch_irpropm(ann, data);
 			break;
-		case FANN_BATCH_TRAIN:
+		case FANN_TRAIN_BATCH:
 			return fann_train_epoch_batch(ann, data);
 			break;
-		case FANN_INCREMENTAL_TRAIN:
+		case FANN_TRAIN_INCREMENTAL:
 			return fann_train_epoch_incremental(ann, data);
 			break;
 		default:
 			return 0.0;
 	}
+}
+
+/* Test a set of training data and calculate the MSE
+ */
+float fann_test_data(struct fann *ann, struct fann_train_data *data)
+{
+	unsigned int i;
+	fann_reset_MSE(ann);
+	
+	for(i = 0; i != data->num_data; i++){
+		fann_test(ann, data->input[i], data->output[i]);
+	}
+
+	return fann_get_MSE(ann);
 }
 
 /* Train directly on the training data.
@@ -184,17 +198,17 @@ void fann_train_on_data_callback(struct fann *ann, struct fann_train_data *data,
 #ifdef DEBUG
 	printf("Training with ");
 	switch(ann->training_algorithm){
-		case FANN_QUICKPROP_TRAIN:
-			printf("FANN_QUICKPROP_TRAIN");
+		case FANN_TRAIN_QUICKPROP:
+			printf("FANN_TRAIN_QUICKPROP");
 			break;
-		case FANN_RPROP_TRAIN:
-			printf("FANN_RPROP_TRAIN");
+		case FANN_TRAIN_RPROP:
+			printf("FANN_TRAIN_RPROP");
 			break;
-		case FANN_BATCH_TRAIN:
-			printf("FANN_BATCH_TRAIN");
+		case FANN_TRAIN_BATCH:
+			printf("FANN_TRAIN_BATCH");
 			break;
-		case FANN_INCREMENTAL_TRAIN:
-			printf("FANN_INCREMENTAL_TRAIN");
+		case FANN_TRAIN_INCREMENTAL:
+			printf("FANN_TRAIN_INCREMENTAL");
 			break;
 	}
 	printf("\n");
@@ -206,8 +220,8 @@ void fann_train_on_data_callback(struct fann *ann, struct fann_train_data *data,
 
 	/* some training algorithms need stuff to be cleared etc. before training starts.
 	 */
-	if(ann->training_algorithm == FANN_RPROP_TRAIN ||
-		ann->training_algorithm == FANN_QUICKPROP_TRAIN){
+	if(ann->training_algorithm == FANN_TRAIN_RPROP ||
+		ann->training_algorithm == FANN_TRAIN_QUICKPROP){
 		fann_clear_train_arrays(ann);
 	}
 

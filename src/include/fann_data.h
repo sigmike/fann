@@ -158,14 +158,14 @@ struct fann
 	/* used to store outputs in */
 	fann_type *output;
 
-	/* the number of data used to calculate the error.
+	/* the number of data used to calculate the mean square error.
 	 */
-	unsigned int num_errors;
+	unsigned int num_MSE;
 
 	/* the total error value.
-	   the real mean square error is error_value/num_errors
+	   the real mean square error is MSE_value/num_MSE
 	 */
-	float error_value;
+	float MSE_value;
 
 	/* When using this, training is usually faster.
 	   Makes the error used for calculating the slopes
@@ -248,14 +248,21 @@ struct fann_error
 };
 
 enum {
-	/* The quickprop training algorithm */
-	FANN_QUICKPROP_TRAIN = 0,
+	/* Standard backpropagation incremental or online training */
+	FANN_TRAIN_INCREMENTAL = 0,
+	/* Standard backpropagation batch training */
+	FANN_TRAIN_BATCH,
 	/* The iRprop- training algorithm */
-	FANN_RPROP_TRAIN,
-	/* Standard batch training */
-	FANN_BATCH_TRAIN,
-	/* Standard incremental or online training */
-	FANN_INCREMENTAL_TRAIN
+	FANN_TRAIN_RPROP,
+	/* The quickprop training algorithm */
+	FANN_TRAIN_QUICKPROP
+};
+
+static char const * const FANN_TRAINING_NAMES[] = {
+	"FANN_TRAIN_INCREMENTAL",
+	"FANN_TRAIN_BATCH",
+	"FANN_TRAIN_RPROP",
+	"FANN_TRAIN_QUICKPROP"
 };
 
 #endif

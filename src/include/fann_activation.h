@@ -30,78 +30,92 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    d is the derivation.
  */
 
-/* Linear activation function.
-   span: -inf < y < inf
-   y = x*s, d = 1*s
-   Can NOT be used in fixed point.
-   (NOT) implemented yet.
-*/
-#define FANN_LINEAR 4
+enum {
+	/* Linear activation function.
+	   span: -inf < y < inf
+	   y = x*s, d = 1*s
+	   Can NOT be used in fixed point.
+	*/
+	FANN_LINEAR = 0,
 
-/* Threshold activation function.
-   x < 0 -> y = 0, x >= 0 -> y = 1
-   Can NOT be used during training.
-*/
-#define FANN_THRESHOLD 2
+	/* Threshold activation function.
+	   x < 0 -> y = 0, x >= 0 -> y = 1
+	   Can NOT be used during training.
+	*/
+	FANN_THRESHOLD,
 
-/* Threshold activation function.
-   x < 0 -> y = 0, x >= 0 -> y = 1
-   Can NOT be used during training.
-*/
-#define FANN_THRESHOLD_SYMMETRIC 11
+	/* Threshold activation function.
+	   x < 0 -> y = 0, x >= 0 -> y = 1
+	   Can NOT be used during training.
+	*/
+	FANN_THRESHOLD_SYMMETRIC,
 
-/* Sigmoid activation function.
-   One of the most used activation functions.
-   span: 0 < y < 1
-   y = 1/(1 + exp(-2*s*x)), d = 2*s*y*(1 - y)
-*/
-#define FANN_SIGMOID 1
+	/* Sigmoid activation function.
+	   One of the most used activation functions.
+	   span: 0 < y < 1
+	   y = 1/(1 + exp(-2*s*x)), d = 2*s*y*(1 - y)
+	*/
+	FANN_SIGMOID,
 
-/* Stepwise linear approximation to sigmoid.
-   Faster than sigmoid but a bit less precise.
-*/
-#define FANN_SIGMOID_STEPWISE 3 /* (default) */
+	/* Stepwise linear approximation to sigmoid.
+	   Faster than sigmoid but a bit less precise.
+	*/
+	FANN_SIGMOID_STEPWISE, /* (default) */
 
 
-/* Symmetric sigmoid activation function, aka. tanh.
-   One of the most used activation functions.
-   span: -1 < y < 1
-   y = tanh(s*x) = 2/(1 + exp(-2*s*x)) - 1, d = s*(1-(y*y))
-*/
-#define FANN_SIGMOID_SYMMETRIC 5
+	/* Symmetric sigmoid activation function, aka. tanh.
+	   One of the most used activation functions.
+	   span: -1 < y < 1
+	   y = tanh(s*x) = 2/(1 + exp(-2*s*x)) - 1, d = s*(1-(y*y))
+	*/
+	FANN_SIGMOID_SYMMETRIC,
 	
-/* Stepwise linear approximation to symmetric sigmoid.
-   Faster than symmetric sigmoid but a bit less precise.
-*/
-#define FANN_SIGMOID_SYMMETRIC_STEPWISE 6
+	/* Stepwise linear approximation to symmetric sigmoid.
+	   Faster than symmetric sigmoid but a bit less precise.
+	*/
+	FANN_SIGMOID_SYMMETRIC_STEPWISE,
 
-/* Gausian activation function.
-   0 when x = -inf, 1 when x = 0 and 0 when x = inf
-   span: 0 < y < 1
-   y = exp(-x*s*x*s), d = -2*x*y*s
-   NOT implemented yet.
-*/
-#define FANN_GAUSSIAN 7
+	/* Gausian activation function.
+	   0 when x = -inf, 1 when x = 0 and 0 when x = inf
+	   span: 0 < y < 1
+	   y = exp(-x*s*x*s), d = -2*x*y*s
+	*/
+	FANN_GAUSSIAN,
 
-/* Stepwise linear approximation to gaussian.
-   Faster than gaussian but a bit less precise.
-   NOT implemented yet.
-*/
-#define FANN_GAUSSIAN_STEPWISE 8 /* not implemented yet. */
+	/* Stepwise linear approximation to gaussian.
+	   Faster than gaussian but a bit less precise.
+	   NOT implemented yet.
+	*/
+	FANN_GAUSSIAN_STEPWISE,
 
-/* Fast (sigmoid like) activation function defined by David Elliott
-   span: 0 < y < 1
-   y = ((x*s) / 2) / (1 + |x*s|) + 0.5, d = s*1/(2*(1+|x|)*(1+|x|))
-   NOT implemented yet.
-*/
-#define FANN_ELLIOT 9
+	/* Fast (sigmoid like) activation function defined by David Elliott
+	   span: 0 < y < 1
+	   y = ((x*s) / 2) / (1 + |x*s|) + 0.5, d = s*1/(2*(1+|x|)*(1+|x|))
+	   NOT implemented yet.
+	*/
+	FANN_ELLIOT,
 
-/* Fast (symmetric sigmoid like) activation function defined by David Elliott
-   span: -1 < y < 1   
-   y = (x*s) / (1 + |x*s|), d = s*1/((1+|x|)*(1+|x|))
-   NOT implemented yet.
-*/
-#define FANN_ELLIOT_SYMMETRIC 10
+	/* Fast (symmetric sigmoid like) activation function defined by David Elliott
+	   span: -1 < y < 1   
+	   y = (x*s) / (1 + |x*s|), d = s*1/((1+|x|)*(1+|x|))
+	   NOT implemented yet.
+	*/
+	FANN_ELLIOT_SYMMETRIC,
+};
+
+static char const * const FANN_ACTIVATION_NAMES[] = {
+	"FANN_LINEAR",
+	"FANN_THRESHOLD",
+	"FANN_THRESHOLD_SYMMETRIC",
+	"FANN_SIGMOID",
+	"FANN_SIGMOID_STEPWISE",
+	"FANN_SIGMOID_SYMMETRIC",
+	"FANN_SIGMOID_SYMMETRIC_STEPWISE",
+	"FANN_GAUSSIAN",
+	"FANN_GAUSSIAN_STEPWISE",
+	"FANN_ELLIOT",
+	"FANN_ELLIOT_SYMMETRIC"
+};
 
 /* Implementation of the activation functions
  */

@@ -89,14 +89,14 @@ fann_type *fann_test(struct fann *ann, fann_type *input, fann_type *desired_outp
 		}
 		
 #ifdef FIXEDFANN
-		ann->error_value += (neuron_diff/(float)ann->multiplier) * (neuron_diff/(float)ann->multiplier);
+		ann->MSE_value += (neuron_diff/(float)ann->multiplier) * (neuron_diff/(float)ann->multiplier);
 #else
-		ann->error_value += neuron_diff * neuron_diff;
+		ann->MSE_value += neuron_diff * neuron_diff;
 #endif
 		
 		desired_output++;
 	}
-	ann->num_errors++;
+	ann->num_MSE++;
 	
 	return output_begin;
 }
@@ -113,8 +113,8 @@ float fann_get_error(struct fann *ann)
  */
 float fann_get_MSE(struct fann *ann)
 {
-	if(ann->num_errors){
-		return ann->error_value/(float)ann->num_errors;
+	if(ann->num_MSE){
+		return ann->MSE_value/(float)ann->num_MSE;
 	}else{
 		return 0;
 	}
@@ -132,8 +132,8 @@ void fann_reset_error(struct fann *ann)
  */
 void fann_reset_MSE(struct fann *ann)
 {
-	ann->num_errors = 0;
-	ann->error_value = 0;
+	ann->num_MSE = 0;
+	ann->MSE_value = 0;
 }
 
 /* INTERNAL FUNCTION
@@ -180,7 +180,7 @@ void fann_compute_MSE(struct fann *ann, fann_type *desired_output)
 			neuron_diff /= 2.0;
 		}
 		
-		ann->error_value += neuron_diff * neuron_diff;
+		ann->MSE_value += neuron_diff * neuron_diff;
 
 		if(ann->use_tanh_error_function){
 			if ( neuron_diff < -.9999999 )
@@ -198,7 +198,7 @@ void fann_compute_MSE(struct fann *ann, fann_type *desired_output)
 		desired_output++;
 		error_it++;
 	}
-	ann->num_errors++;
+	ann->num_MSE++;
 }
 
 /* INTERNAL FUNCTION
@@ -439,7 +439,7 @@ void fann_clear_train_arrays(struct fann *ann)
 		}
 	}	
 
-	if(ann->training_algorithm == FANN_RPROP_TRAIN){
+	if(ann->training_algorithm == FANN_TRAIN_RPROP){
 		for(i = 0; i < ann->total_connections; i++){
 			ann->prev_train_slopes[i] = 0.0125;
 		}

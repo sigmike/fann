@@ -701,6 +701,9 @@ void fann_destroy(struct fann *ann)
 	fann_safe_free(ann->first_layer);
 	fann_safe_free(ann->output);
 	fann_safe_free(ann->train_errors);
+	fann_safe_free(ann->train_slopes);
+	fann_safe_free(ann->prev_train_slopes);
+	fann_safe_free(ann->prev_steps);
 	fann_safe_free(ann->errstr);
 	fann_safe_free(ann);
 }
@@ -721,7 +724,7 @@ void fann_print_connections(struct fann *ann)
 	struct fann_neuron *neuron_it;
 	unsigned int i, value;
 	char *neurons;
-	unsigned int num_neurons = fann_get_total_neurons(ann)+1;
+	unsigned int num_neurons = fann_get_total_neurons(ann) - fann_get_num_output(ann);
 	neurons = (char *)malloc(num_neurons+1);
 	neurons[num_neurons] = 0;
 
@@ -733,14 +736,15 @@ void fann_print_connections(struct fann *ann)
 	
 	for(layer_it = ann->first_layer+1; layer_it != ann->last_layer; layer_it++){
 		for(neuron_it = layer_it->first_neuron;
-			neuron_it != layer_it->last_neuron; neuron_it++){
+			neuron_it != layer_it->last_neuron-1; neuron_it++){
+			
 			memset(neurons, (int)'.', num_neurons);
 			for(i = 0; i < neuron_it->num_connections; i++){
 				value = (unsigned int)(fann_abs(neuron_it->weights[i])+0.5);
 				if(value > 25) value = 25;
 				neurons[neuron_it->connected_neurons[i] - ann->first_layer->first_neuron] = 'a' + value;
 			}
-			printf("L %03d / N %04d %s\n", layer_it - ann->first_layer,
+			printf("L %3d / N %4d %s\n", layer_it - ann->first_layer,
 				neuron_it - ann->first_layer->first_neuron, neurons);
 		}
 	}
@@ -846,9 +850,9 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 	ann->train_slopes = NULL;
 	ann->prev_steps = NULL;
 	ann->prev_train_slopes = NULL;
-	ann->training_algorithm = FANN_RPROP_TRAIN;
-	ann->num_errors = 0;
-	ann->error_value = 0;
+	ann->training_algorithm = FANN_TRAIN_RPROP;
+	ann->num_MSE = 0;
+	ann->MSE_value = 0;
 	ann->forward_connections = 0;
 	ann->use_tanh_error_function = 1;
 
