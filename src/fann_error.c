@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "fann.h"
+#include "fann_internal.h"
 #include "fann_errno.h"
 
 #ifdef _MSC_VER
@@ -84,12 +85,12 @@ FANN_EXTERNAL void FANN_API fann_print_error(struct fann_error *errdat) {
 /* INTERNAL FUNCTION
    Populate the error information
  */
-void fann_error(struct fann_error *errdat, const unsigned int errno, ...)
+void fann_error(struct fann_error *errdat, const unsigned int errno_f, ...)
 {
 	va_list ap;
 	char * errstr;
 
-	if (errdat != NULL) errdat->errno_f = errno;
+	if (errdat != NULL) errdat->errno_f = errno_f;
 	
 	if(errdat != NULL && errdat->errstr != NULL){
 		errstr = errdat->errstr;
@@ -101,8 +102,8 @@ void fann_error(struct fann_error *errdat, const unsigned int errno, ...)
 		}
 	}
 
-	va_start(ap, errno);
-	switch ( errno ) {
+	va_start(ap, errno_f);
+	switch ( errno_f ) {
 	case FANN_E_NO_ERROR:
 		break;
 	case FANN_E_CANT_OPEN_CONFIG_R:
@@ -154,11 +155,11 @@ void fann_error(struct fann_error *errdat, const unsigned int errno, ...)
 	va_end(ap);
 
 	if ( errdat == NULL ) {
-		fprintf(stderr, "FANN Error %d: %s", errno, errstr);
+		fprintf(stderr, "FANN Error %d: %s", errno_f, errstr);
 	} else {
 		errdat->errstr = errstr;
 		if ( errdat->error_log != NULL ) {
-			fprintf(errdat->error_log, "FANN Error %d: %s", errno, errstr);
+			fprintf(errdat->error_log, "FANN Error %d: %s", errno_f, errstr);
 		}
 	}
 }
