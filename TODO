@@ -7,3 +7,4 @@
 * Good reference manual.
 * RPM and DEB packaging.
 * Make it easy to use in windows compilers as Borland C++ and MS Visual C++.
+* Convert existing comments to doxygen-friendly comments.
