@@ -29,6 +29,7 @@ Package: libfann
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
+Suggests: libfann-dev (= ${Source-Version})
 Description: Fast Artificial Neural Network Library (fann)
  fann is implemented in ANSI C. The library implements multilayer
  feedforward networks with support for both fully connected and sparse

@@ -2,7 +2,6 @@
 * Implement rprop training.
 * More advanced activation functions.
 * More checks to see if train data is properly formatted in the file (some have experienced nasty problems because a number was missing in one line).
-* DEB packaging.
 * Make it easy to use in windows compilers as Borland C++ and MS Visual C++.
 * Good reference manual.
 * Convert existing comments to doxygen-friendly comments.
