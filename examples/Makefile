@@ -3,7 +3,7 @@
 
 GCC=gcc
 
-TARGETS = xor_train xor_test xor_test_fixed simple_train steepness_train simple_test
+TARGETS = xor_train xor_test xor_test_fixed simple_train steepness_train simple_test robot mushroom
 DEBUG_TARGETS = xor_train_debug xor_test_debug xor_test_fixed_debug
 
 all: $(TARGETS)
@@ -15,7 +15,7 @@ all: $(TARGETS)
 	$(GCC) -O3 -lm -lfixedfann -DFIXEDFANN $< -o $@
 
 clean:
-	rm -f $(TARGETS) $(DEBUG_TARGETS) xor_fixed.data xor_float.net xor_fixed.net
+	rm -f $(TARGETS) $(DEBUG_TARGETS) xor_fixed.data *.net *~
 
 runtest: $(TARGETS)
 	@echo

@@ -12,6 +12,8 @@ libfann (1.2.0) stable; urgency=low
 	* fann_print_parameters function
 	* Renamed some functions and variables to avoid confusion of terms (kept deprecated functions)
 	
+ -- Steffen Nissen <lukesky@diku.dk> Sat, 09 Oct 2004 11:13:22 +0200
+
 libfann (1.1.0) stable; urgency=low
 	* Error checking when allocating memory
 	* Debian package

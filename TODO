@@ -25,11 +25,21 @@ Things TODO when releasing a new version (mostly for fann developers)
 	cd examples
 	make runtest
 
+* All of the examples should work fine
+	cd examples
+	make simple_train && ./simple_train
+	make simple_test && ./simple_test
+	make steepness_train && ./steepness_train
+	make mushroom && ./mushroom
+	make robot && ./robot
+
 * No memory leaks must exist
 	cd examples
-	rundebug
+	make rundebug
 
 * Documentation should be updated
+
+* Benchmarks should be updated
 
 * Python bindings should compile and run
 	cd python
@@ -38,18 +48,33 @@ Things TODO when releasing a new version (mostly for fann developers)
 
 * Changelog should be updated and timestamp should be set
 
-* CVS branch for release
-
 * PHP Extension should be up-to-date (including documentation)
 
-* Debian packages should be created
+* TGZ/BZ/ZIP packages should be created
 
-* RPM packages should be created
+* Debian packages should be created (from tgz package)
+	#Example of make command
+	rm -rf fann-1.2.0.* test && mkdir test && make dist && cp fann-1.2.0.*gz test && cd test && tar xvzf *gz && cd fann-1.2.0 
+	su
+	pbuilder update --distribution sid
+	pdebuild --distribution sid
+	exit
+	cd .. && cp /var/cache/pbuilder/result/*deb . && lintian *deb
 
 * Windows DLL's should be created
 
+* ZIP package with win dll should be created
+
+* RPM packages should be created
+
+* Commit for CVS
+
+* CVS branch for release
+
 * Upload to sf
 
-* Update sf site
+* Update sf site documentation etc.
 
 * Update fm site
+
+* Send out release info

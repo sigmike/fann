@@ -18,4 +18,4 @@ _%.dll: %_wrap.o fann_helper.o
 	swig -python $<
 
 clean:
-	rm -f $(TARGETS) *_wrap.* fann_helper.o fann.pyc
+	rm -f $(TARGETS) *_wrap.* fann_helper.o fann.pyc *.so

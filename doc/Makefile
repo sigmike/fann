@@ -28,7 +28,7 @@ tex: fann.xml Makefile
 txt: fann.xml Makefile
 	jw -u -b txt $(XML)
 
-sf: html html-single pdf
+sf: pdf html html-single
 	perl -p -i -e 's/><\/BODY/> <br><div><A href="http:\/\/sourceforge.net"> <IMG src="http:\/\/sourceforge.net\/sflogo.php?group_id=93562&amp;type=5" width="210" height="62" border="0" alt="SourceForge.net Logo" \/><\/A><\/div><br> <\/body/' fann.html
 	(cd html && perl -p -i -e 's/><\/BODY/> <br><div><A href="http:\/\/sourceforge.net"> <IMG src="http:\/\/sourceforge.net\/sflogo.php?group_id=93562&amp;type=5" width="210" height="62" border="0" alt="SourceForge.net Logo" \/><\/A><\/div><br> <\/body/' *.html)
 	tar czf sf.tgz *.html search.php style.css fann.pdf html

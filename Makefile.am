@@ -25,7 +25,8 @@ dist-hook:
 	rm -rf `find $(distdir)/examples -name CVS`
 	(cd $(distdir)/benchmarks && make clean)
 	rm -rf `find $(distdir)/benchmarks -name CVS`
-	(cd $(distdir)/python && make clean)
+	(cd $(distdir)/python && make -f makefile.gnu clean)
 	rm -rf `find $(distdir)/python -name CVS`
+	rm -rf `find $(distdir)/MSVC++ -name CVS`
 	zip -9 -r $(distdir).zip $(distdir)
 	tar chojf $(distdir).tar.bz2 $(distdir)
