@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.17 2004/06/24 10:20:33 tadpole9 Exp $ -->
+<!-- $Id: fann.xml,v 1.18 2004/06/24 21:36:02 looksirdroids Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -51,7 +51,7 @@
 	  and <ulink url="http://www.suse.com/">SuSE</ulink>.
 	</para>
 	<para>
-	  Two seperate packages exist; fann, the runtime library, and fann-devel, the development library and
+	  Two separate packages exist; fann, the runtime library, and fann-devel, the development library and
 	  header files.
 	</para>
         <para>
@@ -61,9 +61,12 @@
       <section id="intro.install.deb">
         <title>DEBs</title>
         <para>
-	  DEBs are packages for the <ulink url="http://www.debian.org">Debian</ulink> Linux distribution. 
+	  DEBs are packages for the <ulink url="http://www.debian.org">Debian</ulink> Linux distribution.
 	  Two separate packages exists libfann1 and libfann1-dev, where libfann1 is the runtime library and
 	  libfann1-dev is the development library.
+	</para>
+        <para>
+	  Fann is included in the testing distribution of Debian, so testing users can simply run (as root) the following command: <command>apt-get install libfann1 libfann1-dev</command>.
 	</para>
         <para>
 	  After downloading the FANN DEB package, simply run (as root) the following command: <command>dpkg -i $PATH_TO_DEB</command>
@@ -83,7 +86,7 @@
 	</para>
 	<para>
 	  When the build process is complete, the library and examples can be found in the <filename class="directory">MSVC++\Debug</filename> and
-	  <filename class="directory">MSVC++\Release</filename> directories and the release versions of the examples are automatically copied inot
+	  <filename class="directory">MSVC++\Release</filename> directories and the release versions of the examples are automatically copied into
 	  the <filename class="directory">examples</filename> where they are supposed to be run.
 	</para>
 	<!-- /Koen -->
@@ -102,6 +105,10 @@
 	  Finally, to install the library, type <command>make install</command>. Odds are you will have to
 	  be root to install, so you may need to <command>su</command> to root before installing. Please
 	  remember to log out of the root account immediately after <command>make install</command> finishes.
+	</para>
+	<para>
+	  Some people have experienced problems with compiling the library with some compilers, especially windows compilers which can not use GNU autotools. Please look through the <ulink url="http://sourceforge.net/forum/forum.php?forum_id=323465">help forum</ulink> and the <ulink url="http://sourceforge.net/mailarchive/forum.php?forum=fann-general">mailing list</ulink> archives for info on how these problems was solved. If you do not find any information here, feel free to ask questions.
+
 	</para>
       </section>
     </section>
@@ -156,7 +163,7 @@ int main()
 	</example>
         <para>
 	  The file xor.data, used to train the xor function:
-	  <literallayout id="file_contents.xor.data">
+	  <literallayout class="monospaced" id="file_contents.xor.data">
 4 2 1
 0 0
 0
@@ -271,8 +278,8 @@ int main()
       <para>
 	These two functions set the activation function for the hidden layers and for the output layer. Likewise the steepness parameter used in the sigmoid
 	function can be adjusted with the
-	<link linkend="api.fann_set_activation_hidden_steepness"><function>fann_set_activation_hidden_steepness</function></link> and
-	<link linkend="api.fann_set_activation_output_steepness"><function>fann_set_activation_output_steepness</function></link> functions.
+	<link linkend="api.fann_set_activation_steepness_hidden"><function>fann_set_activation_steepness_hidden</function></link> and
+	<link linkend="api.fann_set_activation_steepness_output"><function>fann_set_activation_steepness_output</function></link> functions.
       </para>
       <para>
         FANN distinguishes between the hidden layers and the output layer, to allow more flexibility. This is especially a good idea for users wanting discrete
@@ -778,6 +785,78 @@ fann_destroy(ann2);
           <para>This function appears in FANN &gt;= 1.0.5.</para>
         </refsect1>
       </refentry>
+      <refentry id="api.fann_create_forward">
+        <refnamediv>
+          <refname>fann_create_forward</refname>
+          <refpurpose>Create a new artificial neural network with forward connections, and return a pointer to it.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>struct fann *</type>
+            <methodname>fann_create_forward</methodname>
+            <methodparam>
+              <type>float</type>
+              <parameter>learning_rate</parameter>
+            </methodparam>
+            <methodparam>
+              <type>unsigned int</type>
+              <parameter>num_layers</parameter>
+            </methodparam>
+            <methodparam>
+              <type>unsigned int</type>
+              <parameter>...</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+            <function>fann_create_forward</function> will create a new artificial neural network, and return
+	    a pointer to it. The network will be fully connected, and will furthermore have all forward 
+	    connections connected.
+	  </para>
+	  <para>
+            Forward connections are connections that skip layers. A fully connected network with forward
+	    connections, is a network where all neurons are connected to all neurons in later layers. 
+	    Including direct connections from the input layer to the output layer.
+	  </para>
+	  <para>
+	    The <parameter>num_layers</parameter> is the number of layers including the input and
+	    output layer. This parameter is followed by one parameter for each layer telling how
+	    many neurons there should be in the layer.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_create_forward_array">
+        <refnamediv>
+          <refname>fann_create_forward_array</refname>
+          <refpurpose>Create a new artificial neural network with forward connections, and return a pointer to it.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>struct fann *</type>
+            <methodname>fann_create_forward_array</methodname>
+            <methodparam>
+              <type>float</type>
+              <parameter>learning_rate</parameter>
+            </methodparam>
+            <methodparam>
+              <type>unsigned int</type>
+              <parameter>num_layers</parameter>
+            </methodparam>
+            <methodparam>
+              <type>unsigned int *</type>
+              <parameter>neurons_per_layer</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+            <function>fann_create_forward_array</function> will create a new artificial neural network, and return a pointer to
+	    it. It is the same as <function>fann_create_forward</function>, only it accepts an array as its final parameter
+	    instead of variable arguments.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
       <refentry id="api.fann_destroy">
         <refnamediv>
           <refname>fann_destroy</refname>
@@ -835,8 +914,12 @@ fann_destroy(ann2);
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
-            <type>struct fann *</type>
+            <type>void</type>
             <methodname>fann_randomize_weights</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
             <methodparam>
               <type>fann_type</type>
               <parameter>min_weight</parameter>
@@ -864,11 +947,15 @@ fann_destroy(ann2);
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
-            <type>struct fann *</type>
+            <type>void</type>
             <methodname>fann_init_weights</methodname>
             <methodparam>
-              <type>fann_train_data</type>
-              <parameter>data</parameter>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+            <methodparam>
+              <type>struct fann_train_data *</type>
+              <parameter>train_data</parameter>
             </methodparam>
           </methodsynopsis>
           <para>
@@ -887,6 +974,38 @@ fann_destroy(ann2);
 	    <link linkend="api.fann_randomize_weights"><function>fann_randomize_weights</function></link>
 	  </para>
           <para>This function appears in FANN &gt;= 1.1.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_print_connections">
+        <refnamediv>
+          <refname>fann_print_connections</refname>
+          <refpurpose>Prints the connections of an ann.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>void</type>
+            <methodname>fann_print_connections</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+            <function>fann_print_connections</function> will print the connections of the ann in a compact matrix, for easy viewing of the internals of the ann.
+	  </para>
+        <para>
+	  The output from fann_print_connections on a small (2 2 1) network trained on the xor problem:
+	  <literallayout class="monospaced" id="api.fann_print_connections.output">
+Layer / Neuron 012345
+L   1 / N    3 ddb...
+L   1 / N    4 bbb...
+L   2 / N    6 ...cda
+	  </literallayout> This network have five real neurons and two bias neurons. This gives a total of seven neurons named from 0 to 6. The connections between these neurons can be seen in the matrix. <constant>"."</constant> is a place where there is no connection, while a character tells how strong the connection is on a scale from a-z. The two real neurons in the hidden layer (neuron <constant>3</constant> and <constant>4</constant> in layer <constant>1</constant>) has connection from the three neurons in the previous layer as is visible in the first two lines. The output neuron (<constant>6</constant>) has connections form the three neurons in the hidden layer <constant>3 - 5</constant> as is visible in the last line.
+	</para>
+	<para> To simplify the matrix output neurons is not visible as neurons that connections can come from, and input and bias neurons are not visible as neurons that connections can go to.
+	</para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
         </refsect1>
       </refentry>
     </section>
@@ -943,7 +1062,7 @@ fann_destroy(ann2);
 
 	  </para>
 	  <para>
-	    This is usefull for training a network in floating points,
+	    This is useful for training a network in floating points,
 	    and then later executing it in fixed point.
 	  </para>
 	  <para>
@@ -956,7 +1075,7 @@ fann_destroy(ann2);
 	    A negative value indicates very low precision, and a very
 	    strong possibility for overflow.
 	    (the actual fix point will be set to 0, since a negative
-	    fix point does not make sence).
+	    fix point does not make sense).
 	  </para>
 	  <para>
 	    Generally, a fix point lower than 6 is bad, and should be avoided.
@@ -1071,7 +1190,7 @@ fann_destroy(ann2);
               <parameter>ann</parameter>
             </methodparam>
           </methodsynopsis>
-          <para>Reads the mean square error from the network.</para>
+          <para>Reads the mean square error from the network. This value is calculated during training or testing, and can therefore sometimes be a bit off if the weights have been changed since the last calculation of the value.</para>
           <para>This function appears in FANN &gt;= 1.1.0. (before this
 	  <link linkend="api.fann_get_error"><function>fann_get_error</function></link> is used)</para>
         </refsect1>
@@ -1218,6 +1337,67 @@ fann_destroy(ann2);
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
+      <refentry id="api.fann_train_epoch">
+        <refnamediv>
+          <refname>fann_train_epoch</refname>
+          <refpurpose>Trains one epoch.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>float</type>
+            <methodname>fann_train_epoch</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+            <methodparam>
+              <type>struct fann_train_data *</type>
+              <parameter>data</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    Train one epoch with the training data stored in <parameter>data</parameter>. One epoch is 
+	    where all of the training data is considered exactly once.
+	  </para>
+	  <para>
+	    This function returns the MSE error as it is calculated either before or during the actual training.
+	    This is not the actual MSE after the training epoch, but since calculating this will require to go 
+	    through the entire training set once more, it is more than adequate to use this value during training.
+	  </para>
+	  <para>
+	    The training algorithm used by this function is chosen by the 
+	    <link linkend="api.fann_set_training_algorithm"><function>fann_set_training_algorithm</function></link> 
+	    function. The default training algorithm is <link linkend="api.sec.constants.training"><constant>FANN_TRAIN_RPROP</constant></link>.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_test_data">
+        <refnamediv>
+          <refname>fann_test_data</refname>
+          <refpurpose>Calculates the mean square error for a set of data.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>float</type>
+            <methodname>fann_test_data</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+            <methodparam>
+              <type>struct fann_train_data *</type>
+              <parameter>data</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    Calculates the mean square error for a set of data.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
       <refentry id="api.fann_train_on_data">
         <refnamediv>
           <refname>fann_train_on_data</refname>
@@ -1254,6 +1434,11 @@ fann_destroy(ann2);
           <parameter>data</parameter>until 
           <parameter>desired_error</parameter>is reached, or until 
           <parameter>max_epochs</parameter>is surpassed.</para>
+	  <para>
+	    The training algorithm used by this function is chosen by the 
+	    <link linkend="api.fann_set_training_algorithm"><function>fann_set_training_algorithm</function></link> 
+	    function. The default training algorithm is <link linkend="api.sec.constants.training"><constant>FANN_TRAIN_RPROP</constant></link>.
+	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
@@ -1305,12 +1490,17 @@ fann_destroy(ann2);
 	    If the callback function returns -1 the training will terminate.
 	  </para>
 	  <para>
-	    The callback function is very usefull in GUI applications or in other applications which
+	    The callback function is very useful in GUI applications or in other applications which
 	    do not wish to report the progress on standard output. Furthermore the callback function
 	    can be used to stop the training at non standard stop criteria (see
 	    <xref linkend="adv.train_test" endterm="adv.train_test.title"/>.)
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.5.</para>
+	  <para>
+	    The training algorithm used by this function is chosen by the 
+	    <link linkend="api.fann_set_training_algorithm"><function>fann_set_training_algorithm</function></link> 
+	    function. The default training algorithm is <link linkend="api.sec.constants.training"><constant>FANN_TRAIN_RPROP</constant></link>.
+	  </para>
         </refsect1>
       </refentry>
       <refentry id="api.fann_train_on_file">
@@ -1347,6 +1537,11 @@ fann_destroy(ann2);
           <para>
 	    Trains <parameter>ann</parameter> using the data in <parameter>filename</parameter> until
 	    <parameter>desired_error</parameter> is reached, or until <parameter>max_epochs</parameter> is surpassed.
+	  </para>
+	  <para>
+	    The training algorithm used by this function is chosen by the 
+	    <link linkend="api.fann_set_training_algorithm"><function>fann_set_training_algorithm</function></link> 
+	    function. The default training algorithm is <link linkend="api.sec.constants.training"><constant>FANN_TRAIN_RPROP</constant></link>.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
@@ -1397,6 +1592,11 @@ fann_destroy(ann2);
             <parameter>epochs_between_reports</parameter> instead of using the default reporting mechanism.
 	    The callback function works as described in
 	    <link linkend="api.fann_train_on_data_callback"><function>fann_train_on_data_callback</function></link>
+	  </para>
+	  <para>
+	    The training algorithm used by this function is chosen by the 
+	    <link linkend="api.fann_set_training_algorithm"><function>fann_set_training_algorithm</function></link> 
+	    function. The default training algorithm is <link linkend="api.sec.constants.training"><constant>FANN_TRAIN_RPROP</constant></link>.
 	  </para>
           <para>This function appears in FANN &gt;= 1.0.5.</para>
         </refsect1>
@@ -1473,6 +1673,100 @@ fann_destroy(ann2);
     </section>
     <section id="api.sec.options">
       <title id="api.sec.options.title">Options</title>
+      <refentry id="api.fann_print_parameters">
+        <refnamediv>
+          <refname>fann_print_parameters</refname>
+          <refpurpose>Prints all of the parameters and options of the ANN.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>void</type>
+            <methodname>fann_print_parameters</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+          </methodsynopsis>
+	  <para>
+	    Prints all the parameters of the network, for easy viewing of all the values.
+	  </para>
+          <para>
+	    An example print of a freshly created (2 3 1) ANN is displayd here:
+	    <literallayout class="monospaced" id="api.fann_print_parameters.output">
+Input layer                :  2 neurons, 1 bias
+  Hidden layer             :  3 neurons, 1 bias
+Output layer               :  1 neurons
+Total neurons and biases   :  8
+Total connections          : 13
+Connection rate            :  1.00
+Forward connections        :  0
+Training algorithm         :  FANN_TRAIN_RPROP
+Learning rate              :  0.70
+Activation function hidden :  FANN_SIGMOID_STEPWISE
+Activation function output :  FANN_SIGMOID_STEPWISE
+Activation steepness hidden:  0.50
+Activation steepness output:  0.50
+Use tanh error function    :  1
+Quickprop decay            : -0.000100
+Quickprop mu               :  1.75
+RPROP increase factor      :  1.20
+RPROP decrease factor      :  0.50
+RPROP delta min            :  0.00
+RPROP delta max            : 50.00
+	    </literallayout>
+  	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_get_training_algorithm">
+        <refnamediv>
+          <refname>fann_get_training_algorithm</refname>
+          <refpurpose>Retrieve training algorithm from a network.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>unsigned int</type>
+            <methodname>fann_get_training_algorithm</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>Return the training algorithm (as described in <link linkend="api.sec.constants.training">Training algorithms</link>) for a given network.</para>
+	  <para>
+	    The default training algorithm is <link linkend="api.sec.constants.training"><constant>FANN_TRAIN_RPROP</constant></link>.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_set_training_algorithm">
+        <refnamediv>
+          <refname>fann_set_training_algorithm</refname>
+          <refpurpose>Set a network's training algorithm.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>void</type>
+            <methodname>fann_set_training_algorithm</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+            <methodparam>
+              <type>unsigned int</type>
+              <parameter>training_algorithm</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>Set the training algorithm (as described in <link linkend="api.sec.constants.training">Training algorithms</link>) of a network.</para>
+	  <para>
+	    The default training algorithm is <link linkend="api.sec.constants.training"><constant>FANN_TRAIN_RPROP</constant></link>.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
       <refentry id="api.fann_get_learning_rate">
         <refnamediv>
           <refname>fann_get_learning_rate</refname>
@@ -1500,7 +1794,7 @@ fann_destroy(ann2);
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
-            <type></type>
+            <type>void</type>
             <methodname>fann_set_learning_rate</methodname>
             <methodparam>
               <type>struct fann *</type>
@@ -1621,16 +1915,16 @@ fann_destroy(ann2);
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
-      <refentry id="api.fann_get_activation_hidden_steepness">
+      <refentry id="api.fann_get_activation_steepness_hidden">
         <refnamediv>
-          <refname>fann_get_activation_hidden_steepness</refname>
+          <refname>fann_get_activation_steepness_hidden</refname>
           <refpurpose>Retrieve the steepness of the activation function of the hidden layers.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
             <type>fann_type</type>
-            <methodname>fann_get_activation_hidden_steepness</methodname>
+            <methodname>fann_get_activation_steepness_hidden</methodname>
             <methodparam>
               <type>struct fann *</type>
               <parameter>ann</parameter>
@@ -1643,19 +1937,19 @@ fann_destroy(ann2);
 	    steep. A large steepness is well suited for classification problems while a small
 	    steepness is well suited for function approximation.
 	  </para>
-          <para>This function appears in FANN &gt;= 1.0.0.</para>
+          <para>This function appears in FANN &gt;= 1.2.0. and replaces the <methodname>fann_get_activation_hidden_steepness</methodname> function from FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
-      <refentry id="api.fann_set_activation_hidden_steepness">
+      <refentry id="api.fann_set_activation_steepness_hidden">
         <refnamediv>
-          <refname>fann_set_activation_hidden_steepness</refname>
+          <refname>fann_set_activation_steepness_hidden</refname>
           <refpurpose>Set the steepness of the activation function of the hidden layers.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
             <type>void</type>
-            <methodname>fann_set_activation_hidden_steepness</methodname>
+            <methodname>fann_set_activation_steepness_hidden</methodname>
             <methodparam>
               <type>struct fann *</type>
               <parameter>ann</parameter>
@@ -1666,7 +1960,7 @@ fann_destroy(ann2);
             </methodparam>
           </methodsynopsis>
           <para>
-	    Set the steepness of the activation function of thie hidden layers of 
+	    Set the steepness of the activation function of the hidden layers of 
 	    <parameter>ann</parameter> to 
 	    <parameter>steepness</parameter>.
 	  </para>
@@ -1676,19 +1970,19 @@ fann_destroy(ann2);
 	    steep. A large steepness is well suited for classification problems while a small
 	    steepness is well suited for function approximation.
 	  </para>
-          <para>This function appears in FANN &gt;= 1.0.0.</para>
+          <para>This function appears in FANN &gt;= 1.2.0. and replaces the <methodname>fann_set_activation_hidden_steepness</methodname> function from FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
-      <refentry id="api.fann_get_activation_output_steepness">
+      <refentry id="api.fann_get_activation_steepness_output">
         <refnamediv>
-          <refname>fann_get_activation_output_steepness</refname>
-          <refpurpose>Retrieve the steepness of the activation function of the hidden layers.</refpurpose>
+          <refname>fann_get_activation_steepness_output</refname>
+          <refpurpose>Retrieve the steepness of the activation function of the output layer.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
             <type>fann_type</type>
-            <methodname>fann_get_activation_output_steepness</methodname>
+            <methodname>fann_get_activation_steepness_output</methodname>
             <methodparam>
               <type>struct fann *</type>
               <parameter>ann</parameter>
@@ -1701,19 +1995,19 @@ fann_destroy(ann2);
 	    steep. A large steepness is well suited for classification problems while a small
 	    steepness is well suited for function approximation.
 	  </para>
-          <para>This function appears in FANN &gt;= 1.0.0.</para>
+          <para>This function appears in FANN &gt;= 1.2.0. and replaces the <methodname>fann_get_activation_output_steepness</methodname> function from FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
-      <refentry id="api.fann_set_activation_output_steepness">
+      <refentry id="api.fann_set_activation_steepness_output">
         <refnamediv>
-          <refname>fann_set_activation_output_steepness</refname>
-          <refpurpose>Set the steepness of the activation function of the hidden layers.</refpurpose>
+          <refname>fann_set_activation_steepness_output</refname>
+          <refpurpose>Set the steepness of the activation function of the output layer.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
             <type>void</type>
-            <methodname>fann_set_activation_output_steepness</methodname>
+            <methodname>fann_set_activation_steepness_output</methodname>
             <methodparam>
               <type>struct fann *</type>
               <parameter>ann</parameter>
@@ -1724,7 +2018,7 @@ fann_destroy(ann2);
             </methodparam>
           </methodsynopsis>
           <para>
-	    Set the steepness of the activation function of thie hidden layers of 
+	    Set the steepness of the activation function of the hidden layers of 
             <parameter>ann</parameter> to <parameter>steepness</parameter>.
 	  </para>
 	  <para>
@@ -1733,7 +2027,393 @@ fann_destroy(ann2);
 	    steep. A large steepness is well suited for classification problems while a small
 	    steepness is well suited for function approximation.
 	  </para>
-          <para>This function appears in FANN &gt;= 1.0.0.</para>
+          <para>This function appears in FANN &gt;= 1.2.0. and replaces the <methodname>fann_set_activation_output_steepness</methodname> function from FANN &gt;= 1.0.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_set_use_tanh_error_function">
+        <refnamediv>
+          <refname>fann_set_use_tanh_error_function</refname>
+          <refpurpose>Sets whether the tanh error function is used.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>void</type>
+            <methodname>fann_get_use_tanh_error_function</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+            <methodparam>
+              <type>unsigned int</type>
+              <parameter>use_tanh_error_function</parameter>
+            </methodparam>
+          </methodsynopsis>
+	  <para>
+	    If <parameter>use_tanh_error_function</parameter> is zero, the tanh error 
+	    function is not used and if it is one, the tanh error function is used.
+	  </para>
+          <para>
+	    The tanh error function is an error function that makes large deviations 
+	    stand out, by altering the error value used when training the network.
+	    The idea behind this is that it is worse to have 1 output that misses the target
+	    by 100%, than having 10 outputs that misses the target by 10%.
+	  </para>
+	  <para>
+	    The default behavior is to use the tanh error function.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_get_use_tanh_error_function">
+        <refnamediv>
+          <refname>fann_get_use_tanh_error_function</refname>
+          <refpurpose>Sees if the tanh error function is used.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>unsigned int</type>
+            <methodname>fann_get_use_tanh_error_function</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The tanh error function is an error function that makes large deviations 
+	    stand out, by altering the error value used when training the network.
+	    The idea behind this is that it is worse to have 1 output that misses the target
+	    by 100%, than having 10 outputs that misses the target by 10%.
+	  </para>
+	  <para>
+	    The default behavior is to use this tanh error function.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_get_quickprop_decay">
+        <refnamediv>
+          <refname>fann_get_quickprop_decay</refname>
+          <refpurpose>Get the decay parameter used by the quickprop training.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>float</type>
+            <methodname>fann_get_quickprop_decay</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The decay is a small negative valued number which is the factor that the weights
+	    should become smaller in each iteration. This is used to make sure that the
+	    weights do not become too high during training.
+	  </para>
+	  <para>
+	    The default value for this parameter is -0.0001.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_set_quickprop_decay">
+        <refnamediv>
+          <refname>fann_set_quickprop_decay</refname>
+          <refpurpose>Set the decay parameter used by the quickprop training.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>void</type>
+            <methodname>fann_set_quickprop_decay</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+            <methodparam>
+              <type>float</type>
+              <parameter>quickprop_decay</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The decay is a small negative valued number which is the factor that the weights
+	    should become smaller in each iteration. This is used to make sure that the
+	    weights do not become too high during training.
+	  </para>
+	  <para>
+	    The default value for this parameter is -0.0001.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_get_quickprop_mu">
+        <refnamediv>
+          <refname>fann_get_quickprop_mu</refname>
+          <refpurpose>Get the mu factor used by quickprop training.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>float</type>
+            <methodname>fann_get_quickprop_mu</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The mu factor is used to increase and decrease the step-size during quickprop
+	    training. The mu factor should always be above 1, since it would otherwise 
+	    decrease the step-size when it was suppose to increase it.
+	  </para>
+	  <para>
+	    The default value for this parameter is 1.75.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_set_quickprop_mu">
+        <refnamediv>
+          <refname>fann_set_quickprop_mu</refname>
+          <refpurpose>Set the mu factor used by quickprop training.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>void</type>
+            <methodname>fann_set_quickprop_mu</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+            <methodparam>
+              <type>float</type>
+              <parameter>quickprop_mu</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The mu factor is used to increase and decrease the step-size during quickprop
+	    training. The mu factor should always be above 1, since it would otherwise 
+	    decrease the step-size when it was suppose to increase it.
+	  </para>
+	  <para>
+	    The default value for this parameter is 1.75.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_get_rprop_increase_factor">
+        <refnamediv>
+          <refname>fann_get_rprop_increase_factor</refname>
+          <refpurpose>Get the increase factor used by RPROP training.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>float</type>
+            <methodname>fann_get_rprop_increase_factor</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The increase factor is a value larger than 1, which is used to increase the 
+	    step-size during RPROP training.
+	  </para>
+	  <para>
+	    The default value for this parameter is 1.2.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_set_rprop_increase_factor">
+        <refnamediv>
+          <refname>fann_set_rprop_increase_factor</refname>
+          <refpurpose>Get the increase factor used by RPROP training.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>void</type>
+            <methodname>fann_set_rprop_increase_factor</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+            <methodparam>
+              <type>float</type>
+              <parameter>rprop_increase_factor</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The increase factor is a value larger than 1, which is used to increase the 
+	    step-size during RPROP training.
+	  </para>
+	  <para>
+	    The default value for this parameter is 1.2.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_get_rprop_decrease_factor">
+        <refnamediv>
+          <refname>fann_get_rprop_decrease_factor</refname>
+          <refpurpose>Get the decrease factor used by RPROP training.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>float</type>
+            <methodname>fann_get_rprop_decrease_factor</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The increase factor is a value smaller than 1, which is used to decrease the 
+	    step-size during RPROP training.
+	  </para>
+	  <para>
+	    The default value for this parameter is 0.5.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_set_rprop_decrease_factor">
+        <refnamediv>
+          <refname>fann_set_rprop_decrease_factor</refname>
+          <refpurpose>Set the decrease factor used by RPROP training.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>void</type>
+            <methodname>fann_set_rprop_decrease_factor</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+            <methodparam>
+              <type>float</type>
+              <parameter>rprop_decrease_factor</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The increase factor is a value smaller than 1, which is used to decrease the 
+	    step-size during RPROP training.
+	  </para>
+	  <para>
+	    The default value for this parameter is 0.5.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_get_rprop_delta_min">
+        <refnamediv>
+          <refname>fann_get_rprop_delta_min</refname>
+          <refpurpose>Get the minimum step-size used by RPROP training.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>float</type>
+            <methodname>fann_get_rprop_delta_min</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The minimum step-size is a small positive number determining how small the minimum step may be.
+	  </para>
+	  <para>
+	    The default value for this parameter is 0.0.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_set_rprop_delta_min">
+        <refnamediv>
+          <refname>fann_set_rprop_delta_min</refname>
+          <refpurpose>Set the minimum step-size used by RPROP training.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>void</type>
+            <methodname>fann_set_rprop_delta_min</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+            <methodparam>
+              <type>float</type>
+              <parameter>rprop_delta_min</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The minimum step-size is a small positive number determining how small the minimum step may be.
+	  </para>
+	  <para>
+	    The default value for this parameter is 0.0.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_get_rprop_delta_max">
+        <refnamediv>
+          <refname>fann_get_rprop_delta_max</refname>
+          <refpurpose>Get the maximum step-size used by RPROP training.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>float</type>
+            <methodname>fann_get_rprop_delta_max</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The maximum step-size is a small positive number determining how small the minimum step may be.
+	  </para>
+	  <para>
+	    The default value for this parameter is 50.0.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="api.fann_set_rprop_delta_max">
+        <refnamediv>
+          <refname>fann_set_rprop_delta_max</refname>
+          <refpurpose>Set the maximum step-size used by RPROP training.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>void</type>
+            <methodname>fann_set_rprop_delta_max</methodname>
+            <methodparam>
+              <type>struct fann *</type>
+              <parameter>ann</parameter>
+            </methodparam>
+            <methodparam>
+              <type>float</type>
+              <parameter>rprop_delta_max</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    The maximum step-size is a small positive number determining how small the minimum step may be.
+	  </para>
+	  <para>
+	    The default value for this parameter is 50.0.
+	  </para>
+          <para>This function appears in FANN &gt;= 1.2.0.</para>
         </refsect1>
       </refentry>
       <refentry id="api.fann_get_num_input">
@@ -2013,7 +2693,7 @@ fann_destroy(ann2);
           <title>Description</title>
           <para>
 	    This structure is subject to change at any time. If you need to use the values contained herein, please
-	    see the <link linkend="api.sec.options">Options</link>functions. If these functions do not fulfill your
+	    see the <link linkend="api.sec.options">Options</link> functions. If these functions do not fulfill your
 	    needs, please open a feature request on our SourceForge
 	    <ulink url="http://www.sourceforge.net/projects/fann">project page</ulink>.
 	  </para>
@@ -2025,7 +2705,7 @@ fann_destroy(ann2);
                 <varname>errno_f</varname>
               </term>
               <listitem>
-                <para>The type of error that last occured.</para>
+                <para>The type of error that last occurred.</para>
               </listitem>
             </varlistentry>
             <varlistentry>
@@ -2066,13 +2746,30 @@ fann_destroy(ann2);
             </varlistentry>
             <varlistentry>
               <term>
+                <type>unsigned int</type>
+                <varname>forward_connections</varname>
+              </term>
+              <listitem>
+                <para>
+		  Is 1 if forward connections are used in the ann otherwise 0
+		  Forward connections are connections that skip layers.
+		  A fully connected ann with forward connections is an ann where
+		  neurons have connections to all neurons in all later layers.
+		</para>
+		<para>
+		  ANNs with forward connections are created by <link linkend="api.fann_create_forward"><function>fann_create_forward</function></link>.
+		</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>
                 <type>struct fann_layer *</type>
                 <varname>first_layer</varname>
               </term>
               <listitem>
                 <para>
-		  Pointer to the first layer (input layer) in an array af all the layers, including the input and
-                  output layers.
+		  Pointer to the first layer (input layer) in an array of all the layers, including the input and
+                  output layer.
 		</para>
               </listitem>
             </varlistentry>
@@ -2083,8 +2780,8 @@ fann_destroy(ann2);
               </term>
               <listitem>
                 <para>
-		  Pointer to the layer past the last layer in an array af all the layers, including the input and
-                  output layers.
+		  Pointer to the layer past the last layer in an array of all the layers, including the input and
+                  output layer.
 		</para>
               </listitem>
             </varlistentry>
@@ -2121,7 +2818,7 @@ fann_destroy(ann2);
             <varlistentry>
               <term>
                 <type>fann_type *</type>
-                <varname>train_deltas</varname>
+                <varname>train_errors</varname>
               </term>
               <listitem>
                 <para>
@@ -2151,7 +2848,7 @@ fann_destroy(ann2);
             <varlistentry>
               <term>
                 <type>unsigned int</type>
-                <varname>activation_hidden_steepness</varname>
+                <varname>activation_steepness_hidden</varname>
               </term>
               <listitem>
                 <para>Parameters for the activation function in the hidden layers.</para>
@@ -2160,10 +2857,21 @@ fann_destroy(ann2);
             <varlistentry>
               <term>
                 <type>unsigned int</type>
-                <varname>activation_output_steepness</varname>
+                <varname>activation_steepness_output</varname>
               </term>
               <listitem>
                 <para>Parameters for the activation function in the output layer.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>
+                <type>unsigned int</type>
+                <varname>training_algorithm</varname>
+              </term>
+              <listitem>
+                <para>
+		  Training algorithm used when calling fann_train_on_... and <link linkend="api.fann_train_epoch"><function>fann_train_epoch</function></link>.
+		</para>
               </listitem>
             </varlistentry>
             <varlistentry>
@@ -2173,8 +2881,8 @@ fann_destroy(ann2);
               </term>
               <listitem>
                 <para>
-                <emphasis>Fixed point only.</emphasis>The decimal point, used for shifting the fix point in fixed point
-                integer operatons.</para>
+                <emphasis>Fixed point only.</emphasis> The decimal point, used for shifting the fix point in fixed point
+                integer operations.</para>
               </listitem>
             </varlistentry>
             <varlistentry>
@@ -2184,15 +2892,15 @@ fann_destroy(ann2);
               </term>
               <listitem>
                 <para>
-                  <emphasis>Fixed point only.</emphasis>The multiplier, used for multiplying the fix point in fixed point
-                  integer operatons. Only used in special cases, since the decimal_point is much faster.
+                  <emphasis>Fixed point only.</emphasis> The multiplier, used for multiplying the fix point in fixed point
+                  integer operations. Only used in special cases, since the decimal_point is much faster.
 		</para>
               </listitem>
             </varlistentry>
             <varlistentry>
               <term>
                 <type>fann_type *</type>
-                <varname>activation_hidden_results</varname>
+                <varname>activation_results_hidden</varname>
               </term>
               <listitem>
                 <para>
@@ -2204,7 +2912,7 @@ fann_destroy(ann2);
             <varlistentry>
               <term>
                 <type>fann_type *</type>
-                <varname>activation_hidden_values</varname>
+                <varname>activation_values_hidden</varname>
               </term>
               <listitem>
                 <para>
@@ -2216,7 +2924,7 @@ fann_destroy(ann2);
             <varlistentry>
               <term>
                 <type>fann_type *</type>
-                <varname>activation_output_results</varname>
+                <varname>activation_results_output</varname>
               </term>
               <listitem>
                 <para>
@@ -2228,7 +2936,7 @@ fann_destroy(ann2);
             <varlistentry>
               <term>
                 <type>fann_type *</type>
-                <varname>activation_output_values</varname>
+                <varname>activation_values_output</varname>
               </term>
               <listitem>
                 <para>
@@ -2261,19 +2969,122 @@ fann_destroy(ann2);
             <varlistentry>
               <term>
                 <type>unsigned int</type>
-                <varname>num_errors</varname>
+                <varname>num_MSE</varname>
               </term>
               <listitem>
-                <para>The number of data used to calculate the error.</para>
+                <para>The number of data used to calculate the mean square error.</para>
               </listitem>
             </varlistentry>
             <varlistentry>
               <term>
                 <type>float</type>
-                <varname>error_value</varname>
+                <varname>MSE_value</varname>
               </term>
               <listitem>
-                <para>The total error value. The real mean square error is error_value/num_errors.</para>
+                <para>The total error value. The real mean square error is MSE_value/num_MSE.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>
+                <type>unsigned int</type>
+                <varname>use_tanh_error_function</varname>
+              </term>
+              <listitem>
+                <para>When using this, training is usually faster.
+		  Makes the error used for calculating the slopes
+	          higher when the difference is higher.
+		</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>
+                <type>float</type>
+                <varname>quickprop_decay</varname>
+              </term>
+              <listitem>
+                <para>Decay is used to make the weights not go so high.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>
+                <type>float</type>
+                <varname>quickprop_mu</varname>
+              </term>
+              <listitem>
+                <para>Mu is a factor used to increase and decrease the step-size.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>
+                <type>float</type>
+                <varname>rprop_increase_factor</varname>
+              </term>
+              <listitem>
+                <para>Tells how much the step-size should increase during learning.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>
+                <type>float</type>
+                <varname>rprop_decrease_factor</varname>
+              </term>
+              <listitem>
+                <para>Tells how much the step-size should decrease during learning.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>
+                <type>float</type>
+                <varname>rprop_delta_min</varname>
+              </term>
+              <listitem>
+                <para>The minimum step-size.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>
+                <type>float</type>
+                <varname>rprop_delta_max</varname>
+              </term>
+              <listitem>
+                <para>The maximum step-size.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>
+                <type>fann_type *</type>
+                <varname>train_slopes</varname>
+              </term>
+              <listitem>
+                <para>
+		  Used to contain the slope errors used during batch training
+		  Is allocated during first training session,
+		  which means that if we do not train, it is never allocated.
+		</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>
+                <type>fann_type *</type>
+                <varname>prev_steps</varname>
+              </term>
+              <listitem>
+                <para>
+		  The previous step taken by the quickprop/rprop procedures.
+		  Not allocated if not used.
+		</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>
+                <type>fann_type *</type>
+                <varname>prev_train_slopes</varname>
+              </term>
+              <listitem>
+                <para>
+		  The slope values used by the quickprop/rprop procedures.
+		  Not allocated if not used.
+		</para>
               </listitem>
             </varlistentry>
           </variablelist>
@@ -2300,7 +3111,7 @@ fann_destroy(ann2);
                 <varname>errno_f</varname>
               </term>
               <listitem>
-                <para>The type of error that last occured.</para>
+                <para>The type of error that last occurred.</para>
               </listitem>
             </varlistentry>
             <varlistentry>
@@ -2403,7 +3214,7 @@ fann_destroy(ann2);
                 <varname>errno_f</varname>
               </term>
               <listitem>
-                <para>The type of error that last occured.</para>
+                <para>The type of error that last occurred.</para>
               </listitem>
             </varlistentry>
             <varlistentry>
@@ -2505,7 +3316,7 @@ fann_destroy(ann2);
                 <para>
 		  A pointer to the first neuron in the layer. When allocated, all the
 		  neurons in all the layers are actually in one long array, this is
-		  because we wan't to easily clear all the neurons at once.
+		  because we want to easily clear all the neurons at once.
 		</para>
               </listitem>
             </varlistentry>
@@ -2529,6 +3340,82 @@ fann_destroy(ann2);
     <section id="api.sec.constants">
       <title id="api.sec.constants.title">Constants</title>
 
+      <refentry id="api.sec.constants.training">
+        <refnamediv>
+          <refname id="api.sec.constants.training.title">Training algorithms</refname>
+          <refpurpose>Constants representing training algorithms.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+	  <para>
+	    These constants represent the training algorithms available within the fann library.
+	    The list will grow over time, but probably not shrink.
+	  </para>
+	  <para>
+	    The training algorithm used by this function is chosen by the 
+	    <link linkend="api.fann_set_training_algorithm"><function>fann_set_training_algorithm</function></link> 
+	    function. The default training algorithm is <constant>FANN_TRAIN_RPROP</constant>.
+	  </para>
+          <variablelist>
+            <title>Constants</title>
+            <varlistentry>
+              <term>FANN_TRAIN_INCREMENTAL</term>
+              <listitem>
+                <para> 
+                 Standard backpropagation algorithm, where the weights are updated after each training 
+		 pattern. This means that the weights are updated many times during a single epoch. 
+		 For this reason some problems, will train very fast with this algorithm, while other more
+                 advanced problems will not train very well.
+		</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>FANN_TRAIN_BATCH</term>
+              <listitem>
+                <para> 
+                 Standard backpropagation algorithm, where the weights are updated after calculating 
+		 the mean square error for the whole training set. This means that the weights are only updated 
+		 once during a epoch. For this reason some problems, will train slower with this algorithm. 
+		 But since the mean square error is calculated more correctly than in incremental training,
+		 some problems will reach a better solutions with this algorithm.
+		</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>FANN_TRAIN_RPROP</term>
+              <listitem>
+	        <para>
+		  A more advanced batch training algorithm which achieves good results for many problems.
+		  The RPROP training algorithm is adaptive, and does therefore not use the learning_rate.
+		  Some other parameters can however be set to change the way the RPROP algorithm works,
+		  but it is only recommended for users with insight in how the RPROP training algorithm works.
+		</para>
+                <para>
+		  The RPROP training algorithm is described in 
+		  [<xref linkend="bib.riedmiller_1993" endterm="bib.riedmiller_1993.abbrev" />], but the
+		  actual learning algorithm used here is the iRPROP- training algorithm 
+		  [<xref linkend="bib.igel_2000" endterm="bib.igel_2000.abbrev" />]  which is an variety
+		  of the standard RPROP training algorithm.
+		</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>FANN_TRAIN_QUICKPROP</term>
+              <listitem>
+	        <para>
+		  A more advanced batch training algorithm which achieves good results for many problems.
+		  The quickprop training algorithm uses the learning_rate parameter along with other more
+		  advanced parameters, but it is only recommended to change these advanced parameters, for 
+		  users with insight in how the quickprop training algorithm works.
+		</para>
+                <para>
+		  The quickprop training algorithm is described in [<xref linkend="bib.fahlman_1988" endterm="bib.fahlman_1988.abbrev" />].
+		</para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
+        </refsect1>
+      </refentry>
       <refentry id="api.sec.constants.activation">
         <refnamediv>
           <refname id="api.sec.constants.activation.title">Activation Functions</refname>
@@ -2546,9 +3433,27 @@ fann_destroy(ann2);
               <term>FANN_THRESHOLD</term>
               <listitem>
                 <para>
-		  <emphasis>Execution only</emphasis> -
-		  Threshold activation function.
+		  <emphasis>Execution only</emphasis> - Threshold activation function.
 		</para>
+		<para> This activation function gives output that is either 0 or 1.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>FANN_THRESHOLD_SYMMETRIC</term>
+              <listitem>
+                <para>
+		  <emphasis>Execution only</emphasis> - Threshold activation function.
+		</para>
+		<para> This activation function gives output that is either -1 or 1.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>FANN_LINEAR</term>
+              <listitem>
+                <para>
+		  <emphasis>Can not be used in fixed point</emphasis> - Linear activation function.
+		</para>
+		<para> This activation function gives output that is unbounded.</para>
               </listitem>
             </varlistentry>
             <varlistentry>
@@ -2557,6 +3462,7 @@ fann_destroy(ann2);
                 <para>
 		  Sigmoid activation function. One of the most used activation functions.
 		</para>
+		<para> This activation function gives output that is between 0 and 1.</para>
               </listitem>
             </varlistentry>
             <varlistentry>
@@ -2565,6 +3471,7 @@ fann_destroy(ann2);
                 <para>
 		  Stepwise linear approximation to sigmoid. Faster than sigmoid but a bit less precise.
 		</para>
+		<para> This activation function gives output that is between 0 and 1.</para>
               </listitem>
             </varlistentry>
             <varlistentry>
@@ -2573,6 +3480,16 @@ fann_destroy(ann2);
                 <para>
 		  Symmetric sigmoid activation function, AKA tanh. One of the most used activation functions.
 		</para>
+		<para> This activation function gives output that is between -1 and 1.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>FANN_SIGMOID_SYMMETRIC_STEPWISE</term>
+              <listitem>
+                <para>
+		  Stepwise linear approximation to symmetric sigmoid. Faster than symmetric sigmoid but a bit less precise.
+		</para>
+		<para> This activation function gives output that is between -1 and 1.</para>
               </listitem>
             </varlistentry>
           </variablelist>
@@ -3006,7 +3923,7 @@ fann_destroy(ann2);
         <refentry id="api.fann_update_stepwise_output">
           <refnamediv>
             <refname>fann_update_stepwise_output</refname>
-            <refpurpose>Adjust the stepwise functions in the output layers.</refpurpose>
+            <refpurpose>Adjust the stepwise functions in the output layer.</refpurpose>
           </refnamediv>
           <refsect1>
             <title>Description</title>
@@ -3019,7 +3936,7 @@ fann_destroy(ann2);
               </methodparam>
             </methodsynopsis>
             <para>
-	      Update the stepwise function in the output layers of <parameter>ann</parameter>.
+	      Update the stepwise function in the output layer of <parameter>ann</parameter>.
 	    </para>
             <para>This function appears in FANN &gt;= 1.0.0.</para>
           </refsect1>
@@ -3069,11 +3986,145 @@ fann_destroy(ann2);
             </methodsynopsis>
             <para>
 	      This function is deprecated and will be removed in a future version. Use
-	      <link linkend="api.fann_reset_MSE"><function>fann_reset_MSE</function></link>instead.
+	      <link linkend="api.fann_reset_MSE"><function>fann_reset_MSE</function></link> instead.
 	    </para>
             <para>This function appears in FANN &gt;= 1.0.0, but is deprecated in FANN &gt;= 1.1.0.</para>
           </refsect1>
         </refentry>
+      </section>
+      <section id="api.sec.steepness.deprecated">
+        <title id="api.sec.steepness.deprecated.title">Get and set activation function steepness.</title>
+	<refentry id="api.fann_get_activation_hidden_steepness">
+	    <refnamediv>
+	      <refname>fann_get_activation_hidden_steepness</refname>
+	      <refpurpose>Retrieve the steepness of the activation function of the hidden layers.</refpurpose>
+	    </refnamediv>
+	    <refsect1>
+	      <title>Description</title>
+	      <methodsynopsis>
+		<type>fann_type</type>
+		<methodname>fann_get_activation_hidden_steepness</methodname>
+		<methodparam>
+		  <type>struct fann *</type>
+		  <parameter>ann</parameter>
+		</methodparam>
+	      </methodsynopsis>
+	      <para>Return the steepness of the activation function of the hidden layers.</para>
+	      <para>
+		The steepness defaults to 0.5 and a larger steepness will make the slope of the
+		activation function more steep, while a smaller steepness will make the slope less
+		steep. A large steepness is well suited for classification problems while a small
+		steepness is well suited for function approximation.
+	      </para>
+              <para>
+	        This function is deprecated and will be removed in a future version. Use
+	        <link linkend="api.fann_get_activation_steepness_hidden"><function>fann_get_activation_steepness_hidden</function></link> instead.
+	      </para>
+	      <para>This function appears in FANN &gt;= 1.0.0. and is deprecated in FANN &gt;= 1.2.0.</para>
+	    </refsect1>
+	  </refentry>
+	  <refentry id="api.fann_set_activation_hidden_steepness">
+	    <refnamediv>
+	      <refname>fann_set_activation_hidden_steepness</refname>
+	      <refpurpose>Set the steepness of the activation function of the hidden layers.</refpurpose>
+	    </refnamediv>
+	    <refsect1>
+	      <title>Description</title>
+	      <methodsynopsis>
+		<type>void</type>
+		<methodname>fann_set_activation_hidden_steepness</methodname>
+		<methodparam>
+		  <type>struct fann *</type>
+		  <parameter>ann</parameter>
+		</methodparam>
+		<methodparam>
+		  <type>fann_type</type>
+		  <parameter>steepness</parameter>
+		</methodparam>
+	      </methodsynopsis>
+	      <para>
+		Set the steepness of the activation function of the hidden layers of 
+		<parameter>ann</parameter> to 
+		<parameter>steepness</parameter>.
+	      </para>
+	      <para>
+		The steepness defaults to 0.5 and a larger steepness will make the slope of the
+		activation function more steep, while a smaller steepness will make the slope less
+		steep. A large steepness is well suited for classification problems while a small
+		steepness is well suited for function approximation.
+	      </para>
+              <para>
+	        This function is deprecated and will be removed in a future version. Use
+	        <link linkend="api.fann_set_activation_steepness_hidden"><function>fann_set_activation_steepness_hidden</function></link> instead.
+	      </para>
+	      <para>This function appears in FANN &gt;= 1.0.0. and is deprecated in FANN &gt;= 1.2.0.</para>
+	    </refsect1>
+	  </refentry>
+	  <refentry id="api.fann_get_activation_output_steepness">
+	    <refnamediv>
+	      <refname>fann_get_activation_output_steepness</refname>
+	      <refpurpose>Retrieve the steepness of the activation function of the output layer.</refpurpose>
+	    </refnamediv>
+	    <refsect1>
+	      <title>Description</title>
+	      <methodsynopsis>
+		<type>fann_type</type>
+		<methodname>fann_get_activation_output_steepness</methodname>
+		<methodparam>
+		  <type>struct fann *</type>
+		  <parameter>ann</parameter>
+		</methodparam>
+	      </methodsynopsis>
+	      <para>Return the steepness of the activation function of the output layer.</para>
+	      <para>
+		The steepness defaults to 0.5 and a larger steepness will make the slope of the
+		activation function more steep, while a smaller steepness will make the slope less
+		steep. A large steepness is well suited for classification problems while a small
+		steepness is well suited for function approximation.
+	      </para>
+              <para>
+	        This function is deprecated and will be removed in a future version. Use
+	        <link linkend="api.fann_get_activation_steepness_output"><function>fann_get_activation_steepness_output</function></link> instead.
+	      </para>
+	      <para>This function appears in FANN &gt;= 1.0.0. and is deprecated in FANN &gt;= 1.2.0.</para>
+	    </refsect1>
+	  </refentry>
+	  <refentry id="api.fann_set_activation_output_steepness">
+	    <refnamediv>
+	      <refname>fann_set_activation_output_steepness</refname>
+	      <refpurpose>Set the steepness of the activation function of the hidden layers.</refpurpose>
+	    </refnamediv>
+	    <refsect1>
+	      <title>Description</title>
+	      <methodsynopsis>
+		<type>void</type>
+		<methodname>fann_set_activation_output_steepness</methodname>
+		<methodparam>
+		  <type>struct fann *</type>
+		  <parameter>ann</parameter>
+		</methodparam>
+		<methodparam>
+		  <type>fann_type</type>
+		  <parameter>steepness</parameter>
+		</methodparam>
+	      </methodsynopsis>
+	      <para>
+		Set the steepness of the activation function of the hidden layers of 
+		<parameter>ann</parameter> to <parameter>steepness</parameter>.
+	      </para>
+	      <para>
+		The steepness defaults to 0.5 and a larger steepness will make the slope of the
+		activation function more steep, while a smaller steepness will make the slope less
+		steep. A large steepness is well suited for classification problems while a small
+		steepness is well suited for function approximation.
+	      </para>
+              <para>
+	        This function is deprecated and will be removed in a future version. Use
+	        <link linkend="api.fann_set_activation_steepness_output"><function>fann_set_activation_steepness_output</function></link> instead.
+	      </para>
+	      <para>This function appears in FANN &gt;= 1.0.0. and is deprecated in FANN &gt;= 1.2.0.</para>
+	    </refsect1>
+	</refentry>
       </section>
     </section>
   </chapter>
@@ -3358,7 +4409,7 @@ if ( fann_train($ann,
           </methodsynopsis>
           <para>
             <function>fann_run</function> will run <parameter>input</parameter> through <parameter>ann</parameter>,
-	    returning an an ouput array on success or FALSE on failure.
+	    returning an an output array on success or FALSE on failure.
 	  </para>
           <example id="example.php.fann_run">
             <title id="example.php.fann_run.title">
@@ -3646,53 +4697,53 @@ else
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
-      <refentry id="function.fann_get_activation_hidden_steepness">
+      <refentry id="function.fann_get_activation_steepness_hidden">
         <refnamediv>
-          <refname>fann_get_activation_hidden_steepness</refname>
+          <refname>fann_get_activation_steepness_hidden</refname>
           <refpurpose>Get the steepness of the activation function for the hidden neurons.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
             <type>float</type>
-            <methodname>fann_get_activation_hidden_steepness</methodname>
+            <methodname>fann_get_activation_steepness_hidden</methodname>
             <methodparam>
               <type>resource</type>
               <parameter>ann</parameter>
             </methodparam>
           </methodsynopsis>
           <para>
-            <function>fann_get_activation_hidden_steepness</function> will return the steepness of the activation
+            <function>fann_get_activation_steepness_hidden</function> will return the steepness of the activation
 	    function for the hidden neurons in <parameter>ann</parameter>.
 	  </para>
           <para>
 	    See also
-	    <link linkend="function.fann_set_activation_hidden_steepness"><function>fann_set_activation_hidden_steepness</function></link>.
+	    <link linkend="function.fann_set_activation_steepness_hidden"><function>fann_set_activation_steepness_hidden</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
-      <refentry id="function.fann_get_activation_output_steepness">
+      <refentry id="function.fann_get_activation_steepness_output">
         <refnamediv>
-          <refname>fann_get_activation_output_steepness</refname>
+          <refname>fann_get_activation_steepness_output</refname>
           <refpurpose>Get the steepness of the activation function for the output neurons.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
             <type>float</type>
-            <methodname>fann_get_activation_output_steepness</methodname>
+            <methodname>fann_get_activation_steepness_output</methodname>
             <methodparam>
               <type>resource</type>
               <parameter>ann</parameter>
             </methodparam>
           </methodsynopsis>
           <para>
-            <function>fann_get_activation_output_steepness</function> will return the steepness of the activation
+            <function>fann_get_activation_steepness_output</function> will return the steepness of the activation
 	    function for the output neurons in <parameter>ann</parameter>.
 	  </para>
           <para>
-	    See also <link linkend="function.fann_set_activation_output_steepness"><function>fann_set_activation_output_steepness</function></link>.
+	    See also <link linkend="function.fann_set_activation_steepness_output"><function>fann_set_activation_steepness_output</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3781,16 +4832,16 @@ else
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
-      <refentry id="function.fann_set_activation_hidden_steepness">
+      <refentry id="function.fann_set_activation_steepness_hidden">
         <refnamediv>
-          <refname>fann_set_activation_hidden_steepness</refname>
+          <refname>fann_set_activation_steepness_hidden</refname>
           <refpurpose>Set the steepness of the activation function for the hidden neurons.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
             <type>void</type>
-            <methodname>fann_set_activation_hidden_steepness</methodname>
+            <methodname>fann_set_activation_steepness_hidden</methodname>
             <methodparam>
               <type>resource</type>
               <parameter>ann</parameter>
@@ -3801,25 +4852,25 @@ else
             </methodparam>
           </methodsynopsis>
           <para>
-            <function>fann_set_activation_hidden_steepness</function>sets the steepness of the activation function
+            <function>fann_set_activation_steepness_hidden</function>sets the steepness of the activation function
 	    hidden neurons to <parameter>steepness</parameter>.
 	  </para>
           <para>
-	    See also <link linkend="function.fann_get_activation_hidden_steepness"><function>fann_get_activation_hidden_steepness</function></link>.
+	    See also <link linkend="function.fann_get_activation_steepness_hidden"><function>fann_get_activation_steepness_hidden</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
-      <refentry id="function.fann_set_activation_output_steepness">
+      <refentry id="function.fann_set_activation_steepness_output">
         <refnamediv>
-          <refname>fann_set_activation_output_steepness</refname>
+          <refname>fann_set_activation_steepness_output</refname>
           <refpurpose>Set the steepness of the activation function for the output neurons.</refpurpose>
         </refnamediv>
         <refsect1>
           <title>Description</title>
           <methodsynopsis>
             <type>void</type>
-            <methodname>fann_set_activation_output_steepness</methodname>
+            <methodname>fann_set_activation_steepness_output</methodname>
             <methodparam>
               <type>resource</type>
               <parameter>ann</parameter>
@@ -3830,11 +4881,11 @@ else
             </methodparam>
           </methodsynopsis>
           <para>
-            <function>fann_set_activation_output_steepness</function> sets the steepness of the activation function
+            <function>fann_set_activation_steepness_output</function> sets the steepness of the activation function
 	    output neurons to <parameter>steepness</parameter>.
 	  </para>
           <para>
-	    See also <link linkend="function.fann_get_activation_output_steepness"><function>fann_get_activation_output_steepness</function></link>.
+	    See also <link linkend="function.fann_get_activation_steepness_output"><function>fann_get_activation_steepness_output</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3850,13 +4901,13 @@ else
     <section id="python.install">
       <title id="python.install.title">Python Install</title>
       <para>
-Make sure to make and install the fann library first.
-Make sure that you have swig and python development files installed.
-Perhaps change the include directory of python.
-Then run 'make' to compile.
+        Make sure to make and install the fann library first.
+        Make sure that you have swig and python development files installed.
+        Perhaps change the include directory of python.
+        Then run 'make' to compile in the python directory.
       </para>
       <para>
-Copy the generated _fann.so and fann.py files to pyhon modules or into working directory.
+Copy the generated _fann.so and fann.py files to python modules or into working directory.
       </para>
       <para>
 After the install, just import fann and all the C functions will be available to your python code.
@@ -3923,14 +4974,14 @@ After the install, just import fann and all the C functions will be available to
       </releaseinfo>
     </biblioentry>
     <biblioentry id="bib.fahlman_1988">
-      <abbrev id="bib.fahlman_1988.abbrev">Falhman, 1988</abbrev>
+      <abbrev id="bib.fahlman_1988.abbrev">Fahlman, 1988</abbrev>
       <author>
         <firstname>S.E.</firstname>
         <surname>Fahlman</surname>
       </author>
       <pubdate>1988</pubdate>
       <title id="bib.fahlman_1988.title">Faster-learning variations on back-propagation</title>
-      <subtitle>An empirical stody</subtitle>
+      <subtitle>An empirical study</subtitle>
     </biblioentry>
     <biblioentry id="bib.FSF_1999">
       <abbrev id="bib.FSF_1999.abbrev">LGPL</abbrev>
@@ -3994,6 +5045,23 @@ After the install, just import fann and all the C functions will be available to
       <releaseinfo>
         <ulink url="http://www.idsoftware.com/games/quake/quake3-arena/">
         http://www.idsoftware.com/games/quake/quake3-arena/</ulink>
+      </releaseinfo>
+    </biblioentry>
+    <biblioentry id="bib.igel_2000">
+      <abbrev id="bib.igel_2000.abbrev">Igel and Hüsken, 2000</abbrev>
+      <author>
+        <firstname>Christian</firstname>
+        <surname>Igel</surname>
+      </author>
+      <author>
+        <firstname>Michael</firstname>
+        <surname>Hüsken</surname>
+      </author>
+      <pubdate>2000</pubdate>
+      <title id="bib.igel_2000.title">Improving the Rprop Learning Algorithm</title>
+      <releaseinfo>
+        <ulink url="http://citeseer.ist.psu.edu/igel00improving.html">
+        http://citeseer.ist.psu.edu/igel00improving.html</ulink>
       </releaseinfo>
     </biblioentry>
     <biblioentry id="bib.kaelbling_1996">
@@ -4288,4 +5356,3 @@ sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
 -->
-

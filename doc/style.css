@@ -1,0 +1,44 @@
+body    {
+        margin: 5px 5px 5px 5px;
+        font-family:Verdana, arial, Helvetica, sans-serif;
+        font-size: 12px;
+        text-decoration:none;
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 255, 255);
+        }
+
+#leftmenu {
+  margin-left:   12px;
+  padding-top:   6px;
+  padding-right: 4px;
+  width:         140px;
+  position:      absolute;
+  padding-left:  6px;
+  left:          0px;
+
+  border-top:   1px solid rgb(192, 181, 149);
+  border-right: 1px solid rgb(192, 181, 149);
+
+  text-align:right;
+  font-family: verdana,tahoma,arial,helvetica;
+  font-size: 11px;
+  background-color: rgb(242, 231, 199);
+}
+
+a:link {
+  color: rgb(157, 41, 51);
+  text-decoration: none;
+}
+
+a:visited {
+  color: rgb(79, 21, 26);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:active {
+   text-decoration: underline;
+}
