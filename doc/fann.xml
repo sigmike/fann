@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.8 2004/03/05 23:43:43 tadpole9 Exp $ -->
+<!-- $Id: fann.xml,v 1.9 2004/03/11 10:40:24 tadpole9 Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -221,14 +221,16 @@ int main()
 	these are parameters that should be adjusted before training.
       </para>
       <para>
-	The learning rate, is one of the most important parameters, but unfortunately it is also a parameter which is hard to find a reasonable default for. I
-	(SN) have several times ended up using 0.7, but it is a good idea to test several different learning rates when training a network. The learning rate can
-	be set when creating the network, but it can also be set by the
+	The learning rate is one of the most important parameters, but unfortunately it is also a parameter which is hard to find a reasonable default for. I
+	(SN) have several times ended up using 0.7, but it is a good idea to test several different learning rates when training a network. It is also worth
+	noting that the activation function has a profound effect on the optimal learning rate [<xref linkend="bib.thimm_1997" endterm="bib.thimm_1997.abbrev"/>].
+	The learning rate can be set when creating the network, but it can also be set by the
 	<link linkend="api.fann_set_learning_rate"><function>fann_set_learning_rate</function></link> function.
       </para>
       <para>
 	The initial weights are random values between -0.1 and 0.1, if other weights are preferred, the weights can be altered by the
-	<link linkend="api.fann_randomize_weights"><function>fann_randomize_weights</function></link> function.
+	<link linkend="api.fann_randomize_weights"><function>fann_randomize_weights</function></link> or 
+	<link linkend="api.fann_init_weights"><function>fann_init_weights</function></link> function.
       </para>
       <para>
 	The standard activation function is the sigmoid activation function, but it is also possible to use the threshold activation function. A list of the
@@ -379,7 +381,7 @@ fann_destroy_train(data);
     <para>
       It is possible to run the ANN with fixed point numbers (internally represented as integers). This option is only intended for use on computers with no
       floating point processor, for example, the iPAQ, but a minor performance enhancement can also be seen on most modern computers
-      <xref linkend="bib.IDS_2000" endterm="bib.IDS_2000.abbrev"/>.
+      [<xref linkend="bib.IDS_2000" endterm="bib.IDS_2000.abbrev"/>].
     </para>
 
     <section id="fixed.train">
@@ -844,28 +846,6 @@ fann_destroy(ann2);
 	  <para>
 	    The algorithm requires access to the range of the input data (ie, largest and smallest input), and therefore accepts a second
 	    argument, <parameter>data</parameter>, which is the training data that will be used to train the network.
-	  </para>
-	  <para>
-	    In tests using the XOR problem, use of this function decreased the number of iterations required to train the network by approximately
-	    25%, but increased the chances of failure to approximately 2.6%. It is therefore recommended to check the mean square error of the
-	    network after training, to make sure it is below the desired error.
-	  </para>
-          <example id="example.fann_randomize_weights">
-	    <title id="example.fann_randomize_weights.title">Checking the network's mean square error to make sure training was successful.</title>
-	    <programlisting>
-<![CDATA[
-while (1) {
-	fann_init_weights(ann, data);
-	fann_train_on_data(ann, data, max_iterations, iterations_between_reports, desired_error);
-	if ( fann_get_MSE(ann) <= desired_error )
-		break;
-}
-]]>
-	    </programlisting>
-          </example>
-	  <para>
-	    In a test of using the XOR problem, this solution still achieved an approximately 15% speed increase. better results should be expected
-	    for more complex problems- the authors of the algorithm claim to have decreased training time of one problem from 2 days to 4 hours.
 	  </para>
           <para>This function appears in FANN &gt;= 1.1.0.</para>
         </refsect1>
@@ -2512,7 +2492,7 @@ while (1) {
 
       <refentry id="api.sec.constants.activation">
         <refnamediv>
-          <refname id="api.sec.constants.activation.title">Activation Function Constants</refname>
+          <refname id="api.sec.constants.activation.title">Activation Functions</refname>
           <refpurpose>Constants representing activation functions.</refpurpose>
         </refnamediv>
         <refsect1>
@@ -2545,6 +2525,14 @@ while (1) {
               <listitem>
                 <para>
 		  Stepwise linear approximation to sigmoid. Faster than sigmoid but a bit less precise.
+		</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>FANN_SIGMOID_SYMMETRIC</term>
+              <listitem>
+                <para>
+		  Symmetric sigmoid activation function, AKA tanh. One of the most used activation functions.
 		</para>
               </listitem>
             </varlistentry>
@@ -3135,7 +3123,7 @@ $ann = fann_create("http://www.example.com/ann.net");
           <para>
 	    See also <function>fann_save</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_train">
@@ -3223,7 +3211,7 @@ if ( fann_train($ann,
 ]]>
             </programlisting>
           </example>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_save">
@@ -3252,7 +3240,7 @@ if ( fann_train($ann,
           <para>
 	    See also <function>fann_create</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_run">
@@ -3297,7 +3285,7 @@ else
 ]]>
             </programlisting>
           </example>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_randomize_weights">
@@ -3309,7 +3297,7 @@ else
           <title>Description</title>
           <methodsynopsis>
             <type>void</type>
-            <methodname>fann_save</methodname>
+            <methodname>fann_randomize_weights</methodname>
             <methodparam>
               <type>resource</type>
               <parameter>ann</parameter>
@@ -3327,7 +3315,38 @@ else
             <function>fann_randomize_weights</function> will randomize the weights of all neurons in
 	    <parameter>ann</parameter>, effectively resetting the network.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
+        </refsect1>
+      </refentry>
+      <refentry id="function.fann_init_weights">
+        <refnamediv>
+          <refname>fann_init_weights</refname>
+          <refpurpose>Initialize the weight of each connection.</refpurpose>
+        </refnamediv>
+        <refsect1>
+          <title>Description</title>
+          <methodsynopsis>
+            <type>void</type>
+            <methodname>fann_init_weights</methodname>
+            <methodparam>
+              <type>resource</type>
+              <parameter>ann</parameter>
+            </methodparam>
+            <methodparam>
+              <type>mixed</type>
+              <parameter>training_data</parameter>
+            </methodparam>
+          </methodsynopsis>
+          <para>
+	    This function behaves similarly to <link linkend="function.fann_randomize_weights"><function>fann_randomize_weights</function></link>.
+	    It will use the algorithm developed by Derrick Nguyen and Bernard Widrow [<link linkend="bib.nguyen_1990" endterm="bib.nguyen_1990.abbrev" />]
+	    to set the weights in such a way as to speed up training.
+	  </para>
+	  <para>
+	    The algorithm requires access to the range of the input data (ie, largest and smallest input), and therefore accepts a second
+	    argument, <parameter>data</parameter>, which is the training data that will be used to train the network.
+	  </para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_get_MSE">
@@ -3349,7 +3368,7 @@ else
             <function>fann_get_MSE</function> will return the mean squared error (MSE) of <parameter>ann</parameter>,
 	    or 0 if it is unavailable.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_get_num_input">
@@ -3373,7 +3392,7 @@ else
           <para>
 	    See also <function>fann_get_num_output</function>, <function>fann_get_total_neurons</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_get_num_output">
@@ -3398,7 +3417,7 @@ else
           <para>
 	    See also <function>fann_get_num_input</function>, <function>fann_get_total_neurons</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_get_total_neurons">
@@ -3423,7 +3442,7 @@ else
           <para>
 	    See also <function>fann_get_num_input</function>, <function>fann_get_num_output</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_get_total_connections">
@@ -3445,7 +3464,7 @@ else
             <function>fann_get_total_connections</function> will return the total number of connections in 
             <parameter>ann</parameter>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_get_learning_rate">
@@ -3469,7 +3488,7 @@ else
           <para>
 	    See also <function>fann_set_learning_rate</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_get_activation_function_hidden">
@@ -3494,7 +3513,7 @@ else
           <para>
 	    See also <function>fann_set_activation_function_hidden</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_get_activation_function_output">
@@ -3519,7 +3538,7 @@ else
           <para>
 	    See also <function>fann_set_activation_function_output</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_get_activation_hidden_steepness">
@@ -3544,7 +3563,7 @@ else
           <para>
 	    See also <function>fann_set_activation_function_hidden_steepness</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_get_activation_output_steepness">
@@ -3569,7 +3588,7 @@ else
           <para>
 	    See also <function>fann_set_activation_output_steepness</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_set_learning_rate">
@@ -3593,7 +3612,7 @@ else
           <para>
 	    See also <function>fann_set_learning_rate</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_set_activation_function_hidden">
@@ -3623,7 +3642,7 @@ else
           <para>
 	    See also <function>fann_get_activation_function_hidden</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_set_activation_function_output">
@@ -3653,7 +3672,7 @@ else
           <para>
 	    See also <function>fann_get_activation_function_output</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_set_activation_hidden_steepness">
@@ -3682,7 +3701,7 @@ else
           <para>
 	    See also <function>fann_get_activation_hidden_steepness</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
       <refentry id="function.fann_set_activation_output_steepness">
@@ -3711,7 +3730,7 @@ else
           <para>
 	    See also <function>fann_get_activation_output_steepness</function>.
 	  </para>
-          <para>This function appears in FANN-PHP &gt;= 1.1.0.</para>
+          <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
     </section>
@@ -4049,6 +4068,22 @@ else
       <pubdate></pubdate>
       <title id="bib.tettamanzi_2001.title">Soft Computing</title>
       <publishername>Springer-Verlag</publishername>
+    </biblioentry>
+    <biblioentry id="bib.thimm_1997">
+      <abbrev id="bib.thimm_1997.abbrev">Thimm and Fiesler, 1997</abbrev>
+      <author>
+        <firstname>G</firstname>
+        <surname>Thimm</surname>
+      </author>
+      <author>
+        <firstname>E</firstname>
+        <surname>Fiesler</surname>
+      </author>
+      <pubdate>1997</pubdate>
+      <title id="bib.thimm_1997.title">Optimal Setting of Weights, Learning Rate, and Gain</title>
+      <releaseinfo>
+        <ulink url="http://citeseer.ist.psu.edu/thimm97optimal.html">http://citeseer.ist.psu.edu/thimm97optimal.html</ulink>
+      </releaseinfo>
     </biblioentry>
     <biblioentry id="bib.van_rossum_2003">
       <abbrev id="bib.van_rossum_2003.abbrev">van Rossum, 2003</abbrev>
