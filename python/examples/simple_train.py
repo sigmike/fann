@@ -12,9 +12,9 @@ max_iterations = 100000
 iterations_between_reports = 1000
 
 ann = fann.create(connection_rate, learning_rate, (num_input, num_neurons_hidden, num_output))
+ann.set_activation_function_output(fann.SIGMOID_SYMMETRIC_STEPWISE)
 
 ann.train_on_file("datasets/xor.data", max_iterations, iterations_between_reports, desired_error)
 
 ann.save("xor_float.net")
 
-ann.destroy()

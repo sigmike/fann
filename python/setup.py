@@ -22,7 +22,7 @@ class smart_install_data(install_data):
     """
     override default distutils install_data, so we can copy
     files directly, without splitting into modules, scripts,
-    packages, and extensions."
+    packages, and extensions.
     """
     def run(self):
         # need to change self.install_dir to the actual library dir

@@ -20,9 +20,9 @@ ann = fann.create(connection_rate, learning_rate, (train_data.get_num_input(), n
 
 # start training the network
 print "Training network"
-ann.set_activation_function_hidden(fann.FANN_SIGMOID_SYMMETRIC_STEPWISE)
-ann.set_activation_function_output(fann.FANN_SIGMOID_STEPWISE)
-ann.set_training_algorithm(fann.FANN_TRAIN_INCREMENTAL)
+ann.set_activation_function_hidden(fann.SIGMOID_SYMMETRIC_STEPWISE)
+ann.set_activation_function_output(fann.SIGMOID_STEPWISE)
+ann.set_training_algorithm(fann.TRAIN_INCREMENTAL)
 	
 ann.train_on_data(train_data, max_iterations, iterations_between_reports, desired_error)
 	
@@ -39,10 +39,4 @@ print "MSE error on test data: %f" % ann.get_MSE()
 # save network to disk
 print "Saving network"
 ann.save("mushroom_float.net")
-
-# blow it all up
-print "Cleaning up."
-ann.destroy()
-test_data.destroy()
-train_data.destroy()
 

@@ -1,5 +1,7 @@
 # This makefile was written to compile a distribution of pyfann for
 # GNU platforms (cygwin included.)
+#
+# This is NOT needed for Linux/Unix, use setup_unix.py instead.
 
 TARGETS = _libfann.dll
 

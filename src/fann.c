@@ -972,6 +972,7 @@ void fann_allocate_connections(struct fann *ann)
  */
 void fann_seed_rand()
 {
+#ifndef _WIN32
 	FILE *fp = fopen("/dev/urandom", "r");
 	unsigned int foo;
 	struct timeval t;
@@ -986,4 +987,8 @@ void fann_seed_rand()
 		fclose(fp);
 	}
 	srand(foo);
+#else
+    /* COMPAT_TIME REPLACEMENT */
+    srand(GetTickCount());
+#endif
 }

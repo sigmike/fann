@@ -1,6 +1,9 @@
 This python binding is provided by Vincenzo Di Massa <hawk.it@tiscalinet.it>
 and Gil Megidish <gil@megidish.net>
 
+Instructions for Windows:
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
 MAKE
 Make sure to make the fann library first. You are required to have
 swig and python development files installed. After you compiled the
@@ -24,3 +27,17 @@ version.
 
 USAGE
 Just import fann.
+
+Instructions for Unix/Linux:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+First build and install the fann library. Then run:
+
+./setup_unix.py build
+./setup_unix.py install
+
+Install alone will work too, if you run it twice (a small bug).
+The examples/ (not installed) should work now after you copy the datasets:
+
+mkdir examples/datasets
+cp ../examples/xor.data ../benchmarks/datasets/mushroom.* examples/datasets/

@@ -33,7 +33,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #else
 
-#include "compat_time.h"
+/* COMPAT_TIME REPLACEMENT */
+#ifndef _WIN32
+    #include <sys/time.h>
+#else  /* _WIN32 */
+#if !defined(_MSC_EXTENSIONS) &&
+!defined(_INC_WINDOWS)
+    extern unsigned long __stdcall GetTickCount(void);
+#else /* _MSC_EXTENSIONS */
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
+#endif /* _MSC_EXTENSIONS */
+#endif /* _WIN32 */
+
 #include "fann_data.h"
 #include "fann_internal.h"
 #include "fann_activation.h"

@@ -21,30 +21,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import libfann
 
-# Activation function
-FANN_LINEAR = 0
-FANN_THRESHOLD = 1
-FANN_THRESHOLD_SYMMETRIC = 2
-FANN_SIGMOID = 3
-FANN_SIGMOID_STEPWISE = 4                # default
-FANN_SIGMOID_SYMMETRIC = 5
-FANN_SIGMOID_SYMMETRIC_STEPWISE = 6
-FANN_GAUSSIAN = 7
-FANN_GAUSSIAN_STEPWISE = 8
-FANN_ELLIOT = 9                          # not implemented yet
-FANN_ELLIOT_SYMMETRIC = 10               # not implemented yet
-
-# Training algorithm
-FANN_TRAIN_INCREMENTAL = 0
-FANN_TRAIN_BATCH = 1
-FANN_TRAIN_RPROP = 2
-FANN_TRAIN_QUICKPROP = 3
+# import all FANN_ constants without FANN_ prefix
+for name, value in libfann.__dict__.iteritems():
+    if name.startswith('FANN_') and not name.endswith('_NAMES'):
+        globals()[name[5:]] = value
+del name, value
 
 class fann_class:
 
     def __init__(self, ann):
+        """
+        Never call this directly.
+        """
         self.__ann = ann
-    
+
+    def __del__(self):
+        libfann.fann_destroy(self.__ann)
+
     def get_native_object(self):
         return self.__train_data
 
@@ -53,13 +46,6 @@ class fann_class:
         Runs a input through the network, and returns the output.
         """
         return libfann.fann_run(self.__ann, input)
-
-    def destroy(self):
-        """ 
-        Destructs the entire network.
-        Be sure to call this function after finished using the network.
-        """
-        libfann.fann_destroy(self.__ann)
 
     def randomize_weights(self, min_weight, max_weight):
         """
@@ -198,31 +184,31 @@ class fann_class:
         """
         libfann.fann_set_activation_function_output(self.__ann, activation_function)
 
-    def get_activation_hidden_steepness(self):
+    def get_activation_steepness_hidden(self):
         """
         Get the steepness parameter for the sigmoid function used in the hidden layers.
         """
-        return libfann.get_activation_hidden_steepness(self.__ann)
+        return libfann.get_activation_steepness_hidden(self.__ann)
 
-    def set_activation_hidden_steepness(self, steepness):
+    def set_activation_steepness_hidden(self, steepness):
         """
         Set the steepness of the sigmoid function used in the hidden layers.
         Only usefull if sigmoid function is used in the hidden layers (default 0.5).
         """
-        libfann.fann_set_activation_hidden_steepness(self.__ann, steepness)
+        libfann.fann_set_activation_steepness_hidden(self.__ann, steepness)
 
-    def get_activation_output_steepness(self):
+    def get_activation_steepness_output(self):
         """
         Get the steepness parameter for the sigmoid function used in the output layer.
         """
-        return libfann.fann_get_activation_output_steepness(self.__ann)
+        return libfann.fann_get_activation_steepness_output(self.__ann)
 
-    def set_activation_output_steepness(self, steepness):
+    def set_activation_steepness_output(self, steepness):
         """
         Set the steepness of the sigmoid function used in the output layer.
         Only usefull if sigmoid function is used in the output layer (default 0.5).
         """
-        libfann.fann_set_activation_output_steepness(self.__ann, steepness)
+        libfann.fann_set_activation_steepness_output(self.__ann, steepness)
 
     def train_on_data(self, data, max_epochs, epochs_between_reports, desired_error):
         """
@@ -269,7 +255,12 @@ class fann_class:
 class train_class:
 
     def __init__(self, train_data):
+        """
+        Never call this directly.
+        """
         self.__train_data = train_data
+    def __del__(self):
+        libfann.fann_destroy_train(self.__train_data)
 
     def get_native_object(self):
         return self.__train_data
@@ -288,13 +279,6 @@ class train_class:
 
     def get_output(self, index):
 	return libfann.get_train_data_output(self.__train_data, index);
-
-    def destroy(self):
-        """
-        Destructs the training data
-        Be sure to call this function after finished using the training data.
-        """
-        libfann.fann_destroy_train(self.__train_data)
 
     def shuffle(self):
         """
@@ -317,12 +301,10 @@ class train_class:
 
     def merge(self, other):
         """
-        Merges training data into a single struct
+        Merges training data into a new struct
         """
         outcome = libfann.fann_merge_train_data(self.__train_data, other.get_native_object())
-        self.destroy()
-        self.__train_data = outcome
-        return self
+        return train_class(outcome)
 
     def duplicate(self):
         """
@@ -345,6 +327,8 @@ def create(connection_rate, learning_rate, layers):
     When running the network, the bias nodes always emits 1
     """
     ann = libfann.fann_create_array(connection_rate, learning_rate, len(layers), layers)
+    if libfann.fann_is_NULL(ann):
+        return None # probably won't happen
     return fann_class(ann)
 
 def create_from_file(filename):
@@ -352,6 +336,8 @@ def create_from_file(filename):
     Constructs a backpropagation neural network from a configuration file.
     """
     ann = libfann.fann_create_from_file(filename)
+    if libfann.fann_is_NULL(ann):
+        raise IOError, "Could not load ann from file '%s'" + filename
     return fann_class(ann)
 
 def read_train_from_file(filename):

@@ -68,3 +68,8 @@ PyObject *get_train_data_output(struct fann_train_data *t, int row)
 	return get_row_from_double_array(t->output, row, t->num_output);
 }
 
+
+int fann_is_NULL(struct fann *ann)
+{
+	return ann == NULL ? 1 : 0;
+}
