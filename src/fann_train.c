@@ -28,6 +28,7 @@
 
 /*#define DEBUGTRAIN*/
 
+#ifndef FIXEDFANN
 /* INTERNAL FUNCTION
   Calculates the derived of a value, given an activation function
    and a steepness
@@ -51,7 +52,6 @@ static fann_type fann_activation_derived(unsigned int activation_function,
 	}
 }
 
-#ifndef FIXEDFANN
 /* Trains the network with the backpropagation algorithm.
  */
 FANN_EXTERNAL void FANN_API fann_train(struct fann *ann, fann_type *input, fann_type *desired_output)
@@ -136,6 +136,7 @@ FANN_EXTERNAL void FANN_API fann_reset_MSE(struct fann *ann)
 	ann->MSE_value = 0;
 }
 
+#ifndef FIXEDFANN
 /* INTERNAL FUNCTION
     compute the error at the network output
 	(usually, after forward propagation of a certain input vector, fann_run)
@@ -188,7 +189,7 @@ void fann_compute_MSE(struct fann *ann, fann_type *desired_output)
 			else if ( neuron_diff > .9999999 )
 				neuron_diff = 17.0;
 			else
-				neuron_diff =  log ( (1.0+neuron_diff) / (1.0-neuron_diff) );
+				neuron_diff = (fann_type)log ( (1.0+neuron_diff) / (1.0-neuron_diff) );
 		}
 	
 		*error_it = fann_activation_derived(ann->activation_function_output,
@@ -441,7 +442,7 @@ void fann_clear_train_arrays(struct fann *ann)
 
 	if(ann->training_algorithm == FANN_TRAIN_RPROP){
 		for(i = 0; i < ann->total_connections; i++){
-			ann->prev_train_slopes[i] = 0.0125;
+			ann->prev_train_slopes[i] = (fann_type)0.0125;
 		}
 	} else {
 		memset(ann->prev_train_slopes, 0, (ann->total_connections) * sizeof(fann_type));
@@ -576,3 +577,5 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int num_data)
 		train_slopes[i] = 0.0;
 	}
 }
+
+#endif

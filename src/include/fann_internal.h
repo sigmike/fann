@@ -86,7 +86,7 @@ void fann_clear_train_arrays(struct fann *ann);
 
 #define fann_mult(x,y) ((x*y) >> decimal_point)
 #define fann_div(x,y) (((x) << decimal_point)/y)
-#define fann_random_weight() (fann_type)(fann_rand(-multiplier/10,multiplier/10))
+#define fann_random_weight() (fann_type)(fann_rand((0-multiplier)/10,multiplier/10))
 /* sigmoid calculated with use of floats, only as reference */
 
 #else
