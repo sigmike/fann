@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.11 2004/03/31 02:28:53 tadpole9 Exp $ -->
+<!-- $Id: fann.xml,v 1.12 2004/03/31 07:33:12 tadpole9 Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -211,6 +211,15 @@ int main()
           </programlisting>
 	</example>
       </section>
+    </section>
+    <section id="intro.help">
+      <title id="intro.help.title">Getting Help</title>
+
+      <para>
+        If after reading the documentation you are still having problems, or have a question that is not covered in the documentation,
+	please consult the fann-general mailing list. Archives and subscription information are available
+	<ulink url="http://lists.sourceforge.net/lists/listinfo/fann-general">here</ulink>. 
+      </para>
     </section>
   </chapter>
   <chapter id="adv">
@@ -3120,7 +3129,7 @@ fann_destroy(ann2);
 	    created with <function>fann_save</function> from the file at <parameter>filename</parameter>.
 	  </para>
           <para>
-            <function>fann_create</function>will return the artificial neural network on success, or FALSE if it fails.
+            <function>fann_create</function> will return the artificial neural network on success, or FALSE if it fails.
 	  </para>
           <example id="example.php.fann_create.scratch">
             <title id="example.php.fann_create.scratch.title"><function>fann_create</function> from scratch</title>
@@ -3149,7 +3158,7 @@ $ann = fann_create("http://www.example.com/ann.net");
             </programlisting>
           </example>
           <para>
-	    See also <function>fann_save</function>.
+	    See also <link linkend="function.fann_save"><function>fann_save</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3266,7 +3275,7 @@ if ( fann_train($ann,
 	    returning TRUE on success or FALSE on failure.
 	  </para>
           <para>
-	    See also <function>fann_create</function>.
+	    See also <link linkend="function.fann_create"><function>fann_create</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3345,7 +3354,7 @@ else
 	  </para>
 	  <para>
 	    See also: <link linkend="adv.adj" endterm="adv.adj.title" />,
-	    <link linkend="api.fann_init_weights"><function>fann_init_weights</function></link>
+	    <link linkend="function.fann_init_weights"><function>fann_init_weights</function></link>
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3380,7 +3389,7 @@ else
 	  </para>
 	  <para>
 	    See also: <link linkend="adv.adj" endterm="adv.adj.title" />,
-	    <link linkend="api.fann_randomize_weights"><function>fann_randomize_weights</function></link>
+	    <link linkend="function.fann_randomize_weights"><function>fann_randomize_weights</function></link>
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3426,7 +3435,8 @@ else
           <function>fann_get_num_input</function>will return the number of input neurons in 
           <parameter>ann</parameter>.</para>
           <para>
-	    See also <function>fann_get_num_output</function>, <function>fann_get_total_neurons</function>.
+	    See also <link linkend="function.fann_get_num_output"><function>fann_get_num_output</function></link>,
+	    <link linkend="function.fann_get_total_neurons"><function>fann_get_total_neurons</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3451,7 +3461,8 @@ else
 	    <parameter>ann</parameter>.
 	  </para>
           <para>
-	    See also <function>fann_get_num_input</function>, <function>fann_get_total_neurons</function>.
+	    See also <link linkend="function.fann_get_num_input"><function>fann_get_num_input</function></link>,
+	    <link linkend="function.fann_get_total_neurons"><function>fann_get_total_neurons</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3476,7 +3487,8 @@ else
 	    <parameter>ann</parameter>.
 	  </para>
           <para>
-	    See also <function>fann_get_num_input</function>, <function>fann_get_num_output</function>.
+	    See also <link linkend="function.fann_get_num_input"><function>fann_get_num_input</function></link>,
+	    <link linkend="function.fann_get_num_output"><function>fann_get_num_output</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3522,7 +3534,7 @@ else
             <function>fann_get_learning_rate</function> will return the learning rate of <parameter>ann</parameter>.
 	  </para>
           <para>
-	    See also <function>fann_set_learning_rate</function>.
+	    See also <link linkend="function.fann_set_learning_rate"><function>fann_set_learning_rate</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3547,7 +3559,7 @@ else
 	    neurons in <parameter>ann</parameter>.
 	  </para>
           <para>
-	    See also <function>fann_set_activation_function_hidden</function>.
+	    See also <link linkend="function.fann_set_activation_function_hidden"><function>fann_set_activation_function_hidden</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3572,7 +3584,7 @@ else
 	    neurons in <parameter>ann</parameter>.
 	  </para>
           <para>
-	    See also <function>fann_set_activation_function_output</function>.
+	    See also <link linkend="function.fann_set_activation_function_output"><function>fann_set_activation_function_output</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3597,7 +3609,8 @@ else
 	    function for the hidden neurons in <parameter>ann</parameter>.
 	  </para>
           <para>
-	    See also <function>fann_set_activation_function_hidden_steepness</function>.
+	    See also
+	    <link linkend="function.fann_set_activation_hidden_steepness"><function>fann_set_activation_hidden_steepness</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3622,7 +3635,7 @@ else
 	    function for the output neurons in <parameter>ann</parameter>.
 	  </para>
           <para>
-	    See also <function>fann_set_activation_output_steepness</function>.
+	    See also <link linkend="function.fann_set_activation_output_steepness"><function>fann_set_activation_output_steepness</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3646,7 +3659,7 @@ else
             <function>fann_set_learning_rate</function> will return the learning rate of <parameter>ann</parameter>.
 	  </para>
           <para>
-	    See also <function>fann_set_learning_rate</function>.
+	    See also <link linkend="function.fann_set_learning_rate"><function>fann_set_learning_rate</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3676,7 +3689,7 @@ else
 	    functions.
 	  </para>
           <para>
-	    See also <function>fann_get_activation_function_hidden</function>.
+	    See also <link linkend="function.fann_get_activation_function_hidden"><function>fann_get_activation_function_hidden</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3706,7 +3719,7 @@ else
 	    functions.
 	  </para>
           <para>
-	    See also <function>fann_get_activation_function_output</function>.
+	    See also <link linkend="function.fann_get_activation_function_output"><function>fann_get_activation_function_output</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3735,7 +3748,7 @@ else
 	    hidden neurons to <parameter>steepness</parameter>.
 	  </para>
           <para>
-	    See also <function>fann_get_activation_hidden_steepness</function>.
+	    See also <link linkend="function.fann_get_activation_hidden_steepness"><function>fann_get_activation_hidden_steepness</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3764,7 +3777,7 @@ else
 	    output neurons to <parameter>steepness</parameter>.
 	  </para>
           <para>
-	    See also <function>fann_get_activation_output_steepness</function>.
+	    See also <link linkend="function.fann_get_activation_output_steepness"><function>fann_get_activation_output_steepness</function></link>.
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
