@@ -26,3 +26,16 @@ runtest: $(TARGETS)
 	@echo
 	@echo Testing network with fixed points
 	./xor_test_fixed
+
+rundebug: $(TARGETS)
+	@echo
+	@echo Training network
+	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_train
+
+	@echo
+	@echo Testing network with floats
+	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_test
+
+	@echo
+	@echo Testing network with fixed points
+	valgrind --leak-check=yes --show-reachable=yes --leak-resolution=high ./xor_test_fixed
