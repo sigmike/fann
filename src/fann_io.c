@@ -250,7 +250,12 @@ void fann_save_train_internal_fd(struct fann_train_data* data, FILE *file, char 
 			if(save_as_fixed){
 				fprintf(file, "%d ", (int)(data->input[i][j]*multiplier));
 			}else{
-				fprintf(file, FANNPRINTF" ", data->input[i][j]);
+				if(((int)floor(data->input[i][j]+0.5)*1000000) ==
+					((int)floor(data->input[i][j]*1000000.0+0.5))){
+					fprintf(file, "%d ", (int)data->input[i][j]);
+				}else{
+					fprintf(file, "%f ", data->input[i][j]);
+				}
 			}
 #else
 			fprintf(file, FANNPRINTF" ", data->input[i][j]);
@@ -263,7 +268,12 @@ void fann_save_train_internal_fd(struct fann_train_data* data, FILE *file, char 
 			if(save_as_fixed){
 				fprintf(file, "%d ", (int)(data->output[i][j]*multiplier));
 			}else{
-				fprintf(file, FANNPRINTF" ", data->output[i][j]);
+				if(((int)floor(data->output[i][j]+0.5)*1000000) ==
+					((int)floor(data->output[i][j]*1000000.0+0.5))){
+					fprintf(file, "%d ", (int)data->output[i][j]);
+				}else{
+					fprintf(file, "%f ", data->output[i][j]);
+				}
 			}
 #else
 			fprintf(file, FANNPRINTF" ", data->output[i][j]);
