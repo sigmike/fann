@@ -1,0 +1,48 @@
+Source: libfann
+Priority: optional
+Maintainer: Steffen Nissen <lukesky@diku.dk>
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.6.0
+
+Package: libfann-dev
+Section: devel
+Architecture: any
+Depends: libfann (= ${Source-Version})
+Description: Fast Artificial Neural Network Library, Development files
+ fann is implemented in ANSI C. The library implements multilayer
+ feedforward networks with support for both fully connected and sparse
+ connected networks. Fann offers support for execution in fixed point
+ arithmetic to allow for fast execution on systems with no floating
+ point processor. To overcome the problems of integer overflow, the
+ library calculates a position of the decimal point after training and
+ guarantees that integer overflow can not occur with this decimal
+ point.
+ .
+ The library is designed to be fast, versatile and easy to use. Several
+ benchmarks have been executed to test the performance of the
+ library. The results show that the fann library is significantly
+ faster than other libraries on systems without a floating point
+ processor, while the performance was comparable to other highly
+ optimized libraries on systems with a floating point processor.
+
+Package: libfann
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Fast Artificial Neural Network Library (fann)
+ fann is implemented in ANSI C. The library implements multilayer
+ feedforward networks with support for both fully connected and sparse
+ connected networks. Fann offers support for execution in fixed point
+ arithmetic to allow for fast execution on systems with no floating
+ point processor. To overcome the problems of integer overflow, the
+ library calculates a position of the decimal point after training and
+ guarantees that integer overflow can not occur with this decimal
+ point.
+ .
+ The library is designed to be fast, versatile and easy to use. Several
+ benchmarks have been executed to test the performance of the
+ library. The results show that the fann library is significantly
+ faster than other libraries on systems without a floating point
+ processor, while the performance was comparable to other highly
+ optimized libraries on systems with a floating point processor.
+
