@@ -54,7 +54,7 @@ int main()
 #endif
 
 	for(i = 0; i < data->num_data; i++){
-		fann_reset_error(ann);
+		fann_reset_MSE(ann);
 		calc_out = fann_test(ann, data->input[i], data->output[i]);
 #ifdef FIXEDFANN
 		printf("XOR test (%d, %d) -> %d, should be %d, difference=%f\n",

@@ -57,17 +57,17 @@ int main(int argc, char* argv[])
 		sprintf(file, "%s_%d", argv[2], fann_get_decimal_point(ann));
 		test_data = fann_read_train_from_file(file);
 
-		fann_reset_error(ann);
+		fann_reset_MSE(ann);
 		for(i = 0; i != train_data->num_data; i++){
 			fann_test(ann, train_data->input[i], train_data->output[i]);
 		}
-		train_error = fann_get_error(ann);
+		train_error = fann_get_MSE(ann);
 
-		fann_reset_error(ann);
+		fann_reset_MSE(ann);
 		for(i = 0; i != test_data->num_data; i++){
 			fann_test(ann, test_data->input[i], test_data->output[i]);
 		}
-		test_error = fann_get_error(ann);
+		test_error = fann_get_MSE(ann);
 
 		sscanf(argv[j], "%d_%lf", &epochs, &total_elapsed);
 		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);

@@ -38,13 +38,13 @@ void train_on_steepness_file(struct fann *ann, char *filename,
 	fann_set_activation_output_steepness(ann, steepness_start);
 	for(i = 1; i <= max_epochs; i++){
 		/* train */
-		fann_reset_error(ann);
+		fann_reset_MSE(ann);
 
 		for(j = 0; j != data->num_data; j++){
 			fann_train(ann, data->input[j], data->output[j]);
 		}
 
-		error = fann_get_error(ann);
+		error = fann_get_MSE(ann);
 
 		/* print current output */
 		if(epochs_between_reports &&
