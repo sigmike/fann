@@ -3,5 +3,5 @@ libfann1 (1.1.0-1) unstable; urgency=low
   * My first try at a debian package, please report any errors.
   * Initial Release.
 
- -- Steffen Nissen <lukesky@diku.dk>  Wed, 14 Jan 2004 00:42:29 +0100
+ -- Steffen Nissen <lukesky@diku.dk>  Wed, 31 Mar 2004 09:54:39 +0200
 

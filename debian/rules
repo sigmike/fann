@@ -48,6 +48,8 @@ build-stamp:  config.status
 	gzip -9 ChangeLog
 	mv ChangeLog.bak ChangeLog
 
+	cd doc && $(MAKE) html
+
 	$(MAKE)
 
 	touch build-stamp
