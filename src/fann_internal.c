@@ -360,6 +360,9 @@ void fann_initialise_result_array(struct fann *ann)
 	ann->activation_results[4] = 0.95;
 	ann->activation_results[5] = 0.995;	
 #endif
+
+	fann_update_stepwise_hidden(ann);
+	fann_update_stepwise_output(ann);
 }
 
 /* Adjust the steepwise functions (if used) */
@@ -410,7 +413,7 @@ void fann_update_stepwise_output(struct fann *ann)
 				break;
 			case FANN_SIGMOID_STEPWISE:
 				ann->activation_output_values[i] = ((log(1.0/ann->activation_results[i] -1.0) * 1.0/-2.0) * 1.0/ann->activation_output_steepness);
-				//printf("%f -> %f\n", ann->activation_results[i], ann->activation_output_values[i]);
+				/* printf("%f -> %f\n", ann->activation_results[i], ann->activation_output_values[i]); */
 				break;
 			case FANN_THRESHOLD:
 				break;

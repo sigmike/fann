@@ -83,13 +83,14 @@ PACKAGE = fann
 RANLIB = ranlib
 RC = @RC@
 STRIP = strip
-VERSION = 1.0.3
+VERSION = 1.0.5
 
 SUBDIRS = include
 
 lib_LTLIBRARIES = libfloatfann.la libdoublefann.la libfixedfann.la libfann.la
 
-LDFLAGS =  -version-info 1:3:0
+LDFLAGS =  -version-info 1:5:0
+CFLAGS =  -O9 -ansi
 
 libfloatfann_la_SOURCES = floatfann.c
 libdoublefann_la_SOURCES = doublefann.c
@@ -116,7 +117,6 @@ libfixedfann_la_OBJECTS =  fixedfann.lo
 libfann_la_LDFLAGS = 
 libfann_la_LIBADD = 
 libfann_la_OBJECTS =  fann.lo fann_internal.lo
-CFLAGS = -g -O2
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)

@@ -21,6 +21,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "fann.h"
 
+int print_callback(unsigned int epochs, float error)
+{
+	printf("Epochs     %8d. Current MSE-Error: %.10f\n", epochs, error);
+	return 0;
+}
+
 int main()
 {
 	fann_type *calc_out;
@@ -30,7 +36,7 @@ int main()
 	const unsigned int num_output = 1;
 	const unsigned int num_layers = 3;
 	const unsigned int num_neurons_hidden = 4;
-	const float desired_error = 0.0001;
+	const float desired_error = 0.001;
 	const unsigned int max_iterations = 500000;
 	const unsigned int iterations_between_reports = 1000;
 	struct fann *ann;
@@ -46,13 +52,14 @@ int main()
 		num_neurons_hidden,
 		num_output);
 
-	fann_set_activation_function_hidden(ann, FANN_SIGMOID_STEPWISE);
-	fann_set_activation_function_output(ann, FANN_SIGMOID_STEPWISE);
-
 	printf("Training network.\n");
 
 	data = fann_read_train_from_file("xor.data");
+
 	fann_train_on_data(ann, data, max_iterations, iterations_between_reports, desired_error);
+
+	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback);*/
+
 
 	printf("Testing network.\n");
 

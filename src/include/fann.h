@@ -42,10 +42,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-
+	
+#ifndef NULL
+#define NULL 0
+#endif /* NULL */
+	
 /* ----- Initialisation and configuration ----- */
-
+	
 /* Constructs a backpropagation neural network, from an connection rate,
    a learning rate, the number of layers and the number of neurons in each
    of the layers.
@@ -57,13 +60,19 @@ extern "C" {
    There will be a bias neuron in each layer (except the output layer),
    and this bias neuron will be connected to all neurons in the next layer.
    When running the network, the bias nodes always emits 1
- */
+*/
 struct fann * fann_create(float connection_rate, float learning_rate,
 	/* the number of layers, including the input and output layer */
 	unsigned int num_layers,
 	/* the number of neurons in each of the layers, starting with
 	   the input layer and ending with the output layer */
 	...);
+
+/* Just like fann_create, but with an array of layer sizes
+   instead of individual parameters.
+*/
+struct fann * fann_create_array(float connection_rate, float learning_rate,
+	unsigned int num_layers, unsigned int * layers);
 
 /* Constructs a backpropagation neural network from a configuration file.
  */
@@ -113,16 +122,18 @@ void fann_set_learning_rate(struct fann *ann, float learning_rate);
 
 /* The possible activation functions.
    Threshold can not be used, when training the network.
+   FANN_SIGMOID_STEPWISE is a stepwise linear function,
+   which is faster but a bit less precise than FANN_SIGMOID
  */
 #define FANN_SIGMOID 1
 #define FANN_THRESHOLD 2
 #define FANN_SIGMOID_STEPWISE 3 /* (default) */
 
-/* Set the activation function for the hidden layers (default SIGMOID).
+/* Set the activation function for the hidden layers.
  */
 void fann_set_activation_function_hidden(struct fann *ann, unsigned int activation_function);
 
-/* Set the activation function for the output layer (default SIGMOID).
+/* Set the activation function for the output layer.
  */
 void fann_set_activation_function_output(struct fann *ann, unsigned int activation_function);
 
@@ -212,6 +223,7 @@ struct fann_train_data* fann_read_train_from_file(char *filename);
 void fann_destroy_train(struct fann_train_data* train_data);
 
 #ifndef FIXEDFANN
+
 /* Trains on an entire dataset, for a maximum of max_epochs
    epochs or until mean square error is lower than desired_error.
    Reports about the progress is given every
@@ -220,9 +232,22 @@ void fann_destroy_train(struct fann_train_data* train_data);
 */
 void fann_train_on_data(struct fann *ann, struct fann_train_data *data, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error);
 
+/* Same as fann_train_on_data, but a callback function is given,
+   which can be used to print out reports. (effective for gui programming).
+   If the callback returns -1, then the training is terminated, otherwise
+   it continues until the normal stop criteria.
+*/
+void fann_train_on_data_callback(struct fann *ann, struct fann_train_data *data, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (*callback)(unsigned int epochs, float error));
+
 /* Does the same as train_on_data, but reads the data directly from a file.
  */
 void fann_train_on_file(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error);
+	
+/* Does the same as train_on_data_callback, but
+   reads the data directly from a file.
+ */
+void fann_train_on_file_callback(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (*callback)(unsigned int epochs, float error));
+
 #endif /* NOT FIXEDFANN */
 
 /* Save the training structure to a file.

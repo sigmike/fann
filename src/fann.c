@@ -28,11 +28,8 @@
 
 /* create a neural network.
  */
-struct fann * fann_create(float connection_rate, float learning_rate,
-	unsigned int num_layers, /* the number of layers, including the input and output layer */
-	...) /* the number of neurons in each of the layers, starting with the input layer and ending with the output layer */
+struct fann * fann_create_array(float connection_rate, float learning_rate, unsigned int num_layers, unsigned int * layers)
 {
-	va_list layer_sizes;
 	struct fann_layer *layer_it, *last_layer, *prev_layer;
 	struct fann *ann;
 	struct fann_neuron *neuron_it, *last_neuron, *random_neuron, *bias_neuron;
@@ -46,7 +43,6 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 	unsigned int decimal_point;
 	unsigned int multiplier;
 #endif
-	
 	if(connection_rate > 1){
 		connection_rate = 1;
 	}
@@ -64,16 +60,14 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 	fann_initialise_result_array(ann);
 	
 	/* determine how many neurons there should be in each layer */
-	va_start(layer_sizes, num_layers);
+	i = 0;
 	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
 		/* we do not allocate room here, but we make sure that
 		   last_neuron - first_neuron is the number of neurons */
 		layer_it->first_neuron = NULL;
-		layer_it->last_neuron = layer_it->first_neuron + va_arg(layer_sizes, unsigned int) +1; /* +1 for bias */
-		
+		layer_it->last_neuron = layer_it->first_neuron + layers[i++] +1; /* +1 for bias */
 		ann->total_neurons += layer_it->last_neuron - layer_it->first_neuron;
 	}
-	va_end(layer_sizes);
 	
 	ann->num_output = (ann->last_layer-1)->last_neuron - (ann->last_layer-1)->first_neuron -1;
 	ann->num_input = ann->first_layer->last_neuron - ann->first_layer->first_neuron -1;
@@ -232,8 +226,8 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 #endif
 		}
 		
-		/* TODO it would be nice to have the randomly created connections sorted
-		   for smoother memory access.
+		/* TODO it would be nice to have the randomly created
+		   connections sorted for smoother memory access.
 		*/
 	}
 	
@@ -244,6 +238,24 @@ struct fann * fann_create(float connection_rate, float learning_rate,
 	return ann;
 }
 
+struct fann * fann_create(float connection_rate, float learning_rate,
+	unsigned int num_layers, /* the number of layers, including the input and output layer */
+
+
+	...) /* the number of neurons in each of the layers, starting with the input layer and ending with the output layer */
+{
+	va_list layer_sizes;
+	unsigned int layers[num_layers];
+	int i = 0;
+
+	va_start(layer_sizes, num_layers);
+	for ( i=0 ; i<num_layers ; i++ ) {
+		layers[i] = va_arg(layer_sizes, unsigned int);
+	}
+	va_end(layer_sizes);
+
+	return fann_create_array(connection_rate, learning_rate, num_layers, layers);
+}
 
 /* Create a network from a configuration file.
  */
@@ -708,14 +720,15 @@ void fann_destroy_train(struct fann_train_data *data)
 }
 
 #ifndef FIXEDFANN
+
 /* Train directly on the training data.
  */
-void fann_train_on_data(struct fann *ann, struct fann_train_data *data, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error)
+void fann_train_on_data_callback(struct fann *ann, struct fann_train_data *data, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (*callback)(unsigned int epochs, float error))
 {
 	float error;
 	unsigned int i, j;
 	
-	if(epochs_between_reports){
+	if(epochs_between_reports && callback == NULL){
 		printf("Max epochs %8d. Desired error: %.10f\n", max_epochs, desired_error);
 	}
 	
@@ -735,24 +748,41 @@ void fann_train_on_data(struct fann *ann, struct fann_train_data *data, unsigned
 				|| i == max_epochs
 				|| i == 1
 				|| error < desired_error)){
-			printf("Epochs     %8d. Current error: %.10f\n", i, error);
+			if (callback == NULL) {
+				printf("Epochs     %8d. Current error: %.10f\n", i, error);
+			} else if((*callback)(i, error) == -1){
+				/* you can break the training by returning -1 */
+				break;
+			}
 		}
 		
 		if(error < desired_error){
 			break;
 		}
 	}
-	fann_reset_error(ann);
 }
+
+void fann_train_on_data(struct fann *ann, struct fann_train_data *data, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error)
+{
+	fann_train_on_data_callback(ann, data, max_epochs, epochs_between_reports, desired_error, NULL);
+}
+
 
 /* Wrapper to make it easy to train directly on a training data file.
  */
-void fann_train_on_file(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error)
+void fann_train_on_file_callback(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, int (*callback)(unsigned int epochs, float error))
 {
 	struct fann_train_data *data = fann_read_train_from_file(filename);
-	fann_train_on_data(ann, data, max_epochs, epochs_between_reports, desired_error);
+	fann_train_on_data_callback(ann, data, max_epochs, epochs_between_reports, desired_error, callback);
 	fann_destroy_train(data);
 }
+
+void fann_train_on_file(struct fann *ann, char *filename, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error)
+{
+	fann_train_on_file_callback(ann, filename, max_epochs, epochs_between_reports, desired_error, NULL);
+}
+
+
 #endif
 
 /* get the mean square error.

@@ -1,7 +1,8 @@
 libfann (1.0.5) stable; urgency=low
-	* Error value not reset after training
 	* Added a new constructor
 	* Added a callback function for output during training
+	* Changed compile parameters for further performance
+	* Error value not set to zero after training
 
  -- Steffen Nissen <lukesky@diku.dk>  Tue, 06 Jan 2004 20:51:34 +0100
 	
