@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-<!-- $Id: fann.xml,v 1.10 2004/03/19 10:37:48 looksirdroids Exp $ -->
+<!-- $Id: fann.xml,v 1.11 2004/03/31 02:28:53 tadpole9 Exp $ -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "docbook/xml-dtd-4.1.2/docbookx.dtd">
 <book>
   <bookinfo id="bookinfo">
@@ -71,7 +71,22 @@
       </section>
       <section id="intro.install.win32">
         <title>Windows</title>
-        <para>Instructions for Borland &amp; VC++</para>
+	<para>
+	  FANN &gt;= 1.1.0 includes a Microsoft Visual C++ 6.0 project file, which can be used to compile FANN for Windows.
+	  To build the library and examples with MSVC++ 6.0:
+	</para>
+	<!-- Thanks to Koen Tanghe for this part. -->
+	<para>
+	  First, navigate to the MSVC++ directory in the FANN distribution and open the <filename>all.dsw</filename> workspace.
+	  In the Visual Studio menu bar, choose &quot;Build&quot; -> &quot;Batch build...&quot;, select the project configurations
+	  that you would like to build (by default, all are selected), and press &quot;rebuild all&quot;
+	</para>
+	<para>
+	  When the build process is complete, the library and examples can be found in the <filename class="directory">MSVC++\Debug</filename> and
+	  <filename class="directory">MSVC++\Release</filename> directories and the release versions of the examples are automatically copied inot
+	  the <filename class="directory">examples</filename> where they are supposed to be run.
+	</para>
+	<!-- /Koen -->
       </section>
       <section id="intro.install.src">
         <title id="intro.install.src.title">Compiling from source</title>
@@ -231,6 +246,11 @@ int main()
 	The initial weights are random values between -0.1 and 0.1, if other weights are preferred, the weights can be altered by the
 	<link linkend="api.fann_randomize_weights"><function>fann_randomize_weights</function></link> or 
 	<link linkend="api.fann_init_weights"><function>fann_init_weights</function></link> function.
+      </para>
+      <para>
+        In [<xref linkend="bib.fiesler_1997" endterm="bib.fiesler_1997.abbrev"/>], Thimm and Fiesler state that, &quot;An <emphasis>(sic)</emphasis> fixed weight
+	variance of 0.2, which corresponds to a weight range of [-0.77, 0.77], gave the best mean performance for all the applications tested in this study. This
+	performance is similar or better as compared to those of the other weight initialization methods.&quot;
       </para>
       <para>
 	The standard activation function is the sigmoid activation function, but it is also possible to use the threshold activation function. A list of the
@@ -820,6 +840,10 @@ fann_destroy(ann2);
           <para>
 	    Randomizes the weight of each connection in <parameter>ann</parameter>, effectively resetting the network.
 	  </para>
+	  <para>
+	    See also: <link linkend="adv.adj" endterm="adv.adj.title" />,
+	    <link linkend="api.fann_init_weights"><function>fann_init_weights</function></link>
+	  </para>
           <para>This function appears in FANN &gt;= 1.0.0.</para>
         </refsect1>
       </refentry>
@@ -846,6 +870,10 @@ fann_destroy(ann2);
 	  <para>
 	    The algorithm requires access to the range of the input data (ie, largest and smallest input), and therefore accepts a second
 	    argument, <parameter>data</parameter>, which is the training data that will be used to train the network.
+	  </para>
+	  <para>
+	    See also: <link linkend="adv.adj" endterm="adv.adj.title" />,
+	    <link linkend="api.fann_randomize_weights"><function>fann_randomize_weights</function></link>
 	  </para>
           <para>This function appears in FANN &gt;= 1.1.0.</para>
         </refsect1>
@@ -3315,6 +3343,10 @@ else
             <function>fann_randomize_weights</function> will randomize the weights of all neurons in
 	    <parameter>ann</parameter>, effectively resetting the network.
 	  </para>
+	  <para>
+	    See also: <link linkend="adv.adj" endterm="adv.adj.title" />,
+	    <link linkend="api.fann_init_weights"><function>fann_init_weights</function></link>
+	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
       </refentry>
@@ -3345,6 +3377,10 @@ else
 	  <para>
 	    The algorithm requires access to the range of the input data (ie, largest and smallest input), and therefore accepts a second
 	    argument, <parameter>data</parameter>, which is the training data that will be used to train the network.
+	  </para>
+	  <para>
+	    See also: <link linkend="adv.adj" endterm="adv.adj.title" />,
+	    <link linkend="api.fann_randomize_weights"><function>fann_randomize_weights</function></link>
 	  </para>
           <para>This function appears in FANN-PHP &gt;= 0.1.0.</para>
         </refsect1>
@@ -3914,6 +3950,25 @@ else
       <pubdate>1990</pubdate>
       <title id="bib.lecun_1990.title">Advances in Neural Information Processing Systems II</title>
     </biblioentry>
+    <biblioentry id="bib.nguyen_1990">
+      <abbrev id="bib.nguyen_1990.abbrev">Nguyen and Widrow, 1990</abbrev>
+      <title id="bib.nguyen_1990.title">Reinforcement Learning</title>
+      <author>
+        <firstname>Derrick</firstname>
+        <surname>Nguyen</surname>
+      </author>
+      <author>
+        <firstname>Bernard</firstname>
+        <surname>Widrow</surname>
+      </author>
+      <pubdate>1990</pubdate>
+      <publishername>Proc. IJCNN</publishername>
+      <volumenum>3</volumenum>
+      <pagenums>21-26</pagenums>
+      <releaseinfo>
+        <ulink url="http://www.cs.montana.edu/~clemens/nguyen-widrow.pdf">http://www.cs.montana.edu/~clemens/nguyen-widrow.pdf</ulink>
+      </releaseinfo>
+    </biblioentry>
     <biblioentry id="bib.nissen_2003">
       <abbrev id="bib.nissen_2003.abbrev">Nissen et al., 2003</abbrev>
       <author>
@@ -3962,25 +4017,6 @@ else
       <releaseinfo>
         <ulink url="http://www.hamster.dk/~purple/robot/iBOT/report.pdf">
         http://www.hamster.dk/~purple/robot/iBOT/report.pdf</ulink>
-      </releaseinfo>
-    </biblioentry>
-    <biblioentry id="bib.nguyen_1990">
-      <abbrev id="bib.nguyen_1990.abbrev">Nguyen and Widrow, 1990</abbrev>
-      <title id="bib.nguyen_1990.title">Reinforcement Learning</title>
-      <author>
-        <firstname>Derrick</firstname>
-        <surname>Nguyen</surname>
-      </author>
-      <author>
-        <firstname>Bernard</firstname>
-        <surname>Widrow</surname>
-      </author>
-      <pubdate>1990</pubdate>
-      <publishername>Proc. IJCNN</publishername>
-      <volumenum>3</volumenum>
-      <pagenums>21-26</pagenums>
-      <releaseinfo>
-        <ulink url="http://www.cs.montana.edu/~clemens/nguyen-widrow.pdf">http://www.cs.montana.edu/~clemens/nguyen-widrow.pdf</ulink>
       </releaseinfo>
     </biblioentry>
     <biblioentry id="bib.OSDN_2003">
@@ -4068,6 +4104,26 @@ else
       <pubdate></pubdate>
       <title id="bib.tettamanzi_2001.title">Soft Computing</title>
       <publishername>Springer-Verlag</publishername>
+    </biblioentry>
+    <biblioentry id="bib.fiesler_1997">
+      <abbrev id="bib.fiesler_1997.abbrev">Thimm and Fiesler, High-Order and Multilayer Perceptron Initialization, 1997</abbrev>
+      <author>
+        <firstname>Georg</firstname>
+        <surname>Thimm</surname>
+      </author>
+      <author>
+        <firstname>Emile</firstname>
+        <surname>Fiesler</surname>
+      </author>
+      <pubdate>March 1997</pubdate>
+      <title id="bib.fiesler_1997.title">High-Order and Multilayer Perceptron Initialization</title>
+      <publishername>IEEE Transactions on Neural Networks</publishername>
+      <volumenum>8</volumenum>
+      <issuenum>2</issuenum>
+      <pagenums>249-259</pagenums>
+      <releaseinfo>
+        <ulink url="http://citeseer.ist.psu.edu/thimm96high.html">http://citeseer.ist.psu.edu/thimm96high.html</ulink>
+      </releaseinfo>
     </biblioentry>
     <biblioentry id="bib.thimm_1997">
       <abbrev id="bib.thimm_1997.abbrev">Thimm and Fiesler, 1997</abbrev>
