@@ -145,7 +145,7 @@ struct fann
 	float error_value;
 
 	/* The type of error that last occured. */
-	unsigned int errno;
+	unsigned int errno_f;
 
 	/* A string representation of the last error. */
 	char * errstr;

@@ -1021,7 +1021,7 @@ fann_type* fann_run(struct fann *ann, fann_type *input)
  */
 void fann_reset_errno(struct fann *ann)
 {
-	ann->errno = 0;
+	ann->errno_f = 0;
 }
 
 /* resets the last errstr
@@ -1037,7 +1037,7 @@ void fann_reset_errstr(struct fann *ann)
  */
 unsigned int fann_get_errno(struct fann *ann)
 {
-	return ann->errno;
+	return ann->errno_f;
 }
 
 /* returns the last errstr
@@ -1055,7 +1055,7 @@ char * fann_get_errstr(struct fann *ann)
 /* prints the last error to stderr
  */
 void fann_print_error(struct fann *ann) {
-	if ( ann->errno != FANN_E_NO_ERROR ){
+	if ( ann->errno_f != FANN_E_NO_ERROR ){
 		fputs(ann->errstr, stderr);
 	}
 }
