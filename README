@@ -1,25 +1,19 @@
 Fast Artificial Neural Network Library (fann)
 
-fann is implemented in ANSI C. The library implements multilayer
-feedforward networks with support for both fully connected and sparse
-connected networks. Fann offers support for execution in fixed point
-arithmetic to allow for fast execution on systems with no floating
-point processor. To overcome the problems of integer overflow, the
-library calculates a position of the decimal point after training and
-guarantees that integer overflow can not occur with this decimal
-point.
+Fast Artificial Neural Network Library implements multilayer
+artificial neural networks in C with support for both fully connected
+and sparsely connected networks. Cross-platform execution in both
+fixed and floating point are supported. It includes a framework for
+easy handling of training data sets. It is easy to use, versatile,
+well documented, and fast. PHP and Python bindings are available.
 
-The library is designed to be fast, versatile and easy to use. Several
-benchmarks have been executed to test the performance of the
-library. The results show that the fann library is significantly
-faster than other libraries on systems without a floating point
-processor, while the performance was comparable to other highly
-optimized libraries on systems with a floating point processor.
-
-A user's guide accompanies the library with examples and
+A reference manual accompanies the library with examples and
 recommendations on how to use the library.
 
-For documentation please see: doc/fann_doc_complete_1.0.pdf
+The reference manual is awailable in: doc/html/index.html
+
+A university report about the implementation of version 1.0 is also
+available, please see: doc/fann_doc_complete_1.0.pdf
 
 For installation do the following:
 type command: ./configure
@@ -36,7 +30,7 @@ For further installation instructions see: INSTALL
 
 For example programs please see:
 examples/simple_train.c
-examples/simple_test_float.c
+examples/simple_test.c
 
-For the newest version of this library please go to:
-http://sourceforge.net/projects/fann/
+For more information and downloads, please go to:
+http://fann.sourceforge.net/

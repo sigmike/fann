@@ -3,7 +3,7 @@
 GCC = gcc
 G++ = g++
 
-TARGETS = quality quality_fixed performance performance_fixed
+TARGETS = quality quality_fixed performance performance_fixed shuffle
 
 CFLAGS = -O3 -finline-functions -funroll-loops -Werror
 

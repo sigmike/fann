@@ -3,7 +3,7 @@ SUBDIRS = src
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = fann.pc
 
-EXTRA_DIST = benchmarks doc examples python MSVC++ src/include/config.h \
+EXTRA_DIST = benchmarks doc/fann.xml doc/fann_doc_complete_1.0.pdf doc/Makefile doc/style.css examples python MSVC++ src/include/config.h \
 	debian/changelog debian/compat debian/control debian/copyright \
 	debian/docs debian/libfann1-dev.dirs debian/libfann1-dev.examples \
 	debian/libfann1-dev.files debian/libfann1-dev.install \
