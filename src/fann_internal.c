@@ -58,8 +58,8 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 	ann->multiplier = 256;
 #endif
 	
-	ann->activation_function_hidden = FANN_SIGMOID;
-	ann->activation_function_output = FANN_SIGMOID;
+	ann->activation_function_hidden = FANN_SIGMOID_STEPWISE;
+	ann->activation_function_output = FANN_SIGMOID_STEPWISE;
 #ifdef FIXEDFANN
 	ann->activation_hidden_steepness = ann->multiplier/2;
 	ann->activation_output_steepness = ann->multiplier/2;
