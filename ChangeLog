@@ -1,7 +1,20 @@
+libfann (1.0.5) stable; urgency=low
+	* Error value not reset after training
+	* Added a new constructor
+	* Added a callback function for output during training
+
+ -- Steffen Nissen <lukesky@diku.dk>  Tue, 06 Jan 2004 20:51:34 +0100
+	
+libfann (1.0.4) stable; urgency=high
+	* Bugfix concerning default activation function
+	
+ -- Steffen Nissen <lukesky@diku.dk>  Thu, 11 Dec 2003 12:42:41 +0100
+	
 libfann (1.0.3) stable; urgency=low
 	* Added FANN_SIGMOID_STEPWISE activation function (faster)
 	* Moved files around and altered some files for easyer benchmarking
 	* Added a benchmark pdf file, benchmarking the new behavior.
+	* Better compability with non gnu compilers (should work off the shelf)
 	
  -- Steffen Nissen <lukesky@diku.dk>  Tue, 09 Dec 2003 23:30:45 +0100
 	
