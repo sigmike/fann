@@ -1,11 +1,12 @@
 Source: libfann1
+Section: libdevel
 Priority: optional
 Maintainer: Steffen Nissen <lukesky@diku.dk>
 Build-Depends: debhelper (>= 4.0.0)
 Standards-Version: 3.6.0
 
 Package: libfann1-dev
-Section: devel
+Section: libdevel
 Architecture: any
 Depends: libfann1 (= ${Source-Version})
 Description: Fast Artificial Neural Network Library, Development files

@@ -134,7 +134,14 @@ SUBDIRS = src
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = fann.pc
 
-EXTRA_DIST = benchmarks doc examples python MSVC++ src/include/config.h
+EXTRA_DIST = benchmarks doc examples python MSVC++ src/include/config.h \
+	debian/changelog debian/compat debian/control debian/copyright \
+	debian/docs debian/libfann1-dev.dirs debian/libfann1-dev.examples \
+	debian/libfann1-dev.files debian/libfann1-dev.install \
+	debian/libfann1.dirs debian/libfann1.files debian/libfann1.install \
+	debian/rules debian/files debian/libfann1.postinst.debhelper \
+	debian/libfann1.postrm.debhelper debian/libfann1.substvars
+
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -347,7 +354,7 @@ distcleancheck_listfiles = find . -type f -print
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/. $(distdir)/src/include
+	$(mkinstalldirs) $(distdir)/. $(distdir)/debian $(distdir)/src/include
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
