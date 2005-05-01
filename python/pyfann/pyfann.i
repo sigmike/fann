@@ -4,7 +4,7 @@
 %include "typemaps.i"
 
 %{
-#include "../src/include/fann.h"
+#include "fann.h"
 %}
 
 %define CHECKED_FLOAT_ARRAY(typemap_name, expected_length)
@@ -84,9 +84,9 @@ typedef double fann_type;
 %rename(fann_test) fann_test2;
 
 #define FANN_INCLUDE
-%include "../src/include/fann.h"
-%include "../src/include/fann_data.h"
-%include "../src/include/fann_activation.h"
+%include "../../src/include/fann.h"
+%include "../../src/include/fann_data.h"
+%include "../../src/include/fann_activation.h"
 
 // Helper functions
 PyObject* fann_run2(struct fann *ann, fann_type *input);

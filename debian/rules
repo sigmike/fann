@@ -46,6 +46,8 @@ build-stamp:  config.status
 	cd doc && $(MAKE) html
 
 	$(MAKE)
+	
+	cd python && make build
 
 	touch build-stamp
 
@@ -74,6 +76,7 @@ install: build
 
 	# Add here commands to install the package into debian/tmp
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	( cd python && make install ROOT=$(CURDIR)/debian/tmp )
 
 # Build architecture-independent files here.
 binary-indep: build install

@@ -11,10 +11,10 @@ OBJS=libfann_wrap.obj fann_helper.obj
 all: $(TARGETS)
 
 _libfann.pyd: $(OBJS)
-	link /LIBPATH:$(PYDIR)/libs /DLL /OUT:$@ $(OBJS) ../src/fann*.obj python23.lib
+	link /LIBPATH:$(PYDIR)/libs /DLL /OUT:$@ $(OBJS) ../../src/fann*.obj python23.lib
 
 .c.obj:
-	cl -c $< -I $(PYDIR)/include -I ../src/include
+	cl -c $< -I $(PYDIR)/include -I ../../src/include
 
 libfann_wrap.c: libfann.i
 	swig -python libfann.i

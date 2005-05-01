@@ -1,3 +1,9 @@
+libfann1 (1.2.0-2) unstable; urgency=low
+
+  * Added python bindings package 
+
+ -- Vincenzo Di Massa <hawk@hawk.linuxpratico.net>  Thu, 21 Apr 2005 12:32:35 +0200
+
 libfann1 (1.2.0-1) unstable; urgency=low
 
   * Debian package for version 1.2.0
