@@ -1,0 +1,14 @@
+Document: libfann1
+Title: FANN Reference Manual
+Author: Steffen Nissen, Evan Nemerson
+Abstract: Fast Artificial Neural Network Library is written in ANSI C. The
+ library implements multilayer feedforward ANNs, up to 150 times faster than
+ other libraries. FANN supports execution in fixed point, for fast execution on
+ systems like the iPAQ.
+ .
+ This document covers programming with FANN.
+Section: Apps/Programming
+
+Format: HTML
+Index: /usr/share/doc/libfann1-dev/html/index.html
+Files: /usr/share/doc/libfann1-dev/html/*.html
