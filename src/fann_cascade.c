@@ -287,8 +287,8 @@ float fann_train_outputs_epoch(struct fann *ann, struct fann_train_data *data)
 	/* TODO this should actually use the algorithm selected by
 	   ann->training_algorithm
 	*/
-	/*fann_update_weights_irpropm(ann, (ann->last_layer-1)->first_neuron->first_con, ann->total_connections);*/
-	fann_update_weights_quickprop(ann, data->num_data, (ann->last_layer-1)->first_neuron->first_con, ann->total_connections);
+	fann_update_weights_irpropm(ann, (ann->last_layer-1)->first_neuron->first_con, ann->total_connections);
+	/*fann_update_weights_quickprop(ann, data->num_data, (ann->last_layer-1)->first_neuron->first_con, ann->total_connections);*/
 
 	return fann_get_MSE(ann);
 }
@@ -584,7 +584,7 @@ void fann_update_candidate_slopes(struct fann *ann)
 #ifdef CASCADE_DEBUG
 			/* printf("diff = %f = (%f * %f) - %f;\n", diff, activation, cand_out_weights[j], output_train_errors[j]); */
 #endif
-			cand_out_slopes[j] += diff * activation;
+			cand_out_slopes[j] -= 2.0 * diff * activation;
 #ifdef CASCADE_DEBUG
 			/* printf("cand_out_slopes[%d] <= %f += %f * %f;\n", j, cand_out_slopes[j], diff, activation); */
 #endif
@@ -592,6 +592,8 @@ void fann_update_candidate_slopes(struct fann *ann)
 			cand_score -= (diff * diff);
 #ifdef CASCADE_DEBUG
 			/* printf("cand_score[%d][%d] = %f -= (%f * %f)\n", cand_it - first_cand, j, cand_score, diff, diff); */
+
+			printf("cand[%d]: error=%f, activation=%f, diff=%f, slope=%f\n", cand_it - first_cand, output_train_errors[j], (activation * cand_out_weights[j]), diff, -2.0 * diff * activation);
 #endif
 		}
 
@@ -600,7 +602,7 @@ void fann_update_candidate_slopes(struct fann *ann)
 		
 		cand_slopes = ann->train_slopes + cand_it->first_con;
 		for(i = 0; i < num_connections; i++){
-			cand_slopes[i] += error_value * neurons[i].value;
+			cand_slopes[i] -= error_value * neurons[i].value;
 		}
 	}
 }
@@ -610,7 +612,7 @@ void fann_update_candidate_weights(struct fann *ann, unsigned int num_data)
 	struct fann_neuron *first_cand = (ann->last_layer-1)->last_neuron + 1; /* there is an empty neuron between the actual neurons and the candidate neuron */
 	struct fann_neuron *last_cand = first_cand + ann->cascade_num_candidates-1;
 
-	fann_update_weights_special_quickprop(ann, num_data, first_cand->first_con, last_cand->last_con+ann->num_output);
+	fann_update_weights_quickprop(ann, num_data, first_cand->first_con, last_cand->last_con+ann->num_output);
 }
 
 float fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data)
@@ -641,7 +643,7 @@ float fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data
 			output_train_errors[j] = ann->output[j] - data->output[i][j];
 			*/
 
-			output_train_errors[j] = (ann->output[j] - data->output[i][j]);
+			output_train_errors[j] = (data->output[i][j] - ann->output[j]);
 
 			if(ann->activation_function_output == FANN_SIGMOID_SYMMETRIC ||
 				ann->activation_function_output == FANN_SIGMOID_SYMMETRIC_STEPWISE){
@@ -665,7 +667,7 @@ float fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data
 	}
 
 	ann->cascade_best_candidate = ann->total_neurons + best_candidate + 1;
-	printf("Best candidate: %d(%d) with score %f, real score: %f\n", ann->cascade_best_candidate, best_candidate, ann->MSE_value-best_score, best_score);
+	printf("Best candidate[%d]: with score %f, real score: %f\n", best_candidate, ann->MSE_value-best_score, best_score);
 	
 	return best_score;
 }
@@ -802,7 +804,7 @@ void fann_add_candidate_neuron(struct fann *ann, struct fann_layer *layer)
 		printf("cadidate output weight set to weight[%d] = weight[%d] = %f %f\n", neuron_it->last_con-1, candidate_output_weight, -(ann->weights[candidate_output_weight]), (ann->weights[candidate_output_weight]));
 #endif
 
-		ann->weights[neuron_it->last_con-1] =  -(ann->weights[candidate_output_weight]) * ann->cascade_weight_multiplier;
+		ann->weights[neuron_it->last_con-1] = -(ann->weights[candidate_output_weight]) * ann->cascade_weight_multiplier;
 		candidate_output_weight++;
 	}
 

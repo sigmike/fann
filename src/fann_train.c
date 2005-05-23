@@ -278,7 +278,6 @@ void fann_compute_MSE(struct fann *ann, fann_type *desired_output)
 	
 		*error_it = fann_activation_derived(ann->activation_function_output,
 			ann->activation_steepness_output, neuron_value) * neuron_diff;
-
 		
 		desired_output++;
 		error_it++;
@@ -644,8 +643,12 @@ void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data, unsi
 			next_step += epsilon * slope;
 		}
 
-		if(next_step > 1000 || next_step < -1000){
+		if(next_step > 100 || next_step < -100){
 			printf("quickprop[%d] weight=%f, slope=%f, next_step=%f, prev_step=%f\n", i, weights[i], slope, next_step, prev_step);
+			if(next_step > 100)
+				next_step = 100;
+			else
+				next_step = -100;
 		}
 
 		/* update global data arrays */

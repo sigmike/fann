@@ -25,9 +25,9 @@ int main()
 {
 	const float learning_rate = (const float)0.7;
 	const float desired_error = (const float)0.001;
-	unsigned int max_out_epochs = 500;
-	unsigned int max_cand_epochs = 500;
-	unsigned int max_neurons = 20;
+	unsigned int max_out_epochs = 100;
+	unsigned int max_cand_epochs = 100;
+	unsigned int max_neurons = 40;
 	unsigned int neurons_between_reports = 1;
 	struct fann *ann;
 	struct fann_train_data *train_data, *test_data;
@@ -41,14 +41,14 @@ int main()
 	/*
 	*/
 	
-	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.test");
+	train_data = fann_read_train_from_file("../benchmarks/datasets/parity4.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/parity4.test");
 	
 	train_data = fann_read_train_from_file("xor.data");
 	test_data = fann_read_train_from_file("xor.data");
 
-	train_data = fann_read_train_from_file("../benchmarks/datasets/parity4.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/parity4.test");
+	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.test");
 	
 	printf("Creating network.\n");
 
