@@ -680,7 +680,7 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight, un
 		prev_step = fann_max(prev_steps[i], (fann_type)0.001); /* prev_step may not be zero because then the training will stop */
 		slope = train_slopes[i];
 		prev_slope = prev_train_slopes[i];
-		next_step = 0.0;
+		/* next_step = 0.0; */
 
 		same_sign = prev_slope * slope;
 	
