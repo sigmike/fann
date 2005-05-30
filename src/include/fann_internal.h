@@ -72,7 +72,7 @@ fann_type fann_activation(struct fann *ann, unsigned int is_output_layer,
 	fann_type value);
 
 fann_type fann_activation_derived(unsigned int activation_function,
-	fann_type steepness, fann_type value);
+	fann_type steepness, fann_type value, fann_type sum);
 
 /* called fann_max, in order to not interferre with predefined versions of max */
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))

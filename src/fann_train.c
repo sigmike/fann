@@ -34,19 +34,25 @@
    and a steepness
 */
 fann_type fann_activation_derived(unsigned int activation_function,
-	fann_type steepness, fann_type value)
+	fann_type steepness, fann_type value, fann_type sum)
 {
 	switch(activation_function){
 		case FANN_LINEAR:
 			return (fann_type)fann_linear_derive(steepness, value);
 		case FANN_SIGMOID:
 		case FANN_SIGMOID_STEPWISE:
-			value = fann_clip(value, 0.01f, 0.99f);
 			return (fann_type)fann_sigmoid_derive(steepness, value);
 		case FANN_SIGMOID_SYMMETRIC:
 		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-			value = fann_clip(value, -0.98f, 0.98f);
 			return (fann_type)fann_sigmoid_symmetric_derive(steepness, value);
+		case FANN_GAUSSIAN:
+			return (fann_type)fann_gaussian_derive(steepness, value, sum);
+		case FANN_GAUSSIAN_SYMMETRIC:
+			return (fann_type)fann_gaussian_symmetric_derive(steepness, value, sum);
+		case FANN_ELLIOT:
+			return (fann_type)fann_elliot_derive(steepness, value, sum);
+		case FANN_ELLIOT_SYMMETRIC:
+			return (fann_type)fann_elliot_symmetric_derive(steepness, value, sum);			
 		default:
 			return 0;
 	}
@@ -120,6 +126,14 @@ fann_type fann_activation(struct fann *ann, unsigned int is_output_layer,
 			return (fann_type)((value < 0) ? 0 : 1);
 		case FANN_THRESHOLD_SYMMETRIC:
 			return (fann_type)((value < 0) ? -1 : 1);
+		case FANN_GAUSSIAN:
+			return (fann_type)fann_gaussian(steepness, value);
+		case FANN_GAUSSIAN_SYMMETRIC:
+			return (fann_type)fann_gaussian_symmetric(steepness, value);
+		case FANN_ELLIOT:
+			return (fann_type)fann_elliot(steepness, value);
+		case FANN_ELLIOT_SYMMETRIC:
+			return (fann_type)fann_elliot_symmetric(steepness, value);			
 		default:
 			fann_error((struct fann_error *)ann, FANN_E_CANT_USE_ACTIVATION);
 			return 0;
@@ -277,7 +291,7 @@ void fann_compute_MSE(struct fann *ann, fann_type *desired_output)
 		}
 	
 		*error_it = fann_activation_derived(ann->activation_function_output,
-			ann->activation_steepness_output, neuron_value) * neuron_diff;
+			ann->activation_steepness_output, neuron_value, last_layer_begin->sum) * neuron_diff;
 		
 		desired_output++;
 		error_it++;
@@ -348,7 +362,14 @@ void fann_backpropagate_MSE(struct fann *ann)
 		/* then calculate the actual errors in the previous layer */
 		error_prev_layer = error_begin + ((layer_it-1)->first_neuron - first_neuron);
 		last_neuron = (layer_it-1)->last_neuron;
-		
+
+		for(neuron_it = (layer_it-1)->first_neuron;
+			neuron_it != last_neuron; neuron_it++){
+			neuron_value = neuron_it->value;
+			*error_prev_layer *= fann_activation(ann, 0, neuron_value);
+		}
+
+		/*
 		switch(ann->activation_function_hidden){
 			case FANN_LINEAR:
 				for(neuron_it = (layer_it-1)->first_neuron;
@@ -363,7 +384,6 @@ void fann_backpropagate_MSE(struct fann *ann)
 				for(neuron_it = (layer_it-1)->first_neuron;
 					neuron_it != last_neuron; neuron_it++){
 					neuron_value = neuron_it->value;
-					neuron_value = fann_clip(neuron_value, 0.01f, 0.99f);
 					*error_prev_layer *= (fann_type)fann_sigmoid_derive(activation_steepness_hidden, neuron_value);
 					error_prev_layer++;
 				}
@@ -373,7 +393,6 @@ void fann_backpropagate_MSE(struct fann *ann)
 				for(neuron_it = (layer_it-1)->first_neuron;
 					neuron_it != last_neuron; neuron_it++){
 					neuron_value = neuron_it->value;
-					neuron_value = fann_clip(neuron_value, -0.98f, 0.98f);
 					*error_prev_layer *= (fann_type)fann_sigmoid_symmetric_derive(activation_steepness_hidden, neuron_value);
 					error_prev_layer++;
 				}
@@ -382,6 +401,7 @@ void fann_backpropagate_MSE(struct fann *ann)
 				fann_error((struct fann_error *)ann, FANN_E_CANT_TRAIN_ACTIVATION);
 				return;
 		}
+		*/
 	}
 }
 

@@ -659,6 +659,18 @@ FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 				case FANN_THRESHOLD_SYMMETRIC:
 					neuron_it->value = (fann_type)((neuron_sum < 0) ? -1 : 1);
 					break;
+				case FANN_GAUSSIAN:
+					neuron_it->value = (fann_type)fann_gaussian(steepness, neuron_sum);
+					break;
+				case FANN_GAUSSIAN_SYMMETRIC:
+					neuron_it->value = (fann_type)fann_gaussian_symmetric(steepness, neuron_sum);
+					break;
+				case FANN_ELLIOT:
+					neuron_it->value = (fann_type)fann_elliot(steepness, neuron_sum);
+					break;
+				case FANN_ELLIOT_SYMMETRIC:
+					neuron_it->value = (fann_type)fann_elliot_symmetric(steepness, neuron_sum);			
+					break;
 				default:
 					fann_error((struct fann_error *)ann, FANN_E_CANT_USE_ACTIVATION);
 			}
@@ -867,9 +879,9 @@ struct fann * fann_allocate_structure(float learning_rate, unsigned int num_laye
 
 	/* variables used for cascade correlation (reasonable defaults) */
 	ann->cascade_change_fraction = 0.01;
-	ann->cascade_stagnation_epochs = 8;
+	ann->cascade_stagnation_epochs = 12;
 	ann->cascade_num_candidates = 8;
-	ann->cascade_weight_multiplier = 1.0;
+	ann->cascade_weight_multiplier = 0.5;
 	ann->cascade_candidate_limit = 1000.0;
 	ann->cascade_candidate_scores = NULL;
 

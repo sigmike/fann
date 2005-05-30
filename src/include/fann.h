@@ -307,6 +307,19 @@ FANN_EXTERNAL void FANN_API fann_train_on_file_callback(struct fann *ann, char *
  */
 FANN_EXTERNAL void FANN_API fann_shuffle_train_data(struct fann_train_data *train_data);
 
+
+/* Scales the inputs in the training data to the specified range
+ */
+FANN_EXTERNAL void FANN_API fann_scale_input_train_data(struct fann_train_data *train_data, fann_type new_min, fann_type new_max);
+
+/* Scales the inputs in the training data to the specified range
+ */
+FANN_EXTERNAL void FANN_API fann_scale_output_train_data(struct fann_train_data *train_data, fann_type new_min, fann_type new_max);
+
+/* Scales the inputs in the training data to the specified range
+ */
+FANN_EXTERNAL void FANN_API fann_scale_train_data(struct fann_train_data *train_data, fann_type new_min, fann_type new_max);
+	
 /* merges training data into a single struct.
  */
 FANN_EXTERNAL struct fann_train_data * FANN_API fann_merge_train_data(struct fann_train_data *data1, struct fann_train_data *data2);

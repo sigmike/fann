@@ -285,6 +285,64 @@ FANN_EXTERNAL void FANN_API fann_shuffle_train_data(struct fann_train_data *trai
 	}
 }
 
+/* INTERNAL FUNCTION
+   Scales data to a specific range
+ */
+void fann_scale_data(fann_type **data, unsigned int num_data, unsigned int num_elem, fann_type new_min, fann_type new_max) {
+	unsigned int dat, elem;
+	fann_type old_min, old_max, temp, old_span, new_span, factor;
+	old_min = old_max = data[0][0];
+
+	/* first calculate min and max */
+	for (dat = 0 ; dat < num_data ; dat++ ) {
+		for ( elem = 0 ; elem < num_elem ; elem++ ) {
+			temp = data[dat][elem];
+			if(temp < old_min)
+				old_min = temp;
+			else if(temp > old_max)
+				old_max = temp;
+		}
+	}
+
+	old_span = old_max - old_min;
+	new_span = new_max - new_min;
+	factor = new_span / old_span;
+
+	for (dat = 0 ; dat < num_data ; dat++ ) {
+		for ( elem = 0 ; elem < num_elem ; elem++ ) {
+			temp = (data[dat][elem] - old_min) * factor + new_min;
+			if(temp < new_min){
+				data[dat][elem] = new_min;
+				printf("error %f < %f\n", temp, new_min);
+			} else if(temp > new_max){
+				data[dat][elem] = new_max;
+				printf("error %f > %f\n", temp, new_max);
+			} else {
+				data[dat][elem] = temp;
+			}
+		}
+	}
+}
+
+/* Scales the inputs in the training data to the specified range
+ */
+FANN_EXTERNAL void FANN_API fann_scale_input_train_data(struct fann_train_data *train_data, fann_type new_min, fann_type new_max) {
+	fann_scale_data(train_data->input, train_data->num_data, train_data->num_input, new_min, new_max);
+}
+
+/* Scales the inputs in the training data to the specified range
+ */
+FANN_EXTERNAL void FANN_API fann_scale_output_train_data(struct fann_train_data *train_data, fann_type new_min, fann_type new_max) {
+	fann_scale_data(train_data->output, train_data->num_data, train_data->num_output, new_min, new_max);
+}
+
+/* Scales the inputs in the training data to the specified range
+ */
+FANN_EXTERNAL void FANN_API fann_scale_train_data(struct fann_train_data *train_data, fann_type new_min, fann_type new_max) {
+	fann_scale_data(train_data->input, train_data->num_data, train_data->num_input, new_min, new_max);
+	fann_scale_data(train_data->output, train_data->num_data, train_data->num_output, new_min, new_max);
+}
+
 /* merges training data into a single struct.
  */
 FANN_EXTERNAL struct fann_train_data * FANN_API fann_merge_train_data(struct fann_train_data *data1, struct fann_train_data *data2) {
@@ -365,6 +423,8 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_duplicate_train_data(struct
 	}
 	return dest;
 }
+
+
 
 /* INTERNAL FUNCTION
    Reads training data from a file descriptor.
