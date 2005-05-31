@@ -574,7 +574,7 @@ void fann_update_candidate_slopes(struct fann *ann)
 		*/
 		/* unrolled loop end */
 
-		activation = fann_activation(ann, 0, cand_sum);
+		activation = fann_activation(ann, ann->activation_function_hidden, ann->activation_steepness_hidden, cand_sum);
 		/* printf("%f = sigmoid(%f);\n", activation, cand_sum);*/
 
 		cand_it->sum = cand_sum;

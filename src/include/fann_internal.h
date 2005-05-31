@@ -68,7 +68,9 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight, un
 
 void fann_clear_train_arrays(struct fann *ann);
 
-fann_type fann_activation(struct fann *ann, unsigned int is_output_layer,
+fann_type fann_activation_old(struct fann *ann, unsigned int is_output_layer,
+	fann_type value);
+fann_type fann_activation_new(struct fann *ann, unsigned int activation_function, fann_type steepness,
 	fann_type value);
 
 fann_type fann_activation_derived(unsigned int activation_function,

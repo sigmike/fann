@@ -62,7 +62,7 @@ fann_type fann_activation_derived(unsigned int activation_function,
   Calculates the activation of a value, given an activation function
    and a steepness
 */
-fann_type fann_activation(struct fann *ann, unsigned int is_output_layer,
+fann_type fann_activation_old(struct fann *ann, unsigned int is_output_layer,
 	fann_type value)
 {
 	/* values used for the stepwise linear sigmoid function */
@@ -138,6 +138,47 @@ fann_type fann_activation(struct fann *ann, unsigned int is_output_layer,
 			fann_error((struct fann_error *)ann, FANN_E_CANT_USE_ACTIVATION);
 			return 0;
 	}
+}
+
+/* INTERNAL FUNCTION
+  Calculates the activation of a value, given an activation function
+   and a steepness
+*/
+fann_type fann_activation(struct fann *ann, unsigned int activation_function, fann_type steepness,
+	fann_type value)
+{
+	value = fann_mult(steepness, value);
+	fann_activation_switch(ann, activation_function, value, value);
+	return value;
+	/*
+	switch(activation_function){
+		case FANN_LINEAR:
+			return value;
+		case FANN_SIGMOID:
+			return (fann_type)fann_sigmoid_real(value);
+		case FANN_SIGMOID_SYMMETRIC:
+			return (fann_type)fann_sigmoid_symmetric_real(value);
+		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+			return (fann_type)fann_stepwise(-2.64665293693542480469e+00, -1.47221934795379638672e+00, -5.49306154251098632812e-01, 5.49306154251098632812e-01, 1.47221934795379638672e+00, 2.64665293693542480469e+00, -9.90000009536743164062e-01, -8.99999976158142089844e-01, -5.00000000000000000000e-01, 5.00000000000000000000e-01, 8.99999976158142089844e-01, 9.90000009536743164062e-01, -1, 1, value);
+		case FANN_SIGMOID_STEPWISE:
+			return (fann_type)fann_stepwise(-2.64665246009826660156e+00, -1.47221946716308593750e+00, -5.49306154251098632812e-01, 5.49306154251098632812e-01, 1.47221934795379638672e+00, 2.64665293693542480469e+00, 4.99999988824129104614e-03, 5.00000007450580596924e-02, 2.50000000000000000000e-01, 7.50000000000000000000e-01, 9.49999988079071044922e-01, 9.95000004768371582031e-01, 0, 1, value);
+		case FANN_THRESHOLD:
+			return (fann_type)((value < 0) ? 0 : 1);
+		case FANN_THRESHOLD_SYMMETRIC:
+			return (fann_type)((value < 0) ? -1 : 1);
+		case FANN_GAUSSIAN:
+			return (fann_type)fann_gaussian_real(value);
+		case FANN_GAUSSIAN_SYMMETRIC:
+			return (fann_type)fann_gaussian_symmetric_real(value);
+		case FANN_ELLIOT:
+			return (fann_type)fann_elliot_real(value);
+		case FANN_ELLIOT_SYMMETRIC:
+			return (fann_type)fann_elliot_symmetric_real(value);			
+		default:
+			fann_error((struct fann_error *)ann, FANN_E_CANT_USE_ACTIVATION);
+			return 0;
+	}
+	*/
 }
 
 /* Trains the network with the backpropagation algorithm.
@@ -366,7 +407,8 @@ void fann_backpropagate_MSE(struct fann *ann)
 		for(neuron_it = (layer_it-1)->first_neuron;
 			neuron_it != last_neuron; neuron_it++){
 			neuron_value = neuron_it->value;
-			*error_prev_layer *= fann_activation(ann, 0, neuron_value);
+			/* *error_prev_layer *= fann_activation(ann, 0, neuron_value); */
+			*error_prev_layer *= fann_activation(ann, ann->activation_function_hidden, activation_steepness_hidden, neuron_value);
 		}
 
 		/*

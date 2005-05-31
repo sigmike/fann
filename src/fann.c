@@ -622,7 +622,10 @@ FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 			}
 			
 			neuron_it->sum = neuron_sum;
-			
+
+			neuron_sum = fann_mult(steepness, neuron_sum);
+			fann_activation_switch(ann, activation_function, neuron_sum, neuron_it->value);
+			/*
 			switch(activation_function){
 #ifdef FIXEDFANN
 				case FANN_SIGMOID:
@@ -674,6 +677,9 @@ FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 				default:
 					fann_error((struct fann_error *)ann, FANN_E_CANT_USE_ACTIVATION);
 			}
+			*/
+			/*if((int)(neuron_it->value*1000.0) != (int)(fann_activation_new(ann, activation_function, steepness, neuron_sum)*1000.0))
+			  printf("Wrong activation calculated %f != %f\n", neuron_it->value, fann_activation_new(ann, activation_function, steepness, neuron_sum));*/
 		}
 	}
 	
