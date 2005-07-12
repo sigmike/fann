@@ -389,11 +389,13 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_merge_train_data(struct fan
 
 /* return a copy of a fann_train_data struct
  */
-FANN_EXTERNAL struct fann_train_data * FANN_API fann_duplicate_train_data(struct fann_train_data *data) {
-	struct fann_train_data * dest;
-	unsigned int x;
+FANN_EXTERNAL struct fann_train_data * FANN_API fann_duplicate_train_data(struct fann_train_data *data)
+{
+	unsigned int i;
+	fann_type *data_input, *data_output;
+	struct fann_train_data* dest = (struct fann_train_data *)malloc(sizeof(struct fann_train_data));
 
-	if ( (dest = (struct fann_train_data *)malloc(sizeof(struct fann_train_data))) == NULL ) {
+	if(dest == NULL){
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
 		return NULL;
 	}
@@ -403,28 +405,44 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_duplicate_train_data(struct
 	dest->num_data = data->num_data;
 	dest->num_input = data->num_input;
 	dest->num_output = data->num_output;
-
-	if ( ((dest->input  = (fann_type **)calloc(dest->num_data, sizeof(fann_type *))) == NULL) ||
-	     ((dest->output = (fann_type **)calloc(dest->num_data, sizeof(fann_type *))) == NULL) ) {
+	dest->input = (fann_type **)calloc(dest->num_data, sizeof(fann_type *));
+	if(dest->input == NULL){
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
 		fann_destroy_train(dest);
 		return NULL;
 	}
+	
+	dest->output = (fann_type **)calloc(dest->num_data, sizeof(fann_type *));
+	if(dest->output == NULL){
+		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		fann_destroy_train(dest);
+		return NULL;
+	}
+	
+	data_input = (fann_type *)calloc(dest->num_input*dest->num_data, sizeof(fann_type));
+	if(data_input == NULL){
+		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		fann_destroy_train(dest);
+		return NULL;
+	}
+	memcpy(data_input, data->input[0], dest->num_input*dest->num_data*sizeof(fann_type));
 
-	for ( x = 0 ; x < dest->num_data ; x++ ) {
-		if ( ((dest->input[x]  = (fann_type *)calloc(dest->num_input,  sizeof(fann_type))) == NULL) ||
-		     ((dest->output[x] = (fann_type *)calloc(dest->num_output, sizeof(fann_type))) == NULL) ) {
-			fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
-			fann_destroy_train(dest);
-			return NULL;
-		}
-		memcpy(dest->input[x],  data->input[x],  dest->num_input  * sizeof(fann_type));
-		memcpy(dest->output[x], data->output[x], dest->num_output * sizeof(fann_type));
+	data_output = (fann_type *)calloc(dest->num_output*dest->num_data, sizeof(fann_type));
+	if(data_output == NULL){
+		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		fann_destroy_train(dest);
+		return NULL;
+	}
+	memcpy(data_output, data->output[0], dest->num_output*dest->num_data*sizeof(fann_type));
+
+	for(i = 0; i != dest->num_data; i++){
+		dest->input[i] = data_input;
+		data_input += dest->num_input;
+		dest->output[i] = data_output;
+		data_output += dest->num_output;
 	}
 	return dest;
 }
-
-
 
 /* INTERNAL FUNCTION
    Reads training data from a file descriptor.
