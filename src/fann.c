@@ -80,7 +80,9 @@ FANN_EXTERNAL struct fann * FANN_API fann_create_array(float connection_rate, fl
 	}
 	
 	/* seed random */
+#ifndef FANN_NO_SEED	
 	fann_seed_rand();
+#endif
 	
 	/* allocate the general structure */
 	ann = fann_allocate_structure(learning_rate, num_layers);
@@ -336,7 +338,9 @@ FANN_EXTERNAL struct fann * FANN_API fann_create_shortcut_array(float learning_r
 	unsigned int multiplier;
 #endif
 	/* seed random */
+#ifndef FANN_NO_SEED	
 	fann_seed_rand();
+#endif
 	
 	/* allocate the general structure */
 	ann = fann_allocate_structure(learning_rate, num_layers);
@@ -448,11 +452,9 @@ FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 	
 	
 	/* store some variabels local for fast access */
-#ifndef FIXEDFANN
 	fann_type steepness;
 	const fann_type activation_steepness_output = ann->activation_steepness_output;
 	const fann_type activation_steepness_hidden = ann->activation_steepness_hidden;
-#endif
 	
 	unsigned int activation_function_output = ann->activation_function_output;
 	unsigned int activation_function_hidden = ann->activation_function_hidden;
@@ -513,10 +515,8 @@ FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 	last_layer = ann->last_layer;
 	for(layer_it = ann->first_layer+1; layer_it != last_layer; layer_it++){
 		
-#ifndef FIXEDFANN
 		steepness = (layer_it == last_layer-1) ? 
 			activation_steepness_output : activation_steepness_hidden;
-#endif
 		
 		activation_function = (layer_it == last_layer-1) ?
 			activation_function_output : activation_function_hidden;
@@ -590,12 +590,14 @@ FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 						fann_mult(weights[i+2], neurons[i+2].value) +
 						fann_mult(weights[i+3], neurons[i+3].value);
 				}
-				
+
 				/*
 				for(i = 0;i != num_connections; i++){
+					printf("%f += %f*%f, ", neuron_sum, weights[i], neurons[i].value);
 					neuron_sum += fann_mult(weights[i], neurons[i].value);
 				}
 				*/
+				
 				/* unrolled loop end */
 			} else {
 				neuron_pointers = ann->connections + neuron_it->first_con;
@@ -621,11 +623,12 @@ FANN_EXTERNAL fann_type * FANN_API fann_run(struct fann *ann, fann_type *input)
 				}
 			}
 			
+			neuron_sum = fann_mult(steepness, neuron_sum);
 			neuron_it->sum = neuron_sum;
 
-			neuron_sum = fann_mult(steepness, neuron_sum);
 			fann_activation_switch(ann, activation_function, neuron_sum, neuron_it->value);
 			/*
+			printf(" sum=%f, value=%f\n", neuron_it->sum, neuron_it->value);
 			switch(activation_function){
 #ifdef FIXEDFANN
 				case FANN_SIGMOID:

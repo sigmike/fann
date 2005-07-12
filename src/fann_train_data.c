@@ -129,6 +129,7 @@ float fann_train_epoch_batch(struct fann *ann, struct fann_train_data *data)
 		fann_backpropagate_MSE(ann);
 		fann_update_slopes_batch(ann, ann->first_layer+1, ann->last_layer-1);
 	}
+	
 	fann_update_weights_batch(ann, data->num_data, 0, ann->total_connections);
 
 	return fann_get_MSE(ann);
@@ -313,10 +314,10 @@ void fann_scale_data(fann_type **data, unsigned int num_data, unsigned int num_e
 			temp = (data[dat][elem] - old_min) * factor + new_min;
 			if(temp < new_min){
 				data[dat][elem] = new_min;
-				printf("error %f < %f\n", temp, new_min);
+				/*printf("error %f < %f\n", temp, new_min);*/
 			} else if(temp > new_max){
 				data[dat][elem] = new_max;
-				printf("error %f > %f\n", temp, new_max);
+				/*printf("error %f > %f\n", temp, new_max);*/
 			} else {
 				data[dat][elem] = temp;
 			}

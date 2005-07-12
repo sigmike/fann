@@ -80,8 +80,8 @@ fann_type fann_activation_derived(unsigned int activation_function,
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))
 #define fann_min(x, y) (((x) < (y)) ? (x) : (y))
 #define fann_safe_free(x) {if(x) { free(x); x = NULL; }}
-/* #define fann_clip(x, lo, hi) (((x) < (lo)) ? (lo) : (((x) > (hi)) ? (hi) : (x))) */
-#define fann_clip(x, lo, hi) (x)
+#define fann_clip(x, lo, hi) (((x) < (lo)) ? (lo) : (((x) > (hi)) ? (hi) : (x)))
+/*#define fann_clip(x, lo, hi) (x)*/
 
 #define fann_rand(min_value, max_value) (((double)(min_value))+(((double)(max_value)-((double)(min_value)))*rand()/(RAND_MAX+1.0)))
 

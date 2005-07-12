@@ -41,9 +41,22 @@ rundebugtest: $(DEBUG_TARGETS)
 	@echo Testing network with floats
 	./xor_test_debug
 
+#	@echo
+#	@echo Testing network with fixed points
+#	./xor_test_fixed_debug
+
+runcompliancetest: $(DEBUG_TARGETS)
+	./xor_train_debug
+
 	@echo
-	@echo Testing network with fixed points
-	./xor_test_fixed_debug
+	@echo Testing network with floats
+	@cp xor_float.net xor_float_new.net
+	@cp xor_float_backup.net xor_float.net
+	@echo RUN
+	@./xor_test_debug | grep XOR
+	@echo CAT
+	@cat xor_float_backup.out
+
 
 #compiletest is used to test whether the library will compile easily in other compilers
 compiletest:

@@ -35,9 +35,9 @@ int main()
 	const unsigned int num_input = 2;
 	const unsigned int num_output = 1;
 	const unsigned int num_layers = 3;
-	const unsigned int num_neurons_hidden = 3;
-	const float desired_error = (const float)0.001;
-	const unsigned int max_iterations = 300000;
+	const unsigned int num_neurons_hidden = 5;
+	const float desired_error = (const float)0.00001;
+	const unsigned int max_iterations = 100000;
 	const unsigned int iterations_between_reports = 1000;
 	struct fann *ann;
 	struct fann_train_data *data;
@@ -57,24 +57,23 @@ int main()
 	data = fann_read_train_from_file("xor.data");
 
 
-	fann_set_activation_steepness_hidden(ann, 1.0);
-	fann_set_activation_steepness_output(ann, 1.0);
+	fann_set_activation_steepness_hidden(ann, 1);
+	fann_set_activation_steepness_output(ann, 1);
+	fann_set_rprop_delta_max(ann, 50);
 	
-	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
-	fann_set_activation_function_output(ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
+	fann_set_activation_function_hidden(ann, FANN_ELLIOT_SYMMETRIC);
+	fann_set_activation_function_output(ann, FANN_GAUSSIAN_SYMMETRIC);
 	
 	fann_init_weights(ann, data);
 
-	fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP);
-
+	/*fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP);*/
 	fann_train_on_data(ann, data, max_iterations, iterations_between_reports, desired_error);
 	
 	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback);*/
 
-	fann_print_connections(ann);
-	fann_print_parameters(ann);		
+	
 
-	printf("Testing network.\n");
+	printf("Testing network. %f\n", fann_test_data(ann, data));
 
 	for(i = 0; i < data->num_data; i++){
 		calc_out = fann_run(ann, data->input[i]);

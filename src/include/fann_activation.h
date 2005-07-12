@@ -81,7 +81,7 @@ enum {
 	   0 when x = -inf, 1 when x = 0 and 0 when x = inf
 	   span: 0 < y < 1
 	   y = exp(-x*s*x*s)
-	   d = -2*x*y*s
+	   d = -2*x*s*y*s
 	*/
 	FANN_GAUSSIAN,
 
@@ -89,7 +89,7 @@ enum {
 	   -1 when x = -inf, 1 when x = 0 and 0 when x = inf
 	   span: -1 < y < 1
 	   y = exp(-x*s*x*s)*2-1
-	   d = -4*x*y*s
+	   d = -2*x*s*(y+1)*s
 	*/
 	FANN_GAUSSIAN_SYMMETRIC,
 
@@ -102,14 +102,14 @@ enum {
 	/* Fast (sigmoid like) activation function defined by David Elliott
 	   span: 0 < y < 1
 	   y = ((x*s) / 2) / (1 + |x*s|) + 0.5
-	   d = s*1/(2*(1+|x|)*(1+|x|))
+	   d = s*1/(2*(1+|x*s|)*(1+|x*s|))
 	*/
 	FANN_ELLIOT,
 
 	/* Fast (symmetric sigmoid like) activation function defined by David Elliott
 	   span: -1 < y < 1   
 	   y = (x*s) / (1 + |x*s|)
-	   d = s*1/((1+|x|)*(1+|x|))
+	   d = s*1/((1+|x*s|)*(1+|x*s|))
 	*/
 	FANN_ELLIOT_SYMMETRIC
 };
@@ -139,8 +139,6 @@ static char const * const FANN_ACTIVATION_NAMES[] = {
 #define fann_linear_func(v1, r1, v2, r2, sum) ((((r2-r1) * (sum-v1))/(v2-v1)) + r1)
 #define fann_stepwise(v1, v2, v3, v4, v5, v6, r1, r2, r3, r4, r5, r6, min, max, sum) (sum < v5 ? (sum < v3 ? (sum < v2 ? (sum < v1 ? min : fann_linear_func(v1, r1, v2, r2, sum)) : fann_linear_func(v2, r2, v3, r3, sum)) : (sum < v4 ? fann_linear_func(v3, r3, v4, r4, sum) : fann_linear_func(v4, r4, v5, r5, sum))) : (sum < v6 ? fann_linear_func(v5, r5, v6, r6, sum) : max))
 
-
-
 /* FANN_LINEAR */
 #define fann_linear(steepness, sum) fann_mult(steepness, sum)
 #define fann_linear_derive(steepness, value) (steepness)
@@ -163,7 +161,7 @@ static char const * const FANN_ACTIVATION_NAMES[] = {
 /* FANN_GAUSSIAN_SYMMETRIC */
 #define fann_gaussian_symmetric(steepness, sum) ((exp(-sum * steepness * sum * steepness)*2.0)-1.0)
 #define fann_gaussian_symmetric_real(sum) ((exp(-sum * sum)*2.0)-1.0)
-#define fann_gaussian_symmetric_derive(steepness, value, sum) (-4.0f * sum * value * steepness)
+#define fann_gaussian_symmetric_derive(steepness, value, sum) (-2.0f * sum * (value+1.0f) * steepness)
 
 /* FANN_ELLIOT */
 #define fann_elliot(steepness, sum) (((sum * steepness) / 2.0f) / (1.0f + abs(sum * steepness)) + 0.5f)
@@ -172,7 +170,7 @@ static char const * const FANN_ACTIVATION_NAMES[] = {
 
 /* FANN_ELLIOT_SYMMETRIC */
 #define fann_elliot_symmetric(steepness, sum) ((sum * steepness) / (1.0f + abs(sum * steepness)))
-#define fann_elliot_symmetric_real(sum) ((sum) / (1.0f + abs(steepness)))
+#define fann_elliot_symmetric_real(sum) ((sum) / (1.0f + abs(sum)))
 #define fann_elliot_symmetric_derive(steepness, value, sum) (steepness * 1.0f / ((1.0f + abs(sum)) * (1.0f + abs(sum))))
 
 #define fann_activation_switch(ann, activation_function, value, result) \

@@ -41,18 +41,24 @@ fann_type fann_activation_derived(unsigned int activation_function,
 			return (fann_type)fann_linear_derive(steepness, value);
 		case FANN_SIGMOID:
 		case FANN_SIGMOID_STEPWISE:
+			value = fann_clip(value, 0.01f, 0.99f);
 			return (fann_type)fann_sigmoid_derive(steepness, value);
 		case FANN_SIGMOID_SYMMETRIC:
 		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+			value = fann_clip(value, -0.98f, 0.98f);
 			return (fann_type)fann_sigmoid_symmetric_derive(steepness, value);
 		case FANN_GAUSSIAN:
+			value = fann_clip(value, 0.01f, 0.99f);
 			return (fann_type)fann_gaussian_derive(steepness, value, sum);
 		case FANN_GAUSSIAN_SYMMETRIC:
+			value = fann_clip(value, -0.98f, 0.98f);
 			return (fann_type)fann_gaussian_symmetric_derive(steepness, value, sum);
 		case FANN_ELLIOT:
+			value = fann_clip(value, 0.01f, 0.99f);
 			return (fann_type)fann_elliot_derive(steepness, value, sum);
 		case FANN_ELLIOT_SYMMETRIC:
-			return (fann_type)fann_elliot_symmetric_derive(steepness, value, sum);			
+			value = fann_clip(value, -0.98f, 0.98f);
+			return (fann_type)fann_elliot_symmetric_derive(steepness, value, sum);
 		default:
 			return 0;
 	}
@@ -213,7 +219,9 @@ FANN_EXTERNAL fann_type * FANN_API fann_test(struct fann *ann, fann_type *input,
 		neuron_diff = (*desired_output - neuron_value);
 		
 		if(ann->activation_function_output == FANN_SIGMOID_SYMMETRIC ||
-			ann->activation_function_output == FANN_SIGMOID_SYMMETRIC_STEPWISE){
+			ann->activation_function_output == FANN_SIGMOID_SYMMETRIC_STEPWISE ||
+			ann->activation_function_output == FANN_ELLIOT_SYMMETRIC ||
+			ann->activation_function_output == FANN_GAUSSIAN_SYMMETRIC){
 			neuron_diff /= (fann_type)2;
 		}
 		
@@ -309,15 +317,18 @@ void fann_compute_MSE(struct fann *ann, fann_type *desired_output)
 	for(; last_layer_begin != last_layer_end; last_layer_begin++){
 		neuron_value = last_layer_begin->value;
 		neuron_diff = *desired_output - neuron_value;
-		/*printf("neuron_diff %f = %f - %f ... %f\n", neuron_diff, *desired_output, neuron_value, last_layer_begin->sum);*/
 
 		if(ann->activation_function_output == FANN_SIGMOID_SYMMETRIC ||
-			ann->activation_function_output == FANN_SIGMOID_SYMMETRIC_STEPWISE){
+			ann->activation_function_output == FANN_SIGMOID_SYMMETRIC_STEPWISE ||
+			ann->activation_function_output == FANN_ELLIOT_SYMMETRIC ||
+			ann->activation_function_output == FANN_GAUSSIAN_SYMMETRIC){
 			neuron_diff /= 2.0;
 		}
 
 		neuron_diff2 = (float)(neuron_diff * neuron_diff);
 		ann->MSE_value += neuron_diff2;
+
+		/*printf("neuron_diff %f = (%f - %f)[/2], neuron_diff2=%f, sum=%f, MSE_value=%f, num_MSE=%d\n", neuron_diff, *desired_output, neuron_value, neuron_diff2, last_layer_begin->sum, ann->MSE_value, ann->num_MSE);*/
 		if(neuron_diff2 >= 0.25){
 			ann->num_bit_fail++;
 		}
@@ -745,7 +756,6 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight, un
 		prev_step = fann_max(prev_steps[i], (fann_type)0.001); /* prev_step may not be zero because then the training will stop */
 		slope = train_slopes[i];
 		prev_slope = prev_train_slopes[i];
-		/* next_step = 0.0; */
 
 		same_sign = prev_slope * slope;
 	
@@ -754,6 +764,8 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight, un
 		} else if(same_sign < 0.0) {
 			next_step = fann_max(prev_step * decrease_factor, delta_min);
 			slope = 0;
+		} else {
+			next_step = 0.0;
 		}
 
 		if(slope < 0){
@@ -763,7 +775,7 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight, un
 		}
 
 		/*if(i == 2){
-			printf("weight=%f, slope=%f, next_step=%f, prev_step=%f\n", weights[i], slope, next_step, prev_step);
+		printf("weight=%f, slope=%f, next_step=%f, prev_step=%f\n", weights[i], slope, next_step, prev_step);
 			}*/
 	
 		/* update global data arrays */
