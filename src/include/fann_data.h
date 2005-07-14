@@ -37,6 +37,10 @@ struct fann_neuron
 	fann_type sum;
 	/* The value of the activation function applied to the sum */
 	fann_type value;
+	/* The steepness of the activation function */
+	/*fann_type steepness;*/
+	/* Used to choose which activation function to use */
+	/*unsigned int activation_function;*/
 #ifdef __GNUC__
 }__attribute__((packed));
 #else
@@ -148,7 +152,6 @@ struct fann
 	   Only used in special cases, since the decimal_point is much faster.
 	*/
 	unsigned int multiplier;
-#endif
 
 	/* When in choosen (or in fixed point), the sigmoid function is
 	   calculated as a stepwise linear function. In the
@@ -159,6 +162,7 @@ struct fann
 	fann_type activation_values_hidden[6];
 	fann_type activation_results_output[6];
 	fann_type activation_values_output[6];
+#endif
 
 	/* Total number of connections.
 	 * very usefull, because the actual connections

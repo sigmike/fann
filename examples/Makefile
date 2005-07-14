@@ -41,9 +41,9 @@ rundebugtest: $(DEBUG_TARGETS)
 	@echo Testing network with floats
 	./xor_test_debug
 
-#	@echo
-#	@echo Testing network with fixed points
-#	./xor_test_fixed_debug
+	@echo
+	@echo Testing network with fixed points
+	./xor_test_fixed_debug
 
 runcompliancetest: $(DEBUG_TARGETS)
 	./xor_train_debug
@@ -70,7 +70,7 @@ debug: $(DEBUG_TARGETS)
 	$(GCC) -ggdb -lm -DDEBUG -Wall -ansi -I../src/ -I../src/include/ ../src/floatfann.c $< -o $@
 
 %_fixed_debug: %.c Makefile ../src/*c ../src/include/*h
-	$(GCC) -O3 -ggdb -lm -DDEBUG -Wall -ansi -DFIXEDFANN -I../src/ -I../src/include/ ../src/fixedfann.c $< -o $@
+	$(GCC) -ggdb -lm -DDEBUG -Wall -ansi -DFIXEDFANN -I../src/ -I../src/include/ ../src/fixedfann.c $< -o $@
 
 rundebug: $(DEBUG_TARGETS)
 	@echo

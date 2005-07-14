@@ -347,8 +347,10 @@ struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file)
 	ann->activation_steepness_output = activation_steepness_output;
 	ann->activation_function_hidden = activation_function_hidden;
 	ann->activation_function_output = activation_function_output;
+#ifdef FIXEDFANN
 	fann_update_stepwise_hidden(ann);
 	fann_update_stepwise_output(ann);
+#endif
 	
 #ifdef DEBUG
 	printf("creating network with learning rate %f\n", learning_rate);
