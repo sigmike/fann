@@ -38,9 +38,9 @@ struct fann_neuron
 	/* The value of the activation function applied to the sum */
 	fann_type value;
 	/* The steepness of the activation function */
-	/*fann_type steepness;*/
+	fann_type activation_steepness;
 	/* Used to choose which activation function to use */
-	/*unsigned int activation_function;*/
+	unsigned int activation_function;
 #ifdef __GNUC__
 }__attribute__((packed));
 #else
@@ -130,12 +130,12 @@ struct fann
 	   to FANN_THRESHOLD and the activation function for the output neurons to FANN_SIGMOID,
 	   in this way you get a very fast network, that is still cabable of
 	   producing real valued output.
-	 */
-	unsigned int activation_function_hidden, activation_function_output;
+	unsigned int activation_function_hidden, activation_function_output; */
 
-	/* Parameters for the activation function */
+	/* Parameters for the activation function 
 	fann_type activation_steepness_hidden;
 	fann_type activation_steepness_output;
+	*/
 
 	/* Training algorithm used when calling fann_train_on_..
 	 */
@@ -158,10 +158,10 @@ struct fann
 	   activation_results array, the result is saved, and in the
 	   two values arrays, the values that gives the results are saved.
 	 */
-	fann_type activation_results_hidden[6];
-	fann_type activation_values_hidden[6];
-	fann_type activation_results_output[6];
-	fann_type activation_values_output[6];
+	fann_type sigmoid_results[6];
+	fann_type sigmoid_values[6];
+	fann_type sigmoid_symmetric_results[6];
+	fann_type sigmoid_symmetric_values[6];
 #endif
 
 	/* Total number of connections.

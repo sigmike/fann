@@ -56,7 +56,6 @@ int main()
 
 	data = fann_read_train_from_file("xor.data");
 
-
 	fann_set_activation_steepness_hidden(ann, 1);
 	fann_set_activation_steepness_output(ann, 1);
 	fann_set_rprop_delta_max(ann, 50);

@@ -574,14 +574,14 @@ void fann_update_candidate_slopes(struct fann *ann)
 		*/
 		/* unrolled loop end */
 
-		activation = fann_activation(ann, ann->activation_function_hidden, ann->activation_steepness_hidden, cand_sum);
+		activation = fann_activation(ann, cand_it->activation_function, cand_it->activation_steepness, cand_sum);
 		/* printf("%f = sigmoid(%f);\n", activation, cand_sum);*/
 
 		cand_it->sum = cand_sum;
 		cand_it->value = activation;
 		
-		derived = fann_activation_derived(ann->activation_function_hidden,
-			ann->activation_steepness_hidden, activation, cand_sum);
+		derived = fann_activation_derived(cand_it->activation_function,
+			cand_it->activation_steepness, activation, cand_sum);
 
 		/* The output weights is located right after the input weights in
 		   the weight array.
@@ -637,6 +637,7 @@ float fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data
 	fann_type best_score;
 	unsigned int num_cand = ann->cascade_num_candidates;
 	fann_type *output_train_errors = ann->train_errors + (ann->total_neurons - ann->num_output);
+	struct fann_neuron *output_neurons = (ann->last_layer-1)->first_neuron;
 
 	for(i = 0; i < num_cand; i++){
 		/* The ann->MSE_value is actually the sum squared error */
@@ -660,9 +661,14 @@ float fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data
 
 			output_train_errors[j] = (data->output[i][j] - ann->output[j]);
 
-			if(ann->activation_function_output == FANN_SIGMOID_SYMMETRIC ||
-				ann->activation_function_output == FANN_SIGMOID_SYMMETRIC_STEPWISE){
-				output_train_errors[j] /= 2.0;
+			switch(output_neurons[j].activation_function)
+			{
+				case FANN_SIGMOID_SYMMETRIC:
+				case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+				case FANN_ELLIOT_SYMMETRIC:
+				case FANN_GAUSSIAN_SYMMETRIC:
+					output_train_errors[j] /= 2.0;
+				break;				
 			}
 		}
 

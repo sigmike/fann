@@ -27,8 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdlib.h>
 #include "fann_data.h"
 
-#define FANN_FIX_VERSION "FANN_FIX_1.1"
-#define FANN_FLO_VERSION "FANN_FLO_1.1"
+#define FANN_FIX_VERSION "FANN_FIX_1.3"
+#define FANN_FLO_VERSION "FANN_FLO_1.3"
 
 #ifdef FIXEDFANN
 #define FANN_CONF_VERSION FANN_FIX_VERSION
@@ -48,8 +48,7 @@ void fann_save_train_internal_fd(struct fann_train_data* data, FILE *file, char 
 
 void fann_seed_rand();
 
-void fann_update_stepwise_hidden(struct fann *ann);
-void fann_update_stepwise_output(struct fann *ann);
+void fann_update_stepwise(struct fann *ann);
 
 void fann_error(struct fann_error *errdat, const unsigned int errno_f, ...);
 void fann_init_error_data(struct fann_error *errdat);

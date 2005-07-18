@@ -128,6 +128,7 @@ FANN_EXTERNAL fann_type * FANN_API fann_test(struct fann *ann, fann_type *input,
 	fann_type *output_it;
 	const fann_type *output_end = output_begin + ann->num_output;
 	fann_type neuron_diff, neuron_diff2;
+	struct fann_neuron *output_neurons = (ann->last_layer-1)->first_neuron;
 
 	/* calculate the error */
 	for(output_it = output_begin;
@@ -136,11 +137,16 @@ FANN_EXTERNAL fann_type * FANN_API fann_test(struct fann *ann, fann_type *input,
 
 		neuron_diff = (*desired_output - neuron_value);
 		
-		if(ann->activation_function_output == FANN_SIGMOID_SYMMETRIC ||
-			ann->activation_function_output == FANN_SIGMOID_SYMMETRIC_STEPWISE ||
-			ann->activation_function_output == FANN_ELLIOT_SYMMETRIC ||
-			ann->activation_function_output == FANN_GAUSSIAN_SYMMETRIC){
-			neuron_diff /= (fann_type)2;
+		switch(output_neurons[output_it - output_begin].activation_function)
+		{
+			case FANN_SIGMOID_SYMMETRIC:
+			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+			case FANN_ELLIOT_SYMMETRIC:
+			case FANN_GAUSSIAN_SYMMETRIC:
+				neuron_diff /= (fann_type)2;
+				break;
+			default:
+				break;
 		}
 		
 #ifdef FIXEDFANN
@@ -236,11 +242,14 @@ void fann_compute_MSE(struct fann *ann, fann_type *desired_output)
 		neuron_value = last_layer_begin->value;
 		neuron_diff = *desired_output - neuron_value;
 
-		if(ann->activation_function_output == FANN_SIGMOID_SYMMETRIC ||
-			ann->activation_function_output == FANN_SIGMOID_SYMMETRIC_STEPWISE ||
-			ann->activation_function_output == FANN_ELLIOT_SYMMETRIC ||
-			ann->activation_function_output == FANN_GAUSSIAN_SYMMETRIC){
-			neuron_diff /= 2.0;
+		switch(last_layer_begin->activation_function)
+		{
+			case FANN_SIGMOID_SYMMETRIC:
+			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+			case FANN_ELLIOT_SYMMETRIC:
+			case FANN_GAUSSIAN_SYMMETRIC:
+				neuron_diff /= 2.0;
+			break;				
 		}
 
 		neuron_diff2 = (float)(neuron_diff * neuron_diff);
@@ -260,8 +269,8 @@ void fann_compute_MSE(struct fann *ann, fann_type *desired_output)
 				neuron_diff = (fann_type)log ( (1.0+neuron_diff) / (1.0-neuron_diff) );
 		}
 	
-		*error_it = fann_activation_derived(ann->activation_function_output,
-			ann->activation_steepness_output, neuron_value, last_layer_begin->sum) * neuron_diff;
+		*error_it = fann_activation_derived(last_layer_begin->activation_function,
+			last_layer_begin->activation_steepness, neuron_value, last_layer_begin->sum) * neuron_diff;
 		
 		desired_output++;
 		error_it++;
@@ -286,7 +295,6 @@ void fann_backpropagate_MSE(struct fann *ann)
 	fann_type *error_begin = ann->train_errors;
 	fann_type *error_prev_layer;
 	fann_type *weights;
-	const fann_type activation_steepness_hidden = ann->activation_steepness_hidden;
 	const struct fann_neuron *first_neuron = ann->first_layer->first_neuron;
 	const struct fann_layer *second_layer = ann->first_layer + 1;
 	struct fann_layer *last_layer = ann->last_layer;
@@ -337,7 +345,7 @@ void fann_backpropagate_MSE(struct fann *ann)
 			neuron_it != last_neuron; neuron_it++){
 			neuron_value = neuron_it->value;
 			/* *error_prev_layer *= fann_activation(ann, 0, neuron_value); */
-			*error_prev_layer *= fann_activation(ann, ann->activation_function_hidden, activation_steepness_hidden, neuron_value);
+			*error_prev_layer *= fann_activation(ann, neuron_it->activation_function, neuron_it->activation_steepness, neuron_value);
 		}
 
 		/*
@@ -425,7 +433,7 @@ void fann_update_weights(struct fann *ann)
 				weights = ann->weights + neuron_it->first_con;
 				connections = ann->connections + neuron_it->first_con;
 				for(i = 0; i != num_connections; i++){
-					weights[i] += tmp_error * connections[i]->value;
+					weights[i] += tmp_error * connections[i]->value;	
 				}
 			}
 		}
