@@ -21,18 +21,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "fann.h"
 
+struct fann *ann;
+struct fann_train_data *train_data, *test_data;
+
+int print_callback(unsigned int epochs, float error)
+{
+	printf("Epochs     %8d. Current MSE-Error: %.10f ", epochs, error);
+	printf("Train error: %f, Test error: %f\n\n", fann_test_data(ann, train_data), fann_test_data(ann, test_data));
+	return 0;
+}
+
 int main()
 {
 	const float learning_rate = (const float)0.7;
-	const float desired_error = (const float)0.005;
+	const float desired_error = (const float)0.00001;
 	unsigned int max_out_epochs = 150;
-	unsigned int max_cand_epochs = 150;
-	unsigned int max_neurons = 30;
+	unsigned int max_cand_epochs = 300;
+	unsigned int max_neurons = 40;
 	unsigned int neurons_between_reports = 1;
-	struct fann *ann;
-	struct fann_train_data *train_data, *test_data;
-	int i;
-	fann_type number, steepness, v1, v2;
+	/*int i;
+	fann_type number, steepness, v1, v2;*/
 	
 	printf("Reading data.\n");
 
@@ -43,14 +51,20 @@ int main()
 	/*
 	*/
 		
-	train_data = fann_read_train_from_file("../benchmarks/datasets/mushroom.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/mushroom.train");
+	train_data = fann_read_train_from_file("xor.data");
+	test_data = fann_read_train_from_file("xor.data");
+
+	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.test");
+
+	train_data = fann_read_train_from_file("../benchmarks/datasets/parity8.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/parity8.test");
 
 	train_data = fann_read_train_from_file("../benchmarks/datasets/parity13.test");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/parity13.test");
 
-	train_data = fann_read_train_from_file("xor.data");
-	test_data = fann_read_train_from_file("xor.data");
+	train_data = fann_read_train_from_file("../benchmarks/datasets/mushroom.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/mushroom.train");
 
 	train_data = fann_read_train_from_file("../benchmarks/datasets/pumadyn-32fm.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/pumadyn-32fm.test");
@@ -58,20 +72,17 @@ int main()
 	train_data = fann_read_train_from_file("../benchmarks/datasets/gene.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/gene.test");
 	
-	train_data = fann_read_train_from_file("../benchmarks/datasets/thyroid.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/thyroid.test");
+	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral.test");
 
 	train_data = fann_read_train_from_file("../benchmarks/datasets/soybean.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/soybean.test");
 
-	train_data = fann_read_train_from_file("../benchmarks/datasets/parity8.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/parity8.test");
-
-	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.test");
-
 	train_data = fann_read_train_from_file("../benchmarks/datasets/robot.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/robot.test");
+
+	train_data = fann_read_train_from_file("../benchmarks/datasets/thyroid.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/thyroid.test");
 
 	fann_scale_train_data(train_data, -1, 1);
 	fann_scale_train_data(test_data, -1, 1);
@@ -137,8 +148,8 @@ int main()
 	fann_set_rprop_delta_max(ann, 50.0);
 
 	ann->cascade_change_fraction = 0.01;
-	ann->cascade_stagnation_epochs = 12;
-	ann->cascade_num_candidates = 10;
+	ann->cascade_stagnation_epochs = 20;
+	ann->cascade_num_candidates = 18;
 	ann->cascade_weight_multiplier = 0.5;
 	
 	fann_print_parameters(ann);
@@ -146,7 +157,7 @@ int main()
 
 	printf("Training network.\n");
 
-	fann_cascadetrain_on_data_callback(ann, train_data, desired_error, NULL, max_out_epochs, max_cand_epochs, max_neurons, neurons_between_reports);
+	fann_cascadetrain_on_data_callback(ann, train_data, desired_error, print_callback, max_out_epochs, max_cand_epochs, max_neurons, neurons_between_reports);
 
 	/*fann_train_on_data(ann, train_data, 300, 1, desired_error);*/
 	/*printf("\nTrain error: %f, Test error: %f\n\n", fann_test_data(ann, train_data), fann_test_data(ann, test_data));*/
