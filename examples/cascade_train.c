@@ -36,7 +36,7 @@ int main()
 	const float learning_rate = (const float)0.7;
 	const float desired_error = (const float)0.00001;
 	unsigned int max_out_epochs = 150;
-	unsigned int max_cand_epochs = 300;
+	unsigned int max_cand_epochs = 150;
 	unsigned int max_neurons = 40;
 	unsigned int neurons_between_reports = 1;
 	/*int i;
@@ -148,8 +148,8 @@ int main()
 	fann_set_rprop_delta_max(ann, 50.0);
 
 	ann->cascade_change_fraction = 0.01;
-	ann->cascade_stagnation_epochs = 20;
-	ann->cascade_num_candidates = 18;
+	ann->cascade_stagnation_epochs = 12;
+	ann->cascade_num_candidates = 16;
 	ann->cascade_weight_multiplier = 0.5;
 	
 	fann_print_parameters(ann);

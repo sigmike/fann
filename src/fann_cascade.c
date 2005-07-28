@@ -436,15 +436,22 @@ int fann_initialize_candidates(struct fann *ann)
 	 */
 	connection_it = first_candidate_connection;
 	neurons = ann->first_layer->first_neuron;
-	for(i = first_candidate_neuron; i < num_neurons; i++){
+	
+	unsigned int cascade_activation_functions[] = 
+		{FANN_SIGMOID, FANN_SIGMOID_SYMMETRIC, 
+/*		 	FANN_GAUSSIAN, FANN_GAUSSIAN_SYMMETRIC, */
+			FANN_ELLIOT, FANN_ELLIOT_SYMMETRIC};
+			
+	for(i = first_candidate_neuron; i < num_neurons; i++)
+	{
 		/* TODO candidates should actually be created both in
 		   the last layer before the output layer, and in a new layer.
 		*/
 		neurons[i].value = 0;
 		neurons[i].sum = 0;
 		/* TODO should be some kind of parameter (random?) */
-		neurons[i].activation_function = FANN_SIGMOID_SYMMETRIC;
-		neurons[i].activation_steepness = 0.5;
+		neurons[i].activation_function = cascade_activation_functions[((i-first_candidate_neuron)/4)%4];
+		neurons[i].activation_steepness = 0.25 * (1 + (i-first_candidate_neuron)%4);
 		neurons[i].first_con = connection_it;
 		connection_it += candidate_connections_in;
 		neurons[i].last_con = connection_it;
@@ -683,7 +690,13 @@ float fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data
 	/* find the best candidate score */
 	best_candidate = 0;
 	best_score = ann->cascade_candidate_scores[best_candidate];
-	for(i = 1; i < num_cand; i++){
+	for(i = 1; i < num_cand; i++)
+	{
+		/*struct fann_neuron *cand = ann->first_layer->first_neuron + ann->total_neurons + 1 + i;
+		printf("candidate[%d] = activation: %s, steepness: %f, score: %f\n", 
+		i, FANN_ACTIVATION_NAMES[cand->activation_function], 
+		cand->activation_steepness, ann->cascade_candidate_scores[i]);*/
+		
 		if(ann->cascade_candidate_scores[i] > best_score){
 			best_candidate = i;
 			best_score = ann->cascade_candidate_scores[best_candidate];
@@ -837,6 +850,10 @@ void fann_add_candidate_neuron(struct fann *ann, struct fann_layer *layer)
 	neuron_place->activation_steepness = candidate->activation_steepness;
 	neuron_place->last_con = (neuron_place+1)->first_con;
 	neuron_place->first_con = neuron_place->last_con - num_connections_in;
+	printf("neuron[%d] = weights[%d ... %d] activation: %s, steepness: %f\n", 
+		neuron_place - ann->first_layer->first_neuron, neuron_place->first_con, 
+		neuron_place->last_con-1, FANN_ACTIVATION_NAMES[neuron_place->activation_function],
+		neuron_place->activation_steepness);
 #ifdef CASCADE_DEBUG_FULL	
 	printf("neuron[%d] = weights[%d ... %d]\n", neuron_place - ann->first_layer->first_neuron, neuron_place->first_con, neuron_place->last_con-1);
 #endif
@@ -863,10 +880,6 @@ void fann_add_candidate_neuron(struct fann *ann, struct fann_layer *layer)
 
 void fann_install_candidate(struct fann *ann)
 {
-	/* TODO the candidate should be installed correctly,
-	   with input and output weights.
-	*/
-	
 	struct fann_layer *layer;
 	layer = fann_add_layer(ann, ann->last_layer-1);
 	fann_add_candidate_neuron(ann, layer);
