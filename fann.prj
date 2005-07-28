@@ -1,0 +1,300 @@
+# Anjuta Version 1.2.3 
+Compatibility Level: 1 
+
+<PROJECT_DESCRIPTION_START>
+Some description<PROJECT_DESCRIPTION_END>
+<CONFIG_PROGS_START>
+<CONFIG_PROGS_END>
+<CONFIG_LIBS_START>
+<CONFIG_LIBS_END>
+<CONFIG_HEADERS_START>
+<CONFIG_HEADERS_END>
+<CONFIG_CHARACTERISTICS_START>
+<CONFIG_CHARACTERISTICS_END>
+<CONFIG_LIB_FUNCS_START>
+<CONFIG_LIB_FUNCS_END>
+<CONFIG_ADDITIONAL_START>
+<CONFIG_ADDITIONAL_END>
+<CONFIG_FILES_START>
+<CONFIG_FILES_END>
+<MAKEFILE_AM_START>
+<MAKEFILE_AM_END>
+
+props.file.type=project
+
+anjuta.version=1.2.3
+anjuta.compatibility.level=1
+
+project.name=fann
+project.type=GENERIC
+project.target.type=EXECUTABLE
+project.version=1.3.0
+project.author=Steffen Nissen
+project.source.target=examples/xor_test_fixed_debug
+project.has.gettext=0
+project.gui.command=
+project.programming.language=C
+project.excluded.modules=intl
+
+project.config.extra.modules.before=
+project.config.extra.modules.after=
+project.config.blocked=1
+project.config.disable.overwriting=1 1 1 1 1 1 1 1 1 
+
+project.menu.entry=fann Version 1.2.0
+project.menu.group=Application
+project.menu.comment=fann Version 1.2.0
+project.menu.icon=
+project.menu.need.terminal=0
+
+project.configure.options=
+anjuta.program.arguments=
+preferences.build.option.jobs=0
+preferences.build.option.silent=0
+preferences.build.option.autosave=0
+preferences.anjuta.make.options=-k
+preferences.make=make
+preferences.build.option.keep.going=1
+preferences.build.option.warn.undef=0
+preferences.autoformat.custom.style= -i8 -sc -bli0 -bl0 -cbi0 -ss
+preferences.indent.opening=0
+preferences.autoformat.disable=1
+preferences.indent.automatic=1
+preferences.use.tabs=1
+preferences.indent.size=4
+preferences.tabsize=4
+preferences.indent.closing=0
+
+module.include.name=.
+module.include.type=
+module.include.files=\
+	benchmarks/ctimer.h\
+	src/include/config.h\
+	src/include/compat_time.h\
+	src/include/doublefann.h\
+	src/include/fann.h\
+	src/include/fann_activation.h\
+	src/include/fann_data.h\
+	src/include/fann_errno.h\
+	src/include/fann_internal.h\
+	src/include/fixedfann.h\
+	src/include/floatfann.h
+
+module.source.name=.
+module.source.type=
+module.source.files=\
+	benchmarks/performance.cc\
+	benchmarks/quality_fixed.c\
+	benchmarks/shuffle.c\
+	benchmarks/quality.cc\
+	benchmarks/parity.c\
+	benchmarks/two-spirals.c\
+	examples/mushroom.c\
+	examples/robot.c\
+	examples/simple_test.c\
+	examples/simple_train.c\
+	examples/steepness_train.c\
+	examples/xor_test.c\
+	examples/xor_train.c\
+	examples/cascade_train.c\
+	examples/train_ann.c\
+	src/doublefann.c\
+	src/fann.c\
+	src/fann_error.c\
+	src/fann_io.c\
+	src/fann_options.c\
+	src/fann_train.c\
+	src/fann_train_data.c\
+	src/fixedfann.c\
+	src/floatfann.c\
+	src/fann_cascade.c
+
+module.pixmap.name=.
+module.pixmap.type=
+module.pixmap.files=\
+	doc/report/img4.png\
+	doc/report/img100.png\
+	doc/report/img95.png\
+	doc/report/img9.png\
+	doc/report/img34.png\
+	doc/report/img97.png\
+	doc/report/img2.png\
+	doc/report/img14.png\
+	doc/report/img86.png\
+	doc/report/img8.png\
+	doc/report/img103.png\
+	doc/report/img18.png\
+	doc/report/img99.png\
+	doc/report/img84.png\
+	doc/report/img6.png\
+	doc/report/img58.png\
+	doc/report/img7.png\
+	doc/report/img45.png\
+	doc/report/img98.png\
+	doc/report/img19.png\
+	doc/report/img66.png\
+	doc/report/img52.png\
+	doc/report/img53.png\
+	doc/report/img82.png\
+	doc/report/img88.png\
+	doc/report/img48.png\
+	doc/report/img49.png\
+	doc/report/img75.png\
+	doc/report/img3.png\
+	doc/report/img68.png\
+	doc/report/img56.png\
+	doc/report/img1.png\
+	doc/report/img39.png\
+	doc/report/img101.png\
+	doc/report/img62.png\
+	doc/report/img77.png\
+	doc/report/img64.png\
+	doc/report/img80.png\
+	doc/report/img5.png\
+	doc/report/img55.png\
+	doc/report/img33.png\
+	doc/report/img69.png\
+	doc/report/img50.png\
+	doc/report/img26.png\
+	doc/report/img90.png\
+	doc/report/img27.png\
+	doc/report/img23.png\
+	doc/report/img83.png\
+	doc/report/img92.png\
+	doc/report/img21.png\
+	doc/report/img59.png\
+	doc/report/img15.png\
+	doc/report/img91.png\
+	doc/report/img67.png\
+	doc/report/img54.png\
+	doc/report/img25.png\
+	doc/report/img22.png\
+	doc/report/img72.png\
+	doc/report/img12.png\
+	doc/report/img41.png\
+	doc/report/img29.png\
+	doc/report/img28.png\
+	doc/report/img51.png\
+	doc/report/img38.png\
+	doc/report/img70.png\
+	doc/report/img32.png\
+	doc/report/img31.png\
+	doc/report/img61.png\
+	doc/report/img47.png\
+	doc/report/img87.png\
+	doc/report/img44.png\
+	doc/report/img42.png\
+	doc/report/img46.png\
+	doc/report/img57.png\
+	doc/report/img16.png\
+	doc/report/img60.png\
+	doc/report/img71.png\
+	doc/report/img102.png\
+	doc/report/img79.png\
+	doc/report/img78.png\
+	doc/report/img74.png\
+	doc/report/img73.png\
+	doc/report/img94.png\
+	doc/report/img36.png\
+	doc/report/img76.png\
+	doc/report/img24.png\
+	doc/report/img63.png\
+	doc/report/img35.png\
+	doc/report/img65.png\
+	doc/report/img37.png\
+	doc/report/img85.png\
+	doc/report/img20.png\
+	doc/report/img89.png\
+	doc/report/img17.png\
+	doc/report/img96.png\
+	doc/report/img81.png\
+	doc/report/img40.png\
+	doc/report/img30.png\
+	doc/report/img11.png\
+	doc/report/img13.png\
+	doc/report/img43.png\
+	doc/report/img93.png\
+	doc/report/img10.png\
+	doc/report/blueball.png\
+	doc/report/next.png\
+	doc/report/prev.png\
+	doc/report/up_g.png\
+	doc/report/ch_begin.png\
+	doc/report/ch_beg_r.png\
+	doc/report/ch_delet.png\
+	doc/report/ch_del_r.png\
+	doc/report/ch_end.png\
+	doc/report/ch_end_r.png\
+	doc/report/contents.png\
+	doc/report/crossref.png\
+	doc/report/footnote.png\
+	doc/report/greenball.png\
+	doc/report/image.png\
+	doc/report/index.png\
+	doc/report/next_g.png\
+	doc/report/nx_grp_g.png\
+	doc/report/nx_grp.png\
+	doc/report/orangeball.png\
+	doc/report/pinkball.png\
+	doc/report/prev_g.png\
+	doc/report/purpleball.png\
+	doc/report/pv_grp_g.png\
+	doc/report/pv_grp.png\
+	doc/report/redball.png\
+	doc/report/up.png\
+	doc/report/whiteball.png\
+	doc/report/yellowball.png\
+	doc/report/building.png\
+	doc/report/card.png\
+	doc/report/gene.png\
+	doc/report/glass.png\
+	doc/report/mushroom.png\
+	doc/report/performance_arm.png\
+	doc/report/performance.png\
+	doc/report/soybean.png\
+	doc/report/thyroid.png\
+	doc/BesselAll.gif
+
+module.data.name=.
+module.data.type=
+module.data.files=
+
+module.help.name=.
+module.help.type=
+module.help.files=
+
+module.doc.name=.
+module.doc.type=
+module.doc.files=\
+	ChangeLog\
+	COPYING\
+	INSTALL\
+	NEWS\
+	README\
+	TODO\
+	benchmarks/README\
+	python/INSTALL\
+	python/README\
+	src/COPYING\
+	AUTHORS
+
+module.po.files=
+
+compiler.options.supports=
+compiler.options.include.paths=\
+	.\
+	..
+compiler.options.library.paths=
+compiler.options.libraries=
+compiler.options.libraries.selected=
+compiler.options.defines=\
+	HAVE_CONFIG_H
+compiler.options.defines.selected=
+compiler.options.warning.buttons=0 0 1 1 0 1 0 0 0 0 0 0 0 1 0 0 
+compiler.options.optimize.buttons=0 0 1 0 
+compiler.options.other.buttons=1 0 
+compiler.options.other.c.flags=
+compiler.options.other.l.flags=
+compiler.options.other.l.libs=
+
+project.src.paths=

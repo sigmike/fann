@@ -442,6 +442,9 @@ int fann_initialize_candidates(struct fann *ann)
 		*/
 		neurons[i].value = 0;
 		neurons[i].sum = 0;
+		/* TODO should be some kind of parameter (random?) */
+		neurons[i].activation_function = FANN_SIGMOID_SYMMETRIC;
+		neurons[i].activation_steepness = 0.5;
 		neurons[i].first_con = connection_it;
 		connection_it += candidate_connections_in;
 		neurons[i].last_con = connection_it;
@@ -830,6 +833,8 @@ void fann_add_candidate_neuron(struct fann *ann, struct fann_layer *layer)
 	/* Now inititalize the actual neuron */
 	neuron_place->value = 0;
 	neuron_place->sum = 0;
+	neuron_place->activation_function = candidate->activation_function;
+	neuron_place->activation_steepness = candidate->activation_steepness;
 	neuron_place->last_con = (neuron_place+1)->first_con;
 	neuron_place->first_con = neuron_place->last_con - num_connections_in;
 #ifdef CASCADE_DEBUG_FULL	

@@ -46,14 +46,11 @@ int main()
 	train_data = fann_read_train_from_file("../benchmarks/datasets/mushroom.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/mushroom.train");
 
-	train_data = fann_read_train_from_file("xor.data");
-	test_data = fann_read_train_from_file("xor.data");
-
 	train_data = fann_read_train_from_file("../benchmarks/datasets/parity13.test");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/parity13.test");
 
-	train_data = fann_read_train_from_file("../benchmarks/datasets/robot.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/robot.test");
+	train_data = fann_read_train_from_file("xor.data");
+	test_data = fann_read_train_from_file("xor.data");
 
 	train_data = fann_read_train_from_file("../benchmarks/datasets/pumadyn-32fm.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/pumadyn-32fm.test");
@@ -67,11 +64,14 @@ int main()
 	train_data = fann_read_train_from_file("../benchmarks/datasets/soybean.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/soybean.test");
 
+	train_data = fann_read_train_from_file("../benchmarks/datasets/parity8.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/parity8.test");
+
 	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.test");
 
-	train_data = fann_read_train_from_file("../benchmarks/datasets/parity8.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/parity8.test");
+	train_data = fann_read_train_from_file("../benchmarks/datasets/robot.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/robot.test");
 
 	fann_scale_train_data(train_data, -1, 1);
 	fann_scale_train_data(test_data, -1, 1);
