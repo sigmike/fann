@@ -16,7 +16,7 @@
 	 ~~~~~~~~~~~
 	   This program generates parity benchmark data in the CMU Neural 
          Network Benchmark format. 
-*/ 
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,18 +26,18 @@
 
 /*      Function Prototypes      */
 
-void getCommandLine ( int *, int, char ** );
-void printHeader    ( int );
-void printSet       ( int );
+void getCommandLine(int *, int, char **);
+void printHeader(int);
+void printSet(int);
 
 
-int main  ( int argc, char **argv )
+int main(int argc, char **argv)
 {
-  int inputs;    /* Number of inputs into the neural network */   
+	int inputs;					/* Number of inputs into the neural network */
 
-  getCommandLine ( &inputs, argc, argv );
-  printHeader    ( inputs );
-  printSet       ( inputs );
+	getCommandLine(&inputs, argc, argv);
+	printHeader(inputs);
+	printSet(inputs);
 }
 
 
@@ -47,18 +47,18 @@ int main  ( int argc, char **argv )
         Invalid arguments are flagged and an error is produced.
 */
 
-void getCommandLine  ( int *inputs, int argc, char **argv )
+void getCommandLine(int *inputs, int argc, char **argv)
 {
-  if  ( argc < 2 )
-    *inputs = 2;
-  else  
-    if  ( ( **(argv+1) >= '0' ) && ( **(argv+1) <= '9' ) )
-      *inputs = atoi( *(argv+1) );
-    else  {
-      fprintf (stderr, "Invalid argument: %s\n",*(argv+1));
-      fprintf (stderr, "Value should be an integer.\n");
-      exit( 1 );
-    }
+	if(argc < 2)
+		*inputs = 2;
+	else if((**(argv + 1) >= '0') && (**(argv + 1) <= '9'))
+		*inputs = atoi(*(argv + 1));
+	else
+	{
+		fprintf(stderr, "Invalid argument: %s\n", *(argv + 1));
+		fprintf(stderr, "Value should be an integer.\n");
+		exit(1);
+	}
 }
 
 
@@ -67,13 +67,13 @@ void getCommandLine  ( int *inputs, int argc, char **argv )
 	It also prints the $SETUP segment for the data set.
 */
 
-void printHeader ( int inputs )
+void printHeader(int inputs)
 {
-  unsigned int num_points;
+	unsigned int num_points;
 
-  num_points = pow(2,inputs);
-  
-  printf("%d %d 1\n", num_points, inputs);
+	num_points = pow(2, inputs);
+
+	printf("%d %d 1\n", num_points, inputs);
 }
 
 
@@ -81,36 +81,35 @@ void printHeader ( int inputs )
 	number of inputs.
 */
 
-void printSet  ( int inputs )  
+void printSet(int inputs)
 {
-	unsigned int num_points,  /* Number of points of data to generate */
-		num_pos,     /* Number of positive bits in this number */
-		this_point,  /* Number being analyzed */
-		i,	    /* General indexing variables */
-		j;
+	unsigned int num_points,	/* Number of points of data to generate */
+	  num_pos,					/* Number of positive bits in this number */
+	  this_point,				/* Number being analyzed */
+	  i,						/* General indexing variables */
+	  j;
 
-	num_points = pow(2,inputs);	/* Figure out how many points to generate */
+	num_points = pow(2, inputs);	/* Figure out how many points to generate */
 
-	for  ( i = 0 ; i < num_points ; i++ )  {
+	for(i = 0; i < num_points; i++)
+	{
 		num_pos = 0;
 		this_point = i;
-		for  ( j = 0 ; j < inputs ; j++ )  {	/* Analyze the number */
-			if  ( (this_point & 1) == 1 )  {		/* Get a bit and use it */
-				printf ("1 ");
+		for(j = 0; j < inputs; j++)
+		{						/* Analyze the number */
+			if((this_point & 1) == 1)
+			{					/* Get a bit and use it */
+				printf("1 ");
 				num_pos++;
-			} else
-				printf ("-1 ");
-			this_point >>= 1;				/* Shift to the next bit */
+			}
+			else
+				printf("-1 ");
+			this_point >>= 1;	/* Shift to the next bit */
 		}
 
-		if  ( (num_pos % 2) == 1 )			/* Print the expected output */
-			printf  ("1\n");
+		if((num_pos % 2) == 1)	/* Print the expected output */
+			printf("1\n");
 		else
-			printf  ("0\n"); 
-	}  
+			printf("0\n");
+	}
 }
-
-
-
-
-

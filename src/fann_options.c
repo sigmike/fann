@@ -30,15 +30,19 @@
 FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 {
 	struct fann_layer *layer_it;
-	
+
 	printf("Input layer                :%4d neurons, 1 bias\n", ann->num_input);
-	for(layer_it = ann->first_layer+1; layer_it != ann->last_layer-1; layer_it++){
-		if(ann->shortcut_connections){
+	for(layer_it = ann->first_layer + 1; layer_it != ann->last_layer - 1; layer_it++)
+	{
+		if(ann->shortcut_connections)
+		{
 			printf("  Hidden layer             :%4d neurons, 0 bias\n",
-				layer_it->last_neuron - layer_it->first_neuron);
-		} else {
+				   layer_it->last_neuron - layer_it->first_neuron);
+		}
+		else
+		{
 			printf("  Hidden layer             :%4d neurons, 1 bias\n",
-				layer_it->last_neuron - layer_it->first_neuron - 1);
+				   layer_it->last_neuron - layer_it->first_neuron - 1);
 		}
 	}
 	printf("Output layer               :%4d neurons\n", ann->num_output);
@@ -46,7 +50,7 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("Total connections          :%4d\n", ann->total_connections);
 	printf("Connection rate            :  %5.2f\n", ann->connection_rate);
 	printf("Shortcut connections       :%4d\n", ann->shortcut_connections);
-	printf("Training algorithm         :   %s\n", FANN_TRAIN_NAMES[ann->training_algorithm]);	
+	printf("Training algorithm         :   %s\n", FANN_TRAIN_NAMES[ann->training_algorithm]);
 	printf("Learning rate              :  %5.2f\n", ann->learning_rate);
 /*	printf("Activation function hidden :   %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_hidden]);
 	printf("Activation function output :   %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_output]);
@@ -81,7 +85,8 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_training_algorithm(struct fann *ann
 	return ann->training_algorithm;
 }
 
-FANN_EXTERNAL void FANN_API fann_set_training_algorithm(struct fann *ann, unsigned int training_algorithm)
+FANN_EXTERNAL void FANN_API fann_set_training_algorithm(struct fann *ann,
+														unsigned int training_algorithm)
 {
 	ann->training_algorithm = training_algorithm;
 }
@@ -91,12 +96,14 @@ FANN_EXTERNAL void FANN_API fann_set_learning_rate(struct fann *ann, float learn
 	ann->learning_rate = learning_rate;
 }
 
-FANN_EXTERNAL void FANN_API fann_set_activation_function_hidden(struct fann *ann, unsigned int activation_function)
+FANN_EXTERNAL void FANN_API fann_set_activation_function_hidden(struct fann *ann,
+																unsigned int activation_function)
 {
 	struct fann_neuron *last_neuron, *neuron_it;
 	struct fann_layer *layer_it;
-	struct fann_layer *last_layer = ann->last_layer-1; /* -1 to not update the output layer */
-	for(layer_it = ann->first_layer+1; layer_it != last_layer; layer_it++)
+	struct fann_layer *last_layer = ann->last_layer - 1;	/* -1 to not update the output layer */
+
+	for(layer_it = ann->first_layer + 1; layer_it != last_layer; layer_it++)
 	{
 		last_neuron = layer_it->last_neuron;
 		for(neuron_it = layer_it->first_neuron; neuron_it != last_neuron; neuron_it++)
@@ -106,10 +113,11 @@ FANN_EXTERNAL void FANN_API fann_set_activation_function_hidden(struct fann *ann
 	}
 }
 
-FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann, unsigned int activation_function)
+FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann,
+																unsigned int activation_function)
 {
 	struct fann_neuron *last_neuron, *neuron_it;
-	struct fann_layer *last_layer = ann->last_layer-1;
+	struct fann_layer *last_layer = ann->last_layer - 1;
 
 	last_neuron = last_layer->last_neuron;
 	for(neuron_it = last_layer->first_neuron; neuron_it != last_neuron; neuron_it++)
@@ -118,12 +126,14 @@ FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann
 	}
 }
 
-FANN_EXTERNAL void FANN_API fann_set_activation_steepness_hidden(struct fann *ann, fann_type steepness)
+FANN_EXTERNAL void FANN_API fann_set_activation_steepness_hidden(struct fann *ann,
+																 fann_type steepness)
 {
 	struct fann_neuron *last_neuron, *neuron_it;
 	struct fann_layer *layer_it;
-	struct fann_layer *last_layer = ann->last_layer-1; /* -1 to not update the output layer */
-	for(layer_it = ann->first_layer+1; layer_it != last_layer; layer_it++)
+	struct fann_layer *last_layer = ann->last_layer - 1;	/* -1 to not update the output layer */
+
+	for(layer_it = ann->first_layer + 1; layer_it != last_layer; layer_it++)
 	{
 		last_neuron = layer_it->last_neuron;
 		for(neuron_it = layer_it->first_neuron; neuron_it != last_neuron; neuron_it++)
@@ -133,10 +143,11 @@ FANN_EXTERNAL void FANN_API fann_set_activation_steepness_hidden(struct fann *an
 	}
 }
 
-FANN_EXTERNAL void FANN_API fann_set_activation_steepness_output(struct fann *ann, fann_type steepness)
+FANN_EXTERNAL void FANN_API fann_set_activation_steepness_output(struct fann *ann,
+																 fann_type steepness)
 {
 	struct fann_neuron *last_neuron, *neuron_it;
-	struct fann_layer *last_layer = ann->last_layer-1;
+	struct fann_layer *last_layer = ann->last_layer - 1;
 
 	last_neuron = last_layer->last_neuron;
 	for(neuron_it = last_layer->first_neuron; neuron_it != last_neuron; neuron_it++)
@@ -145,12 +156,14 @@ FANN_EXTERNAL void FANN_API fann_set_activation_steepness_output(struct fann *an
 	}
 }
 
-FANN_EXTERNAL void FANN_API fann_set_activation_hidden_steepness(struct fann *ann, fann_type steepness)
+FANN_EXTERNAL void FANN_API fann_set_activation_hidden_steepness(struct fann *ann,
+																 fann_type steepness)
 {
 	fann_set_activation_steepness_hidden(ann, steepness);
 }
 
-FANN_EXTERNAL void FANN_API fann_set_activation_output_steepness(struct fann *ann, fann_type steepness)
+FANN_EXTERNAL void FANN_API fann_set_activation_output_steepness(struct fann *ann,
+																 fann_type steepness)
 {
 	fann_set_activation_steepness_output(ann, steepness);
 }
@@ -204,9 +217,12 @@ FANN_EXTERNAL fann_type FANN_API fann_get_activation_steepness_output(struct fan
 
 FANN_EXTERNAL unsigned int FANN_API fann_get_total_neurons(struct fann *ann)
 {
-	if(ann->shortcut_connections){
+	if(ann->shortcut_connections)
+	{
 		return ann->total_neurons;
-	} else {
+	}
+	else
+	{
 		/* -1, because there is always an unused bias neuron in the last layer */
 		return ann->total_neurons - 1;
 	}
@@ -221,7 +237,8 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_total_connections(struct fann *ann)
    Makes the error used for calculating the slopes
    higher when the difference is higher.
  */
-FANN_EXTERNAL void FANN_API fann_set_train_error_function(struct fann *ann, unsigned int train_error_function)
+FANN_EXTERNAL void FANN_API fann_set_train_error_function(struct fann *ann,
+														  unsigned int train_error_function)
 {
 	ann->train_error_function = train_error_function;
 }
@@ -231,7 +248,7 @@ FANN_EXTERNAL void FANN_API fann_set_quickprop_decay(struct fann *ann, float qui
 {
 	ann->quickprop_decay = quickprop_decay;
 }
-	
+
 /* Mu is a factor used to increase and decrease the stepsize (default 1.75). */
 FANN_EXTERNAL void FANN_API fann_set_quickprop_mu(struct fann *ann, float quickprop_mu)
 {
@@ -239,13 +256,15 @@ FANN_EXTERNAL void FANN_API fann_set_quickprop_mu(struct fann *ann, float quickp
 }
 
 /* Tells how much the stepsize should increase during learning (default 1.2). */
-FANN_EXTERNAL void FANN_API fann_set_rprop_increase_factor(struct fann *ann, float rprop_increase_factor)
+FANN_EXTERNAL void FANN_API fann_set_rprop_increase_factor(struct fann *ann,
+														   float rprop_increase_factor)
 {
 	ann->rprop_increase_factor = rprop_increase_factor;
 }
 
 /* Tells how much the stepsize should decrease during learning (default 0.5). */
-FANN_EXTERNAL void FANN_API fann_set_rprop_decrease_factor(struct fann *ann, float rprop_decrease_factor)
+FANN_EXTERNAL void FANN_API fann_set_rprop_decrease_factor(struct fann *ann,
+														   float rprop_decrease_factor)
 {
 	ann->rprop_decrease_factor = rprop_decrease_factor;
 }
@@ -276,7 +295,7 @@ FANN_EXTERNAL float FANN_API fann_get_quickprop_decay(struct fann *ann)
 {
 	return ann->quickprop_decay;
 }
-	
+
 /* Mu is a factor used to increase and decrease the stepsize (default 1.75). */
 FANN_EXTERNAL float FANN_API fann_get_quickprop_mu(struct fann *ann)
 {
@@ -328,44 +347,63 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_multiplier(struct fann *ann)
 void fann_update_stepwise(struct fann *ann)
 {
 	unsigned int i = 0;
-	/* Calculate the parameters for the stepwise linear
-	   sigmoid function fixed point.
-	   Using a rewritten sigmoid function.
-	   results 0.005, 0.05, 0.25, 0.75, 0.95, 0.995
-	*/
-	ann->sigmoid_results[0] = fann_max((fann_type)(ann->multiplier/200.0+0.5), 1);
-	ann->sigmoid_results[1] = (fann_type)(ann->multiplier/20.0+0.5);
-	ann->sigmoid_results[2] = (fann_type)(ann->multiplier/4.0+0.5);
-	ann->sigmoid_results[3] = ann->multiplier - (fann_type)(ann->multiplier/4.0+0.5);
-	ann->sigmoid_results[4] = ann->multiplier - (fann_type)(ann->multiplier/20.0+0.5);
-	ann->sigmoid_results[5] = fann_min(ann->multiplier - (fann_type)(ann->multiplier/200.0+0.5), ann->multiplier-1);
 
-	ann->sigmoid_symmetric_results[0] = fann_max((fann_type)((ann->multiplier/100.0) - ann->multiplier-0.5), (fann_type)(1-(fann_type)ann->multiplier));
-	ann->sigmoid_symmetric_results[1] = (fann_type)((ann->multiplier/10.0) - ann->multiplier-0.5);
-	ann->sigmoid_symmetric_results[2] = (fann_type)((ann->multiplier/2.0) - ann->multiplier-0.5);
-	ann->sigmoid_symmetric_results[3] = ann->multiplier - (fann_type)(ann->multiplier/2.0+0.5);
-	ann->sigmoid_symmetric_results[4] = ann->multiplier - (fann_type)(ann->multiplier/10.0+0.5);
-	ann->sigmoid_symmetric_results[5] = fann_min(ann->multiplier - (fann_type)(ann->multiplier/100.0+1.0), ann->multiplier-1);
+	/* Calculate the parameters for the stepwise linear
+	 * sigmoid function fixed point.
+	 * Using a rewritten sigmoid function.
+	 * results 0.005, 0.05, 0.25, 0.75, 0.95, 0.995
+	 */
+	ann->sigmoid_results[0] = fann_max((fann_type) (ann->multiplier / 200.0 + 0.5), 1);
+	ann->sigmoid_results[1] = (fann_type) (ann->multiplier / 20.0 + 0.5);
+	ann->sigmoid_results[2] = (fann_type) (ann->multiplier / 4.0 + 0.5);
+	ann->sigmoid_results[3] = ann->multiplier - (fann_type) (ann->multiplier / 4.0 + 0.5);
+	ann->sigmoid_results[4] = ann->multiplier - (fann_type) (ann->multiplier / 20.0 + 0.5);
+	ann->sigmoid_results[5] =
+		fann_min(ann->multiplier - (fann_type) (ann->multiplier / 200.0 + 0.5),
+				 ann->multiplier - 1);
+
+	ann->sigmoid_symmetric_results[0] =
+		fann_max((fann_type) ((ann->multiplier / 100.0) - ann->multiplier - 0.5),
+				 (fann_type) (1 - (fann_type) ann->multiplier));
+	ann->sigmoid_symmetric_results[1] =
+		(fann_type) ((ann->multiplier / 10.0) - ann->multiplier - 0.5);
+	ann->sigmoid_symmetric_results[2] =
+		(fann_type) ((ann->multiplier / 2.0) - ann->multiplier - 0.5);
+	ann->sigmoid_symmetric_results[3] = ann->multiplier - (fann_type) (ann->multiplier / 2.0 + 0.5);
+	ann->sigmoid_symmetric_results[4] =
+		ann->multiplier - (fann_type) (ann->multiplier / 10.0 + 0.5);
+	ann->sigmoid_symmetric_results[5] =
+		fann_min(ann->multiplier - (fann_type) (ann->multiplier / 100.0 + 1.0),
+				 ann->multiplier - 1);
 
 	/*DEBUG
-	ann->sigmoid_results[0] = (fann_type)(ann->multiplier/200.0+0.5);
-	ann->sigmoid_results[1] = (fann_type)(ann->multiplier/20.0+0.5);
-	ann->sigmoid_results[2] = (fann_type)(ann->multiplier/4.0+0.5);
-	ann->sigmoid_results[3] = ann->multiplier - (fann_type)(ann->multiplier/4.0+0.5);
-	ann->sigmoid_results[4] = ann->multiplier - (fann_type)(ann->multiplier/20.0+0.5);
-	ann->sigmoid_results[5] = ann->multiplier - (fann_type)(ann->multiplier/200.0+0.5);
+	 * ann->sigmoid_results[0] = (fann_type)(ann->multiplier/200.0+0.5);
+	 * ann->sigmoid_results[1] = (fann_type)(ann->multiplier/20.0+0.5);
+	 * ann->sigmoid_results[2] = (fann_type)(ann->multiplier/4.0+0.5);
+	 * ann->sigmoid_results[3] = ann->multiplier - (fann_type)(ann->multiplier/4.0+0.5);
+	 * ann->sigmoid_results[4] = ann->multiplier - (fann_type)(ann->multiplier/20.0+0.5);
+	 * ann->sigmoid_results[5] = ann->multiplier - (fann_type)(ann->multiplier/200.0+0.5);
+	 * 
+	 * ann->sigmoid_symmetric_results[0] = (fann_type)((ann->multiplier/100.0) - ann->multiplier + 0.5);
+	 * ann->sigmoid_symmetric_results[1] = (fann_type)((ann->multiplier/10.0) - ann->multiplier + 0.5);
+	 * ann->sigmoid_symmetric_results[2] = (fann_type)((ann->multiplier/2.0) - ann->multiplier + 0.5);
+	 * ann->sigmoid_symmetric_results[3] = ann->multiplier - (fann_type)(ann->multiplier/2.0+0.5);
+	 * ann->sigmoid_symmetric_results[4] = ann->multiplier - (fann_type)(ann->multiplier/10.0+0.5);
+	 * ann->sigmoid_symmetric_results[5] = ann->multiplier - (fann_type)(ann->multiplier/100.0+0.5);
+	 */
 
-	ann->sigmoid_symmetric_results[0] = (fann_type)((ann->multiplier/100.0) - ann->multiplier + 0.5);
-	ann->sigmoid_symmetric_results[1] = (fann_type)((ann->multiplier/10.0) - ann->multiplier + 0.5);
-	ann->sigmoid_symmetric_results[2] = (fann_type)((ann->multiplier/2.0) - ann->multiplier + 0.5);
-	ann->sigmoid_symmetric_results[3] = ann->multiplier - (fann_type)(ann->multiplier/2.0+0.5);
-	ann->sigmoid_symmetric_results[4] = ann->multiplier - (fann_type)(ann->multiplier/10.0+0.5);
-	ann->sigmoid_symmetric_results[5] = ann->multiplier - (fann_type)(ann->multiplier/100.0+0.5);
-	*/
-	
-	for(i = 0; i < 6; i++){
-		ann->sigmoid_values[i] = (fann_type)(((log(ann->multiplier/(float)ann->sigmoid_results[i] -1)*(float)ann->multiplier) / -2.0)*(float)ann->multiplier);
-		ann->sigmoid_symmetric_values[i] = (fann_type)(((log((ann->multiplier - (float)ann->sigmoid_symmetric_results[i])/((float)ann->sigmoid_symmetric_results[i] + ann->multiplier))*(float)ann->multiplier) / -2.0)*(float)ann->multiplier);
+	for(i = 0; i < 6; i++)
+	{
+		ann->sigmoid_values[i] =
+			(fann_type) (((log(ann->multiplier / (float) ann->sigmoid_results[i] - 1) *
+						   (float) ann->multiplier) / -2.0) * (float) ann->multiplier);
+		ann->sigmoid_symmetric_values[i] =
+			(fann_type) (((log
+						   ((ann->multiplier -
+							 (float) ann->sigmoid_symmetric_results[i]) /
+							((float) ann->sigmoid_symmetric_results[i] +
+							 ann->multiplier)) * (float) ann->multiplier) / -2.0) *
+						 (float) ann->multiplier);
 	}
 }
 #endif

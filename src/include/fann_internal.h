@@ -36,15 +36,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define FANN_CONF_VERSION FANN_FLO_VERSION
 #endif
 
-struct fann * fann_allocate_structure(float learning_rate, unsigned int num_layers);
+struct fann *fann_allocate_structure(float learning_rate, unsigned int num_layers);
 void fann_allocate_neurons(struct fann *ann);
 
 void fann_allocate_connections(struct fann *ann);
 
-int fann_save_internal(struct fann *ann, const char *configuration_file, unsigned int save_as_fixed);
-int fann_save_internal_fd(struct fann *ann, FILE *conf, const char *configuration_file, unsigned int save_as_fixed);
-void fann_save_train_internal(struct fann_train_data* data, char *filename, unsigned int save_as_fixed, unsigned int decimal_point);
-void fann_save_train_internal_fd(struct fann_train_data* data, FILE *file, char *filename, unsigned int save_as_fixed, unsigned int decimal_point);
+int fann_save_internal(struct fann *ann, const char *configuration_file,
+					   unsigned int save_as_fixed);
+int fann_save_internal_fd(struct fann *ann, FILE * conf, const char *configuration_file,
+						  unsigned int save_as_fixed);
+void fann_save_train_internal(struct fann_train_data *data, char *filename,
+							  unsigned int save_as_fixed, unsigned int decimal_point);
+void fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, char *filename,
+								 unsigned int save_as_fixed, unsigned int decimal_point);
 
 void fann_seed_rand();
 
@@ -53,27 +57,30 @@ void fann_update_stepwise(struct fann *ann);
 void fann_error(struct fann_error *errdat, const unsigned int errno_f, ...);
 void fann_init_error_data(struct fann_error *errdat);
 
-struct fann * fann_create_from_fd(FILE *conf, const char *configuration_file);
-struct fann_train_data* fann_read_train_from_fd(FILE *file, char *filename);
+struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file);
+struct fann_train_data *fann_read_train_from_fd(FILE * file, char *filename);
 
-void fann_compute_MSE(struct fann *ann, fann_type *desired_output);
+void fann_compute_MSE(struct fann *ann, fann_type * desired_output);
 void fann_update_output_weights(struct fann *ann);
 void fann_backpropagate_MSE(struct fann *ann);
 void fann_update_weights(struct fann *ann);
-void fann_update_slopes_batch(struct fann *ann, struct fann_layer *layer_begin, struct fann_layer *layer_end);
-void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data, unsigned int first_weight, unsigned int past_end);
-void fann_update_weights_batch(struct fann *ann, unsigned int num_data, unsigned int first_weight, unsigned int past_end);
-void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight, unsigned int past_end);
+void fann_update_slopes_batch(struct fann *ann, struct fann_layer *layer_begin,
+							  struct fann_layer *layer_end);
+void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data,
+								   unsigned int first_weight, unsigned int past_end);
+void fann_update_weights_batch(struct fann *ann, unsigned int num_data, unsigned int first_weight,
+							   unsigned int past_end);
+void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight,
+								 unsigned int past_end);
 
 void fann_clear_train_arrays(struct fann *ann);
 
-fann_type fann_activation_old(struct fann *ann, unsigned int is_output_layer,
-	fann_type value);
-fann_type fann_activation_new(struct fann *ann, unsigned int activation_function, fann_type steepness,
-	fann_type value);
+fann_type fann_activation_old(struct fann *ann, unsigned int is_output_layer, fann_type value);
+fann_type fann_activation_new(struct fann *ann, unsigned int activation_function,
+							  fann_type steepness, fann_type value);
 
 fann_type fann_activation_derived(unsigned int activation_function,
-	fann_type steepness, fann_type value, fann_type sum);
+								  fann_type steepness, fann_type value, fann_type sum);
 
 /* called fann_max, in order to not interferre with predefined versions of max */
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))

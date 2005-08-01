@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include "fixedfann.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	struct fann_train_data *train_data, *test_data;
 	FILE *train_out, *test_out;
@@ -30,27 +30,36 @@ int main(int argc, char* argv[])
 	unsigned int epochs = 0;
 	double total_elapsed = 0;
 	char file[256];
-	
-	if(argc < 6){
-		printf("usage %s train_file test_file train_file_out test_file_out fixed_conf_files\n", argv[0]);
+
+	if(argc < 6)
+	{
+		printf("usage %s train_file test_file train_file_out test_file_out fixed_conf_files\n",
+			   argv[0]);
 		return -1;
 	}
 
-	if(strlen(argv[3]) == 1 && argv[3][0] == '-'){
+	if(strlen(argv[3]) == 1 && argv[3][0] == '-')
+	{
 		train_out = stdout;
-	}else{
+	}
+	else
+	{
 		train_out = fopen(argv[3], "w");
 	}
-	
-	if(strlen(argv[4]) == 1 && argv[4][0] == '-'){
+
+	if(strlen(argv[4]) == 1 && argv[4][0] == '-')
+	{
 		test_out = stdout;
-	}else{
+	}
+	else
+	{
 		test_out = fopen(argv[4], "w");
 	}
 
 	fprintf(stderr, "Quality test of fixed point ");
-	
-	for(j = 5; j < argc; j++){
+
+	for(j = 5; j < argc; j++)
+	{
 		ann = fann_create_from_file(argv[j]);
 
 		sprintf(file, "%s_%d", argv[1], fann_get_decimal_point(ann));
@@ -60,13 +69,15 @@ int main(int argc, char* argv[])
 		test_data = fann_read_train_from_file(file);
 
 		fann_reset_MSE(ann);
-		for(i = 0; i != train_data->num_data; i++){
+		for(i = 0; i != train_data->num_data; i++)
+		{
 			fann_test(ann, train_data->input[i], train_data->output[i]);
 		}
 		train_error = fann_get_MSE(ann);
 
 		fann_reset_MSE(ann);
-		for(i = 0; i != test_data->num_data; i++){
+		for(i = 0; i != test_data->num_data; i++)
+		{
 			fann_test(ann, test_data->input[i], test_data->output[i]);
 		}
 		test_error = fann_get_MSE(ann);
@@ -80,6 +91,6 @@ int main(int argc, char* argv[])
 	}
 
 	fprintf(stderr, "\n");
-	
+
 	return 0;
 }

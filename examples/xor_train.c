@@ -31,26 +31,24 @@ int main()
 {
 	fann_type *calc_out;
 	const float connection_rate = 1;
-	const float learning_rate = (const float)0.7;
+	const float learning_rate = (const float) 0.7;
 	const unsigned int num_input = 2;
 	const unsigned int num_output = 1;
 	const unsigned int num_layers = 3;
 	const unsigned int num_neurons_hidden = 3;
-	const float desired_error = (const float)0.00001;
+	const float desired_error = (const float) 0.00001;
 	const unsigned int max_iterations = 100000;
 	const unsigned int iterations_between_reports = 1000;
 	struct fann *ann;
 	struct fann_train_data *data;
-	
+
 	unsigned int i = 0;
 	unsigned int decimal_point;
 
 	printf("Creating network.\n");
 
 	ann = fann_create(connection_rate, learning_rate, num_layers,
-		num_input,
-		num_neurons_hidden,
-		num_output);
+					  num_input, num_neurons_hidden, num_output);
 
 	printf("Training network.\n");
 
@@ -59,37 +57,39 @@ int main()
 	fann_set_activation_steepness_hidden(ann, 1);
 	fann_set_activation_steepness_output(ann, 1);
 	fann_set_rprop_delta_max(ann, 50);
-	
+
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
 	fann_set_activation_function_output(ann, FANN_GAUSSIAN_SYMMETRIC);
-	
+
 	fann_init_weights(ann, data);
 
-	/*fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP);*/
+	/*fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP); */
 	fann_train_on_data(ann, data, max_iterations, iterations_between_reports, desired_error);
-	
-	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback);*/
 
-	
+	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback); */
+
+
 
 	printf("Testing network. %f\n", fann_test_data(ann, data));
 
-	for(i = 0; i < data->num_data; i++){
+	for(i = 0; i < data->num_data; i++)
+	{
 		calc_out = fann_run(ann, data->input[i]);
 		printf("XOR test (%f,%f) -> %f, should be %f, difference=%f\n",
-		data->input[i][0], data->input[i][1], *calc_out, data->output[i][0], fann_abs(*calc_out - data->output[i][0]));
+			   data->input[i][0], data->input[i][1], *calc_out, data->output[i][0],
+			   fann_abs(*calc_out - data->output[i][0]));
 	}
-	
+
 	printf("Saving network.\n");
 
 	fann_save(ann, "xor_float.net");
 
 	decimal_point = fann_save_to_fixed(ann, "xor_fixed.net");
 	fann_save_train_to_fixed(data, "xor_fixed.data", decimal_point);
-	
+
 	printf("Cleaning up.\n");
 	fann_destroy_train(data);
 	fann_destroy(ann);
-	
+
 	return 0;
 }

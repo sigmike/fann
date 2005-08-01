@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 struct fann_neuron
 {
 	/* Index to the first and last connection
-	   (actually the last is a past end index)
+	 * (actually the last is a past end index)
 	 */
 	unsigned int first_con;
 	unsigned int last_con;
@@ -42,7 +42,7 @@ struct fann_neuron
 	/* Used to choose which activation function to use */
 	unsigned int activation_function;
 #ifdef __GNUC__
-}__attribute__((packed));
+} __attribute__ ((packed));
 #else
 };
 #endif
@@ -74,7 +74,7 @@ struct fann
 	FILE *error_log;
 
 	/* A string representation of the last error. */
-	char * errstr;
+	char *errstr;
 
 	/* the learning rate of the network */
 	float learning_rate;
@@ -117,7 +117,7 @@ struct fann
 
 	/* The connection array */
 	struct fann_neuron **connections;
-	
+
 	/* Used to contain the errors used during training
 	 * Is allocated during first training session,
 	 * which means that if we do not train, it is never allocated.
@@ -130,20 +130,20 @@ struct fann
 
 #ifdef FIXEDFANN
 	/* the decimal_point, used for shifting the fix point
-	   in fixed point integer operatons.
-	*/
+	 * in fixed point integer operatons.
+	 */
 	unsigned int decimal_point;
-	
+
 	/* the multiplier, used for multiplying the fix point
-	   in fixed point integer operatons.
-	   Only used in special cases, since the decimal_point is much faster.
-	*/
+	 * in fixed point integer operatons.
+	 * Only used in special cases, since the decimal_point is much faster.
+	 */
 	unsigned int multiplier;
 
 	/* When in choosen (or in fixed point), the sigmoid function is
-	   calculated as a stepwise linear function. In the
-	   activation_results array, the result is saved, and in the
-	   two values arrays, the values that gives the results are saved.
+	 * calculated as a stepwise linear function. In the
+	 * activation_results array, the result is saved, and in the
+	 * two values arrays, the values that gives the results are saved.
 	 */
 	fann_type sigmoid_results[6];
 	fann_type sigmoid_values[6];
@@ -165,7 +165,7 @@ struct fann
 	unsigned int num_MSE;
 
 	/* the total error value.
-	   the real mean square error is MSE_value/num_MSE
+	 * the real mean square error is MSE_value/num_MSE
 	 */
 	float MSE_value;
 
@@ -176,23 +176,23 @@ struct fann
 	/* The error function used during training. (default FANN_ERRORFUNC_TANH)
 	 */
 	unsigned int train_error_function;
-	
+
 	/* Variables for use with Cascade Correlation */
 
 	/* The error must change by at least this
-	   fraction of its old value to count as a
-	   significant change.
-	*/
+	 * fraction of its old value to count as a
+	 * significant change.
+	 */
 	float cascade_change_fraction;
 
 	/* No change in this number of epochs will cause
-	   stagnation.
-	*/
+	 * stagnation.
+	 */
 	unsigned int cascade_stagnation_epochs;
 
 	/* The number of candidate neurons used during cascade correlation
-	   training.
-	*/
+	 * training.
+	 */
 	unsigned int cascade_num_candidates;
 
 	/* The current best candidate, which will be installed.
@@ -206,21 +206,21 @@ struct fann
 	/* Scale of copied candidate output weights
 	 */
 	fann_type cascade_weight_multiplier;
-	
+
 	/* An array consisting of the score of the individual candidates,
-	   which is used to decide which candidate is the best
-	*/
+	 * which is used to decide which candidate is the best
+	 */
 	fann_type *cascade_candidate_scores;
 
 	/* The number of allocated neurons during cascade correlation algorithms.
-	   This number might be higher than the actual number of neurons to avoid
-	   allocating new space too often.
+	 * This number might be higher than the actual number of neurons to avoid
+	 * allocating new space too often.
 	 */
 	unsigned int total_neurons_allocated;
 
 	/* The number of allocated connections during cascade correlation algorithms.
-	   This number might be higher than the actual number of neurons to avoid
-	   allocating new space too often.
+	 * This number might be higher than the actual number of neurons to avoid
+	 * allocating new space too often.
 	 */
 	unsigned int total_connections_allocated;
 
@@ -245,7 +245,7 @@ struct fann
 
 	/* The maximum stepsize */
 	float rprop_delta_max;
-	
+
 	/* The initial stepsize */
 	float rprop_delta_zero;
 
@@ -256,12 +256,12 @@ struct fann
 	fann_type *train_slopes;
 
 	/* The previous step taken by the quickprop/rprop procedures.
-	   Not allocated if not used.
+	 * Not allocated if not used.
 	 */
 	fann_type *prev_steps;
 
 	/* The slope values used by the quickprop/rprop procedures.
-	   Not allocated if not used.
+	 * Not allocated if not used.
 	 */
 	fann_type *prev_train_slopes;
 };
@@ -285,10 +285,11 @@ struct fann_error
 {
 	unsigned int errno_f;
 	FILE *error_log;
-	char * errstr;
+	char *errstr;
 };
 
-enum {
+enum
+{
 	/* Standard backpropagation incremental or online training */
 	FANN_TRAIN_INCREMENTAL = 0,
 	/* Standard backpropagation batch training */
@@ -299,22 +300,23 @@ enum {
 	FANN_TRAIN_QUICKPROP
 };
 
-static char const * const FANN_TRAIN_NAMES[] = {
+static char const *const FANN_TRAIN_NAMES[] = {
 	"FANN_TRAIN_INCREMENTAL",
 	"FANN_TRAIN_BATCH",
 	"FANN_TRAIN_RPROP",
 	"FANN_TRAIN_QUICKPROP"
 };
 
-enum {
+enum
+{
 	/* Standard linear error function */
 	FANN_ERRORFUNC_LINEAR = 0,
 	/* Tanh error function, usually better but can require
-	   a lower learning rate */
+	 * a lower learning rate */
 	FANN_ERRORFUNC_TANH
 };
 
-static char const * const FANN_ERRORFUNC_NAMES[] = {
+static char const *const FANN_ERRORFUNC_NAMES[] = {
 	"FANN_ERRORFUNC_LINEAR",
 	"FANN_ERRORFUNC_TANH"
 };

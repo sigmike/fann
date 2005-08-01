@@ -30,13 +30,13 @@ int print_callback(unsigned int epochs, float error)
 int main()
 {
 	const float connection_rate = 1;
-	const float learning_rate = (const float)0.7;
+	const float learning_rate = (const float) 0.7;
 	const unsigned int num_layers = 3;
 	const unsigned int num_neurons_hidden = 96;
-	const float desired_error = (const float)0.001;
+	const float desired_error = (const float) 0.001;
 	struct fann *ann;
 	struct fann_train_data *train_data, *test_data;
-	
+
 	unsigned int i = 0;
 
 	printf("Creating network.\n");
@@ -44,23 +44,22 @@ int main()
 	train_data = fann_read_train_from_file("../benchmarks/datasets/robot.train");
 
 	ann = fann_create(connection_rate, learning_rate, num_layers,
-		train_data->num_input,
-		num_neurons_hidden,
-		train_data->num_output);
+					  train_data->num_input, num_neurons_hidden, train_data->num_output);
 
 	printf("Training network.\n");
 
 	fann_set_training_algorithm(ann, FANN_TRAIN_INCREMENTAL);
-	
+
 	fann_train_on_data(ann, train_data, 1000, 10, desired_error);
-	
-	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback);*/
+
+	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback); */
 	printf("Testing network.\n");
 
 	test_data = fann_read_train_from_file("../benchmarks/datasets/robot.test");
 
 	fann_reset_MSE(ann);
-	for(i = 0; i < test_data->num_data; i++){
+	for(i = 0; i < test_data->num_data; i++)
+	{
 		fann_test(ann, test_data->input[i], test_data->output[i]);
 	}
 	printf("MSE error on test data: %f\n", fann_get_MSE(ann));
@@ -73,6 +72,6 @@ int main()
 	fann_destroy_train(train_data);
 	fann_destroy_train(test_data);
 	fann_destroy(ann);
-	
+
 	return 0;
 }

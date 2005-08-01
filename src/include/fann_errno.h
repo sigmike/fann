@@ -21,61 +21,63 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __fann_errno_h__
 
 #ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+extern "C"
+{
+#endif							/* __cplusplus */
 
 /* Maximum length (in bytes) of an error message */
 #define FANN_ERRSTR_MAX 128
 
-enum {
-	/* No error */
-	FANN_E_NO_ERROR = 0,
+	enum
+	{
+		/* No error */
+		FANN_E_NO_ERROR = 0,
 
-	/* Unable to open configuration file for reading */
-	FANN_E_CANT_OPEN_CONFIG_R,
+		/* Unable to open configuration file for reading */
+		FANN_E_CANT_OPEN_CONFIG_R,
 
-	/* Unable to open configuration file for writing */
-	FANN_E_CANT_OPEN_CONFIG_W,
+		/* Unable to open configuration file for writing */
+		FANN_E_CANT_OPEN_CONFIG_W,
 
-	/* Wrong version of configuration file */
-	FANN_E_WRONG_CONFIG_VERSION,
+		/* Wrong version of configuration file */
+		FANN_E_WRONG_CONFIG_VERSION,
 
-	/* Error reading info from configuration file */
-	FANN_E_CANT_READ_CONFIG,
+		/* Error reading info from configuration file */
+		FANN_E_CANT_READ_CONFIG,
 
-	/* Error reading neuron info from configuration file */
-	FANN_E_CANT_READ_NEURON,
+		/* Error reading neuron info from configuration file */
+		FANN_E_CANT_READ_NEURON,
 
-	/* Error reading connections from configuration file */
-	FANN_E_CANT_READ_CONNECTIONS,
+		/* Error reading connections from configuration file */
+		FANN_E_CANT_READ_CONNECTIONS,
 
-	/* Number of connections not equal to the number expected. */
-	FANN_E_WRONG_NUM_CONNECTIONS,
+		/* Number of connections not equal to the number expected. */
+		FANN_E_WRONG_NUM_CONNECTIONS,
 
-	/* Unable to open train data file for writing */
-	FANN_E_CANT_OPEN_TD_W,
+		/* Unable to open train data file for writing */
+		FANN_E_CANT_OPEN_TD_W,
 
-	/* Unable to open train data file for reading. */
-	FANN_E_CANT_OPEN_TD_R,
+		/* Unable to open train data file for reading. */
+		FANN_E_CANT_OPEN_TD_R,
 
-	/* Error reading training data from file. */
-	FANN_E_CANT_READ_TD,
+		/* Error reading training data from file. */
+		FANN_E_CANT_READ_TD,
 
-	/* Unable to allocate memory. */
-	FANN_E_CANT_ALLOCATE_MEM,
+		/* Unable to allocate memory. */
+		FANN_E_CANT_ALLOCATE_MEM,
 
-	/* Unable to train with the selected activation function */
-	FANN_E_CANT_TRAIN_ACTIVATION,
+		/* Unable to train with the selected activation function */
+		FANN_E_CANT_TRAIN_ACTIVATION,
 
-	/* Unable to use the selected activation function */
-	FANN_E_CANT_USE_ACTIVATION,
+		/* Unable to use the selected activation function */
+		FANN_E_CANT_USE_ACTIVATION,
 
-	/* Irreconcilable differences between two fann_train_data structures */
-	FANN_E_TRAIN_DATA_MISMATCH
-};
+		/* Irreconcilable differences between two fann_train_data structures */
+		FANN_E_TRAIN_DATA_MISMATCH
+	};
 
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
+#endif							/* __cplusplus */
 
-#endif /* __fann_errno_h__ */
+#endif							/* __fann_errno_h__ */

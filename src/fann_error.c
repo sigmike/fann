@@ -43,7 +43,7 @@ FANN_EXTERNAL void FANN_API fann_reset_errno(struct fann_error *errdat)
  */
 FANN_EXTERNAL void FANN_API fann_reset_errstr(struct fann_error *errdat)
 {
-	if ( errdat->errstr != NULL )
+	if(errdat->errstr != NULL)
 		free(errdat->errstr);
 	errdat->errstr = NULL;
 }
@@ -57,7 +57,7 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_errno(struct fann_error *errdat)
 
 /* returns the last errstr
  */
-FANN_EXTERNAL char * FANN_API fann_get_errstr(struct fann_error *errdat)
+FANN_EXTERNAL char *FANN_API fann_get_errstr(struct fann_error *errdat)
 {
 	char *errstr = errdat->errstr;
 
@@ -69,15 +69,17 @@ FANN_EXTERNAL char * FANN_API fann_get_errstr(struct fann_error *errdat)
 
 /* change where errors are logged to
  */
-FANN_EXTERNAL void FANN_API fann_set_error_log(struct fann_error *errdat, FILE *log_file)
+FANN_EXTERNAL void FANN_API fann_set_error_log(struct fann_error *errdat, FILE * log_file)
 {
 	errdat->error_log = log_file;
 }
 
 /* prints the last error to the error log (default stderr)
  */
-FANN_EXTERNAL void FANN_API fann_print_error(struct fann_error *errdat) {
-	if ( (errdat->errno_f != FANN_E_NO_ERROR) && (errdat->error_log != NULL) ){
+FANN_EXTERNAL void FANN_API fann_print_error(struct fann_error *errdat)
+{
+	if((errdat->errno_f != FANN_E_NO_ERROR) && (errdat->error_log != NULL))
+	{
 		fputs(errdat->errstr, errdat->error_log);
 	}
 }
@@ -88,22 +90,28 @@ FANN_EXTERNAL void FANN_API fann_print_error(struct fann_error *errdat) {
 void fann_error(struct fann_error *errdat, const unsigned int errno_f, ...)
 {
 	va_list ap;
-	char * errstr;
+	char *errstr;
 
-	if (errdat != NULL) errdat->errno_f = errno_f;
-	
-	if(errdat != NULL && errdat->errstr != NULL){
+	if(errdat != NULL)
+		errdat->errno_f = errno_f;
+
+	if(errdat != NULL && errdat->errstr != NULL)
+	{
 		errstr = errdat->errstr;
-	}else{
-		errstr = (char *)malloc(FANN_ERRSTR_MAX);
-		if(errstr == NULL){
+	}
+	else
+	{
+		errstr = (char *) malloc(FANN_ERRSTR_MAX);
+		if(errstr == NULL)
+		{
 			fprintf(stderr, "Unable to allocate memory.\n");
 			return;
 		}
 	}
 
 	va_start(ap, errno_f);
-	switch ( errno_f ) {
+	switch (errno_f)
+	{
 	case FANN_E_NO_ERROR:
 		break;
 	case FANN_E_CANT_OPEN_CONFIG_R:
@@ -113,7 +121,9 @@ void fann_error(struct fann_error *errdat, const unsigned int errno_f, ...)
 		vsprintf(errstr, "Unable to open configuration file \"%s\" for writing.\n", ap);
 		break;
 	case FANN_E_WRONG_CONFIG_VERSION:
-		vsprintf(errstr, "Wrong version of configuration file, aborting read of configuration file \"%s\".\n", ap);
+		vsprintf(errstr,
+				 "Wrong version of configuration file, aborting read of configuration file \"%s\".\n",
+				 ap);
 		break;
 	case FANN_E_CANT_READ_CONFIG:
 		vsprintf(errstr, "Error reading info from configuration file \"%s\".\n", ap);
@@ -154,11 +164,15 @@ void fann_error(struct fann_error *errdat, const unsigned int errno_f, ...)
 	}
 	va_end(ap);
 
-	if ( errdat == NULL ) {
+	if(errdat == NULL)
+	{
 		fprintf(stderr, "FANN Error %d: %s", errno_f, errstr);
-	} else {
+	}
+	else
+	{
 		errdat->errstr = errstr;
-		if ( errdat->error_log != NULL ) {
+		if(errdat->error_log != NULL)
+		{
 			fprintf(errdat->error_log, "FANN Error %d: %s", errno_f, errstr);
 		}
 	}

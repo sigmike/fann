@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __fixedfann_h__
 
 typedef int fann_type;
+
 #undef FIXEDFANN
 #define FIXEDFANN
 #define FANNPRINTF "%d"

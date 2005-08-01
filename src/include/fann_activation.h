@@ -30,91 +30,92 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    d is the derivation.
  */
 
-enum {
+enum
+{
 	/* Linear activation function.
-	   span: -inf < y < inf
-	   y = x*s, d = 1*s
-	   Can NOT be used in fixed point.
-	*/
+	 * span: -inf < y < inf
+	 * y = x*s, d = 1*s
+	 * Can NOT be used in fixed point.
+	 */
 	FANN_LINEAR = 0,
 
 	/* Threshold activation function.
-	   x < 0 -> y = 0, x >= 0 -> y = 1
-	   Can NOT be used during training.
-	*/
+	 * x < 0 -> y = 0, x >= 0 -> y = 1
+	 * Can NOT be used during training.
+	 */
 	FANN_THRESHOLD,
 
 	/* Threshold activation function.
-	   x < 0 -> y = 0, x >= 0 -> y = 1
-	   Can NOT be used during training.
-	*/
+	 * x < 0 -> y = 0, x >= 0 -> y = 1
+	 * Can NOT be used during training.
+	 */
 	FANN_THRESHOLD_SYMMETRIC,
 
 	/* Sigmoid activation function.
-	   One of the most used activation functions.
-	   span: 0 < y < 1
-	   y = 1/(1 + exp(-2*s*x))
-	   d = 2*s*y*(1 - y)
-	*/
+	 * One of the most used activation functions.
+	 * span: 0 < y < 1
+	 * y = 1/(1 + exp(-2*s*x))
+	 * d = 2*s*y*(1 - y)
+	 */
 	FANN_SIGMOID,
 
 	/* Stepwise linear approximation to sigmoid.
-	   Faster than sigmoid but a bit less precise.
-	*/
-	FANN_SIGMOID_STEPWISE, /* (default) */
+	 * Faster than sigmoid but a bit less precise.
+	 */
+	FANN_SIGMOID_STEPWISE,		/* (default) */
 
 
 	/* Symmetric sigmoid activation function, aka. tanh.
-	   One of the most used activation functions.
-	   span: -1 < y < 1
-	   y = tanh(s*x) = 2/(1 + exp(-2*s*x)) - 1
-	   d = s*(1-(y*y))
-	*/
+	 * One of the most used activation functions.
+	 * span: -1 < y < 1
+	 * y = tanh(s*x) = 2/(1 + exp(-2*s*x)) - 1
+	 * d = s*(1-(y*y))
+	 */
 	FANN_SIGMOID_SYMMETRIC,
-	
+
 	/* Stepwise linear approximation to symmetric sigmoid.
-	   Faster than symmetric sigmoid but a bit less precise.
-	*/
+	 * Faster than symmetric sigmoid but a bit less precise.
+	 */
 	FANN_SIGMOID_SYMMETRIC_STEPWISE,
 
 	/* Gaussian activation function.
-	   0 when x = -inf, 1 when x = 0 and 0 when x = inf
-	   span: 0 < y < 1
-	   y = exp(-x*s*x*s)
-	   d = -2*x*s*y*s
-	*/
+	 * 0 when x = -inf, 1 when x = 0 and 0 when x = inf
+	 * span: 0 < y < 1
+	 * y = exp(-x*s*x*s)
+	 * d = -2*x*s*y*s
+	 */
 	FANN_GAUSSIAN,
 
 	/* Symmetric gaussian activation function.
-	   -1 when x = -inf, 1 when x = 0 and 0 when x = inf
-	   span: -1 < y < 1
-	   y = exp(-x*s*x*s)*2-1
-	   d = -2*x*s*(y+1)*s
-	*/
+	 * -1 when x = -inf, 1 when x = 0 and 0 when x = inf
+	 * span: -1 < y < 1
+	 * y = exp(-x*s*x*s)*2-1
+	 * d = -2*x*s*(y+1)*s
+	 */
 	FANN_GAUSSIAN_SYMMETRIC,
 
 	/* Stepwise linear approximation to gaussian.
-	   Faster than gaussian but a bit less precise.
-	   NOT implemented yet.
-	*/
+	 * Faster than gaussian but a bit less precise.
+	 * NOT implemented yet.
+	 */
 	FANN_GAUSSIAN_STEPWISE,
 
 	/* Fast (sigmoid like) activation function defined by David Elliott
-	   span: 0 < y < 1
-	   y = ((x*s) / 2) / (1 + |x*s|) + 0.5
-	   d = s*1/(2*(1+|x*s|)*(1+|x*s|))
-	*/
+	 * span: 0 < y < 1
+	 * y = ((x*s) / 2) / (1 + |x*s|) + 0.5
+	 * d = s*1/(2*(1+|x*s|)*(1+|x*s|))
+	 */
 	FANN_ELLIOT,
 
 	/* Fast (symmetric sigmoid like) activation function defined by David Elliott
-	   span: -1 < y < 1   
-	   y = (x*s) / (1 + |x*s|)
-	   d = s*1/((1+|x*s|)*(1+|x*s|))
-	*/
+	 * span: -1 < y < 1   
+	 * y = (x*s) / (1 + |x*s|)
+	 * d = s*1/((1+|x*s|)*(1+|x*s|))
+	 */
 	FANN_ELLIOT_SYMMETRIC
 };
 
-static char const * const FANN_ACTIVATION_NAMES[] = {
+static char const *const FANN_ACTIVATION_NAMES[] = {
 	"FANN_LINEAR",
 	"FANN_THRESHOLD",
 	"FANN_THRESHOLD_SYMMETRIC",
