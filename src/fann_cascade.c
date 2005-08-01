@@ -283,13 +283,17 @@ float fann_train_outputs_epoch(struct fann *ann, struct fann_train_data *data)
 		fann_compute_MSE(ann, data->output[i]);
  		fann_update_slopes_batch(ann, ann->last_layer-1, ann->last_layer-1);
 	}
-	/* TODO this should actually use the algorithm selected by
-	   ann->training_algorithm
-	*/
-	if(ann->training_algorithm == FANN_TRAIN_RPROP){
-		fann_update_weights_irpropm(ann, (ann->last_layer-1)->first_neuron->first_con, ann->total_connections);
-	} else {
-		fann_update_weights_quickprop(ann, data->num_data, (ann->last_layer-1)->first_neuron->first_con, ann->total_connections);
+
+	switch(ann->training_algorithm)
+	{
+		case FANN_TRAIN_RPROP:
+			fann_update_weights_irpropm(ann, (ann->last_layer-1)->first_neuron->first_con, ann->total_connections);
+			break;
+		case FANN_TRAIN_QUICKPROP:
+			fann_update_weights_quickprop(ann, data->num_data, (ann->last_layer-1)->first_neuron->first_con, ann->total_connections);
+			break;
+		default:
+			fann_error((struct fann_error *)ann, FANN_E_CANT_USE_ACTIVATION);
 	}
 
 	return fann_get_MSE(ann);
@@ -632,11 +636,16 @@ void fann_update_candidate_weights(struct fann *ann, unsigned int num_data)
 	struct fann_neuron *first_cand = (ann->last_layer-1)->last_neuron + 1; /* there is an empty neuron between the actual neurons and the candidate neuron */
 	struct fann_neuron *last_cand = first_cand + ann->cascade_num_candidates-1;
 
-	/**/
-	if(ann->training_algorithm == FANN_TRAIN_RPROP){
-		fann_update_weights_irpropm(ann, first_cand->first_con, last_cand->last_con+ann->num_output);
-	}else{
-		fann_update_weights_quickprop(ann, num_data, first_cand->first_con, last_cand->last_con+ann->num_output);
+	switch(ann->training_algorithm)
+	{
+		case FANN_TRAIN_RPROP:
+			fann_update_weights_irpropm(ann, first_cand->first_con, last_cand->last_con+ann->num_output);
+			break;
+		case FANN_TRAIN_QUICKPROP:
+			fann_update_weights_quickprop(ann, num_data, first_cand->first_con, last_cand->last_con+ann->num_output);
+			break;
+		default:
+			fann_error((struct fann_error *)ann, FANN_E_CANT_USE_ACTIVATION);				
 	}
 }
 
@@ -885,7 +894,5 @@ void fann_install_candidate(struct fann *ann)
 	fann_add_candidate_neuron(ann, layer);
 	return;
 }
-
-
 
 #endif /* FIXEDFANN */

@@ -33,10 +33,10 @@ int print_callback(unsigned int epochs, float error)
 
 int main()
 {
-	const float learning_rate = (const float)0.7;
+	const float learning_rate = (const float)1.7;
 	const float desired_error = (const float)0.00001;
-	unsigned int max_out_epochs = 150;
-	unsigned int max_cand_epochs = 150;
+	unsigned int max_out_epochs = 1500;
+	unsigned int max_cand_epochs = 1500;
 	unsigned int max_neurons = 40;
 	unsigned int neurons_between_reports = 1;
 	/*int i;
@@ -51,12 +51,6 @@ int main()
 	/*
 	*/
 		
-	train_data = fann_read_train_from_file("xor.data");
-	test_data = fann_read_train_from_file("xor.data");
-
-	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.test");
-
 	train_data = fann_read_train_from_file("../benchmarks/datasets/parity8.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/parity8.test");
 
@@ -78,11 +72,20 @@ int main()
 	train_data = fann_read_train_from_file("../benchmarks/datasets/soybean.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/soybean.test");
 
+	train_data = fann_read_train_from_file("../benchmarks/datasets/thyroid.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/thyroid.test");
+
 	train_data = fann_read_train_from_file("../benchmarks/datasets/robot.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/robot.test");
 
-	train_data = fann_read_train_from_file("../benchmarks/datasets/thyroid.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/thyroid.test");
+	train_data = fann_read_train_from_file("xor.data");
+	test_data = fann_read_train_from_file("xor.data");
+
+	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral2.test");
+
+	train_data = fann_read_train_from_file("../benchmarks/datasets/building.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/building.test");
 
 	fann_scale_train_data(train_data, -1, 1);
 	fann_scale_train_data(test_data, -1, 1);
@@ -91,11 +94,55 @@ int main()
 
 	ann = fann_create_shortcut(learning_rate, 2, train_data->num_input, train_data->num_output);
 	
+	fann_set_training_algorithm(ann, FANN_TRAIN_BATCH);
+	fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP);
 	fann_set_training_algorithm(ann, FANN_TRAIN_RPROP);
+	
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
 	fann_set_activation_function_output(ann, FANN_LINEAR);
 	fann_set_activation_steepness_hidden(ann, 1);
 	fann_set_activation_steepness_output(ann, 1);
+
+
+	fann_set_train_error_function(ann, FANN_ERRORFUNC_LINEAR);
+
+	fann_set_rprop_increase_factor(ann, 1.2);
+	fann_set_rprop_decrease_factor(ann, 0.5);
+	fann_set_rprop_delta_min(ann, 0.0);
+	fann_set_rprop_delta_max(ann, 50.0);
+
+	ann->cascade_change_fraction = 0.001;
+	ann->cascade_stagnation_epochs = 120;
+	ann->cascade_num_candidates = 16;
+	ann->cascade_weight_multiplier = 0.7;
+	
+	fann_print_parameters(ann);
+	/*fann_print_connections(ann);*/
+
+	printf("Training network.\n");
+
+	fann_cascadetrain_on_data_callback(ann, train_data, desired_error, print_callback, max_out_epochs, max_cand_epochs, max_neurons, neurons_between_reports);
+
+	/*fann_train_on_data(ann, train_data, 300, 1, desired_error);*/
+	/*printf("\nTrain error: %f, Test error: %f\n\n", fann_test_data(ann, train_data), fann_test_data(ann, test_data));*/
+
+	fann_print_connections(ann);
+	/*fann_print_parameters(ann);*/
+
+	printf("\nTrain error: %f, Test error: %f\n\n", fann_test_data(ann, train_data), fann_test_data(ann, test_data));
+
+	printf("Saving network.\n");
+
+	fann_save(ann, "xor_float.net");
+
+	printf("Cleaning up.\n");
+	fann_destroy_train(train_data);
+	fann_destroy_train(test_data);
+	fann_destroy(ann);
+	
+	return 0;
+}
+
 
 	/*
 	for(i = 0; i < 6; i++){
@@ -140,41 +187,3 @@ int main()
 	
 	exit(0);
 	*/
-	
-	fann_set_train_error_function(ann, FANN_ERRORFUNC_LINEAR);
-	fann_set_rprop_increase_factor(ann, 1.2);
-	fann_set_rprop_decrease_factor(ann, 0.5);
-	fann_set_rprop_delta_min(ann, 0.0);
-	fann_set_rprop_delta_max(ann, 50.0);
-
-	ann->cascade_change_fraction = 0.01;
-	ann->cascade_stagnation_epochs = 12;
-	ann->cascade_num_candidates = 16;
-	ann->cascade_weight_multiplier = 0.5;
-	
-	fann_print_parameters(ann);
-	/*fann_print_connections(ann);*/
-
-	printf("Training network.\n");
-
-	fann_cascadetrain_on_data_callback(ann, train_data, desired_error, print_callback, max_out_epochs, max_cand_epochs, max_neurons, neurons_between_reports);
-
-	/*fann_train_on_data(ann, train_data, 300, 1, desired_error);*/
-	/*printf("\nTrain error: %f, Test error: %f\n\n", fann_test_data(ann, train_data), fann_test_data(ann, test_data));*/
-
-	fann_print_connections(ann);
-	/*fann_print_parameters(ann);*/
-
-	printf("\nTrain error: %f, Test error: %f\n\n", fann_test_data(ann, train_data), fann_test_data(ann, test_data));
-
-	printf("Saving network.\n");
-
-	fann_save(ann, "xor_float.net");
-
-	printf("Cleaning up.\n");
-	fann_destroy_train(train_data);
-	fann_destroy_train(test_data);
-	fann_destroy(ann);
-	
-	return 0;
-}

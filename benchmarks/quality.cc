@@ -254,10 +254,24 @@ void quality_benchmark_cascade(
 	struct fann *ann;
 
 	ann = fann_create_shortcut(0.7, 2, num_input, num_output);
-	fann_set_activation_steepness_hidden(ann, 1);
-	fann_set_activation_steepness_output(ann, 1);
+	
+	fann_set_training_algorithm(ann, FANN_TRAIN_RPROP);
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
-	fann_set_activation_function_output(ann, FANN_SIGMOID);
+	fann_set_activation_function_output(ann, FANN_LINEAR);
+	fann_set_activation_steepness_hidden(ann, 0.5);
+	fann_set_activation_steepness_output(ann, 0.5);
+
+	fann_set_train_error_function(ann, FANN_ERRORFUNC_LINEAR);
+	fann_set_rprop_increase_factor(ann, 1.2);
+	fann_set_rprop_decrease_factor(ann, 0.5);
+	fann_set_rprop_delta_min(ann, 0.0);
+	fann_set_rprop_delta_max(ann, 50.0);
+
+	ann->cascade_change_fraction = 0.01;
+	ann->cascade_stagnation_epochs = 12;
+	ann->cascade_num_candidates = 16;
+	ann->cascade_weight_multiplier = 0.5;
+	
 	calibrate_timer();
 
 	while(total_elapsed < (double)seconds_of_training){

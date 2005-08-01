@@ -124,19 +124,6 @@ struct fann
 	 */
 	fann_type *train_errors;
 
-	/* Used to choose which activation function to use
-	   
-	   Sometimes it can be smart, to set the activation function for the hidden neurons
-	   to FANN_THRESHOLD and the activation function for the output neurons to FANN_SIGMOID,
-	   in this way you get a very fast network, that is still cabable of
-	   producing real valued output.
-	unsigned int activation_function_hidden, activation_function_output; */
-
-	/* Parameters for the activation function 
-	fann_type activation_steepness_hidden;
-	fann_type activation_steepness_output;
-	*/
-
 	/* Training algorithm used when calling fann_train_on_..
 	 */
 	unsigned int training_algorithm;
