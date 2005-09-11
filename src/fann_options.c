@@ -77,7 +77,7 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("RPROP delta max            :  %5.2f\n", ann->rprop_delta_max);
 	printf("Cascade change fraction    :  %9.6f\n", ann->cascade_change_fraction);
 	printf("Cascade stagnation epochs  :%4d\n", ann->cascade_stagnation_epochs);
-	printf("Cascade no. of candidates  :%4d\n", ann->cascade_num_candidates);
+	printf("Cascade no. of candidates  :%4d\n", fann_get_cascade_num_candidates(ann));
 }
 
 FANN_EXTERNAL unsigned int FANN_API fann_get_training_algorithm(struct fann *ann)
@@ -324,6 +324,16 @@ FANN_EXTERNAL float FANN_API fann_get_rprop_delta_min(struct fann *ann)
 FANN_EXTERNAL float FANN_API fann_get_rprop_delta_max(struct fann *ann)
 {
 	return ann->rprop_delta_max;
+}
+
+/* The number of candidates (calculated from cascade_activation_functions_count,
+ * cascade_activation_steepnesses_count and cascade_num_candidate_groups). 
+ */
+FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_num_candidates(struct fann *ann)
+{
+	return ann->cascade_activation_functions_count *
+		ann->cascade_activation_steepnesses_count *
+		ann->cascade_num_candidate_groups;
 }
 
 #ifdef FIXEDFANN

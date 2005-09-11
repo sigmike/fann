@@ -173,9 +173,20 @@ struct fann
 	 */
 	unsigned int num_bit_fail;
 
+	/* The maximum difference between the actual output and the expected output 
+	 * which is accepted when counting the bit fails.
+	 * This difference is multiplied by two when dealing with symmetric activation functions,
+	 * so that symmetric and not symmetric activation functions can use the same limit.
+	 */
+	fann_type bit_fail_limit;
+
 	/* The error function used during training. (default FANN_ERRORFUNC_TANH)
 	 */
 	unsigned int train_error_function;
+	
+	/* The stop function used during training. (default FANN_STOPFUNC_MSE)
+	*/
+	unsigned int train_stop_function;
 
 	/* Variables for use with Cascade Correlation */
 
@@ -190,11 +201,6 @@ struct fann
 	 */
 	unsigned int cascade_stagnation_epochs;
 
-	/* The number of candidate neurons used during cascade correlation
-	 * training.
-	 */
-	unsigned int cascade_num_candidates;
-
 	/* The current best candidate, which will be installed.
 	 */
 	unsigned int cascade_best_candidate;
@@ -206,12 +212,45 @@ struct fann
 	/* Scale of copied candidate output weights
 	 */
 	fann_type cascade_weight_multiplier;
+	
+	/* Maximum epochs to train the output neurons during cascade training
+	 */
+	unsigned int cascade_max_out_epochs;
+	
+	/* Maximum epochs to train the candidate neurons during cascade training
+	 */
+	unsigned int cascade_max_cand_epochs;	
 
+	/* An array consisting of the activation functions used when doing
+	 * cascade training.
+	 */
+	unsigned int *cascade_activation_functions;
+	
+	/* The number of elements in the cascade_activation_functions array.
+	*/
+	unsigned int cascade_activation_functions_count;
+	
+	/* An array consisting of the steepnesses used during cascade training.
+	*/
+	fann_type *cascade_activation_steepnesses;
+
+	/* The number of elements in the cascade_activation_steepnesses array.
+	*/
+	unsigned int cascade_activation_steepnesses_count;
+	
+	/* The number of candidates of each type that will be present.
+	 * The actual number of candidates is then 
+	 * cascade_activation_functions_count * 
+	 * cascade_activation_steepnesses_count *
+	 * cascade_num_candidate_groups
+	*/
+	unsigned int cascade_num_candidate_groups;
+	
 	/* An array consisting of the score of the individual candidates,
 	 * which is used to decide which candidate is the best
 	 */
 	fann_type *cascade_candidate_scores;
-
+	
 	/* The number of allocated neurons during cascade correlation algorithms.
 	 * This number might be higher than the actual number of neurons to avoid
 	 * allocating new space too often.
@@ -307,6 +346,7 @@ static char const *const FANN_TRAIN_NAMES[] = {
 	"FANN_TRAIN_QUICKPROP"
 };
 
+/* Error function used during training */
 enum
 {
 	/* Standard linear error function */
@@ -319,6 +359,20 @@ enum
 static char const *const FANN_ERRORFUNC_NAMES[] = {
 	"FANN_ERRORFUNC_LINEAR",
 	"FANN_ERRORFUNC_TANH"
+};
+
+/* Stop function used during training */
+enum fann_stopfunc_enum
+{
+	/* Stop criteria is MSE value */
+	FANN_STOPFUNC_MSE = 0,
+	/* Stop criteria is number of bits that fail */
+	FANN_STOPFUNC_BIT
+};
+
+static char const *const FANN_STOPFUNC_NAMES[] = {
+	"FANN_STOPFUNC_MSE",
+	"FANN_STOPFUNC_BIT"
 };
 
 #endif

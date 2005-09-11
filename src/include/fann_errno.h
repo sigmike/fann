@@ -73,7 +73,10 @@ extern "C"
 		FANN_E_CANT_USE_ACTIVATION,
 
 		/* Irreconcilable differences between two fann_train_data structures */
-		FANN_E_TRAIN_DATA_MISMATCH
+		FANN_E_TRAIN_DATA_MISMATCH,
+
+		/* Unable to use the selected training algorithm */
+		FANN_E_CANT_USE_TRAIN_ALG
 	};
 
 #ifdef __cplusplus

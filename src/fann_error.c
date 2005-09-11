@@ -156,8 +156,11 @@ void fann_error(struct fann_error *errdat, const unsigned int errno_f, ...)
 		sprintf(errstr, "Unable to use the selected activation function.\n");
 		break;
 	case FANN_E_TRAIN_DATA_MISMATCH:
-		sprintf(errstr, "Training data must be of equivalent structure.");
+		sprintf(errstr, "Training data must be of equivalent structure.\n");
 		break;
+	case FANN_E_CANT_USE_TRAIN_ALG:
+		sprintf(errstr, "Unable to use the selected training algorithm.\n");
+		
 	default:
 		vsprintf(errstr, "Unknown error.\n", ap);
 		break;

@@ -178,20 +178,21 @@ FANN_EXTERNAL float FANN_API fann_train_epoch(struct fann *ann, struct fann_trai
 {
 	switch (ann->training_algorithm)
 	{
-	case FANN_TRAIN_QUICKPROP:
-		return fann_train_epoch_quickprop(ann, data);
-		break;
-	case FANN_TRAIN_RPROP:
-		return fann_train_epoch_irpropm(ann, data);
-		break;
-	case FANN_TRAIN_BATCH:
-		return fann_train_epoch_batch(ann, data);
-		break;
-	case FANN_TRAIN_INCREMENTAL:
-		return fann_train_epoch_incremental(ann, data);
-		break;
-	default:
-		return 0.0;
+		case FANN_TRAIN_QUICKPROP:
+			return fann_train_epoch_quickprop(ann, data);
+			break;
+		case FANN_TRAIN_RPROP:
+			return fann_train_epoch_irpropm(ann, data);
+			break;
+		case FANN_TRAIN_BATCH:
+			return fann_train_epoch_batch(ann, data);
+			break;
+		case FANN_TRAIN_INCREMENTAL:
+			return fann_train_epoch_incremental(ann, data);
+			break;
+		default:
+			fann_error((struct fann_error *) ann, FANN_E_CANT_USE_TRAIN_ALG);
+			return 0.0;
 	}
 }
 
@@ -231,18 +232,18 @@ FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann,
 	printf("Training with ");
 	switch (ann->training_algorithm)
 	{
-	case FANN_TRAIN_QUICKPROP:
-		printf("FANN_TRAIN_QUICKPROP");
-		break;
-	case FANN_TRAIN_RPROP:
-		printf("FANN_TRAIN_RPROP");
-		break;
-	case FANN_TRAIN_BATCH:
-		printf("FANN_TRAIN_BATCH");
-		break;
-	case FANN_TRAIN_INCREMENTAL:
-		printf("FANN_TRAIN_INCREMENTAL");
-		break;
+		case FANN_TRAIN_QUICKPROP:
+			printf("FANN_TRAIN_QUICKPROP");
+			break;
+		case FANN_TRAIN_RPROP:
+			printf("FANN_TRAIN_RPROP");
+			break;
+		case FANN_TRAIN_BATCH:
+			printf("FANN_TRAIN_BATCH");
+			break;
+		case FANN_TRAIN_INCREMENTAL:
+			printf("FANN_TRAIN_INCREMENTAL");
+			break;
 	}
 	printf("\n");
 #endif

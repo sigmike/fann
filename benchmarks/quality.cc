@@ -217,15 +217,6 @@ void quality_benchmark_fann(bool stepwise, int training_algorithm,
 
 		/* make report */
 		clear_error();
-		for(i = 0; i != train_data->num_data; i++)
-		{
-			output = fann_run(ann, train_data->input[i]);
-			update_error(output, train_data->output[i], train_data->num_output);
-		}
-		train_error = mean_error();
-		train_bit_fail = num_bit_fail;
-
-		clear_error();
 		for(i = 0; i != test_data->num_data; i++)
 		{
 			output = fann_run(ann, test_data->input[i]);
@@ -233,6 +224,15 @@ void quality_benchmark_fann(bool stepwise, int training_algorithm,
 		}
 		test_error = mean_error();
 		test_bit_fail = num_bit_fail;
+
+		clear_error();
+		for(i = 0; i != train_data->num_data; i++)
+		{
+			output = fann_run(ann, train_data->input[i]);
+			update_error(output, train_data->output[i], train_data->num_output);
+		}
+		train_error = mean_error();
+		train_bit_fail = num_bit_fail;
 
 		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
 		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);
@@ -279,7 +279,7 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 
 	fann_set_training_algorithm(ann, FANN_TRAIN_RPROP);
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
-	fann_set_activation_function_output(ann, FANN_LINEAR);
+	fann_set_activation_function_output(ann, FANN_LINEAR_PIECE);
 	fann_set_activation_steepness_hidden(ann, 0.5);
 	fann_set_activation_steepness_output(ann, 0.5);
 
@@ -314,15 +314,6 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 		/* make report */
 
 		clear_error();
-		for(i = 0; i != train_data->num_data; i++)
-		{
-			output = fann_run(ann, train_data->input[i]);
-			update_error(output, train_data->output[i], train_data->num_output);
-		}
-		train_error = mean_error();
-		train_bit_fail = num_bit_fail;
-
-		clear_error();
 		for(i = 0; i != test_data->num_data; i++)
 		{
 			output = fann_run(ann, test_data->input[i]);
@@ -331,6 +322,14 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 		test_error = mean_error();
 		test_bit_fail = num_bit_fail;
 
+		clear_error();
+		for(i = 0; i != train_data->num_data; i++)
+		{
+			output = fann_run(ann, train_data->input[i]);
+			update_error(output, train_data->output[i], train_data->num_output);
+		}
+		train_error = mean_error();
+		train_bit_fail = num_bit_fail;
 
 		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
 		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);

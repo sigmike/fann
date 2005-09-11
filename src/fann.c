@@ -520,6 +520,8 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 
 	fann_type last_steepness = 0;
 	unsigned int last_activation_function = 0;
+#else
+	fann_type max_sum;	
 #endif
 
 	/* first set the input */
@@ -562,17 +564,6 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 
 			activation_function = neuron_it->activation_function;
 			steepness = neuron_it->activation_steepness;
-			/* TODO REMOVE BEGIN
-			 * if(layer_it == last_layer-1)
-			 * activation_function = FANN_SIGMOID_SYMMETRIC;
-			 * else
-			 * activation_function = FANN_SIGMOID;
-			 * #ifdef FIXEDFANN
-			 * steepness = multiplier/2.0;
-			 * #else
-			 * steepness = 0.5;
-			 * #endif
-			 * TODO REMOVE END */
 
 			neuron_sum = 0;
 			num_connections = neuron_it->last_con - neuron_it->first_con;
@@ -594,14 +585,14 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 				i = num_connections & 3;	/* same as modulo 4 */
 				switch (i)
 				{
-				case 3:
-					neuron_sum += fann_mult(weights[2], neurons[2].value);
-				case 2:
-					neuron_sum += fann_mult(weights[1], neurons[1].value);
-				case 1:
-					neuron_sum += fann_mult(weights[0], neurons[0].value);
-				case 0:
-					break;
+					case 3:
+						neuron_sum += fann_mult(weights[2], neurons[2].value);
+					case 2:
+						neuron_sum += fann_mult(weights[1], neurons[1].value);
+					case 1:
+						neuron_sum += fann_mult(weights[0], neurons[0].value);
+					case 0:
+						break;
 				}
 
 				for(; i != num_connections; i += 4)
@@ -628,14 +619,14 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 				i = num_connections & 3;	/* same as modulo 4 */
 				switch (i)
 				{
-				case 3:
-					neuron_sum += fann_mult(weights[2], neuron_pointers[2]->value);
-				case 2:
-					neuron_sum += fann_mult(weights[1], neuron_pointers[1]->value);
-				case 1:
-					neuron_sum += fann_mult(weights[0], neuron_pointers[0]->value);
-				case 0:
-					break;
+					case 3:
+						neuron_sum += fann_mult(weights[2], neuron_pointers[2]->value);
+					case 2:
+						neuron_sum += fann_mult(weights[1], neuron_pointers[1]->value);
+					case 1:
+						neuron_sum += fann_mult(weights[0], neuron_pointers[0]->value);
+					case 0:
+						break;
 				}
 
 				for(; i != num_connections; i += 4)
@@ -655,68 +646,75 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 			{
 				switch (activation_function)
 				{
-				case FANN_SIGMOID:
-				case FANN_SIGMOID_STEPWISE:
-					r1 = ann->sigmoid_results[0];
-					r2 = ann->sigmoid_results[1];
-					r3 = ann->sigmoid_results[2];
-					r4 = ann->sigmoid_results[3];
-					r5 = ann->sigmoid_results[4];
-					r6 = ann->sigmoid_results[5];
-					v1 = ann->sigmoid_values[0] / steepness;
-					v2 = ann->sigmoid_values[1] / steepness;
-					v3 = ann->sigmoid_values[2] / steepness;
-					v4 = ann->sigmoid_values[3] / steepness;
-					v5 = ann->sigmoid_values[4] / steepness;
-					v6 = ann->sigmoid_values[5] / steepness;
-					break;
-				case FANN_SIGMOID_SYMMETRIC:
-				case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-					r1 = ann->sigmoid_symmetric_results[0];
-					r2 = ann->sigmoid_symmetric_results[1];
-					r3 = ann->sigmoid_symmetric_results[2];
-					r4 = ann->sigmoid_symmetric_results[3];
-					r5 = ann->sigmoid_symmetric_results[4];
-					r6 = ann->sigmoid_symmetric_results[5];
-					v1 = ann->sigmoid_symmetric_values[0] / steepness;
-					v2 = ann->sigmoid_symmetric_values[1] / steepness;
-					v3 = ann->sigmoid_symmetric_values[2] / steepness;
-					v4 = ann->sigmoid_symmetric_values[3] / steepness;
-					v5 = ann->sigmoid_symmetric_values[4] / steepness;
-					v6 = ann->sigmoid_symmetric_values[5] / steepness;
-					break;
-				default:
-					break;
+					case FANN_SIGMOID:
+					case FANN_SIGMOID_STEPWISE:
+						r1 = ann->sigmoid_results[0];
+						r2 = ann->sigmoid_results[1];
+						r3 = ann->sigmoid_results[2];
+						r4 = ann->sigmoid_results[3];
+						r5 = ann->sigmoid_results[4];
+						r6 = ann->sigmoid_results[5];
+						v1 = ann->sigmoid_values[0] / steepness;
+						v2 = ann->sigmoid_values[1] / steepness;
+						v3 = ann->sigmoid_values[2] / steepness;
+						v4 = ann->sigmoid_values[3] / steepness;
+						v5 = ann->sigmoid_values[4] / steepness;
+						v6 = ann->sigmoid_values[5] / steepness;
+						break;
+					case FANN_SIGMOID_SYMMETRIC:
+					case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+						r1 = ann->sigmoid_symmetric_results[0];
+						r2 = ann->sigmoid_symmetric_results[1];
+						r3 = ann->sigmoid_symmetric_results[2];
+						r4 = ann->sigmoid_symmetric_results[3];
+						r5 = ann->sigmoid_symmetric_results[4];
+						r6 = ann->sigmoid_symmetric_results[5];
+						v1 = ann->sigmoid_symmetric_values[0] / steepness;
+						v2 = ann->sigmoid_symmetric_values[1] / steepness;
+						v3 = ann->sigmoid_symmetric_values[2] / steepness;
+						v4 = ann->sigmoid_symmetric_values[3] / steepness;
+						v5 = ann->sigmoid_symmetric_values[4] / steepness;
+						v6 = ann->sigmoid_symmetric_values[5] / steepness;
+						break;
+					default:
+						break;
 				}
 			}
 
 			switch (activation_function)
 			{
-			case FANN_SIGMOID:
-			case FANN_SIGMOID_STEPWISE:
-				neuron_it->value =
-					(fann_type) fann_stepwise(v1, v2, v3, v4, v5, v6, r1, r2, r3, r4, r5, r6, 0,
-											  multiplier, neuron_sum);
-				break;
-			case FANN_SIGMOID_SYMMETRIC:
-			case FANN_SIGMOID_SYMMETRIC_STEPWISE:
-				neuron_it->value =
-					(fann_type) fann_stepwise(v1, v2, v3, v4, v5, v6, r1, r2, r3, r4, r5, r6,
-											  -multiplier, multiplier, neuron_sum);
-				break;
-			case FANN_THRESHOLD:
-				neuron_it->value = (fann_type) ((neuron_sum < 0) ? 0 : 1);
-				break;
-			case FANN_THRESHOLD_SYMMETRIC:
-				neuron_it->value = (fann_type) ((neuron_sum < 0) ? -1 : 1);
-				break;
-			default:
-				fann_error((struct fann_error *) ann, FANN_E_CANT_USE_ACTIVATION);
+				case FANN_SIGMOID:
+				case FANN_SIGMOID_STEPWISE:
+					neuron_it->value =
+						(fann_type) fann_stepwise(v1, v2, v3, v4, v5, v6, r1, r2, r3, r4, r5, r6, 0,
+												  multiplier, neuron_sum);
+					break;
+				case FANN_SIGMOID_SYMMETRIC:
+				case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+					neuron_it->value =
+						(fann_type) fann_stepwise(v1, v2, v3, v4, v5, v6, r1, r2, r3, r4, r5, r6,
+												  -multiplier, multiplier, neuron_sum);
+					break;
+				case FANN_THRESHOLD:
+					neuron_it->value = (fann_type) ((neuron_sum < 0) ? 0 : 1);
+					break;
+				case FANN_THRESHOLD_SYMMETRIC:
+					neuron_it->value = (fann_type) ((neuron_sum < 0) ? -1 : 1);
+					break;
+				default:
+					fann_error((struct fann_error *) ann, FANN_E_CANT_USE_ACTIVATION);
 			}
 			last_steepness = steepness;
 			last_activation_function = activation_function;
 #else
 			neuron_sum = fann_mult(steepness, neuron_sum);
+			
+			max_sum = 150/steepness;
+			if(neuron_sum > max_sum)
+				neuron_sum = max_sum;
+			else if(neuron_sum < -max_sum)
+				neuron_sum = -max_sum;
+			
 			neuron_it->sum = neuron_sum;
 
 			fann_activation_switch(ann, activation_function, neuron_sum, neuron_it->value);
@@ -751,6 +749,8 @@ FANN_EXTERNAL void FANN_API fann_destroy(struct fann *ann)
 	fann_safe_free(ann->prev_train_slopes);
 	fann_safe_free(ann->prev_steps);
 	fann_safe_free(ann->errstr);
+	fann_safe_free(ann->cascade_activation_functions);
+	fann_safe_free(ann->cascade_activation_steepnesses);
 	fann_safe_free(ann);
 }
 
@@ -957,16 +957,54 @@ struct fann *fann_allocate_structure(float learning_rate, unsigned int num_layer
 	ann->num_MSE = 0;
 	ann->MSE_value = 0;
 	ann->num_bit_fail = 0;
+	ann->bit_fail_limit = 0.35;
 	ann->shortcut_connections = 0;
 	ann->train_error_function = FANN_ERRORFUNC_TANH;
+	ann->train_stop_function = FANN_STOPFUNC_MSE;
 
 	/* variables used for cascade correlation (reasonable defaults) */
 	ann->cascade_change_fraction = 0.01;
 	ann->cascade_stagnation_epochs = 12;
-	ann->cascade_num_candidates = 8;
-	ann->cascade_weight_multiplier = 0.5;
+	ann->cascade_num_candidate_groups = 2;
+	ann->cascade_weight_multiplier = 0.4;
 	ann->cascade_candidate_limit = 1000.0;
+	ann->cascade_max_out_epochs = 150;
+	ann->cascade_max_cand_epochs = 150;
 	ann->cascade_candidate_scores = NULL;
+	ann->cascade_activation_functions_count = 6;
+	ann->cascade_activation_functions = 
+		(unsigned int *)calloc(ann->cascade_activation_functions_count, 
+							   sizeof(unsigned int));
+	if(ann->cascade_activation_functions == NULL)
+	{
+		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		free(ann);
+		return NULL;
+	}
+							   
+	ann->cascade_activation_functions[0] = FANN_SIGMOID;
+	ann->cascade_activation_functions[1] = FANN_SIGMOID_SYMMETRIC;
+	ann->cascade_activation_functions[2] = FANN_GAUSSIAN;
+	ann->cascade_activation_functions[3] = FANN_GAUSSIAN_SYMMETRIC;
+	ann->cascade_activation_functions[4] = FANN_ELLIOT;
+	ann->cascade_activation_functions[5] = FANN_ELLIOT_SYMMETRIC;
+
+	ann->cascade_activation_steepnesses_count = 4;
+	ann->cascade_activation_steepnesses = 
+		(fann_type *)calloc(ann->cascade_activation_steepnesses_count, 
+							   sizeof(fann_type));
+	if(ann->cascade_activation_functions == NULL)
+	{
+		fann_safe_free(ann->cascade_activation_functions);
+		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		free(ann);
+		return NULL;
+	}
+	
+	ann->cascade_activation_steepnesses[0] = 0.25;
+	ann->cascade_activation_steepnesses[1] = 0.5;
+	ann->cascade_activation_steepnesses[2] = 0.75;
+	ann->cascade_activation_steepnesses[3] = 1.0;
 
 	/* Variables for use with with Quickprop training (reasonable defaults) */
 	ann->quickprop_decay = (float) -0.0001;

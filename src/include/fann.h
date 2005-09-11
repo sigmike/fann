@@ -401,11 +401,10 @@ extern "C"
 															 unsigned int decimal_point);
 	 
 /* ----- Implemented in fann_cascade.c Used to train the ANN with cascade correlation ----- */ 
-	void fann_cascadetrain_on_data_callback(struct fann *ann, struct fann_train_data *data,
+void fann_cascadetrain_on_data_callback(struct fann *ann, struct fann_train_data *data,
 											float desired_error,
 											int (*callback) (unsigned int epochs, float error),
 											unsigned int max_out_epochs,
-											unsigned int max_cand_epochs, unsigned int max_neurons,
 											unsigned int neurons_between_reports);
 	 
 /* ----- Implemented in fann_options.c Get and set options for the ANNs ----- */ 
@@ -567,7 +566,12 @@ extern "C"
 /* Get the total number of connections in the entire network.
  */ 
 	  FANN_EXTERNAL unsigned int FANN_API fann_get_total_connections(struct fann *ann);
-	 
+
+/* The number of candidates (calculated from cascade_activation_functions_count,
+ * cascade_activation_steepnesses_count and cascade_num_candidate_groups). 
+ */
+FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_num_candidates(struct fann *ann);
+	  
 #ifdef FIXEDFANN
 	 
 /* returns the position of the decimal point.

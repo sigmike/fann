@@ -2,7 +2,7 @@
 
 date;
 
-max_seconds_training=300;
+max_seconds_training=1000;
 secs_between_reports=0.01;
 
 function benchmark_algorithm() {
@@ -13,16 +13,16 @@ function benchmark_algorithm() {
 function benchmark_problem() {
     #rm -f *_fixed.net
     algo="fann_cascade"; benchmark_algorithm;
-    algo="fann_rprop"; benchmark_algorithm;
+#    algo="fann_rprop"; benchmark_algorithm;
     #./quality_fixed $prob.$algo.train.out_fixed_train $prob.$algo.train.out_fixed_test $prob.$algo.fixed_train.out $prob.$algo.fixed_test.out *_fixed.net
     
 	
 #	algo="fann_rprop_stepwise"; benchmark_algorithm;
-    algo="fann_quickprop"; benchmark_algorithm;
+#    algo="fann_quickprop"; benchmark_algorithm;
     #algo="fann_quickprop_stepwise"; benchmark_algorithm;
 #    algo="fann_batch"; benchmark_algorithm;
     #algo="fann_batch_stepwise"; benchmark_algorithm;
-    algo="fann_incremental"; benchmark_algorithm;
+#    algo="fann_incremental"; benchmark_algorithm;
     #algo="fann_incremental_stepwise"; benchmark_algorithm;
 
     #comment out two following lines if the libraries are not available
@@ -69,10 +69,10 @@ benchmark_problem;
 prob="two-spiral"; n1=20; n2=10; sec_train=$max_seconds_training;
 benchmark_problem;
 
-# ./performance fann fann_performance.out 1 2048 2 20
-# ./performance fann_stepwise fann_stepwise_performance.out 1 2048 2 20
-# ./performance_fixed fann fann_fixed_performance.out 1 2048 2 20
-# ./performance lwnn lwnn_performance.out 1 2048 2 20
-# ./performance jneural jneural_performance.out 1 256 2 20
+./performance fann fann_performance.out 1 2048 2 20
+./performance fann_stepwise fann_stepwise_performance.out 1 2048 2 20
+./performance_fixed fann fann_fixed_performance.out 1 2048 2 20
+./performance lwnn lwnn_performance.out 1 2048 2 20
+./performance jneural jneural_performance.out 1 256 2 20
 
 gnuplot < gnuplot

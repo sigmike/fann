@@ -112,7 +112,19 @@ enum
 	 * y = (x*s) / (1 + |x*s|)
 	 * d = s*1/((1+|x*s|)*(1+|x*s|))
 	 */
-	FANN_ELLIOT_SYMMETRIC
+	FANN_ELLIOT_SYMMETRIC,
+
+	/* Linear activation function.
+	 * span: 0 < y < 1
+	 * y = x*s, d = 1*s
+	 */
+	FANN_LINEAR_PIECE,
+
+	/* Linear activation function.
+	 * span: -1 < y < 1
+	 * y = x*s, d = 1*s
+	 */
+	FANN_LINEAR_PIECE_SYMMETRIC
 };
 
 static char const *const FANN_ACTIVATION_NAMES[] = {
@@ -127,7 +139,9 @@ static char const *const FANN_ACTIVATION_NAMES[] = {
 	"FANN_GAUSSIAN_SYMMETRIC",
 	"FANN_GAUSSIAN_STEPWISE",
 	"FANN_ELLIOT",
-	"FANN_ELLIOT_SYMMETRIC"
+	"FANN_ELLIOT_SYMMETRIC",
+	"FANN_LINEAR_PIECE",
+	"FANN_LINEAR_PIECE_SYMMETRIC"
 };
 
 /* Implementation of the activation functions
@@ -165,20 +179,26 @@ static char const *const FANN_ACTIVATION_NAMES[] = {
 #define fann_gaussian_symmetric_derive(steepness, value, sum) (-2.0f * sum * (value+1.0f) * steepness)
 
 /* FANN_ELLIOT */
-#define fann_elliot(steepness, sum) (((sum * steepness) / 2.0f) / (1.0f + abs(sum * steepness)) + 0.5f)
-#define fann_elliot_real(sum) (((sum) / 2.0f) / (1.0f + abs(sum)) + 0.5f)
-#define fann_elliot_derive(steepness, value, sum) (steepness * 1.0f / (2.0f * (1.0f + abs(sum)) * (1.0f + abs(sum))))
+#define fann_elliot(steepness, sum) (((sum * steepness) / 2.0f) / (1.0f + fann_abs(sum * steepness)) + 0.5f)
+#define fann_elliot_real(sum) (((sum) / 2.0f) / (1.0f + fann_abs(sum)) + 0.5f)
+#define fann_elliot_derive(steepness, value, sum) (steepness * 1.0f / (2.0f * (1.0f + fann_abs(sum)) * (1.0f + fann_abs(sum))))
 
 /* FANN_ELLIOT_SYMMETRIC */
-#define fann_elliot_symmetric(steepness, sum) ((sum * steepness) / (1.0f + abs(sum * steepness)))
-#define fann_elliot_symmetric_real(sum) ((sum) / (1.0f + abs(sum)))
-#define fann_elliot_symmetric_derive(steepness, value, sum) (steepness * 1.0f / ((1.0f + abs(sum)) * (1.0f + abs(sum))))
+#define fann_elliot_symmetric(steepness, sum) ((sum * steepness) / (1.0f + fann_abs(sum * steepness)))
+#define fann_elliot_symmetric_real(sum) ((sum) / (1.0f + fann_abs(sum)))
+#define fann_elliot_symmetric_derive(steepness, value, sum) (steepness * 1.0f / ((1.0f + fann_abs(sum)) * (1.0f + fann_abs(sum))))
 
 #define fann_activation_switch(ann, activation_function, value, result) \
 switch(activation_function) \
 { \
 	case FANN_LINEAR: \
-		result = value; \
+		result = (fann_type)value; \
+        break; \
+	case FANN_LINEAR_PIECE: \
+		result = (fann_type)((value < 0) ? 0 : (value > 1) ? 1 : value); \
+        break; \
+	case FANN_LINEAR_PIECE_SYMMETRIC: \
+		result = (fann_type)((value < -1) ? -1 : (value > 1) ? 1 : value); \
         break; \
 	case FANN_SIGMOID: \
 		result = (fann_type)fann_sigmoid_real(value); \
@@ -206,7 +226,7 @@ switch(activation_function) \
         break; \
 	case FANN_ELLIOT: \
 		result = (fann_type)fann_elliot_real(value); \
-        break; \
+	    break; \
 	case FANN_ELLIOT_SYMMETRIC: \
 		result = (fann_type)fann_elliot_symmetric_real(value); \
         break; \
