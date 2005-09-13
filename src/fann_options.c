@@ -26,7 +26,6 @@
 #include "fann.h"
 #include "fann_errno.h"
 
-/* Prints all of the parameters and options of the ANN */
 FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 {
 	struct fann_layer *layer_it;
@@ -80,24 +79,27 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("Cascade no. of candidates  :%4d\n", fann_get_cascade_num_candidates(ann));
 }
 
-FANN_EXTERNAL unsigned int FANN_API fann_get_training_algorithm(struct fann *ann)
-{
-	return ann->training_algorithm;
+#define FANN_GET(type, name) \
+FANN_EXTERNAL type FANN_API fann_get_ ## name(struct fann *ann) \
+{ \
+	return ann->name; \
 }
 
-FANN_EXTERNAL void FANN_API fann_set_training_algorithm(struct fann *ann,
-														unsigned int training_algorithm)
-{
-	ann->training_algorithm = training_algorithm;
+#define FANN_SET(type, name) \
+FANN_EXTERNAL void FANN_API fann_set_ ## name(struct fann *ann, type value) \
+{ \
+	ann->name = value; \
 }
 
-FANN_EXTERNAL void FANN_API fann_set_learning_rate(struct fann *ann, float learning_rate)
-{
-	ann->learning_rate = learning_rate;
-}
+#define FANN_GET_SET(type, name) \
+FANN_GET(type, name) \
+FANN_SET(type, name)
+
+FANN_GET_SET(enum fann_train_enum, training_algorithm)
+FANN_GET_SET(float, learning_rate)
 
 FANN_EXTERNAL void FANN_API fann_set_activation_function_hidden(struct fann *ann,
-																unsigned int activation_function)
+																enum fann_activationfunc_enum activation_function)
 {
 	struct fann_neuron *last_neuron, *neuron_it;
 	struct fann_layer *layer_it;
@@ -114,7 +116,7 @@ FANN_EXTERNAL void FANN_API fann_set_activation_function_hidden(struct fann *ann
 }
 
 FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann,
-																unsigned int activation_function)
+																enum fann_activationfunc_enum activation_function)
 {
 	struct fann_neuron *last_neuron, *neuron_it;
 	struct fann_layer *last_layer = ann->last_layer - 1;
@@ -156,64 +158,8 @@ FANN_EXTERNAL void FANN_API fann_set_activation_steepness_output(struct fann *an
 	}
 }
 
-FANN_EXTERNAL void FANN_API fann_set_activation_hidden_steepness(struct fann *ann,
-																 fann_type steepness)
-{
-	fann_set_activation_steepness_hidden(ann, steepness);
-}
-
-FANN_EXTERNAL void FANN_API fann_set_activation_output_steepness(struct fann *ann,
-																 fann_type steepness)
-{
-	fann_set_activation_steepness_output(ann, steepness);
-}
-
-FANN_EXTERNAL float FANN_API fann_get_learning_rate(struct fann *ann)
-{
-	return ann->learning_rate;
-}
-
-FANN_EXTERNAL unsigned int FANN_API fann_get_num_input(struct fann *ann)
-{
-	return ann->num_input;
-}
-
-FANN_EXTERNAL unsigned int FANN_API fann_get_num_output(struct fann *ann)
-{
-	return ann->num_output;
-}
-
-/*
-FANN_EXTERNAL unsigned int FANN_API fann_get_activation_function_hidden(struct fann *ann)
-{
-	return ann->activation_function_hidden;
-}
-
-FANN_EXTERNAL unsigned int FANN_API fann_get_activation_function_output(struct fann *ann)
-{
-	return ann->activation_function_output;
-}
-
-FANN_EXTERNAL fann_type FANN_API fann_get_activation_hidden_steepness(struct fann *ann)
-{
-	return ann->activation_steepness_hidden;
-}
-
-FANN_EXTERNAL fann_type FANN_API fann_get_activation_output_steepness(struct fann *ann)
-{
-	return ann->activation_steepness_output;
-}
-
-FANN_EXTERNAL fann_type FANN_API fann_get_activation_steepness_hidden(struct fann *ann)
-{
-	return ann->activation_steepness_hidden;
-}
-
-FANN_EXTERNAL fann_type FANN_API fann_get_activation_steepness_output(struct fann *ann)
-{
-	return ann->activation_steepness_output;
-}
-*/
+FANN_GET(unsigned int, num_input)
+FANN_GET(unsigned int, num_output)
 
 FANN_EXTERNAL unsigned int FANN_API fann_get_total_neurons(struct fann *ann)
 {
@@ -228,107 +174,16 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_total_neurons(struct fann *ann)
 	}
 }
 
-FANN_EXTERNAL unsigned int FANN_API fann_get_total_connections(struct fann *ann)
-{
-	return ann->total_connections;
-}
+FANN_GET(unsigned int, total_connections)
+FANN_GET_SET(enum fann_errorfunc_enum, train_error_function)
+FANN_GET_SET(float, quickprop_decay)
+FANN_GET_SET(float, quickprop_mu)
+FANN_GET_SET(float, rprop_increase_factor)
+FANN_GET_SET(float, rprop_decrease_factor)
+FANN_GET_SET(float, rprop_delta_min)
+FANN_GET_SET(float, rprop_delta_max)
+FANN_GET_SET(enum fann_stopfunc_enum, train_stop_function)
 
-/* When using this, training is usually faster. (default ).
-   Makes the error used for calculating the slopes
-   higher when the difference is higher.
- */
-FANN_EXTERNAL void FANN_API fann_set_train_error_function(struct fann *ann,
-														  unsigned int train_error_function)
-{
-	ann->train_error_function = train_error_function;
-}
-
-/* Decay is used to make the weights do not go so high (default -0.0001). */
-FANN_EXTERNAL void FANN_API fann_set_quickprop_decay(struct fann *ann, float quickprop_decay)
-{
-	ann->quickprop_decay = quickprop_decay;
-}
-
-/* Mu is a factor used to increase and decrease the stepsize (default 1.75). */
-FANN_EXTERNAL void FANN_API fann_set_quickprop_mu(struct fann *ann, float quickprop_mu)
-{
-	ann->quickprop_mu = quickprop_mu;
-}
-
-/* Tells how much the stepsize should increase during learning (default 1.2). */
-FANN_EXTERNAL void FANN_API fann_set_rprop_increase_factor(struct fann *ann,
-														   float rprop_increase_factor)
-{
-	ann->rprop_increase_factor = rprop_increase_factor;
-}
-
-/* Tells how much the stepsize should decrease during learning (default 0.5). */
-FANN_EXTERNAL void FANN_API fann_set_rprop_decrease_factor(struct fann *ann,
-														   float rprop_decrease_factor)
-{
-	ann->rprop_decrease_factor = rprop_decrease_factor;
-}
-
-/* The minimum stepsize (default 0.0). */
-FANN_EXTERNAL void FANN_API fann_set_rprop_delta_min(struct fann *ann, float rprop_delta_min)
-{
-	ann->rprop_delta_min = rprop_delta_min;
-}
-
-/* The maximum stepsize (default 50.0). */
-FANN_EXTERNAL void FANN_API fann_set_rprop_delta_max(struct fann *ann, float rprop_delta_max)
-{
-	ann->rprop_delta_max = rprop_delta_max;
-}
-
-/* When using this, training is usually faster. (default ).
-   Makes the error used for calculating the slopes
-   higher when the difference is higher.
- */
-FANN_EXTERNAL unsigned int FANN_API fann_get_train_error_function(struct fann *ann)
-{
-	return ann->train_error_function;
-}
-
-/* Decay is used to make the weights do not go so high (default -0.0001). */
-FANN_EXTERNAL float FANN_API fann_get_quickprop_decay(struct fann *ann)
-{
-	return ann->quickprop_decay;
-}
-
-/* Mu is a factor used to increase and decrease the stepsize (default 1.75). */
-FANN_EXTERNAL float FANN_API fann_get_quickprop_mu(struct fann *ann)
-{
-	return ann->quickprop_mu;
-}
-
-/* Tells how much the stepsize should increase during learning (default 1.2). */
-FANN_EXTERNAL float FANN_API fann_get_rprop_increase_factor(struct fann *ann)
-{
-	return ann->rprop_increase_factor;
-}
-
-/* Tells how much the stepsize should decrease during learning (default 0.5). */
-FANN_EXTERNAL float FANN_API fann_get_rprop_decrease_factor(struct fann *ann)
-{
-	return ann->rprop_decrease_factor;
-}
-
-/* The minimum stepsize (default 0.0). */
-FANN_EXTERNAL float FANN_API fann_get_rprop_delta_min(struct fann *ann)
-{
-	return ann->rprop_delta_min;
-}
-
-/* The maximum stepsize (default 50.0). */
-FANN_EXTERNAL float FANN_API fann_get_rprop_delta_max(struct fann *ann)
-{
-	return ann->rprop_delta_max;
-}
-
-/* The number of candidates (calculated from cascade_activation_functions_count,
- * cascade_activation_steepnesses_count and cascade_num_candidate_groups). 
- */
 FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_num_candidates(struct fann *ann)
 {
 	return ann->cascade_activation_functions_count *
@@ -336,20 +191,74 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_num_candidates(struct fann 
 		ann->cascade_num_candidate_groups;
 }
 
-#ifdef FIXEDFANN
-/* returns the position of the fix point.
- */
-FANN_EXTERNAL unsigned int FANN_API fann_get_decimal_point(struct fann *ann)
+FANN_GET_SET(float, cascade_change_fraction)
+FANN_GET_SET(unsigned int, cascade_stagnation_epochs)
+FANN_GET_SET(unsigned int, cascade_num_candidate_groups)
+FANN_GET_SET(fann_type, cascade_weight_multiplier)
+FANN_GET_SET(fann_type, cascade_candidate_limit)
+FANN_GET_SET(unsigned int, cascade_max_out_epochs)
+FANN_GET_SET(unsigned int, cascade_max_cand_epochs)
+
+FANN_GET(unsigned int, cascade_activation_functions_count)
+FANN_GET(enum fann_activationfunc_enum *, cascade_activation_functions)
+
+FANN_EXTERNAL void fann_set_cascade_activation_functions(struct fann *ann,
+														 enum fann_activationfunc_enum *
+														 cascade_activation_functions,
+														 unsigned int 
+														 cascade_activation_functions_count)
 {
-	return ann->decimal_point;
+	if(ann->cascade_activation_functions_count != cascade_activation_functions_count)
+	{
+		ann->cascade_activation_functions_count = cascade_activation_functions_count;
+		
+		/* reallocate mem */
+		ann->cascade_activation_functions = 
+			(enum fann_activationfunc_enum *)realloc(ann->cascade_activation_functions, 
+			ann->cascade_activation_functions_count * sizeof(enum fann_activationfunc_enum));
+		if(ann->cascade_activation_functions == NULL)
+		{
+			fann_error((struct fann_error*)ann, FANN_E_CANT_ALLOCATE_MEM);
+			return;
+		}
+	}
+	
+	memmove(ann->cascade_activation_functions, cascade_activation_functions, 
+		ann->cascade_activation_functions_count * sizeof(enum fann_activationfunc_enum));
 }
 
-/* returns the multiplier that fix point data is multiplied with.
- */
-FANN_EXTERNAL unsigned int FANN_API fann_get_multiplier(struct fann *ann)
+FANN_GET(unsigned int, cascade_activation_steepnesses_count)
+FANN_GET(fann_type *, cascade_activation_steepnesses)
+
+FANN_EXTERNAL void fann_set_cascade_activation_steepnesses(struct fann *ann,
+														   fann_type *
+														   cascade_activation_steepnesses,
+														   unsigned int 
+														   cascade_activation_steepnesses_count)
 {
-	return ann->multiplier;
+	if(ann->cascade_activation_steepnesses_count != cascade_activation_steepnesses_count)
+	{
+		ann->cascade_activation_steepnesses_count = cascade_activation_steepnesses_count;
+		
+		/* reallocate mem */
+		ann->cascade_activation_steepnesses = 
+			(fann_type *)realloc(ann->cascade_activation_steepnesses, 
+			ann->cascade_activation_steepnesses_count * sizeof(fann_type));
+		if(ann->cascade_activation_steepnesses == NULL)
+		{
+			fann_error((struct fann_error*)ann, FANN_E_CANT_ALLOCATE_MEM);
+			return;
+		}
+	}
+	
+	memmove(ann->cascade_activation_steepnesses, cascade_activation_steepnesses, 
+		ann->cascade_activation_steepnesses_count * sizeof(fann_type));
 }
+
+#ifdef FIXEDFANN
+
+FANN_GET(unsigned int, decimal_point)
+FANN_GET(unsigned int, multiplier)
 
 /* INTERNAL FUNCTION
    Adjust the steepwise functions (if used)
@@ -385,22 +294,6 @@ void fann_update_stepwise(struct fann *ann)
 	ann->sigmoid_symmetric_results[5] =
 		fann_min(ann->multiplier - (fann_type) (ann->multiplier / 100.0 + 1.0),
 				 ann->multiplier - 1);
-
-	/*DEBUG
-	 * ann->sigmoid_results[0] = (fann_type)(ann->multiplier/200.0+0.5);
-	 * ann->sigmoid_results[1] = (fann_type)(ann->multiplier/20.0+0.5);
-	 * ann->sigmoid_results[2] = (fann_type)(ann->multiplier/4.0+0.5);
-	 * ann->sigmoid_results[3] = ann->multiplier - (fann_type)(ann->multiplier/4.0+0.5);
-	 * ann->sigmoid_results[4] = ann->multiplier - (fann_type)(ann->multiplier/20.0+0.5);
-	 * ann->sigmoid_results[5] = ann->multiplier - (fann_type)(ann->multiplier/200.0+0.5);
-	 * 
-	 * ann->sigmoid_symmetric_results[0] = (fann_type)((ann->multiplier/100.0) - ann->multiplier + 0.5);
-	 * ann->sigmoid_symmetric_results[1] = (fann_type)((ann->multiplier/10.0) - ann->multiplier + 0.5);
-	 * ann->sigmoid_symmetric_results[2] = (fann_type)((ann->multiplier/2.0) - ann->multiplier + 0.5);
-	 * ann->sigmoid_symmetric_results[3] = ann->multiplier - (fann_type)(ann->multiplier/2.0+0.5);
-	 * ann->sigmoid_symmetric_results[4] = ann->multiplier - (fann_type)(ann->multiplier/10.0+0.5);
-	 * ann->sigmoid_symmetric_results[5] = ann->multiplier - (fann_type)(ann->multiplier/100.0+0.5);
-	 */
 
 	for(i = 0; i < 6; i++)
 	{

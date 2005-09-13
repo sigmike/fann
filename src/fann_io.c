@@ -362,8 +362,8 @@ void fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, char
  */
 struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file)
 {
-	unsigned int num_layers, layer_size, activation_function_hidden, activation_function_output,
-		input_neuron, i, shortcut_connections, num_connections;
+	unsigned int num_layers, layer_size, input_neuron, i, shortcut_connections, num_connections;
+	unsigned int activation_function_hidden, activation_function_output;
 #ifdef FIXEDFANN
 	unsigned int decimal_point, multiplier;
 #endif
@@ -495,8 +495,8 @@ struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file
 
 	fann_set_activation_steepness_hidden(ann, activation_steepness_hidden);
 	fann_set_activation_steepness_output(ann, activation_steepness_output);
-	fann_set_activation_function_hidden(ann, activation_function_hidden);
-	fann_set_activation_function_output(ann, activation_function_output);
+	fann_set_activation_function_hidden(ann, (enum fann_activationfunc_enum)activation_function_hidden);
+	fann_set_activation_function_output(ann, (enum fann_activationfunc_enum)activation_function_output);
 
 #ifdef DEBUG
 	printf("output\n");
@@ -638,7 +638,7 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 	for(neuron_it = ann->first_layer->first_neuron; neuron_it != last_neuron; neuron_it++)
 	{
 		if(fscanf
-		   (conf, "%u %u " FANNSCANF " ", &num_connections, &neuron_it->activation_function,
+		   (conf, "%u %u " FANNSCANF " ", &num_connections, (unsigned int *)&neuron_it->activation_function,
 			&neuron_it->activation_steepness) != 3)
 		{
 			fann_error((struct fann_error *) ann, FANN_E_CANT_READ_NEURON, configuration_file);

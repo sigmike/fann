@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    d is the derivation.
  */
 
-enum
+enum fann_activationfunc_enum
 {
 	/* Linear activation function.
 	 * span: -inf < y < inf
@@ -229,10 +229,6 @@ switch(activation_function) \
 	    break; \
 	case FANN_ELLIOT_SYMMETRIC: \
 		result = (fann_type)fann_elliot_symmetric_real(value); \
-        break; \
-	default: \
-		fann_error((struct fann_error *)ann, FANN_E_CANT_USE_ACTIVATION); \
-		result = 0; \
         break; \
 }
 

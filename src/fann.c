@@ -676,7 +676,7 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 						v5 = ann->sigmoid_symmetric_values[4] / steepness;
 						v6 = ann->sigmoid_symmetric_values[5] / steepness;
 						break;
-					default:
+					case FANN_THRESHOLD:
 						break;
 				}
 			}
@@ -701,7 +701,7 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 				case FANN_THRESHOLD_SYMMETRIC:
 					neuron_it->value = (fann_type) ((neuron_sum < 0) ? -1 : 1);
 					break;
-				default:
+				case FANN_ELLIOT:
 					fann_error((struct fann_error *) ann, FANN_E_CANT_USE_ACTIVATION);
 			}
 			last_steepness = steepness;
@@ -941,7 +941,7 @@ struct fann *fann_allocate_structure(float learning_rate, unsigned int num_layer
 		return NULL;
 	}
 
-	ann->errno_f = 0;
+	ann->errno_f = FANN_E_NO_ERROR;
 	ann->error_log = NULL;
 	ann->errstr = NULL;
 	ann->learning_rate = learning_rate;
@@ -973,8 +973,8 @@ struct fann *fann_allocate_structure(float learning_rate, unsigned int num_layer
 	ann->cascade_candidate_scores = NULL;
 	ann->cascade_activation_functions_count = 6;
 	ann->cascade_activation_functions = 
-		(unsigned int *)calloc(ann->cascade_activation_functions_count, 
-							   sizeof(unsigned int));
+		(enum fann_activationfunc_enum *)calloc(ann->cascade_activation_functions_count, 
+							   sizeof(enum fann_activationfunc_enum));
 	if(ann->cascade_activation_functions == NULL)
 	{
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);

@@ -178,22 +178,16 @@ FANN_EXTERNAL float FANN_API fann_train_epoch(struct fann *ann, struct fann_trai
 {
 	switch (ann->training_algorithm)
 	{
-		case FANN_TRAIN_QUICKPROP:
-			return fann_train_epoch_quickprop(ann, data);
-			break;
-		case FANN_TRAIN_RPROP:
-			return fann_train_epoch_irpropm(ann, data);
-			break;
-		case FANN_TRAIN_BATCH:
-			return fann_train_epoch_batch(ann, data);
-			break;
-		case FANN_TRAIN_INCREMENTAL:
-			return fann_train_epoch_incremental(ann, data);
-			break;
-		default:
-			fann_error((struct fann_error *) ann, FANN_E_CANT_USE_TRAIN_ALG);
-			return 0.0;
+	case FANN_TRAIN_QUICKPROP:
+		return fann_train_epoch_quickprop(ann, data);
+	case FANN_TRAIN_RPROP:
+		return fann_train_epoch_irpropm(ann, data);
+	case FANN_TRAIN_BATCH:
+		return fann_train_epoch_batch(ann, data);
+	case FANN_TRAIN_INCREMENTAL:
+		return fann_train_epoch_incremental(ann, data);
 	}
+	return 0;
 }
 
 /*
@@ -227,25 +221,10 @@ FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann,
 {
 	float error;
 	unsigned int i;
+	int desired_error_reached;
 
 #ifdef DEBUG
-	printf("Training with ");
-	switch (ann->training_algorithm)
-	{
-		case FANN_TRAIN_QUICKPROP:
-			printf("FANN_TRAIN_QUICKPROP");
-			break;
-		case FANN_TRAIN_RPROP:
-			printf("FANN_TRAIN_RPROP");
-			break;
-		case FANN_TRAIN_BATCH:
-			printf("FANN_TRAIN_BATCH");
-			break;
-		case FANN_TRAIN_INCREMENTAL:
-			printf("FANN_TRAIN_INCREMENTAL");
-			break;
-	}
-	printf("\n");
+	printf("Training with %s\n", FANN_TRAIN_NAMES[ann->training_algorithm]);
 #endif
 
 	if(epochs_between_reports && callback == NULL)
@@ -259,12 +238,14 @@ FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann,
 		 * train 
 		 */
 		error = fann_train_epoch(ann, data);
+		desired_error_reached = fann_desired_error_reached(ann, desired_error);
 
 		/*
 		 * print current output 
 		 */
 		if(epochs_between_reports &&
-		   (i % epochs_between_reports == 0 || i == max_epochs || i == 1 || error < desired_error))
+		   (i % epochs_between_reports == 0 || i == max_epochs || i == 1 ||
+			desired_error_reached == 0))
 		{
 			if(callback == NULL)
 			{
@@ -280,10 +261,8 @@ FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann,
 			}
 		}
 
-		if(error < desired_error)
-		{
+		if(desired_error_reached == 0)
 			break;
-		}
 	}
 }
 
@@ -666,4 +645,23 @@ struct fann_train_data *fann_read_train_from_fd(FILE * file, char *filename)
 		line++;
 	}
 	return data;
+}
+
+/*
+ * INTERNAL FUNCTION returns 0 if the desired error is reached and -1 if it is not reached
+ */
+int fann_desired_error_reached(struct fann *ann, float desired_error)
+{
+	switch (ann->train_stop_function)
+	{
+	case FANN_STOPFUNC_MSE:
+		if(fann_get_MSE(ann) < desired_error)
+			return 0;
+		break;
+	case FANN_STOPFUNC_BIT:
+		if(ann->num_bit_fail < desired_error)
+			return 0;
+		break;
+	}
+	return -1;
 }

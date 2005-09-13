@@ -62,10 +62,10 @@ fann_type fann_activation_derived(unsigned int activation_function,
 		case FANN_ELLIOT_SYMMETRIC:
 			value = fann_clip(value, -0.98f, 0.98f);
 			return (fann_type) fann_elliot_symmetric_derive(steepness, value, sum);
-		default:
+		case FANN_THRESHOLD:
 			fann_error(NULL, FANN_E_CANT_TRAIN_ACTIVATION);
-			return 0;
 	}
+	return 0;
 }
 
 /* INTERNAL FUNCTION
@@ -106,11 +106,21 @@ fann_type fann_update_MSE(struct fann *ann, struct fann_neuron* neuron, fann_typ
 	switch (neuron->activation_function)
 	{
 		case FANN_LINEAR_PIECE_SYMMETRIC:
+		case FANN_THRESHOLD_SYMMETRIC:
 		case FANN_SIGMOID_SYMMETRIC:
 		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
 		case FANN_ELLIOT_SYMMETRIC:
 		case FANN_GAUSSIAN_SYMMETRIC:
 			neuron_diff /= 2.0;
+			break;
+		case FANN_THRESHOLD:
+		case FANN_LINEAR:
+		case FANN_SIGMOID:
+		case FANN_SIGMOID_STEPWISE:
+		case FANN_GAUSSIAN:
+		case FANN_GAUSSIAN_STEPWISE:
+		case FANN_ELLIOT:
+		case FANN_LINEAR_PIECE:
 			break;
 	}
 

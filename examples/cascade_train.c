@@ -35,7 +35,7 @@ int print_callback(unsigned int epochs, float error)
 	mse1 = fann_test_data(ann, train_data);
 	bit1 = ann->num_bit_fail;
 
-	printf("Nerons     %8d. Current MSE-Error: %.10f ", epochs, error);
+	printf("Nerons     %4d. Epochs: %7d ", epochs, (int)error);
 	printf("Train error: %.10f (%d), Test error: %.10f (%d)\n", mse1, bit1, mse2, bit2);
 	return 0;
 }
@@ -109,41 +109,20 @@ int main()
 
 
 	fann_set_train_error_function(ann, FANN_ERRORFUNC_LINEAR);
+	fann_set_train_stop_function(ann, FANN_STOPFUNC_BIT);
 
 	fann_set_rprop_increase_factor(ann, 1.2);
 	fann_set_rprop_decrease_factor(ann, 0.5);
 	fann_set_rprop_delta_min(ann, 0.0);
 	fann_set_rprop_delta_max(ann, 50.0);
 
-	ann->cascade_change_fraction = 0.01;
-	ann->cascade_stagnation_epochs = 12;
-	ann->cascade_weight_multiplier = 0.4;
- 	ann->cascade_candidate_limit = 1000.0;
-	ann->cascade_max_out_epochs = 150;
-	ann->cascade_max_cand_epochs = 150;
-	ann->cascade_num_candidate_groups = 1;
-
-	ann->cascade_activation_functions_count = 6;
-	ann->cascade_activation_functions = 
-		(unsigned int *)calloc(ann->cascade_activation_functions_count, 
-							   sizeof(unsigned int));
-							   
-	ann->cascade_activation_functions[0] = FANN_SIGMOID;
-	ann->cascade_activation_functions[1] = FANN_SIGMOID_SYMMETRIC;
-	ann->cascade_activation_functions[2] = FANN_GAUSSIAN;
-	ann->cascade_activation_functions[3] = FANN_GAUSSIAN_SYMMETRIC;
-	ann->cascade_activation_functions[4] = FANN_ELLIOT;
-	ann->cascade_activation_functions[5] = FANN_ELLIOT_SYMMETRIC;
-
-	ann->cascade_activation_steepnesses_count = 4;
-	ann->cascade_activation_steepnesses = 
-		(fann_type *)calloc(ann->cascade_activation_steepnesses_count, 
-							   sizeof(fann_type));
-	
-	ann->cascade_activation_steepnesses[0] = 0.25;
-	ann->cascade_activation_steepnesses[1] = 0.5;
-	ann->cascade_activation_steepnesses[2] = 0.75;
-	ann->cascade_activation_steepnesses[3] = 1.0;
+	fann_set_cascade_change_fraction(ann, 0.01);
+	fann_set_cascade_stagnation_epochs(ann, 12);
+	fann_set_cascade_weight_multiplier(ann, 0.4);
+ 	fann_set_cascade_candidate_limit(ann, 1000.0);
+	fann_set_cascade_max_out_epochs(ann, 150);
+	fann_set_cascade_max_cand_epochs(ann, 150);
+	fann_set_cascade_num_candidate_groups(ann, 1);
 
 	fann_print_parameters(ann);
 	/*fann_print_connections(ann); */

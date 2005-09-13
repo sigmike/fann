@@ -73,6 +73,7 @@ void fann_cascadetrain_on_data_callback(struct fann *ann, struct fann_train_data
 	float error;
 	unsigned int i;
 	unsigned int total_epochs = 0;
+	int desired_error_reached;
 
 	if(neurons_between_reports && callback == NULL)
 	{
@@ -93,6 +94,7 @@ void fann_cascadetrain_on_data_callback(struct fann *ann, struct fann_train_data
 #endif
 		total_epochs += fann_train_outputs(ann, data, desired_error);
 		error = fann_get_MSE(ann);
+		desired_error_reached = fann_desired_error_reached(ann, desired_error);
 
 #ifdef CASCADE_DEBUG
 		printf("\n");
@@ -101,7 +103,7 @@ void fann_cascadetrain_on_data_callback(struct fann *ann, struct fann_train_data
 		/* print current error */
 		if(neurons_between_reports &&
 		   (i % neurons_between_reports == 0
-			|| i == max_neurons || i == 1 || error < desired_error))
+			|| i == max_neurons || i == 1 || desired_error_reached == 0))
 		{
 			if(callback == NULL)
 			{
@@ -109,7 +111,10 @@ void fann_cascadetrain_on_data_callback(struct fann *ann, struct fann_train_data
 					("Neurons     %6d. Current error: %.6f. Total error: %.6f. Epochs %6d. Bit fail %d.\n",
 					 i, error, ann->MSE_value, total_epochs, ann->num_bit_fail);
 			}
-			else if((*callback) (i, error) == -1)
+			else if((*callback) (i, total_epochs) == -1) 
+				/* TODO the callback should be changed, to include more info
+				 * now total_epochs is included in the error field.
+				*/
 			{
 				/* you can break the training by returning -1 */
 				break;
@@ -122,10 +127,8 @@ void fann_cascadetrain_on_data_callback(struct fann *ann, struct fann_train_data
 		fann_print_connections_raw(ann);
 #endif
 
-		if(error < desired_error)
-		{
+		if(desired_error_reached == 0)
 			break;
-		}
 
 		if(fann_initialize_candidates(ann) == -1)
 		{
@@ -184,10 +187,8 @@ int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float des
 	/* run an initial epoch to set the initital error */
 	initial_error = fann_train_outputs_epoch(ann, data);
 
-	if(initial_error < desired_error)
-	{
+	if(fann_desired_error_reached(ann, desired_error) == 0)
 		return 1;
-	}
 
 	for(i = 1; i < max_epochs; i++)
 	{
@@ -195,7 +196,7 @@ int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float des
 
 		/*printf("Epoch %6d. Current error: %.6f. Bit fail %d.\n", i, error, ann->num_bit_fail); */
 
-		if(error < desired_error)
+		if(fann_desired_error_reached(ann, desired_error) == 0)
 		{
 #ifdef CASCADE_DEBUG
 			printf("Error %f < %f\n", error, desired_error);
@@ -251,7 +252,8 @@ float fann_train_outputs_epoch(struct fann *ann, struct fann_train_data *data)
 										  (ann->last_layer - 1)->first_neuron->first_con,
 										  ann->total_connections);
 			break;
-		default:
+		case FANN_TRAIN_BATCH:
+		case FANN_TRAIN_INCREMENTAL:
 			fann_error((struct fann_error *) ann, FANN_E_CANT_USE_TRAIN_ALG);
 	}
 
@@ -663,8 +665,10 @@ void fann_update_candidate_weights(struct fann *ann, unsigned int num_data)
 			fann_update_weights_quickprop(ann, num_data, first_cand->first_con,
 										  last_cand->last_con + ann->num_output);
 			break;
-		default:
+		case FANN_TRAIN_BATCH:
+		case FANN_TRAIN_INCREMENTAL:
 			fann_error((struct fann_error *) ann, FANN_E_CANT_USE_TRAIN_ALG);
+			break;
 	}
 }
 
@@ -707,9 +711,19 @@ float fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data
 				case FANN_LINEAR_PIECE_SYMMETRIC:
 				case FANN_SIGMOID_SYMMETRIC:
 				case FANN_SIGMOID_SYMMETRIC_STEPWISE:
+				case FANN_THRESHOLD_SYMMETRIC:
 				case FANN_ELLIOT_SYMMETRIC:
 				case FANN_GAUSSIAN_SYMMETRIC:
 					output_train_errors[j] /= 2.0;
+					break;
+				case FANN_LINEAR:
+				case FANN_THRESHOLD:
+				case FANN_SIGMOID:
+				case FANN_SIGMOID_STEPWISE:
+				case FANN_GAUSSIAN:
+				case FANN_GAUSSIAN_STEPWISE:
+				case FANN_ELLIOT:
+				case FANN_LINEAR_PIECE:
 					break;
 			}
 		}

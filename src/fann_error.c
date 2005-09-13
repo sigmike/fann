@@ -36,7 +36,7 @@
  */
 FANN_EXTERNAL void FANN_API fann_reset_errno(struct fann_error *errdat)
 {
-	errdat->errno_f = 0;
+	errdat->errno_f = FANN_E_NO_ERROR;
 }
 
 /* resets the last errstr
@@ -50,7 +50,7 @@ FANN_EXTERNAL void FANN_API fann_reset_errstr(struct fann_error *errdat)
 
 /* returns the last error number
  */
-FANN_EXTERNAL unsigned int FANN_API fann_get_errno(struct fann_error *errdat)
+FANN_EXTERNAL enum fann_errno_enum FANN_API fann_get_errno(struct fann_error *errdat)
 {
 	return errdat->errno_f;
 }
@@ -87,7 +87,7 @@ FANN_EXTERNAL void FANN_API fann_print_error(struct fann_error *errdat)
 /* INTERNAL FUNCTION
    Populate the error information
  */
-void fann_error(struct fann_error *errdat, const unsigned int errno_f, ...)
+void fann_error(struct fann_error *errdat, const enum fann_errno_enum errno_f, ...)
 {
 	va_list ap;
 	char *errstr;
@@ -160,9 +160,6 @@ void fann_error(struct fann_error *errdat, const unsigned int errno_f, ...)
 		break;
 	case FANN_E_CANT_USE_TRAIN_ALG:
 		sprintf(errstr, "Unable to use the selected training algorithm.\n");
-		
-	default:
-		vsprintf(errstr, "Unknown error.\n", ap);
 		break;
 	}
 	va_end(ap);
@@ -187,6 +184,6 @@ void fann_error(struct fann_error *errdat, const unsigned int errno_f, ...)
 void fann_init_error_data(struct fann_error *errdat)
 {
 	errdat->errstr = NULL;
-	errdat->errno_f = 0;
+	errdat->errno_f = FANN_E_NO_ERROR;
 	errdat->error_log = stderr;
 }

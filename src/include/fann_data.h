@@ -21,6 +21,56 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __fann_data_h__
 
 #include <stdio.h>
+#include "fann_activation.h"
+#include "fann_errno.h"
+
+enum fann_train_enum
+{
+	/* Standard backpropagation incremental or online training */
+	FANN_TRAIN_INCREMENTAL = 0,
+	/* Standard backpropagation batch training */
+	FANN_TRAIN_BATCH,
+	/* The iRprop- training algorithm */
+	FANN_TRAIN_RPROP,
+	/* The quickprop training algorithm */
+	FANN_TRAIN_QUICKPROP
+};
+
+static char const *const FANN_TRAIN_NAMES[] = {
+	"FANN_TRAIN_INCREMENTAL",
+	"FANN_TRAIN_BATCH",
+	"FANN_TRAIN_RPROP",
+	"FANN_TRAIN_QUICKPROP"
+};
+
+/* Error function used during training */
+enum fann_errorfunc_enum
+{
+	/* Standard linear error function */
+	FANN_ERRORFUNC_LINEAR = 0,
+	/* Tanh error function, usually better but can require
+	 * a lower learning rate */
+	FANN_ERRORFUNC_TANH
+};
+
+static char const *const FANN_ERRORFUNC_NAMES[] = {
+	"FANN_ERRORFUNC_LINEAR",
+	"FANN_ERRORFUNC_TANH"
+};
+
+/* Stop function used during training */
+enum fann_stopfunc_enum
+{
+	/* Stop criteria is MSE value */
+	FANN_STOPFUNC_MSE = 0,
+	/* Stop criteria is number of bits that fail */
+	FANN_STOPFUNC_BIT
+};
+
+static char const *const FANN_STOPFUNC_NAMES[] = {
+	"FANN_STOPFUNC_MSE",
+	"FANN_STOPFUNC_BIT"
+};
 
 /* ----- Data structures -----
  * No data within these structures should be altered directly by the user.
@@ -40,7 +90,7 @@ struct fann_neuron
 	/* The steepness of the activation function */
 	fann_type activation_steepness;
 	/* Used to choose which activation function to use */
-	unsigned int activation_function;
+	enum fann_activationfunc_enum activation_function;
 #ifdef __GNUC__
 } __attribute__ ((packed));
 #else
@@ -63,12 +113,21 @@ struct fann_layer
 	struct fann_neuron *last_neuron;
 };
 
+/* Structure used to store error-related information */
+struct fann_error
+{
+	enum fann_errno_enum errno_f;
+	FILE *error_log;
+	char *errstr;
+};
+
+
 /* The fast artificial neural network(fann) structure
  */
 struct fann
 {
 	/* The type of error that last occured. */
-	unsigned int errno_f;
+	enum fann_errno_enum errno_f;
 
 	/* Where to log error messages. */
 	FILE *error_log;
@@ -126,7 +185,7 @@ struct fann
 
 	/* Training algorithm used when calling fann_train_on_..
 	 */
-	unsigned int training_algorithm;
+	enum fann_train_enum training_algorithm;
 
 #ifdef FIXEDFANN
 	/* the decimal_point, used for shifting the fix point
@@ -182,11 +241,11 @@ struct fann
 
 	/* The error function used during training. (default FANN_ERRORFUNC_TANH)
 	 */
-	unsigned int train_error_function;
+	enum fann_errorfunc_enum train_error_function;
 	
 	/* The stop function used during training. (default FANN_STOPFUNC_MSE)
 	*/
-	unsigned int train_stop_function;
+	enum fann_stopfunc_enum train_stop_function;
 
 	/* Variables for use with Cascade Correlation */
 
@@ -224,7 +283,7 @@ struct fann
 	/* An array consisting of the activation functions used when doing
 	 * cascade training.
 	 */
-	unsigned int *cascade_activation_functions;
+	enum fann_activationfunc_enum *cascade_activation_functions;
 	
 	/* The number of elements in the cascade_activation_functions array.
 	*/
@@ -308,7 +367,7 @@ struct fann
 /* Structure used to store data, for use with training. */
 struct fann_train_data
 {
-	unsigned int errno_f;
+	enum fann_errno_enum errno_f;
 	FILE *error_log;
 	char *errstr;
 
@@ -317,62 +376,6 @@ struct fann_train_data
 	unsigned int num_output;
 	fann_type **input;
 	fann_type **output;
-};
-
-/* Structure used to store error-related information */
-struct fann_error
-{
-	unsigned int errno_f;
-	FILE *error_log;
-	char *errstr;
-};
-
-enum
-{
-	/* Standard backpropagation incremental or online training */
-	FANN_TRAIN_INCREMENTAL = 0,
-	/* Standard backpropagation batch training */
-	FANN_TRAIN_BATCH,
-	/* The iRprop- training algorithm */
-	FANN_TRAIN_RPROP,
-	/* The quickprop training algorithm */
-	FANN_TRAIN_QUICKPROP
-};
-
-static char const *const FANN_TRAIN_NAMES[] = {
-	"FANN_TRAIN_INCREMENTAL",
-	"FANN_TRAIN_BATCH",
-	"FANN_TRAIN_RPROP",
-	"FANN_TRAIN_QUICKPROP"
-};
-
-/* Error function used during training */
-enum
-{
-	/* Standard linear error function */
-	FANN_ERRORFUNC_LINEAR = 0,
-	/* Tanh error function, usually better but can require
-	 * a lower learning rate */
-	FANN_ERRORFUNC_TANH
-};
-
-static char const *const FANN_ERRORFUNC_NAMES[] = {
-	"FANN_ERRORFUNC_LINEAR",
-	"FANN_ERRORFUNC_TANH"
-};
-
-/* Stop function used during training */
-enum fann_stopfunc_enum
-{
-	/* Stop criteria is MSE value */
-	FANN_STOPFUNC_MSE = 0,
-	/* Stop criteria is number of bits that fail */
-	FANN_STOPFUNC_BIT
-};
-
-static char const *const FANN_STOPFUNC_NAMES[] = {
-	"FANN_STOPFUNC_MSE",
-	"FANN_STOPFUNC_BIT"
 };
 
 #endif

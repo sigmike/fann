@@ -54,7 +54,7 @@ void fann_seed_rand();
 
 void fann_update_stepwise(struct fann *ann);
 
-void fann_error(struct fann_error *errdat, const unsigned int errno_f, ...);
+void fann_error(struct fann_error *errdat, const enum fann_errno_enum errno_f, ...);
 void fann_init_error_data(struct fann_error *errdat);
 
 struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file);
@@ -81,6 +81,8 @@ fann_type fann_activation_new(struct fann *ann, unsigned int activation_function
 
 fann_type fann_activation_derived(unsigned int activation_function,
 								  fann_type steepness, fann_type value, fann_type sum);
+
+int fann_desired_error_reached(struct fann *ann, float desired_error);
 
 /* called fann_max, in order to not interferre with predefined versions of max */
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))

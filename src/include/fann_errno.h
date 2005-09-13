@@ -28,7 +28,7 @@ extern "C"
 /* Maximum length (in bytes) of an error message */
 #define FANN_ERRSTR_MAX 128
 
-	enum
+	enum fann_errno_enum
 	{
 		/* No error */
 		FANN_E_NO_ERROR = 0,
