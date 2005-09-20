@@ -918,6 +918,134 @@ FANN_EXTERNAL void FANN_API fann_init_weights(struct fann *ann, struct fann_trai
 #endif
 }
 
+FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
+{
+	struct fann_layer *layer_it;
+
+	printf("Input layer                :%4d neurons, 1 bias\n", ann->num_input);
+	for(layer_it = ann->first_layer + 1; layer_it != ann->last_layer - 1; layer_it++)
+	{
+		if(ann->shortcut_connections)
+		{
+			printf("  Hidden layer             :%4d neurons, 0 bias\n",
+				   layer_it->last_neuron - layer_it->first_neuron);
+		}
+		else
+		{
+			printf("  Hidden layer             :%4d neurons, 1 bias\n",
+				   layer_it->last_neuron - layer_it->first_neuron - 1);
+		}
+	}
+	printf("Output layer               :%4d neurons\n", ann->num_output);
+	printf("Total neurons and biases   :%4d\n", fann_get_total_neurons(ann));
+	printf("Total connections          :%4d\n", ann->total_connections);
+	printf("Connection rate            :  %5.2f\n", ann->connection_rate);
+	printf("Shortcut connections       :%4d\n", ann->shortcut_connections);
+	printf("Training algorithm         :   %s\n", FANN_TRAIN_NAMES[ann->training_algorithm]);
+	printf("Learning rate              :  %5.2f\n", ann->learning_rate);
+/*	printf("Activation function hidden :   %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_hidden]);
+	printf("Activation function output :   %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_output]);
+*/
+#ifndef FIXEDFANN
+/*
+	printf("Activation steepness hidden:  %5.2f\n", ann->activation_steepness_hidden);
+	printf("Activation steepness output:  %5.2f\n", ann->activation_steepness_output);
+*/
+#else
+/*
+	printf("Activation steepness hidden:  %d\n", ann->activation_steepness_hidden);
+	printf("Activation steepness output:  %d\n", ann->activation_steepness_output);
+*/
+	printf("Decimal point              :%4d\n", ann->decimal_point);
+	printf("Multiplier                 :%4d\n", ann->multiplier);
+#endif
+	printf("Training error function    :   %s\n", FANN_ERRORFUNC_NAMES[ann->train_error_function]);
+	printf("Quickprop decay            :  %9.6f\n", ann->quickprop_decay);
+	printf("Quickprop mu               :  %5.2f\n", ann->quickprop_mu);
+	printf("RPROP increase factor      :  %5.2f\n", ann->rprop_increase_factor);
+	printf("RPROP decrease factor      :  %5.2f\n", ann->rprop_decrease_factor);
+	printf("RPROP delta min            :  %5.2f\n", ann->rprop_delta_min);
+	printf("RPROP delta max            :  %5.2f\n", ann->rprop_delta_max);
+	printf("Cascade change fraction    :  %9.6f\n", ann->cascade_change_fraction);
+	printf("Cascade stagnation epochs  :%4d\n", ann->cascade_stagnation_epochs);
+	printf("Cascade no. of candidates  :%4d\n", fann_get_cascade_num_candidates(ann));
+}
+
+FANN_GET(unsigned int, num_input)
+FANN_GET(unsigned int, num_output)
+
+FANN_EXTERNAL unsigned int FANN_API fann_get_total_neurons(struct fann *ann)
+{
+	if(ann->shortcut_connections)
+	{
+		return ann->total_neurons;
+	}
+	else
+	{
+		/* -1, because there is always an unused bias neuron in the last layer */
+		return ann->total_neurons - 1;
+	}
+}
+
+FANN_GET(unsigned int, total_connections)
+
+#ifdef FIXEDFANN
+
+FANN_GET(unsigned int, decimal_point)
+FANN_GET(unsigned int, multiplier)
+
+/* INTERNAL FUNCTION
+   Adjust the steepwise functions (if used)
+*/
+void fann_update_stepwise(struct fann *ann)
+{
+	unsigned int i = 0;
+
+	/* Calculate the parameters for the stepwise linear
+	 * sigmoid function fixed point.
+	 * Using a rewritten sigmoid function.
+	 * results 0.005, 0.05, 0.25, 0.75, 0.95, 0.995
+	 */
+	ann->sigmoid_results[0] = fann_max((fann_type) (ann->multiplier / 200.0 + 0.5), 1);
+	ann->sigmoid_results[1] = (fann_type) (ann->multiplier / 20.0 + 0.5);
+	ann->sigmoid_results[2] = (fann_type) (ann->multiplier / 4.0 + 0.5);
+	ann->sigmoid_results[3] = ann->multiplier - (fann_type) (ann->multiplier / 4.0 + 0.5);
+	ann->sigmoid_results[4] = ann->multiplier - (fann_type) (ann->multiplier / 20.0 + 0.5);
+	ann->sigmoid_results[5] =
+		fann_min(ann->multiplier - (fann_type) (ann->multiplier / 200.0 + 0.5),
+				 ann->multiplier - 1);
+
+	ann->sigmoid_symmetric_results[0] =
+		fann_max((fann_type) ((ann->multiplier / 100.0) - ann->multiplier - 0.5),
+				 (fann_type) (1 - (fann_type) ann->multiplier));
+	ann->sigmoid_symmetric_results[1] =
+		(fann_type) ((ann->multiplier / 10.0) - ann->multiplier - 0.5);
+	ann->sigmoid_symmetric_results[2] =
+		(fann_type) ((ann->multiplier / 2.0) - ann->multiplier - 0.5);
+	ann->sigmoid_symmetric_results[3] = ann->multiplier - (fann_type) (ann->multiplier / 2.0 + 0.5);
+	ann->sigmoid_symmetric_results[4] =
+		ann->multiplier - (fann_type) (ann->multiplier / 10.0 + 0.5);
+	ann->sigmoid_symmetric_results[5] =
+		fann_min(ann->multiplier - (fann_type) (ann->multiplier / 100.0 + 1.0),
+				 ann->multiplier - 1);
+
+	for(i = 0; i < 6; i++)
+	{
+		ann->sigmoid_values[i] =
+			(fann_type) (((log(ann->multiplier / (float) ann->sigmoid_results[i] - 1) *
+						   (float) ann->multiplier) / -2.0) * (float) ann->multiplier);
+		ann->sigmoid_symmetric_values[i] =
+			(fann_type) (((log
+						   ((ann->multiplier -
+							 (float) ann->sigmoid_symmetric_results[i]) /
+							((float) ann->sigmoid_symmetric_results[i] +
+							 ann->multiplier)) * (float) ann->multiplier) / -2.0) *
+						 (float) ann->multiplier);
+	}
+}
+#endif
+
+
 /* INTERNAL FUNCTION
    Allocates the main structure and sets some default values.
  */

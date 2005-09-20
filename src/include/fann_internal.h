@@ -36,6 +36,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define FANN_CONF_VERSION FANN_FLO_VERSION
 #endif
 
+#define FANN_GET(type, name) \
+FANN_EXTERNAL type FANN_API fann_get_ ## name(struct fann *ann) \
+{ \
+	return ann->name; \
+}
+
+#define FANN_SET(type, name) \
+FANN_EXTERNAL void FANN_API fann_set_ ## name(struct fann *ann, type value) \
+{ \
+	ann->name = value; \
+}
+
+#define FANN_GET_SET(type, name) \
+FANN_GET(type, name) \
+FANN_SET(type, name)
+
+
 struct fann *fann_allocate_structure(float learning_rate, unsigned int num_layers);
 void fann_allocate_neurons(struct fann *ann);
 

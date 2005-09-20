@@ -78,7 +78,13 @@ module.include.files=\
 	src/include/fann_errno.h\
 	src/include/fann_internal.h\
 	src/include/fixedfann.h\
-	src/include/floatfann.h
+	src/include/floatfann.h\
+	src/include/fann_cascade.h\
+	src/include/fann_error.h\
+	src/include/fann_io.h\
+	src/include/fann_options.h\
+	src/include/fann_train.h\
+	src/include/fann_train_data.h
 
 module.source.name=.
 module.source.type=

@@ -770,3 +770,75 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight, un
 }
 
 #endif
+
+FANN_GET_SET(enum fann_train_enum, training_algorithm)
+FANN_GET_SET(float, learning_rate)
+
+FANN_EXTERNAL void FANN_API fann_set_activation_function_hidden(struct fann *ann,
+																enum fann_activationfunc_enum activation_function)
+{
+	struct fann_neuron *last_neuron, *neuron_it;
+	struct fann_layer *layer_it;
+	struct fann_layer *last_layer = ann->last_layer - 1;	/* -1 to not update the output layer */
+
+	for(layer_it = ann->first_layer + 1; layer_it != last_layer; layer_it++)
+	{
+		last_neuron = layer_it->last_neuron;
+		for(neuron_it = layer_it->first_neuron; neuron_it != last_neuron; neuron_it++)
+		{
+			neuron_it->activation_function = activation_function;
+		}
+	}
+}
+
+FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann,
+																enum fann_activationfunc_enum activation_function)
+{
+	struct fann_neuron *last_neuron, *neuron_it;
+	struct fann_layer *last_layer = ann->last_layer - 1;
+
+	last_neuron = last_layer->last_neuron;
+	for(neuron_it = last_layer->first_neuron; neuron_it != last_neuron; neuron_it++)
+	{
+		neuron_it->activation_function = activation_function;
+	}
+}
+
+FANN_EXTERNAL void FANN_API fann_set_activation_steepness_hidden(struct fann *ann,
+																 fann_type steepness)
+{
+	struct fann_neuron *last_neuron, *neuron_it;
+	struct fann_layer *layer_it;
+	struct fann_layer *last_layer = ann->last_layer - 1;	/* -1 to not update the output layer */
+
+	for(layer_it = ann->first_layer + 1; layer_it != last_layer; layer_it++)
+	{
+		last_neuron = layer_it->last_neuron;
+		for(neuron_it = layer_it->first_neuron; neuron_it != last_neuron; neuron_it++)
+		{
+			neuron_it->activation_steepness = steepness;
+		}
+	}
+}
+
+FANN_EXTERNAL void FANN_API fann_set_activation_steepness_output(struct fann *ann,
+																 fann_type steepness)
+{
+	struct fann_neuron *last_neuron, *neuron_it;
+	struct fann_layer *last_layer = ann->last_layer - 1;
+
+	last_neuron = last_layer->last_neuron;
+	for(neuron_it = last_layer->first_neuron; neuron_it != last_neuron; neuron_it++)
+	{
+		neuron_it->activation_steepness = steepness;
+	}
+}
+
+FANN_GET_SET(enum fann_errorfunc_enum, train_error_function)
+FANN_GET_SET(float, quickprop_decay)
+FANN_GET_SET(float, quickprop_mu)
+FANN_GET_SET(float, rprop_increase_factor)
+FANN_GET_SET(float, rprop_decrease_factor)
+FANN_GET_SET(float, rprop_delta_min)
+FANN_GET_SET(float, rprop_delta_max)
+FANN_GET_SET(enum fann_stopfunc_enum, train_stop_function)

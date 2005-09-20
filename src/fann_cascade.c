@@ -954,3 +954,74 @@ void fann_install_candidate(struct fann *ann)
 }
 
 #endif /* FIXEDFANN */
+
+FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_num_candidates(struct fann *ann)
+{
+	return ann->cascade_activation_functions_count *
+		ann->cascade_activation_steepnesses_count *
+		ann->cascade_num_candidate_groups;
+}
+
+FANN_GET_SET(float, cascade_change_fraction)
+FANN_GET_SET(unsigned int, cascade_stagnation_epochs)
+FANN_GET_SET(unsigned int, cascade_num_candidate_groups)
+FANN_GET_SET(fann_type, cascade_weight_multiplier)
+FANN_GET_SET(fann_type, cascade_candidate_limit)
+FANN_GET_SET(unsigned int, cascade_max_out_epochs)
+FANN_GET_SET(unsigned int, cascade_max_cand_epochs)
+
+FANN_GET(unsigned int, cascade_activation_functions_count)
+FANN_GET(enum fann_activationfunc_enum *, cascade_activation_functions)
+
+FANN_EXTERNAL void fann_set_cascade_activation_functions(struct fann *ann,
+														 enum fann_activationfunc_enum *
+														 cascade_activation_functions,
+														 unsigned int 
+														 cascade_activation_functions_count)
+{
+	if(ann->cascade_activation_functions_count != cascade_activation_functions_count)
+	{
+		ann->cascade_activation_functions_count = cascade_activation_functions_count;
+		
+		/* reallocate mem */
+		ann->cascade_activation_functions = 
+			(enum fann_activationfunc_enum *)realloc(ann->cascade_activation_functions, 
+			ann->cascade_activation_functions_count * sizeof(enum fann_activationfunc_enum));
+		if(ann->cascade_activation_functions == NULL)
+		{
+			fann_error((struct fann_error*)ann, FANN_E_CANT_ALLOCATE_MEM);
+			return;
+		}
+	}
+	
+	memmove(ann->cascade_activation_functions, cascade_activation_functions, 
+		ann->cascade_activation_functions_count * sizeof(enum fann_activationfunc_enum));
+}
+
+FANN_GET(unsigned int, cascade_activation_steepnesses_count)
+FANN_GET(fann_type *, cascade_activation_steepnesses)
+
+FANN_EXTERNAL void fann_set_cascade_activation_steepnesses(struct fann *ann,
+														   fann_type *
+														   cascade_activation_steepnesses,
+														   unsigned int 
+														   cascade_activation_steepnesses_count)
+{
+	if(ann->cascade_activation_steepnesses_count != cascade_activation_steepnesses_count)
+	{
+		ann->cascade_activation_steepnesses_count = cascade_activation_steepnesses_count;
+		
+		/* reallocate mem */
+		ann->cascade_activation_steepnesses = 
+			(fann_type *)realloc(ann->cascade_activation_steepnesses, 
+			ann->cascade_activation_steepnesses_count * sizeof(fann_type));
+		if(ann->cascade_activation_steepnesses == NULL)
+		{
+			fann_error((struct fann_error*)ann, FANN_E_CANT_ALLOCATE_MEM);
+			return;
+		}
+	}
+	
+	memmove(ann->cascade_activation_steepnesses, cascade_activation_steepnesses, 
+		ann->cascade_activation_steepnesses_count * sizeof(fann_type));
+}
