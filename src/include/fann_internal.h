@@ -52,8 +52,9 @@ FANN_EXTERNAL void FANN_API fann_set_ ## name(struct fann *ann, type value) \
 FANN_GET(type, name) \
 FANN_SET(type, name)
 
+struct fann_train_data;
 
-struct fann *fann_allocate_structure(float learning_rate, unsigned int num_layers);
+struct fann *fann_allocate_structure(unsigned int num_layers);
 void fann_allocate_neurons(struct fann *ann);
 
 void fann_allocate_connections(struct fann *ann);

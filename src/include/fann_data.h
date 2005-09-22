@@ -21,21 +21,49 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __fann_data_h__
 
 #include <stdio.h>
-#include "fann_activation.h"
-#include "fann_errno.h"
 
+/* Section: FANN Datatypes */
+
+
+/* Type: fann_type
+	fann_type is defined as a:
+	float - if you include fann.h or floatfann.h
+	double - if you include doublefann.h
+	int - if you include fixedfann.h (please be aware that fixed point usage is 
+			only to be used during execution, and not during training).
+*/
+
+/* Enum: fann_train_enum
+	The Training algorithms used when training on <struct fann_train_data> with functions like
+	<fann_train_on_data> or <fann_train_on_file>.
+
+	FANN_TRAIN_INCREMENTAL - Standard backpropagation incremental or online training
+	FANN_TRAIN_BATCH - Standard backpropagation batch training
+	FANN_TRAIN_RPROP - The iRprop- training algorithm 
+	FANN_TRAIN_QUICKPROP - The Quickprop training algorithm
+	
+	See also:
+		<fann_set_training_algorithm>, <fann_get_training_algorithm>
+*/
 enum fann_train_enum
 {
-	/* Standard backpropagation incremental or online training */
 	FANN_TRAIN_INCREMENTAL = 0,
-	/* Standard backpropagation batch training */
 	FANN_TRAIN_BATCH,
-	/* The iRprop- training algorithm */
 	FANN_TRAIN_RPROP,
-	/* The quickprop training algorithm */
 	FANN_TRAIN_QUICKPROP
 };
 
+/* Constant: FANN_TRAIN_NAMES
+   
+   Constant array consisting of the names for the training algorithms, so that the name of an
+   training function can be received by:
+   (code)
+   char *name = FANN_TRAIN_NAMES[train_function];
+   (end)
+
+   See Also:
+      <fann_train_enum>
+*/
 static char const *const FANN_TRAIN_NAMES[] = {
 	"FANN_TRAIN_INCREMENTAL",
 	"FANN_TRAIN_BATCH",
@@ -43,30 +71,200 @@ static char const *const FANN_TRAIN_NAMES[] = {
 	"FANN_TRAIN_QUICKPROP"
 };
 
-/* Error function used during training */
+/* Enums: fann_activationfunc_enum
+   
+	The activation functions used for the neurons during training. The activation functions
+	can either be defined for a group of neurons by <fann_set_activation_function_hidden> and
+	<fann_set_activation_function_output> or it can be defined for a single neuron by <TODO>.
+
+	The steepness of an activation function is defined in the same way by 
+	<fann_set_activation_steepness_hidden>, <fann_set_activation_steepness_output>
+   
+   The functions are described with functions where:
+   * x is the input to the activation function,
+   * y is the output,
+   * s is the steepness and
+   * d is the derivation.
+
+   FANN_LINEAR - Linear activation function. 
+     * span: -inf < y < inf
+	 * y = x*s, d = 1*s
+	 * Can NOT be used in fixed point.
+
+   FANN_THRESHOLD - Threshold activation function.
+	 * x < 0 -> y = 0, x >= 0 -> y = 1
+	 * Can NOT be used during training.
+
+   FANN_THRESHOLD_SYMMETRIC - Threshold activation function.
+	 * x < 0 -> y = 0, x >= 0 -> y = 1
+	 * Can NOT be used during training.
+
+   FANN_SIGMOID - Sigmoid activation function.
+	 * One of the most used activation functions.
+	 * span: 0 < y < 1
+	 * y = 1/(1 + exp(-2*s*x))
+	 * d = 2*s*y*(1 - y)
+
+   FANN_SIGMOID_STEPWISE - Stepwise linear approximation to sigmoid.
+	 * Faster than sigmoid but a bit less precise.
+
+   FANN_SIGMOID_SYMMETRIC - Symmetric sigmoid activation function, aka. tanh.
+	 * One of the most used activation functions.
+	 * span: -1 < y < 1
+	 * y = tanh(s*x) = 2/(1 + exp(-2*s*x)) - 1
+	 * d = s*(1-(y*y))
+
+   FANN_SIGMOID_SYMMETRIC - Stepwise linear approximation to symmetric sigmoid.
+	 * Faster than symmetric sigmoid but a bit less precise.
+
+   FANN_GAUSSIAN - Gaussian activation function.
+	 * 0 when x = -inf, 1 when x = 0 and 0 when x = inf
+	 * span: 0 < y < 1
+	 * y = exp(-x*s*x*s)
+	 * d = -2*x*s*y*s
+
+   FANN_GAUSSIAN_SYMMETRIC - Symmetric gaussian activation function.
+	 * -1 when x = -inf, 1 when x = 0 and 0 when x = inf
+	 * span: -1 < y < 1
+	 * y = exp(-x*s*x*s)*2-1
+	 * d = -2*x*s*(y+1)*s
+	 
+   FANN_ELLIOT - Fast (sigmoid like) activation function defined by David Elliott
+	 * span: 0 < y < 1
+	 * y = ((x*s) / 2) / (1 + |x*s|) + 0.5
+	 * d = s*1/(2*(1+|x*s|)*(1+|x*s|))
+	 
+   FANN_ELLIOT_SYMMETRIC - Fast (symmetric sigmoid like) activation function defined by David Elliott
+	 * span: -1 < y < 1   
+	 * y = (x*s) / (1 + |x*s|)
+	 * d = s*1/((1+|x*s|)*(1+|x*s|))
+
+	FANN_LINEAR_PIECE - Bounded linear activation function.
+	 * span: 0 < y < 1
+	 * y = x*s, d = 1*s
+	 
+	FANN_LINEAR_PIECE_SYMMETRIC - Bounded Linear activation function.
+	 * span: -1 < y < 1
+	 * y = x*s, d = 1*s
+	 
+	See also:
+		<fann_set_activation_function_hidden>,
+		<fann_set_activation_function_output>
+*/
+enum fann_activationfunc_enum
+{
+	FANN_LINEAR = 0,
+	FANN_THRESHOLD,
+	FANN_THRESHOLD_SYMMETRIC,
+	FANN_SIGMOID,
+	FANN_SIGMOID_STEPWISE,
+	FANN_SIGMOID_SYMMETRIC,
+	FANN_SIGMOID_SYMMETRIC_STEPWISE,
+	FANN_GAUSSIAN,
+	FANN_GAUSSIAN_SYMMETRIC,
+	/* Stepwise linear approximation to gaussian.
+	 * Faster than gaussian but a bit less precise.
+	 * NOT implemented yet.
+	 */
+	FANN_GAUSSIAN_STEPWISE,
+	FANN_ELLIOT,
+	FANN_ELLIOT_SYMMETRIC,
+	FANN_LINEAR_PIECE,
+	FANN_LINEAR_PIECE_SYMMETRIC
+};
+
+/* Constant: FANN_ACTIVATIONFUNC_NAMES
+   
+   Constant array consisting of the names for the activation function, so that the name of an
+   activation function can be received by:
+   (code)
+   char *name = FANN_ACTIVATIONFUNC_NAMES[activation_function];
+   (end)
+
+   See Also:
+      <fann_activationfunc_enum>
+*/
+static char const *const FANN_ACTIVATIONFUNC_NAMES[] = {
+	"FANN_LINEAR",
+	"FANN_THRESHOLD",
+	"FANN_THRESHOLD_SYMMETRIC",
+	"FANN_SIGMOID",
+	"FANN_SIGMOID_STEPWISE",
+	"FANN_SIGMOID_SYMMETRIC",
+	"FANN_SIGMOID_SYMMETRIC_STEPWISE",
+	"FANN_GAUSSIAN",
+	"FANN_GAUSSIAN_SYMMETRIC",
+	"FANN_GAUSSIAN_STEPWISE",
+	"FANN_ELLIOT",
+	"FANN_ELLIOT_SYMMETRIC",
+	"FANN_LINEAR_PIECE",
+	"FANN_LINEAR_PIECE_SYMMETRIC"
+};
+
+/* Enum: fann_errorfunc_enum
+	Error function used during training.
+	
+	FANN_ERRORFUNC_LINEAR - Standard linear error function.
+	FANN_ERRORFUNC_TANH - Tanh error function, usually better 
+		but can require a lower learning rate. This error function agressively targets outputs that
+		differ much from the desired, while not targetting outputs that only differ a little that much.
+		This activation function is not recommended for cascade training and incremental training.
+
+	See also:
+		<fann_set_train_error_function>, <fann_get_train_error_function>
+*/
 enum fann_errorfunc_enum
 {
-	/* Standard linear error function */
 	FANN_ERRORFUNC_LINEAR = 0,
-	/* Tanh error function, usually better but can require
-	 * a lower learning rate */
 	FANN_ERRORFUNC_TANH
 };
 
+/* Constant: FANN_ERRORFUNC_NAMES
+   
+   Constant array consisting of the names for the training error functions, so that the name of an
+   error function can be received by:
+   (code)
+   char *name = FANN_ERRORFUNC_NAMES[error_function];
+   (end)
+
+   See Also:
+      <fann_errorfunc_enum>
+*/
 static char const *const FANN_ERRORFUNC_NAMES[] = {
 	"FANN_ERRORFUNC_LINEAR",
 	"FANN_ERRORFUNC_TANH"
 };
 
-/* Stop function used during training */
+/* Enum: fann_stopfunc_enum
+	Stop criteria used during training.
+
+	FANN_STOPFUNC_MSE - Stop criteria is Mean Square Error (MSE) value.
+	FANN_STOPFUNC_BIT - Stop criteria is number of bits that fail. The number of bits mean the
+		number of output neurons which differ more than the bit fail limit 
+		(see <fann_get_bit_fail_limit>, <fann_set_bit_fail_limit>). 
+		The bits are counted in all of the training data, so this number can be higher than
+		the number of training data.
+
+	See also:
+		<fann_set_train_stop_function>, <fann_get_train_stop_function>
+*/
 enum fann_stopfunc_enum
 {
-	/* Stop criteria is MSE value */
 	FANN_STOPFUNC_MSE = 0,
-	/* Stop criteria is number of bits that fail */
 	FANN_STOPFUNC_BIT
 };
 
+/* Constant: FANN_STOPFUNC_NAMES
+   
+   Constant array consisting of the names for the training stop functions, so that the name of a
+   stop function can be received by:
+   (code)
+   char *name = FANN_STOPFUNC_NAMES[stop_function];
+   (end)
+
+   See Also:
+      <fann_stopfunc_enum>
+*/
 static char const *const FANN_STOPFUNC_NAMES[] = {
 	"FANN_STOPFUNC_MSE",
 	"FANN_STOPFUNC_BIT"
@@ -113,7 +311,11 @@ struct fann_layer
 	struct fann_neuron *last_neuron;
 };
 
-/* Structure used to store error-related information */
+/* Struct: struct fann_error
+   
+	Structure used to store error-related information, both
+	<struct fann> and <struct fann_train_data> can be casted to this type so 
+*/
 struct fann_error
 {
 	enum fann_errno_enum errno_f;
@@ -122,7 +324,17 @@ struct fann_error
 };
 
 
-/* The fast artificial neural network(fann) structure
+/* 	Struct: struct fann
+	The fast artificial neural network(fann) structure.
+
+	Data within this structure should never be accessed directly, but only by using the
+	*fann_get_...* and *fann_set_...* functions.
+
+	The fann structure is created using one of the *fann_create_...* functions and each of
+	the functions which operates on the structure takes *struct fann * ann* as the first parameter.
+
+	See also:
+		<fann_create_standard>, <fann_destroy>
  */
 struct fann
 {
@@ -362,20 +574,6 @@ struct fann
 	 * Not allocated if not used.
 	 */
 	fann_type *prev_train_slopes;
-};
-
-/* Structure used to store data, for use with training. */
-struct fann_train_data
-{
-	enum fann_errno_enum errno_f;
-	FILE *error_log;
-	char *errstr;
-
-	unsigned int num_data;
-	unsigned int num_input;
-	unsigned int num_output;
-	fann_type **input;
-	fann_type **output;
 };
 
 #endif

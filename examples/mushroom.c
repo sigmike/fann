@@ -29,8 +29,6 @@ int print_callback(unsigned int epochs, float error)
 
 int main()
 {
-	const float connection_rate = 1;
-	const float learning_rate = (const float) 0.7;
 	const unsigned int num_layers = 3;
 	const unsigned int num_neurons_hidden = 32;
 	const float desired_error = (const float) 0.0001;
@@ -45,7 +43,7 @@ int main()
 
 	train_data = fann_read_train_from_file("../benchmarks/datasets/mushroom.train");
 
-	ann = fann_create(connection_rate, learning_rate, num_layers,
+	ann = fann_create_standard(num_layers,
 					  train_data->num_input, num_neurons_hidden, train_data->num_output);
 
 	printf("Training network.\n");

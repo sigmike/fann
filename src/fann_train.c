@@ -24,7 +24,6 @@
 
 #include "config.h"
 #include "fann.h"
-#include "fann_errno.h"
 
 /*#define DEBUGTRAIN*/
 
@@ -842,3 +841,4 @@ FANN_GET_SET(float, rprop_decrease_factor)
 FANN_GET_SET(float, rprop_delta_min)
 FANN_GET_SET(float, rprop_delta_max)
 FANN_GET_SET(enum fann_stopfunc_enum, train_stop_function)
+FANN_GET_SET(fann_type, bit_fail_limit)

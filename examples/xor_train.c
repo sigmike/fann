@@ -30,8 +30,6 @@ int print_callback(unsigned int epochs, float error)
 int main()
 {
 	fann_type *calc_out;
-	const float connection_rate = 1;
-	const float learning_rate = (const float) 0.7;
 	const unsigned int num_input = 2;
 	const unsigned int num_output = 1;
 	const unsigned int num_layers = 3;
@@ -47,8 +45,7 @@ int main()
 
 	printf("Creating network.\n");
 
-	ann = fann_create(connection_rate, learning_rate, num_layers,
-					  num_input, num_neurons_hidden, num_output);
+	ann = fann_create_standard(num_layers, num_input, num_neurons_hidden, num_output);
 
 	printf("Training network.\n");
 

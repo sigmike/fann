@@ -26,12 +26,8 @@
 
 #include "config.h"
 #include "fann.h"
-#include "fann_errno.h"
 
-/* create a neural network.
- */
-FANN_EXTERNAL struct fann *FANN_API fann_create(float connection_rate, float learning_rate, unsigned int num_layers,	/* the number of layers, including the input and output layer */
-												...)	/* the number of neurons in each of the layers, starting with the input layer and ending with the output layer */
+FANN_EXTERNAL struct fann *FANN_API fann_create_standard(unsigned int num_layers, ...)
 {
 	struct fann *ann;
 	va_list layer_sizes;
@@ -51,17 +47,50 @@ FANN_EXTERNAL struct fann *FANN_API fann_create(float connection_rate, float lea
 	}
 	va_end(layer_sizes);
 
-	ann = fann_create_array(connection_rate, learning_rate, num_layers, layers);
+	ann = fann_create_standard_array(num_layers, layers);
 
 	free(layers);
 
 	return ann;
 }
 
-/* create a neural network.
- */
-FANN_EXTERNAL struct fann *FANN_API fann_create_array(float connection_rate, float learning_rate,
-													  unsigned int num_layers, unsigned int *layers)
+FANN_EXTERNAL struct fann *FANN_API fann_create_standard_array(unsigned int num_layers, 
+															   unsigned int *layers)
+{
+	return fann_create_sparse_array(1, num_layers, layers);	
+}
+
+FANN_EXTERNAL struct fann *FANN_API fann_create_sparse(float connection_rate, 
+													   unsigned int num_layers, ...)
+{
+	struct fann *ann;
+	va_list layer_sizes;
+	int i;
+	unsigned int *layers = (unsigned int *) calloc(num_layers, sizeof(unsigned int));
+
+	if(layers == NULL)
+	{
+		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		return NULL;
+	}
+
+	va_start(layer_sizes, num_layers);
+	for(i = 0; i < (int) num_layers; i++)
+	{
+		layers[i] = va_arg(layer_sizes, unsigned int);
+	}
+	va_end(layer_sizes);
+
+	ann = fann_create_sparse_array(connection_rate, num_layers, layers);
+
+	free(layers);
+
+	return ann;
+}
+
+FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_rate,
+														     unsigned int num_layers, 
+															 unsigned int *layers)
 {
 	struct fann_layer *layer_it, *last_layer, *prev_layer;
 	struct fann *ann;
@@ -87,7 +116,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_array(float connection_rate, flo
 #endif
 
 	/* allocate the general structure */
-	ann = fann_allocate_structure(learning_rate, num_layers);
+	ann = fann_allocate_structure(num_layers);
 	if(ann == NULL)
 	{
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
@@ -124,8 +153,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_array(float connection_rate, flo
 	}
 
 #ifdef DEBUG
-	printf("creating network with learning rate %f and connection rate %f\n", learning_rate,
-		   connection_rate);
+	printf("creating network with connection rate %f\n", connection_rate);
 	printf("input\n");
 	printf("  layer       : %d neurons, 1 bias\n",
 		   ann->first_layer->last_neuron - ann->first_layer->first_neuron - 1);
@@ -326,10 +354,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_array(float connection_rate, flo
 }
 
 
-/* create a neural network with shortcut connections.
- */
-FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut(float learning_rate, unsigned int num_layers,	/* the number of layers, including the input and output layer */
-														 ...)	/* the number of neurons in each of the layers, starting with the input layer and ending with the output layer */
+FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut(unsigned int num_layers, ...)
 {
 	struct fann *ann;
 	int i;
@@ -350,17 +375,14 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut(float learning_rate, un
 	}
 	va_end(layer_sizes);
 
-	ann = fann_create_shortcut_array(learning_rate, num_layers, layers);
+	ann = fann_create_shortcut_array(num_layers, layers);
 
 	free(layers);
 
 	return ann;
 }
 
-/* create a neural network with shortcut connections.
- */
-FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut_array(float learning_rate,
-															   unsigned int num_layers,
+FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut_array(unsigned int num_layers,
 															   unsigned int *layers)
 {
 	struct fann_layer *layer_it, *layer_it2, *last_layer;
@@ -379,7 +401,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut_array(float learning_ra
 #endif
 
 	/* allocate the general structure */
-	ann = fann_allocate_structure(learning_rate, num_layers);
+	ann = fann_allocate_structure(num_layers);
 	if(ann == NULL)
 	{
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
@@ -423,7 +445,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut_array(float learning_ra
 	}
 
 #ifdef DEBUG
-	printf("creating fully shortcut connected network with learning rate %f.\n", learning_rate);
+	printf("creating fully shortcut connected network.\n");
 	printf("input\n");
 	printf("  layer       : %d neurons, 1 bias\n",
 		   ann->first_layer->last_neuron - ann->first_layer->first_neuron - 1);
@@ -495,8 +517,6 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut_array(float learning_ra
 	return ann;
 }
 
-/* runs the network.
- */
 FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 {
 	struct fann_neuron *neuron_it, *last_neuron, *neurons, **neuron_pointers;
@@ -733,8 +753,6 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 	return ann->output;
 }
 
-/* deallocate the network.
- */
 FANN_EXTERNAL void FANN_API fann_destroy(struct fann *ann)
 {
 	if(ann == NULL)
@@ -921,6 +939,7 @@ FANN_EXTERNAL void FANN_API fann_init_weights(struct fann *ann, struct fann_trai
 FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 {
 	struct fann_layer *layer_it;
+	unsigned int i;
 
 	printf("Input layer                :%4d neurons, 1 bias\n", ann->num_input);
 	for(layer_it = ann->first_layer + 1; layer_it != ann->last_layer - 1; layer_it++)
@@ -941,25 +960,15 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("Total connections          :%4d\n", ann->total_connections);
 	printf("Connection rate            :  %5.2f\n", ann->connection_rate);
 	printf("Shortcut connections       :%4d\n", ann->shortcut_connections);
-	printf("Training algorithm         :   %s\n", FANN_TRAIN_NAMES[ann->training_algorithm]);
-	printf("Learning rate              :  %5.2f\n", ann->learning_rate);
-/*	printf("Activation function hidden :   %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_hidden]);
-	printf("Activation function output :   %s\n", FANN_ACTIVATION_NAMES[ann->activation_function_output]);
-*/
-#ifndef FIXEDFANN
-/*
-	printf("Activation steepness hidden:  %5.2f\n", ann->activation_steepness_hidden);
-	printf("Activation steepness output:  %5.2f\n", ann->activation_steepness_output);
-*/
-#else
-/*
-	printf("Activation steepness hidden:  %d\n", ann->activation_steepness_hidden);
-	printf("Activation steepness output:  %d\n", ann->activation_steepness_output);
-*/
+#ifdef FIXEDFANN
 	printf("Decimal point              :%4d\n", ann->decimal_point);
 	printf("Multiplier                 :%4d\n", ann->multiplier);
 #endif
+	printf("Training algorithm         :   %s\n", FANN_TRAIN_NAMES[ann->training_algorithm]);
 	printf("Training error function    :   %s\n", FANN_ERRORFUNC_NAMES[ann->train_error_function]);
+	printf("Training stop function     :   %s\n", FANN_STOPFUNC_NAMES[ann->train_stop_function]);
+	printf("Bit fail limit             :  %5.2f\n", ann->bit_fail_limit);
+	printf("Learning rate              :  %5.2f\n", ann->learning_rate);
 	printf("Quickprop decay            :  %9.6f\n", ann->quickprop_decay);
 	printf("Quickprop mu               :  %5.2f\n", ann->quickprop_mu);
 	printf("RPROP increase factor      :  %5.2f\n", ann->rprop_increase_factor);
@@ -967,7 +976,19 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("RPROP delta min            :  %5.2f\n", ann->rprop_delta_min);
 	printf("RPROP delta max            :  %5.2f\n", ann->rprop_delta_max);
 	printf("Cascade change fraction    :  %9.6f\n", ann->cascade_change_fraction);
+	printf("Cascade weight multiplier  :  %9.6f\n", ann->cascade_weight_multiplier);
+	printf("Cascade candidate limit    :  %9.6f\n", ann->cascade_candidate_limit);
 	printf("Cascade stagnation epochs  :%4d\n", ann->cascade_stagnation_epochs);
+	printf("Cascade max output epochs  :%4d\n", ann->cascade_max_out_epochs);
+	printf("Cascade max cand epochs    :%4d\n", ann->cascade_max_cand_epochs);
+	for(i = 0; i < ann->cascade_activation_functions_count; i++)
+		printf("Cascade activation func[%d] :   %s\n", i,
+			FANN_ACTIVATIONFUNC_NAMES[ann->cascade_activation_functions[i]]);
+	for(i = 0; i < ann->cascade_activation_steepnesses_count; i++)
+		printf("Cascade activation steep[%d]:  %5.2f\n", i,
+			ann->cascade_activation_steepnesses[i]);
+		
+	printf("Cascade candidate groups   :%4d\n", ann->cascade_num_candidate_groups);
 	printf("Cascade no. of candidates  :%4d\n", fann_get_cascade_num_candidates(ann));
 }
 
@@ -1049,7 +1070,7 @@ void fann_update_stepwise(struct fann *ann)
 /* INTERNAL FUNCTION
    Allocates the main structure and sets some default values.
  */
-struct fann *fann_allocate_structure(float learning_rate, unsigned int num_layers)
+struct fann *fann_allocate_structure(unsigned int num_layers)
 {
 	struct fann *ann;
 
@@ -1072,7 +1093,7 @@ struct fann *fann_allocate_structure(float learning_rate, unsigned int num_layer
 	ann->errno_f = FANN_E_NO_ERROR;
 	ann->error_log = NULL;
 	ann->errstr = NULL;
-	ann->learning_rate = learning_rate;
+	ann->learning_rate = 0.7;
 	ann->total_neurons = 0;
 	ann->total_connections = 0;
 	ann->num_input = 0;

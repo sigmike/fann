@@ -69,8 +69,6 @@ void train_on_steepness_file(struct fann *ann, char *filename,
 
 int main()
 {
-	const float connection_rate = 1;
-	const float learning_rate = (const float) 0.7;
 	const unsigned int num_input = 2;
 	const unsigned int num_output = 1;
 	const unsigned int num_layers = 3;
@@ -83,8 +81,7 @@ int main()
 
 	struct fann_train_data *data;
 
-	struct fann *ann = fann_create(connection_rate,
-								   learning_rate, num_layers,
+	struct fann *ann = fann_create_standard(num_layers,
 								   num_input, num_neurons_hidden, num_output);
 
 	data = fann_read_train_from_file("xor.data");

@@ -42,7 +42,6 @@ int print_callback(unsigned int epochs, float error)
 
 int main()
 {
-	const float learning_rate = (const float) 0.7;
 	const float desired_error = (const float) 0.00001;
 	unsigned int max_neurons = 40;
 	unsigned int neurons_between_reports = 1;
@@ -96,7 +95,7 @@ int main()
 
 	printf("Creating network.\n");
 
-	ann = fann_create_shortcut(learning_rate, 2, train_data->num_input, train_data->num_output);
+	ann = fann_create_shortcut(2, train_data->num_input, train_data->num_output);
 
 	fann_set_training_algorithm(ann, FANN_TRAIN_BATCH);
 	fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP);

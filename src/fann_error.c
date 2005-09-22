@@ -24,8 +24,6 @@
 
 #include "config.h"
 #include "fann.h"
-#include "fann_internal.h"
-#include "fann_errno.h"
 
 #ifdef _MSC_VER
 #define vsnprintf _vsnprintf

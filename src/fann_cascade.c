@@ -17,8 +17,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "config.h"
 #include "fann.h"
-#include "fann_errno.h"
 
 #ifndef FIXEDFANN
 
@@ -740,7 +740,7 @@ float fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data
 	{
 		/*struct fann_neuron *cand = ann->first_layer->first_neuron + ann->total_neurons + 1 + i;
 		 * printf("candidate[%d] = activation: %s, steepness: %f, score: %f\n", 
-		 * i, FANN_ACTIVATION_NAMES[cand->activation_function], 
+		 * i, FANN_ACTIVATIONFUNC_NAMES[cand->activation_function], 
 		 * cand->activation_steepness, ann->cascade_candidate_scores[i]); */
 
 		if(ann->cascade_candidate_scores[i] > best_score)
@@ -913,7 +913,7 @@ void fann_add_candidate_neuron(struct fann *ann, struct fann_layer *layer)
 	neuron_place->first_con = neuron_place->last_con - num_connections_in;
 	printf("neuron[%d] = weights[%d ... %d] activation: %s, steepness: %f\n",
 		   neuron_place - ann->first_layer->first_neuron, neuron_place->first_con,
-		   neuron_place->last_con - 1, FANN_ACTIVATION_NAMES[neuron_place->activation_function],
+		   neuron_place->last_con - 1, FANN_ACTIVATIONFUNC_NAMES[neuron_place->activation_function],
 		   neuron_place->activation_steepness);
 #ifdef CASCADE_DEBUG_FULL
 	printf("neuron[%d] = weights[%d ... %d]\n", neuron_place - ann->first_layer->first_neuron,

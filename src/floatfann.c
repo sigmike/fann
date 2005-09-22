@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 /* Easy way to allow for build of multiple binaries */
 
+#include "config.h"
 #include "floatfann.h"
 
 #include "fann.c"

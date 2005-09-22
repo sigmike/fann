@@ -24,7 +24,6 @@
 
 #include "config.h"
 #include "fann.h"
-#include "fann_errno.h"
 
 /* Create a network from a configuration file.
  */
@@ -393,13 +392,14 @@ struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file
 		return NULL;
 	}
 
-	ann = fann_allocate_structure(learning_rate, num_layers);
+	ann = fann_allocate_structure(num_layers);
 	if(ann == NULL)
 	{
 		return NULL;
 	}
 	ann->connection_rate = connection_rate;
 	ann->shortcut_connections = shortcut_connections;
+	ann->learning_rate = learning_rate;
 
 #ifdef FIXEDFANN
 	ann->decimal_point = decimal_point;
@@ -570,13 +570,14 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 		return NULL;
 	}
 
-	ann = fann_allocate_structure(learning_rate, num_layers);
+	ann = fann_allocate_structure(num_layers);
 	if(ann == NULL)
 	{
 		return NULL;
 	}
 	ann->connection_rate = connection_rate;
 	ann->shortcut_connections = shortcut_connections;
+	ann->learning_rate = learning_rate;
 
 #ifdef FIXEDFANN
 	ann->decimal_point = decimal_point;

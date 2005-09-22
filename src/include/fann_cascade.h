@@ -20,11 +20,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __fann_cascade_h__
 #define __fann_cascade_h__
 
-/* Package: FANN Cascade Training
+/* Section: FANN Cascade Training
    test info about cascade training
 */
 
-/* Group: Functions */
+/* Group: Cascade Training */
 
 /* Function: fann_cascadetrain_on_data_callback
 */

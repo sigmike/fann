@@ -24,7 +24,6 @@
 
 #include "config.h"
 #include "fann.h"
-#include "fann_errno.h"
 
 /*
  * Reads training data from a file. 

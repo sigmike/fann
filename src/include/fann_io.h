@@ -20,7 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __fann_io_h__
 #define __fann_io_h__
 	
-/* Package: FANN Input/Output */	
+/* Section: FANN File Input/Output */	
+
+/* Group: File Input and Output */	
 	
 /* Function: fann_create_from_file
    Constructs a backpropagation neural network from a configuration file.
