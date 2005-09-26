@@ -171,14 +171,6 @@ FANN_EXTERNAL fann_type *FANN_API fann_test(struct fann *ann, fann_type * input,
 }
 
 /* get the mean square error.
-   (obsolete will be removed at some point, use fann_get_MSE)
- */
-FANN_EXTERNAL float FANN_API fann_get_error(struct fann *ann)
-{
-	return fann_get_MSE(ann);
-}
-
-/* get the mean square error.
  */
 FANN_EXTERNAL float FANN_API fann_get_MSE(struct fann *ann)
 {
@@ -192,12 +184,9 @@ FANN_EXTERNAL float FANN_API fann_get_MSE(struct fann *ann)
 	}
 }
 
-/* reset the mean square error.
-   (obsolete will be removed at some point, use fann_reset_MSE)
- */
-FANN_EXTERNAL void FANN_API fann_reset_error(struct fann *ann)
+FANN_EXTERNAL unsigned int fann_get_bit_fail(struct fann *ann)
 {
-	fann_reset_MSE(ann);
+	return ann->num_bit_fail;	
 }
 
 /* reset the mean square error.

@@ -55,6 +55,13 @@
 </item>
 <item id="org.eclipse.cdt.make.core.buildtargets">
 <buildTargets>
+<target name="Documentation" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="natural_docs">
+<buildCommand>./NaturalDocs</buildCommand>
+<buildArguments/>
+<buildTarget/>
+<stopOnError>false</stopOnError>
+<useDefaultCommand>true</useDefaultCommand>
+</target>
 <target name="all" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
 <buildCommand>make</buildCommand>
 <buildArguments/>

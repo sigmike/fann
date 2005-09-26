@@ -35,7 +35,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 /* Enum: fann_train_enum
 	The Training algorithms used when training on <struct fann_train_data> with functions like
-	<fann_train_on_data> or <fann_train_on_file>.
+	<fann_train_on_data> or <fann_train_on_file>. The incremental training looks alters the weights
+	after each time it is presented an input pattern, while batch only alters the weights once after
+	it has been presented to all the patterns.
 
 	FANN_TRAIN_INCREMENTAL - Standard backpropagation incremental or online training
 	FANN_TRAIN_BATCH - Standard backpropagation batch training
@@ -239,7 +241,7 @@ static char const *const FANN_ERRORFUNC_NAMES[] = {
 	Stop criteria used during training.
 
 	FANN_STOPFUNC_MSE - Stop criteria is Mean Square Error (MSE) value.
-	FANN_STOPFUNC_BIT - Stop criteria is number of bits that fail. The number of bits mean the
+	FANN_STOPFUNC_BIT - Stop criteria is number of bits that fail. The number of bits; means the
 		number of output neurons which differ more than the bit fail limit 
 		(see <fann_get_bit_fail_limit>, <fann_set_bit_fail_limit>). 
 		The bits are counted in all of the training data, so this number can be higher than
