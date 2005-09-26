@@ -994,7 +994,7 @@ FANN_EXTERNAL void fann_set_cascade_activation_functions(struct fann *ann,
 		}
 	}
 	
-	memmove(ann->cascade_activation_functions, cascade_activation_functions, 
+	memcpy(ann->cascade_activation_functions, cascade_activation_functions, 
 		ann->cascade_activation_functions_count * sizeof(enum fann_activationfunc_enum));
 }
 
@@ -1022,6 +1022,6 @@ FANN_EXTERNAL void fann_set_cascade_activation_steepnesses(struct fann *ann,
 		}
 	}
 	
-	memmove(ann->cascade_activation_steepnesses, cascade_activation_steepnesses, 
+	memcpy(ann->cascade_activation_steepnesses, cascade_activation_steepnesses, 
 		ann->cascade_activation_steepnesses_count * sizeof(fann_type));
 }

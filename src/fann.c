@@ -163,7 +163,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_ra
 	for(layer_it = ann->first_layer + 1; layer_it != ann->last_layer; layer_it++)
 	{
 		num_neurons_out = layer_it->last_neuron - layer_it->first_neuron - 1;
-		/* if all neurons in each layer should be connected to at least one neuron
+		/*ï¿½if all neurons in each layer should be connected to at least one neuron
 		 * in the previous layer, and one neuron in the next layer.
 		 * and the bias node should be connected to the all neurons in the next layer.
 		 * Then this is the minimum amount of neurons */
@@ -939,7 +939,9 @@ FANN_EXTERNAL void FANN_API fann_init_weights(struct fann *ann, struct fann_trai
 FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 {
 	struct fann_layer *layer_it;
+#ifndef FIXEDFANN
 	unsigned int i;
+#endif
 
 	printf("Input layer                :%4d neurons, 1 bias\n", ann->num_input);
 	for(layer_it = ann->first_layer + 1; layer_it != ann->last_layer - 1; layer_it++)
@@ -963,11 +965,14 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 #ifdef FIXEDFANN
 	printf("Decimal point              :%4d\n", ann->decimal_point);
 	printf("Multiplier                 :%4d\n", ann->multiplier);
-#endif
+#else
 	printf("Training algorithm         :   %s\n", FANN_TRAIN_NAMES[ann->training_algorithm]);
 	printf("Training error function    :   %s\n", FANN_ERRORFUNC_NAMES[ann->train_error_function]);
 	printf("Training stop function     :   %s\n", FANN_STOPFUNC_NAMES[ann->train_stop_function]);
-	printf("Bit fail limit             :  %5.2f\n", ann->bit_fail_limit);
+#endif
+#ifdef FIXEDFANN
+	printf("Bit fail limit             :%4d\n", ann->bit_fail_limit);
+#else
 	printf("Learning rate              :  %5.2f\n", ann->learning_rate);
 	printf("Quickprop decay            :  %9.6f\n", ann->quickprop_decay);
 	printf("Quickprop mu               :  %5.2f\n", ann->quickprop_mu);
@@ -990,6 +995,7 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 		
 	printf("Cascade candidate groups   :%4d\n", ann->cascade_num_candidate_groups);
 	printf("Cascade no. of candidates  :%4d\n", fann_get_cascade_num_candidates(ann));
+#endif
 }
 
 FANN_GET(unsigned int, num_input)
