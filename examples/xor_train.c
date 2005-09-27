@@ -21,9 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "fann.h"
 
-int print_callback(unsigned int epochs, float error)
+int FANN_API test_callback(struct fann *ann, struct fann_train_data *train,
+	unsigned int max_epochs, unsigned int epochs_between_reports, 
+	float desired_error, unsigned int epochs)
 {
-	printf("Epochs     %8d. Current MSE-Error: %.10f\n", epochs, error);
+	printf("Epochs     %8d. MSE: %.5f. Desired-MSE: %.5f\n", epochs, fann_get_MSE(ann), desired_error);
 	return 0;
 }
 
@@ -35,8 +37,8 @@ int main()
 	const unsigned int num_layers = 3;
 	const unsigned int num_neurons_hidden = 3;
 	const float desired_error = (const float) 0.00001;
-	const unsigned int max_iterations = 100000;
-	const unsigned int iterations_between_reports = 1000;
+	const unsigned int max_epochs = 100000;
+	const unsigned int epochs_between_reports = 1000;
 	struct fann *ann;
 	struct fann_train_data *data;
 
@@ -61,10 +63,10 @@ int main()
 	fann_init_weights(ann, data);
 
 	/*fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP); */
-	fann_train_on_data(ann, data, max_iterations, iterations_between_reports, desired_error);
-
-	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback); */
-
+	
+	fann_set_callback(ann, test_callback);
+	
+	fann_train_on_data(ann, data, max_epochs, epochs_between_reports, desired_error);
 
 
 	printf("Testing network. %f\n", fann_test_data(ann, data));

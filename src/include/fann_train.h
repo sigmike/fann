@@ -145,42 +145,53 @@ FANN_EXTERNAL unsigned int fann_get_bit_fail(struct fann *ann);
  */ 
 FANN_EXTERNAL void FANN_API fann_reset_MSE(struct fann *ann);
 
-/* Group: Training Data */
-
-/* Function: fann_read_train_from_file
-   Reads a file that stores training data.
-   
-   The file must be formatted like:
-   >num_train_data num_input num_output
-   >inputdata seperated by space
-   >outputdata seperated by space
-   >
-   >.
-   >.
-   >.
-   >
-   >inputdata seperated by space
-   >outputdata seperated by space
-   
-   See also:
-   	<fann_train_on_data>, <fann_destroy_train>, <fann_save_train>
-
-    This function appears in FANN >= 1.0.0
-*/ 
-FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(char *filename);
-
-
-/* Function: fann_destroy_train
-   Destructs the training data and properly deallocates all of the associated data.
-   Be sure to call this function after finished using the training data.
-
-    This function appears in FANN >= 1.0.0
- */ 
-FANN_EXTERNAL void FANN_API fann_destroy_train(struct fann_train_data *train_data);
-
+/* Group: Training Data Training */
 
 #ifndef FIXEDFANN
 	
+/* Function: fann_train_on_data
+
+   Trains on an entire dataset, for a period of time. 
+   
+   This training uses the training algorithm chosen by <fann_set_training_algorithm>,
+   and the parameters set for these training algorithms.
+   
+   Parameters:
+   		ann - The neural network
+   		data - The data, which should be used during training
+   		max_epochs - The maximum number of epochs the training should continue
+   		epochs_between_reports - The number of epochs between printing a status report to stdout.
+   			A value of zero means no reports should be printed.
+   		desired_error - The desired <fann_get_MSE> or <fann_get_bit_fail>, depending on which stop function
+   			is chosen by <fann_set_train_stop_function>.
+
+	Instead of printing out reports every epochs_between_reports, a callback function can be called 
+	(see <fann_set_callback>).
+	
+	See also:
+		<fann_train_on_file>, <fann_train_epoch>, <Parameters>
+
+	This function appears in FANN >= 1.0.0.
+*/ 
+FANN_EXTERNAL void FANN_API fann_train_on_data(struct fann *ann, struct fann_train_data *data,
+											   unsigned int max_epochs,
+											   unsigned int epochs_between_reports,
+											   float desired_error);
+
+/* Function: fann_train_on_file
+   
+   Does the same as <fann_train_on_data>, but reads the training data directly from a file.
+   
+   See also:
+   		<fann_train_on_data>
+
+	This function appears in FANN >= 1.0.0.
+*/ 
+FANN_EXTERNAL void FANN_API fann_train_on_file(struct fann *ann, char *filename,
+											   unsigned int max_epochs,
+											   unsigned int epochs_between_reports,
+											   float desired_error);
+
 /* Function: fann_train_epoch
    Train one epoch with a set of training data.
    
@@ -215,73 +226,38 @@ FANN_EXTERNAL float FANN_API fann_train_epoch(struct fann *ann, struct fann_trai
  */ 
 FANN_EXTERNAL float FANN_API fann_test_data(struct fann *ann, struct fann_train_data *data);
 
+/* Group: Training Data Manipulation */
 
-/* Function: fann_train_on_data
-
-   Trains on an entire dataset, for a period of time. 
+/* Function: fann_read_train_from_file
+   Reads a file that stores training data.
    
-   This training uses the training algorithm chosen by <fann_set_training_algorithm>,
-   and the parameters set for these training algorithms.
+   The file must be formatted like:
+   >num_train_data num_input num_output
+   >inputdata seperated by space
+   >outputdata seperated by space
+   >
+   >.
+   >.
+   >.
+   >
+   >inputdata seperated by space
+   >outputdata seperated by space
    
-   Parameters:
-   		ann - The neural network
-   		data - The data, which should be used during training
-   		max_epochs - The maximum number of epochs the training should continue
-   		epochs_between_reports - The number of epochs between printing a status report to stdout.
-   			A value of zero means no reports should be printed.
-   		desired_error - The desired <fann_get_MSE> or <fann_get_bit_fail>, depending on which stop function
-   			is chosen by <fann_set_train_stop_function>.
+   See also:
+   	<fann_train_on_data>, <fann_destroy_train>, <fann_save_train>
 
-	See also:
-		<fann_train_on_data_callback>, <fann_train_on_file>, <fann_train_epoch>, <Parameters>
+    This function appears in FANN >= 1.0.0
 */ 
-FANN_EXTERNAL void FANN_API fann_train_on_data(struct fann *ann, struct fann_train_data *data,
-											   unsigned int max_epochs,
-											   unsigned int epochs_between_reports,
-											   float desired_error);
+FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(char *filename);
 
 
-/* Function: fann_train_on_data_callback
+/* Function: fann_destroy_train
+   Destructs the training data and properly deallocates all of the associated data.
+   Be sure to call this function after finished using the training data.
 
-	TODO - callback definition should be changed.
-	   
-   Same as fann_train_on_data, but a callback function is given,
-   which can be used to print out reports. (effective for gui programming).
-   If the callback returns -1, then the training is terminated, otherwise
-   it continues until the normal stop criteria.
-*/ 
-FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann,
-														struct fann_train_data *data,
-														unsigned int max_epochs,
-														unsigned int epochs_between_reports,
-														float desired_error,
-														int (FANN_API *
-															 callback) (unsigned int epochs,
-																		float error));
-
-
-/* Function: fann_train_on_file
-   
-   Does the same as train_on_data, but reads the data directly from a file.
+    This function appears in FANN >= 1.0.0
  */ 
-FANN_EXTERNAL void FANN_API fann_train_on_file(struct fann *ann, char *filename,
-											   unsigned int max_epochs,
-											   unsigned int epochs_between_reports,
-											   float desired_error);
-
-
-/* Function: fann_train_on_file_callback
-   
-   Does the same as train_on_data_callback, but
-   reads the data directly from a file.
- */ 
-FANN_EXTERNAL void FANN_API fann_train_on_file_callback(struct fann *ann, char *filename,
-														unsigned int max_epochs,
-														unsigned int epochs_between_reports,
-														float desired_error,
-														int (FANN_API *
-															 callback) (unsigned int epochs,
-																		float error));
+FANN_EXTERNAL void FANN_API fann_destroy_train(struct fann_train_data *train_data);
 
 
 /* Function: fann_shuffle_train_data
@@ -461,6 +437,13 @@ FANN_EXTERNAL fann_type FANN_API fann_get_bit_fail_limit(struct fann *ann);
    so that symmetric and not symmetric activation functions can use the same limit.
  */ 
 FANN_EXTERNAL void FANN_API fann_set_bit_fail_limit(struct fann *ann, fann_type bit_fail_limit);
+
+/* Function: fann_set_callback
+ 	Sets the callback function for use during training.
+ 	
+ 	See <fann_callback_type> for more information about the callback function.
+ */
+FANN_EXTERNAL void fann_set_callback(struct fann *ann, fann_callback_type callback);
 
 /* Function: fann_get_quickprop_decay
 

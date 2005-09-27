@@ -90,11 +90,9 @@ extern "C"
  The __stdcall calling convention is used for functions in a
  windows DLL.
 
- The callback functions for fann_train_on_data_callback and
- fann_train_on_file_callback must be declared as FANN_API
+ The callback functions for fann_set_callback must be declared as FANN_API
  so the DLL and the application program both use the same
- calling convention. The callback functions must of this form:
-     int FANN_API user_callback(unsigned int epochs, float error)
+ calling convention.
 */ 
  
 /*

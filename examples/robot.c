@@ -21,12 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "fann.h"
 
-int print_callback(unsigned int epochs, float error)
-{
-	printf("Epochs     %8d. Current MSE-Error: %.10f\n", epochs, error);
-	return 0;
-}
-
 int main()
 {
 	const unsigned int num_layers = 3;
@@ -50,7 +44,6 @@ int main()
 
 	fann_train_on_data(ann, train_data, 1000, 10, desired_error);
 
-	/*fann_train_on_data_callback(ann, data, max_iterations, iterations_between_reports, desired_error, print_callback); */
 	printf("Testing network.\n");
 
 	test_data = fann_read_train_from_file("../benchmarks/datasets/robot.test");

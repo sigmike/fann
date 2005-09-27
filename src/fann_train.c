@@ -823,6 +823,7 @@ FANN_EXTERNAL void FANN_API fann_set_activation_steepness_output(struct fann *an
 }
 
 FANN_GET_SET(enum fann_errorfunc_enum, train_error_function)
+FANN_GET_SET(fann_callback_type, callback)
 FANN_GET_SET(float, quickprop_decay)
 FANN_GET_SET(float, quickprop_mu)
 FANN_GET_SET(float, rprop_increase_factor)

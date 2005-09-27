@@ -272,6 +272,45 @@ static char const *const FANN_STOPFUNC_NAMES[] = {
 	"FANN_STOPFUNC_BIT"
 };
 
+/* forward declarations for use with the callback */
+struct fann;
+struct fann_train_data;
+/* Type: fann_callback_type
+   This callback function can be called during training when using <fann_train_on_data>, 
+   <fann_train_on_file> or <fann_cascade_train>.
+	
+	>typedef int (FANN_API * fann_callback_type) (struct fann *ann, struct fann_train_data *train, 
+	>											  unsigned int max_epochs, 
+	>                                             unsigned int epochs_between_reports, 
+	>                                             float desired_error, unsigned int epochs);
+	
+	The callback can be set by using <fann_set_callback> and is very usefull for doing custom 
+	things during training. It is recommended to use this function when implementing custom 
+	training procedures, or when visualizing the training in a GUI etc. The parameters which the
+	callback function takes is the parameters given to the <fann_train_on_data>, plus an epochs
+	parameter which tells how many epochs the training have taken so far.
+	
+	The callback function should return an integer, if the callback function returns -1, the training
+	will terminate.
+	
+	Example of a callback function:
+		>int FANN_API test_callback(struct fann *ann, struct fann_train_data *train,
+		>				            unsigned int max_epochs, unsigned int epochs_between_reports, 
+		>				            float desired_error, unsigned int epochs)
+		>{
+		>	printf("Epochs     %8d. MSE: %.5f. Desired-MSE: %.5f\n", epochs, fann_get_MSE(ann), desired_error);
+		>	return 0;
+		>}
+	
+	See also:
+		<fann_set_callback>, <fann_train_on_data>
+ */ 
+FANN_EXTERNAL typedef int (FANN_API * fann_callback_type) (struct fann *ann, struct fann_train_data *train, 
+														   unsigned int max_epochs, 
+														   unsigned int epochs_between_reports, 
+														   float desired_error, unsigned int epochs);
+
+
 /* ----- Data structures -----
  * No data within these structures should be altered directly by the user.
  */
@@ -460,6 +499,10 @@ struct fann
 	/* The stop function used during training. (default FANN_STOPFUNC_MSE)
 	*/
 	enum fann_stopfunc_enum train_stop_function;
+
+	/* The callback function used during training. (default NULL)
+	*/
+	fann_callback_type callback;
 
 	/* Variables for use with Cascade Correlation */
 

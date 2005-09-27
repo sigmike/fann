@@ -74,8 +74,8 @@ int main()
 	const unsigned int num_layers = 3;
 	const unsigned int num_neurons_hidden = 3;
 	const float desired_error = (const float) 0.001;
-	const unsigned int max_iterations = 500000;
-	const unsigned int iterations_between_reports = 1000;
+	const unsigned int max_epochs = 500000;
+	const unsigned int epochs_between_reports = 1000;
 	unsigned int i;
 	fann_type *calc_out;
 
@@ -91,8 +91,8 @@ int main()
 
 	fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP);
 
-	train_on_steepness_file(ann, "xor.data", max_iterations,
-							iterations_between_reports, desired_error, (float) 1.0, (float) 0.1,
+	train_on_steepness_file(ann, "xor.data", max_epochs,
+							epochs_between_reports, desired_error, (float) 1.0, (float) 0.1,
 							(float) 20.0);
 
 	fann_set_activation_function_hidden(ann, FANN_THRESHOLD_SYMMETRIC);

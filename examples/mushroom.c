@@ -21,19 +21,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "fann.h"
 
-int print_callback(unsigned int epochs, float error)
-{
-	printf("Epochs     %8d. Current MSE-Error: %.10f\n", epochs, error);
-	return 0;
-}
-
 int main()
 {
 	const unsigned int num_layers = 3;
 	const unsigned int num_neurons_hidden = 32;
 	const float desired_error = (const float) 0.0001;
-	const unsigned int max_iterations = 300;
-	const unsigned int iterations_between_reports = 10;
+	const unsigned int max_epochs = 300;
+	const unsigned int epochs_between_reports = 10;
 	struct fann *ann;
 	struct fann_train_data *train_data, *test_data;
 
@@ -53,7 +47,7 @@ int main()
 
 	/*fann_set_training_algorithm(ann, FANN_TRAIN_INCREMENTAL); */
 
-	fann_train_on_data(ann, train_data, max_iterations, iterations_between_reports, desired_error);
+	fann_train_on_data(ann, train_data, max_epochs, epochs_between_reports, desired_error);
 
 	printf("Testing network.\n");
 

@@ -206,17 +206,10 @@ FANN_EXTERNAL float FANN_API fann_test_data(struct fann *ann, struct fann_train_
 	return fann_get_MSE(ann);
 }
 
-/*
- * Train directly on the training data. 
- */
-FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann,
-														struct fann_train_data *data,
-														unsigned int max_epochs,
-														unsigned int epochs_between_reports,
-														float desired_error,
-														int (FANN_API *
-															 callback) (unsigned int epochs,
-																		float error))
+FANN_EXTERNAL void FANN_API fann_train_on_data(struct fann *ann, struct fann_train_data *data,
+											   unsigned int max_epochs,
+											   unsigned int epochs_between_reports,
+											   float desired_error)
 {
 	float error;
 	unsigned int i;
@@ -226,7 +219,7 @@ FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann,
 	printf("Training with %s\n", FANN_TRAIN_NAMES[ann->training_algorithm]);
 #endif
 
-	if(epochs_between_reports && callback == NULL)
+	if(epochs_between_reports && ann->callback == NULL)
 	{
 		printf("Max epochs %8d. Desired error: %.10f.\n", max_epochs, desired_error);
 	}
@@ -246,12 +239,13 @@ FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann,
 		   (i % epochs_between_reports == 0 || i == max_epochs || i == 1 ||
 			desired_error_reached == 0))
 		{
-			if(callback == NULL)
+			if(ann->callback == NULL)
 			{
 				printf("Epochs     %8d. Current error: %.10f. Bit fail %d.\n", i, error,
 					   ann->num_bit_fail);
 			}
-			else if((*callback) (i, error) == -1)
+			else if(((*ann->callback)(ann, data, max_epochs, epochs_between_reports, 
+									  desired_error, i)) == -1)
 			{
 				/*
 				 * you can break the training by returning -1 
@@ -265,25 +259,10 @@ FANN_EXTERNAL void FANN_API fann_train_on_data_callback(struct fann *ann,
 	}
 }
 
-FANN_EXTERNAL void FANN_API fann_train_on_data(struct fann *ann, struct fann_train_data *data,
+FANN_EXTERNAL void FANN_API fann_train_on_file(struct fann *ann, char *filename,
 											   unsigned int max_epochs,
 											   unsigned int epochs_between_reports,
 											   float desired_error)
-{
-	fann_train_on_data_callback(ann, data, max_epochs, epochs_between_reports, desired_error, NULL);
-}
-
-
-/*
- * Wrapper to make it easy to train directly on a training data file. 
- */
-FANN_EXTERNAL void FANN_API fann_train_on_file_callback(struct fann *ann, char *filename,
-														unsigned int max_epochs,
-														unsigned int epochs_between_reports,
-														float desired_error,
-														int (FANN_API *
-															 callback) (unsigned int epochs,
-																		float error))
 {
 	struct fann_train_data *data = fann_read_train_from_file(filename);
 
@@ -291,18 +270,8 @@ FANN_EXTERNAL void FANN_API fann_train_on_file_callback(struct fann *ann, char *
 	{
 		return;
 	}
-	fann_train_on_data_callback(ann, data, max_epochs, epochs_between_reports, desired_error,
-								callback);
+	fann_train_on_data(ann, data, max_epochs, epochs_between_reports, desired_error);
 	fann_destroy_train(data);
-}
-
-FANN_EXTERNAL void FANN_API fann_train_on_file(struct fann *ann, char *filename,
-											   unsigned int max_epochs,
-											   unsigned int epochs_between_reports,
-											   float desired_error)
-{
-	fann_train_on_file_callback(ann, filename, max_epochs, epochs_between_reports, desired_error,
-								NULL);
 }
 
 #endif
