@@ -26,12 +26,6 @@
 /* #define CASCADE_DEBUG */
 /* #define CASCADE_DEBUG_FULL */
 
-void fann_cascadetrain_on_data_callback(struct fann *ann, struct fann_train_data *data,
-										float desired_error, int (*callback) (unsigned int epochs,
-																			  float error),
-										unsigned int max_neurons,
-										unsigned int neurons_between_reports);
-
 int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float desired_error);
 
 float fann_train_outputs_epoch(struct fann *ann, struct fann_train_data *data);
@@ -65,18 +59,17 @@ void fann_print_connections_raw(struct fann *ann)
    The connected_neurons pointers are not valid during training,
    but they will be again after training.
  */
-void fann_cascadetrain_on_data_callback(struct fann *ann, struct fann_train_data *data,
-										float desired_error, int (*callback) (unsigned int epochs,
-																			  float error),
+void fann_cascadetrain_on_data(struct fann *ann, struct fann_train_data *data,
 										unsigned int max_neurons,
-										unsigned int neurons_between_reports)
+										unsigned int neurons_between_reports,
+										float desired_error)
 {
 	float error;
 	unsigned int i;
 	unsigned int total_epochs = 0;
 	int desired_error_reached;
 
-	if(neurons_between_reports && callback == NULL)
+	if(neurons_between_reports && ann->callback == NULL)
 	{
 		printf("Max neurons %6d. Desired error: %.6f\n", max_neurons, desired_error);
 	}
@@ -106,16 +99,14 @@ void fann_cascadetrain_on_data_callback(struct fann *ann, struct fann_train_data
 		   (i % neurons_between_reports == 0
 			|| i == max_neurons || i == 1 || desired_error_reached == 0))
 		{
-			if(callback == NULL)
+			if(ann->callback == NULL)
 			{
 				printf
 					("Neurons     %6d. Current error: %.6f. Total error: %.6f. Epochs %6d. Bit fail %d.\n",
 					 i, error, ann->MSE_value, total_epochs, ann->num_bit_fail);
 			}
-			else if((*callback) (i, total_epochs) == -1) 
-				/* TODO the callback should be changed, to include more info
-				 * now total_epochs is included in the error field.
-				*/
+			else if((*ann->callback) (ann, data, max_neurons, 
+				neurons_between_reports, desired_error, total_epochs) == -1) 
 			{
 				/* you can break the training by returning -1 */
 				break;
@@ -160,7 +151,7 @@ void fann_cascadetrain_on_data_callback(struct fann *ann, struct fann_train_data
 	/* Train outputs one last time but without any desired error */
 	total_epochs += fann_train_outputs(ann, data, 0.0);
 
-	if(neurons_between_reports && callback == NULL)
+	if(neurons_between_reports && ann->callback == NULL)
 	{
 		printf("Train outputs       Current error: %.6f. Epochs %6d\n", fann_get_MSE(ann),
 			   total_epochs);

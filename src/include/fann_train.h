@@ -212,6 +212,7 @@ FANN_EXTERNAL void FANN_API fann_train_on_file(struct fann *ann, char *filename,
 	This function appears in FANN >= 1.2.0.
  */ 
 FANN_EXTERNAL float FANN_API fann_train_epoch(struct fann *ann, struct fann_train_data *data);
+#endif	/* NOT FIXEDFANN */
 
 /* Function: fann_test_data
   
@@ -311,7 +312,9 @@ FANN_EXTERNAL void FANN_API fann_scale_train_data(struct fann_train_data *train_
 
 /* Function: fann_merge_train_data
    
-   Merges the data from data1 and data2 into a new <struct fann_train_data>training data into a single struct.
+   Merges the data from *data1* and *data2* into a new <struct fann_train_data>.
+   
+   This function appears in FANN >= 1.1.0.
  */ 
 FANN_EXTERNAL struct fann_train_data *FANN_API fann_merge_train_data(struct fann_train_data *data1,
 																	 struct fann_train_data *data2);
@@ -319,17 +322,69 @@ FANN_EXTERNAL struct fann_train_data *FANN_API fann_merge_train_data(struct fann
 
 /* Function: fann_duplicate_train_data
    
-   return a copy of a fann_train_data struct
+   Returns an exact copy of a <struct fann_train_data>.
+
+   This function appears in FANN >= 1.1.0.
  */ 
 FANN_EXTERNAL struct fann_train_data *FANN_API fann_duplicate_train_data(struct fann_train_data
 																		 *data);
+	
+/* Function: fann_subset_train_data
+   
+   Returns an copy of a subset of the <struct fann_train_data>, starting at position *pos* 
+   and *length* elements forward.
+   
+   >fann_subset_train_data(train_data, 0, fann_length_train_data(train_data))
+   
+   Will do the same as <fann_duplicate_train_data>.
+   
+   See also:
+   	<fann_length_train_data>
 
+   This function appears in FANN >= 2.0.0.
+ */ 
+FANN_EXTERNAL struct fann_train_data *FANN_API fann_subset_train_data(struct fann_train_data
+																		 *data, unsigned int pos,
+																		 unsigned int length);
+	
+/* Function: fann_length_train_data
+   
+   Returns the number of training patterns in the <struct fann_train_data>.
 
-#endif	/* NOT FIXEDFANN */
+   This function appears in FANN >= 2.0.0.
+ */ 
+FANN_EXTERNAL unsigned int FANN_API fann_length_train_data(struct fann_train_data *data);
+	
+/* Function: fann_num_input_train_data
+   
+   Returns the number of inputs in each of the training patterns in the <struct fann_train_data>.
+   
+   See also:
+   	<fann_num_train_data>, <fann_num_output_train_data>
+
+   This function appears in FANN >= 2.0.0.
+ */ 
+FANN_EXTERNAL unsigned int FANN_API fann_num_input_train_data(struct fann_train_data *data);
+	
+/* Function: fann_num_input_train_data
+   
+   Returns the number of outputs in each of the training patterns in the <struct fann_train_data>.
+   
+   See also:
+   	<fann_num_train_data>, <fann_num_input_train_data>
+
+   This function appears in FANN >= 2.0.0.
+ */ 
+FANN_EXTERNAL unsigned int FANN_API fann_num_output_train_data(struct fann_train_data *data);
 	
 /* Function: fann_save_train
    
-   Save the training structure to a file.
+   Save the training structure to a file, with the format as specified in <fann_read_train_from_file>
+   
+   See also:
+   	<fann_read_train_from_file>, <fann_save_train_to_fixed>
+	
+   This function appears in FANN >= 1.0.0.   	
  */ 
 FANN_EXTERNAL void FANN_API fann_save_train(struct fann_train_data *data, char *filename);
 
@@ -337,7 +392,13 @@ FANN_EXTERNAL void FANN_API fann_save_train(struct fann_train_data *data, char *
 /* Function: fann_save_train_to_fixed
    
    Saves the training structure to a fixed point data file.
- *  (Very usefull for testing the quality of a fixed point network).
+ 
+   This function is very usefull for testing the quality of a fixed point network.
+   
+   See also:
+   	<fann_save_train>
+
+   This function appears in FANN >= 1.0.0.   	
  */ 
 FANN_EXTERNAL void FANN_API fann_save_train_to_fixed(struct fann_train_data *data, char *filename,
 													 unsigned int decimal_point);
@@ -347,7 +408,18 @@ FANN_EXTERNAL void FANN_API fann_save_train_to_fixed(struct fann_train_data *dat
 
 /* Function: fann_get_training_algorithm
 
-   Get the training algorithm.
+   Return the training algorithm as described by <fann_train_enum>. This training algorithm
+   is used by <fann_train_on_data> and associated functions.
+   
+   Note that this algorithm is also used during <fann_cascadetrain_on_data>, although only
+   FANN_TRAIN_RPROP and FANN_TRAIN_QUICKPROP is allowed during cascade training.
+   
+   The default training algorithm is FANN_TRAIN_RPROP.
+   
+   See also:
+    <fann_set_training_algorithm>, <fann_train_enum>
+
+   This function appears in FANN >= 1.0.0.   	
  */ 
 FANN_EXTERNAL enum fann_train_enum FANN_API fann_get_training_algorithm(struct fann *ann);
 
@@ -355,6 +427,10 @@ FANN_EXTERNAL enum fann_train_enum FANN_API fann_get_training_algorithm(struct f
 /* Function: fann_set_training_algorithm
 
    Set the training algorithm.
+   
+   More info available in <fann_get_training_algorithm>
+
+   This function appears in FANN >= 1.0.0.   	
  */ 
 FANN_EXTERNAL void FANN_API fann_set_training_algorithm(struct fann *ann,
 														enum fann_train_enum training_algorithm);
@@ -362,7 +438,18 @@ FANN_EXTERNAL void FANN_API fann_set_training_algorithm(struct fann *ann,
 
 /* Function: fann_get_learning_rate
 
-   Get the learning rate.
+   Return the learning rate.
+   
+   The learning rate is used to determine how aggressive training should be for some of the
+   training algorithms (FANN_TRAIN_INCREMENTAL, FANN_TRAIN_BATCH, FANN_TRAIN_QUICKPROP).
+   Do however note that it is not used in FANN_TRAIN_RPROP.
+   
+   The default learning rate is 0.7.
+   
+   See also:
+   	<fann_set_learning_rate>, <fann_set_training_algorithm>
+   
+   This function appears in FANN >= 1.0.0.   	
  */ 
 FANN_EXTERNAL float FANN_API fann_get_learning_rate(struct fann *ann);
 
@@ -370,9 +457,57 @@ FANN_EXTERNAL float FANN_API fann_get_learning_rate(struct fann *ann);
 /* Function: fann_set_learning_rate
 
    Set the learning rate.
+   
+   More info available in <fann_get_learning_rate>
+
+   This function appears in FANN >= 1.0.0.   	
  */ 
 FANN_EXTERNAL void FANN_API fann_set_learning_rate(struct fann *ann, float learning_rate);
 
+/* Function: fann_set_activation_function
+
+   Set the activation function for neuron number *neuron* in layer number *layer*, 
+   counting the input layer as layer 0. 
+   
+   It is not possible to set activation functions for the neurons in the input layer.
+
+   TODO description about the activation function
+   
+   TODO implement
+   
+   The default activation function is FANN_SIGMOID_STEPWISE.
+   
+   See also:
+   	<fann_set_activation_function_layer>, <fann_set_activation_function_hidden>,
+   	<fann_set_activation_function_output>, <fann_set_activation_steepness>
+
+   This function appears in FANN >= 2.0.0.
+ */ 
+FANN_EXTERNAL void FANN_API fann_set_activation_function(struct fann *ann,
+																enum fann_activationfunc_enum
+																activation_function,
+																unsigned int layer,
+																unsigned int neuron);
+
+/* Function: fann_set_activation_function_layer
+
+   Set the activation function for all the neurons in the layer number *layer*, 
+   counting the input layer as layer 0. 
+   
+   It is not possible to set activation functions for the neurons in the input layer.
+   
+   TODO implement
+
+   See also:
+   	<fann_set_activation_function>, <fann_set_activation_function_hidden>,
+   	<fann_set_activation_function_output>, <fann_set_activation_steepness_layer>
+
+   This function appears in FANN >= 2.0.0.
+ */ 
+FANN_EXTERNAL void FANN_API fann_set_activation_function_layer(struct fann *ann,
+																enum fann_activationfunc_enum
+																activation_function,
+																unsigned int layer);
 
 /* Function: fann_set_activation_function_hidden
 
@@ -390,6 +525,49 @@ FANN_EXTERNAL void FANN_API fann_set_activation_function_hidden(struct fann *ann
 FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann,
 																enum fann_activationfunc_enum
 																activation_function);
+
+/* Function: fann_set_activation_steepness
+
+   Set the activation steepness for neuron number *neuron* in layer number *layer*, 
+   counting the input layer as layer 0. 
+   
+   It is not possible to set activation steepness for the neurons in the input layer.
+   
+   TODO description about the steepness
+   
+   TODO implement
+   
+   The default activation steepness is 0.5.
+   
+   See also:
+   	<fann_set_activation_steepness_layer>, <fann_set_activation_steepness_hidden>,
+   	<fann_set_activation_steepness_output>, <fann_set_activation_function>
+
+   This function appears in FANN >= 2.0.0.
+ */ 
+FANN_EXTERNAL void FANN_API fann_set_activation_steepness(struct fann *ann,
+																fann_type steepness,
+																unsigned int layer,
+																unsigned int neuron);
+
+/* Function: fann_set_activation_steepness_layer
+
+   Set the activation steepness all of the neurons in layer number *layer*, 
+   counting the input layer as layer 0. 
+   
+   It is not possible to set activation steepness for the neurons in the input layer.
+   
+   TODO implement
+   
+   See also:
+   	<fann_set_activation_steepness>, <fann_set_activation_steepness_hidden>,
+   	<fann_set_activation_steepness_output>, <fann_set_activation_function>
+
+   This function appears in FANN >= 2.0.0.
+ */ 
+FANN_EXTERNAL void FANN_API fann_set_activation_steepness_layer(struct fann *ann,
+																fann_type steepness,
+																unsigned int neuron);
 
 /* Function: fann_set_activation_steepness_hidden
 

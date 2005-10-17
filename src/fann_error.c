@@ -159,6 +159,9 @@ void fann_error(struct fann_error *errdat, const enum fann_errno_enum errno_f, .
 	case FANN_E_CANT_USE_TRAIN_ALG:
 		sprintf(errstr, "Unable to use the selected training algorithm.\n");
 		break;
+	case FANN_E_TRAIN_DATA_SUBSET:
+		vsprintf(errstr, "Subset from %d of length %d not valid in training set of length %d.\n", ap);
+		break;
 	}
 	va_end(ap);
 

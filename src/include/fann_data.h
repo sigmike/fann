@@ -39,10 +39,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	after each time it is presented an input pattern, while batch only alters the weights once after
 	it has been presented to all the patterns.
 
-	FANN_TRAIN_INCREMENTAL - Standard backpropagation incremental or online training
-	FANN_TRAIN_BATCH - Standard backpropagation batch training
-	FANN_TRAIN_RPROP - The iRprop- training algorithm 
-	FANN_TRAIN_QUICKPROP - The Quickprop training algorithm
+	FANN_TRAIN_INCREMENTAL -  Standard backpropagation algorithm, where the weights are 
+		updated after each training pattern. This means that the weights are updated many 
+		times during a single epoch. For this reason some problems, will train very fast with 
+		this algorithm, while other more advanced problems will not train very well.
+	FANN_TRAIN_BATCH -  Standard backpropagation algorithm, where the weights are updated after 
+		calculating the mean square error for the whole training set. This means that the weights 
+		are only updated once during a epoch. For this reason some problems, will train slower with 
+		this algorithm. But since the mean square error is calculated more correctly than in 
+		incremental training, some problems will reach a better solutions with this algorithm.
+	FANN_TRAIN_RPROP - A more advanced batch training algorithm which achieves good results 
+		for many problems. The RPROP training algorithm is adaptive, and does therefore not 
+		use the learning_rate. Some other parameters can however be set to change the way the 
+		RPROP algorithm works, but it is only recommended for users with insight in how the RPROP 
+		training algorithm works. The RPROP training algorithm is described by 
+		[Riedmiller and Braun, 1993], but the actual learning algorithm used here is the 
+		iRPROP- training algorithm which is described by [Igel and Husken, 2000] which 
+    	is an variety of the standard RPROP training algorithm.
+	FANN_TRAIN_QUICKPROP - A more advanced batch training algorithm which achieves good results 
+		for many problems. The quickprop training algorithm uses the learning_rate parameter 
+		along with other more advanced parameters, but it is only recommended to change these 
+		advanced parameters, for users with insight in how the quickprop training algorithm works.
+		The quickprop training algorithm is described by [Fahlman, 1988].
 	
 	See also:
 		<fann_set_training_algorithm>, <fann_get_training_algorithm>

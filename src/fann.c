@@ -1116,6 +1116,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->shortcut_connections = 0;
 	ann->train_error_function = FANN_ERRORFUNC_TANH;
 	ann->train_stop_function = FANN_STOPFUNC_MSE;
+	ann->callback = NULL;
 
 	/* variables used for cascade correlation (reasonable defaults) */
 	ann->cascade_change_fraction = 0.01;

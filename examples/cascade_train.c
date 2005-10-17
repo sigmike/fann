@@ -24,7 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 struct fann *ann;
 struct fann_train_data *train_data, *test_data;
 
-int print_callback(unsigned int epochs, float error)
+int FANN_API print_callback(struct fann *ann, struct fann_train_data *train,
+                           unsigned int max_epochs, unsigned int epochs_between_reports,
+                           float desired_error, unsigned int epochs)
 {
 	int bit1, bit2;
 	float mse1, mse2;
@@ -32,10 +34,11 @@ int print_callback(unsigned int epochs, float error)
 	mse2 = fann_test_data(ann, test_data);
 	bit2 = ann->num_bit_fail;
 
-	mse1 = fann_test_data(ann, train_data);
+	mse1 = fann_test_data(ann, train);
 	bit1 = ann->num_bit_fail;
 
-	printf("Nerons     %4d. Epochs: %7d ", epochs, (int)error);
+	printf("Nerons     %4d. Epochs: %7d ", 
+		fann_get_total_neurons(ann)-(fann_get_num_input(ann)+fann_get_num_output(ann)), epochs);
 	printf("Train error: %.10f (%d), Test error: %.10f (%d)\n", mse1, bit1, mse2, bit2);
 	return 0;
 }
@@ -45,6 +48,7 @@ int main()
 	const float desired_error = (const float) 0.00001;
 	unsigned int max_neurons = 40;
 	unsigned int neurons_between_reports = 1;
+	struct fann_train_data *test = NULL;
 
 	printf("Reading data.\n");
 
@@ -59,9 +63,6 @@ int main()
 
 	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral.test");
-
-	train_data = fann_read_train_from_file("xor.data");
-	test_data = fann_read_train_from_file("xor.data");
 
 	train_data = fann_read_train_from_file("../benchmarks/datasets/mushroom.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/mushroom.test");
@@ -90,8 +91,16 @@ int main()
 	train_data = fann_read_train_from_file("../benchmarks/datasets/parity13.test");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/parity13.test");
 
+	train_data = fann_read_train_from_file("xor.data");
+	test_data = fann_read_train_from_file("xor.data");
+	
 	fann_scale_train_data(train_data, 0, 1);
 	fann_scale_train_data(test_data, 0, 1);
+
+	test = fann_subset_train_data(train_data, 0, 2);
+	test_data = fann_subset_train_data(train_data, 2, 2);
+	test = fann_merge_train_data(test, test_data);
+	fann_save_train(test, "test_test.data");
 
 	printf("Creating network.\n");
 
@@ -123,13 +132,14 @@ int main()
 	fann_set_cascade_max_cand_epochs(ann, 150);
 	fann_set_cascade_num_candidate_groups(ann, 1);
 
+	fann_set_callback(ann, print_callback);
+
 	fann_print_parameters(ann);
 	/*fann_print_connections(ann); */
 
 	printf("Training network.\n");
 
-	fann_cascadetrain_on_data_callback(ann, train_data, desired_error, print_callback,
-									   max_neurons, neurons_between_reports);
+	fann_cascadetrain_on_data(ann, train_data, max_neurons, neurons_between_reports, desired_error);
 
 	/*fann_train_on_data(ann, train_data, 300, 1, desired_error); */
 	/*printf("\nTrain error: %f, Test error: %f\n\n", fann_test_data(ann, train_data), fann_test_data(ann, test_data)); */
