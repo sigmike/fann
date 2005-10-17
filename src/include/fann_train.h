@@ -262,14 +262,22 @@ FANN_EXTERNAL void FANN_API fann_destroy_train(struct fann_train_data *train_dat
 
 /* Function: fann_shuffle_train_data
    
-   shuffles training data, randomizing the order
+   Shuffles training data, randomizing the order. 
+   This is recommended for incremental training, while it have no influence during batch training.
+   
+   This function appears in FANN >= 1.1.0.
  */ 
 FANN_EXTERNAL void FANN_API fann_shuffle_train_data(struct fann_train_data *train_data);
 
 
 /* Function: fann_scale_input_train_data
    
-   Scales the inputs in the training data to the specified range
+   Scales the inputs in the training data to the specified range.
+
+   See also:
+   	<fann_scale_output_train_data>, <fann_scale_train_data>
+
+   This function appears in FANN >= 2.0.0.
  */ 
 FANN_EXTERNAL void FANN_API fann_scale_input_train_data(struct fann_train_data *train_data,
 														fann_type new_min, fann_type new_max);
@@ -277,7 +285,12 @@ FANN_EXTERNAL void FANN_API fann_scale_input_train_data(struct fann_train_data *
 
 /* Function: fann_scale_output_train_data
    
-   Scales the inputs in the training data to the specified range
+   Scales the outputs in the training data to the specified range.
+
+   See also:
+   	<fann_scale_input_train_data>, <fann_scale_train_data>
+
+   This function appears in FANN >= 2.0.0.
  */ 
 FANN_EXTERNAL void FANN_API fann_scale_output_train_data(struct fann_train_data *train_data,
 														 fann_type new_min, fann_type new_max);
@@ -285,7 +298,12 @@ FANN_EXTERNAL void FANN_API fann_scale_output_train_data(struct fann_train_data 
 
 /* Function: fann_scale_train_data
    
-   Scales the inputs in the training data to the specified range
+   Scales the inputs and outputs in the training data to the specified range.
+   
+   See also:
+   	<fann_scale_output_train_data>, <fann_scale_input_train_data>
+
+   This function appears in FANN >= 2.0.0.
  */ 
 FANN_EXTERNAL void FANN_API fann_scale_train_data(struct fann_train_data *train_data,
 												  fann_type new_min, fann_type new_max);
@@ -293,7 +311,7 @@ FANN_EXTERNAL void FANN_API fann_scale_train_data(struct fann_train_data *train_
 
 /* Function: fann_merge_train_data
    
-   merges training data into a single struct.
+   Merges the data from data1 and data2 into a new <struct fann_train_data>training data into a single struct.
  */ 
 FANN_EXTERNAL struct fann_train_data *FANN_API fann_merge_train_data(struct fann_train_data *data1,
 																	 struct fann_train_data *data2);
