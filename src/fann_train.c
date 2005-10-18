@@ -779,6 +779,68 @@ FANN_EXTERNAL void FANN_API fann_set_activation_function_hidden(struct fann *ann
 	}
 }
 
+FANN_EXTERNAL struct fann_layer* FANN_API fann_get_layer(struct fann *ann, int layer)
+{
+	if(layer <= 0 || layer >= (ann->last_layer - ann->first_layer))
+	{
+		fann_error((struct fann_error *) ann, FANN_E_INDEX_OUT_OF_BOUND, layer);
+		return NULL;
+	}
+	
+	return ann->first_layer + layer;	
+}
+
+FANN_EXTERNAL struct fann_neuron* FANN_API fann_get_neuron_layer(struct fann *ann, struct fann_layer* layer, int neuron)
+{
+	if(neuron >= (layer->first_neuron - layer->last_neuron))
+	{
+		fann_error((struct fann_error *) ann, FANN_E_INDEX_OUT_OF_BOUND, neuron);
+		return NULL;	
+	}
+	
+	return layer->first_neuron + neuron;
+}
+
+FANN_EXTERNAL struct fann_neuron* FANN_API fann_get_neuron(struct fann *ann, unsigned int layer, int neuron)
+{
+	struct fann_layer *layer_it = fann_get_layer(ann, layer);
+	if(layer_it == NULL)
+		return NULL;
+	return fann_get_neuron_layer(ann, layer_it, neuron);
+}
+
+FANN_EXTERNAL void FANN_API fann_set_activation_function(struct fann *ann,
+																enum fann_activationfunc_enum
+																activation_function,
+																int layer,
+																int neuron)
+{
+	struct fann_neuron* neuron_it = fann_get_neuron(ann, layer, neuron);
+	if(neuron_it == NULL)
+		return;
+
+	neuron_it->activation_function = activation_function;
+}
+
+FANN_EXTERNAL void FANN_API fann_set_activation_function_layer(struct fann *ann,
+																enum fann_activationfunc_enum
+																activation_function,
+																int layer)
+{
+	struct fann_neuron *last_neuron, *neuron_it;
+	struct fann_layer *layer_it = fann_get_layer(ann, layer);
+	
+	if(layer_it == NULL)
+		return;
+
+	last_neuron = layer_it->last_neuron;
+	for(neuron_it = layer_it->first_neuron; neuron_it != last_neuron; neuron_it++)
+	{
+		neuron_it->activation_function = activation_function;
+	}
+}
+
+
 FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann,
 																enum fann_activationfunc_enum activation_function)
 {
@@ -806,6 +868,35 @@ FANN_EXTERNAL void FANN_API fann_set_activation_steepness_hidden(struct fann *an
 		{
 			neuron_it->activation_steepness = steepness;
 		}
+	}
+}
+
+FANN_EXTERNAL void FANN_API fann_set_activation_steepness(struct fann *ann,
+																fann_type steepness,
+																int layer,
+																int neuron)
+{
+	struct fann_neuron* neuron_it = fann_get_neuron(ann, layer, neuron);
+	if(neuron_it == NULL)
+		return;
+
+	neuron_it->activation_steepness = steepness;
+}
+
+FANN_EXTERNAL void FANN_API fann_set_activation_steepness_layer(struct fann *ann,
+																fann_type steepness,
+																int layer)
+{
+	struct fann_neuron *last_neuron, *neuron_it;
+	struct fann_layer *layer_it = fann_get_layer(ann, layer);
+	
+	if(layer_it == NULL)
+		return;
+
+	last_neuron = layer_it->last_neuron;
+	for(neuron_it = layer_it->first_neuron; neuron_it != last_neuron; neuron_it++)
+	{
+		neuron_it->activation_steepness = steepness;
 	}
 }
 

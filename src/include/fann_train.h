@@ -470,10 +470,12 @@ FANN_EXTERNAL void FANN_API fann_set_learning_rate(struct fann *ann, float learn
    counting the input layer as layer 0. 
    
    It is not possible to set activation functions for the neurons in the input layer.
-
-   TODO description about the activation function
    
-   TODO implement
+   When choosing an activation function it is important to note that the activation 
+   functions have different range. FANN_SIGMOID is e.g. in the 0 - 1 range while 
+   FANN_SIGMOID_SYMMETRIC is in the -1 - 1 range and FANN_LINEAR is unbound.
+   
+   Information about the individual activation functions is available at <fann_activationfunc_enum>.
    
    The default activation function is FANN_SIGMOID_STEPWISE.
    
@@ -486,8 +488,8 @@ FANN_EXTERNAL void FANN_API fann_set_learning_rate(struct fann *ann, float learn
 FANN_EXTERNAL void FANN_API fann_set_activation_function(struct fann *ann,
 																enum fann_activationfunc_enum
 																activation_function,
-																unsigned int layer,
-																unsigned int neuron);
+																int layer,
+																int neuron);
 
 /* Function: fann_set_activation_function_layer
 
@@ -495,8 +497,6 @@ FANN_EXTERNAL void FANN_API fann_set_activation_function(struct fann *ann,
    counting the input layer as layer 0. 
    
    It is not possible to set activation functions for the neurons in the input layer.
-   
-   TODO implement
 
    See also:
    	<fann_set_activation_function>, <fann_set_activation_function_hidden>,
@@ -507,11 +507,17 @@ FANN_EXTERNAL void FANN_API fann_set_activation_function(struct fann *ann,
 FANN_EXTERNAL void FANN_API fann_set_activation_function_layer(struct fann *ann,
 																enum fann_activationfunc_enum
 																activation_function,
-																unsigned int layer);
+																int layer);
 
 /* Function: fann_set_activation_function_hidden
 
-   Set the activation function for the hidden layers.
+   Set the activation function for all of the hidden layers.
+
+   See also:
+   	<fann_set_activation_function>, <fann_set_activation_function_layer>,
+   	<fann_set_activation_function_output>, <fann_set_activation_steepness_hidden>
+
+   This function appears in FANN >= 1.0.0.
  */ 
 FANN_EXTERNAL void FANN_API fann_set_activation_function_hidden(struct fann *ann,
 																enum fann_activationfunc_enum
@@ -521,6 +527,12 @@ FANN_EXTERNAL void FANN_API fann_set_activation_function_hidden(struct fann *ann
 /* Function: fann_set_activation_function_output
 
    Set the activation function for the output layer.
+
+   See also:
+   	<fann_set_activation_function>, <fann_set_activation_function_layer>,
+   	<fann_set_activation_function_hidden>, <fann_set_activation_steepness_output>
+
+   This function appears in FANN >= 1.0.0.
  */ 
 FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann,
 																enum fann_activationfunc_enum
@@ -533,9 +545,12 @@ FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann
    
    It is not possible to set activation steepness for the neurons in the input layer.
    
-   TODO description about the steepness
+   The steepness of an activation function says something about how fast the activation function 
+   goes from the minimum to the maximum. A high value for the activation function will also
+   give a more agressive training.
    
-   TODO implement
+   When training neural networks where the output values should be at the extremes (usually 0 and 1, 
+   depending on the activation function), a steep activation function can be used (e.g. 1.0).
    
    The default activation steepness is 0.5.
    
@@ -547,8 +562,8 @@ FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann
  */ 
 FANN_EXTERNAL void FANN_API fann_set_activation_steepness(struct fann *ann,
 																fann_type steepness,
-																unsigned int layer,
-																unsigned int neuron);
+																int layer,
+																int neuron);
 
 /* Function: fann_set_activation_steepness_layer
 
@@ -557,22 +572,25 @@ FANN_EXTERNAL void FANN_API fann_set_activation_steepness(struct fann *ann,
    
    It is not possible to set activation steepness for the neurons in the input layer.
    
-   TODO implement
-   
    See also:
    	<fann_set_activation_steepness>, <fann_set_activation_steepness_hidden>,
-   	<fann_set_activation_steepness_output>, <fann_set_activation_function>
+   	<fann_set_activation_steepness_output>, <fann_set_activation_function_layer>
 
    This function appears in FANN >= 2.0.0.
  */ 
 FANN_EXTERNAL void FANN_API fann_set_activation_steepness_layer(struct fann *ann,
 																fann_type steepness,
-																unsigned int neuron);
+																int layer);
 
 /* Function: fann_set_activation_steepness_hidden
 
-   Set the steepness of the sigmoid function used in the hidden layers.
-    (default 0.5).
+   Set the steepness of the activation steepness in all of the hidden layers.
+
+   See also:
+   	<fann_set_activation_steepness>, <fann_set_activation_steepness_layer>,
+   	<fann_set_activation_steepness_output>, <fann_set_activation_function_hidden>
+
+   This function appears in FANN >= 1.2.0.
  */ 
 FANN_EXTERNAL void FANN_API fann_set_activation_steepness_hidden(struct fann *ann,
 																 fann_type steepness);
@@ -580,140 +598,286 @@ FANN_EXTERNAL void FANN_API fann_set_activation_steepness_hidden(struct fann *an
 
 /* Function: fann_set_activation_steepness_output
 
-   Set the steepness of the sigmoid function used in the output layer.
-   Only usefull if sigmoid function is used in the output layer (default 0.5).
+   Set the steepness of the activation steepness in the output layer.
+
+   See also:
+   	<fann_set_activation_steepness>, <fann_set_activation_steepness_layer>,
+   	<fann_set_activation_steepness_hidden>, <fann_set_activation_function_output>
+
+   This function appears in FANN >= 1.2.0.
  */ 
 FANN_EXTERNAL void FANN_API fann_set_activation_steepness_output(struct fann *ann,
 																 fann_type steepness);
 
 
+/* Function: fann_get_train_error_function
+
+   Returns the error function used during training.
+
+   The error functions is described further in <fann_errorfunc_enum>
+   
+   The default error function is FANN_ERRORFUNC_TANH
+   
+   See also:
+   	<fann_set_train_error_function>
+      
+   This function appears in FANN >= 1.2.0.
+  */ 
+FANN_EXTERNAL enum fann_errorfunc_enum FANN_API fann_get_train_error_function(struct fann *ann);
+
+
 /* Function: fann_set_train_error_function
 
-   Set the error function used during training. (default FANN_ERRORFUNC_TANH)
+   Set the error function used during training.
+   
+   The error functions is described further in <fann_errorfunc_enum>
+   
+   See also:
+   	<fann_get_train_error_function>
+      
+   This function appears in FANN >= 1.2.0.
  */ 
 FANN_EXTERNAL void FANN_API fann_set_train_error_function(struct fann *ann,
 														  enum fann_errorfunc_enum 
 														  train_error_function);
 
 
-/* Function: fann_get_train_error_function
+/* Function: fann_get_train_stop_function
 
-   Get the error function used during training.
+   Returns the the stop function used during training.
+   
+   The stop function is described further in <fann_stopfunc_enum>
+   
+   The default stop function is FANN_STOPFUNC_MSE
+   
+   See also:
+   	<fann_get_train_stop_function>, <fann_get_bit_fail_limit>
+      
+   This function appears in FANN >= 2.0.0.
  */ 
-FANN_EXTERNAL enum fann_errorfunc_enum FANN_API fann_get_train_error_function(struct fann *ann);
+FANN_EXTERNAL enum fann_stopfunc_enum FANN_API fann_get_train_stop_function(struct fann *ann);
 
 
 /* Function: fann_set_train_stop_function
 
-   Set the stop function used during training. (default FANN_STOPFUNC_MSE)
+   Set the stop function used during training.
+
+   Returns the the stop function used during training.
+   
+   The stop function is described further in <fann_stopfunc_enum>
+   
+   See also:
+   	<fann_get_train_stop_function>
+      
+   This function appears in FANN >= 2.0.0.
  */ 
 FANN_EXTERNAL void FANN_API fann_set_train_stop_function(struct fann *ann,
 														 enum fann_stopfunc_enum train_stop_function);
 
 
-/* Function: fann_get_train_stop_function
-
-   Get the stop function used during training.
- */ 
-FANN_EXTERNAL enum fann_stopfunc_enum FANN_API fann_get_train_stop_function(struct fann *ann);
-
 /* Function: fann_get_bit_fail_limit
 
-   Get the bit fail limit used during training.
+   Returns the bit fail limit used during training.
+   
+   The bit fail limit is used during training where the <fann_stopfunc_enum> is set to FANN_STOPFUNC_BIT.
+
+   The limit is the maximum accepted difference between the desired output and the actual output during
+   training. Each output that diverges more than this limit is counted as an error bit.
+   This difference is divided by two when dealing with symmetric activation functions,
+   so that symmetric and not symmetric activation functions can use the same limit.
+   
+   The default bit fail limit is 0.35.
+   
+   See also:
+   	<fann_set_bit_fail_limit>
+   
+   This function appears in FANN >= 2.0.0.
  */ 
 FANN_EXTERNAL fann_type FANN_API fann_get_bit_fail_limit(struct fann *ann);
 
 /* Function: fann_set_bit_fail_limit
 
-   Set the bit fail limit used during training. (default 0.35)
+   Set the bit fail limit used during training.
   
-   The bit fail limit is the maximum difference between the actual output and the desired output 
-   which is accepted when counting the bit fails.
-   This difference is multiplied by two when dealing with symmetric activation functions,
-   so that symmetric and not symmetric activation functions can use the same limit.
+   See also:
+   	<fann_get_bit_fail_limit>
+   
+   This function appears in FANN >= 2.0.0.
  */ 
 FANN_EXTERNAL void FANN_API fann_set_bit_fail_limit(struct fann *ann, fann_type bit_fail_limit);
 
 /* Function: fann_set_callback
- 	Sets the callback function for use during training.
+   
+   Sets the callback function for use during training.
  	
- 	See <fann_callback_type> for more information about the callback function.
+   See <fann_callback_type> for more information about the callback function.
+   
+   The default callback function simply prints out some status information.
+
+   This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL void fann_set_callback(struct fann *ann, fann_callback_type callback);
 
 /* Function: fann_get_quickprop_decay
 
-   Decay is used to make the weights do not go so high (default -0.0001). 
+   The decay is a small negative valued number which is the factor that the weights 
+   should become smaller in each iteration during quickprop training. This is used 
+   to make sure that the weights do not become too high during training.
+   
+   The default decay is -0.0001.
+   
+   See also:
+   	<fann_set_quickprop_decay>
+
+   This function appears in FANN >= 1.2.0.
  */
 FANN_EXTERNAL float FANN_API fann_get_quickprop_decay(struct fann *ann);
 
 
 /* Function: fann_set_quickprop_decay
+   
+   Sets the quickprop decay factor.
+   
+   See also:
+   	<fann_get_quickprop_decay>
 
-   Decay is used to make the weights do not go so high (default -0.0001). */ 
+   This function appears in FANN >= 1.2.0.
+*/ 
 FANN_EXTERNAL void FANN_API fann_set_quickprop_decay(struct fann *ann, float quickprop_decay);
 
 
 /* Function: fann_get_quickprop_mu
 
-   Mu is a factor used to increase and decrease the stepsize (default 1.75). */ 
+   The mu factor is used to increase and decrease the step-size during quickprop training. 
+   The mu factor should always be above 1, since it would otherwise decrease the step-size 
+   when it was suppose to increase it.
+   
+   The default mu factor is 1.75. 
+   
+   See also:
+   	<fann_set_quickprop_mu>
+
+   This function appears in FANN >= 1.2.0.
+*/ 
 FANN_EXTERNAL float FANN_API fann_get_quickprop_mu(struct fann *ann);
 
 
 /* Function: fann_set_quickprop_mu
 
-   Mu is a factor used to increase and decrease the stepsize (default 1.75). */ 
+    Sets the quickprop mu factor.
+   
+   See also:
+   	<fann_get_quickprop_mu>
+
+   This function appears in FANN >= 1.2.0.
+*/ 
 FANN_EXTERNAL void FANN_API fann_set_quickprop_mu(struct fann *ann, float quickprop_mu);
 
 
 /* Function: fann_get_rprop_increase_factor
 
-   Tells how much the stepsize should increase during learning (default 1.2). */ 
+   The increase factor is a value larger than 1, which is used to 
+   increase the step-size during RPROP training.
+
+   The default increase factor is 1.2.
+   
+   See also:
+   	<fann_set_rprop_increase_factor>
+
+   This function appears in FANN >= 1.2.0.
+*/ 
 FANN_EXTERNAL float FANN_API fann_get_rprop_increase_factor(struct fann *ann);
 
 
 /* Function: fann_set_rprop_increase_factor
 
-   Tells how much the stepsize should increase during learning (default 1.2). */ 
+   The increase factor used during RPROP training.
+
+   See also:
+   	<fann_get_rprop_increase_factor>
+
+   This function appears in FANN >= 1.2.0.
+*/ 
 FANN_EXTERNAL void FANN_API fann_set_rprop_increase_factor(struct fann *ann,
 														   float rprop_increase_factor);
 
 
 /* Function: fann_get_rprop_decrease_factor
 
-   Tells how much the stepsize should decrease during learning (default 0.5). */ 
+   The decrease factor is a value smaller than 1, which is used to decrease the step-size during RPROP training.
+
+   The default decrease factor is 0.5.
+
+   See also:
+    <fann_set_rprop_decrease_factor>
+
+   This function appears in FANN >= 1.2.0.
+*/ 
 FANN_EXTERNAL float FANN_API fann_get_rprop_decrease_factor(struct fann *ann);
 
 
 /* Function: fann_set_rprop_decrease_factor
 
-   Tells how much the stepsize should decrease during learning (default 0.5). */ 
+   The decrease factor is a value smaller than 1, which is used to decrease the step-size during RPROP training.
+
+   See also:
+    <fann_get_rprop_decrease_factor>
+
+   This function appears in FANN >= 1.2.0.
+*/
 FANN_EXTERNAL void FANN_API fann_set_rprop_decrease_factor(struct fann *ann,
 														   float rprop_decrease_factor);
 
 
 /* Function: fann_get_rprop_delta_min
 
-   The minimum stepsize (default 0.0). */ 
+   The minimum step-size is a small positive number determining how small the minimum step-size may be.
+
+   The default value delta min is 0.0.
+
+   See also:
+   	<fann_set_rprop_delta_min>
+   	
+   This function appears in FANN >= 1.2.0.
+*/ 
 FANN_EXTERNAL float FANN_API fann_get_rprop_delta_min(struct fann *ann);
 
 
 /* Function: fann_set_rprop_delta_min
 
-   The minimum stepsize (default 0.0). */ 
+   The minimum step-size is a small positive number determining how small the minimum step-size may be.
+
+   See also:
+   	<fann_get_rprop_delta_min>
+   	
+   This function appears in FANN >= 1.2.0.
+*/ 
 FANN_EXTERNAL void FANN_API fann_set_rprop_delta_min(struct fann *ann, float rprop_delta_min);
 
 
 /* Function: fann_get_rprop_delta_max
 
-   The maximum stepsize (default 50.0). */ 
+   The maximum step-size is a positive number determining how large the maximum step-size may be.
+
+   The default delta max is 50.0.
+
+   See also:
+   	<fann_set_rprop_delta_max>, <fann_get_rprop_delta_min>
+
+   This function appears in FANN >= 1.2.0.
+*/ 
 FANN_EXTERNAL float FANN_API fann_get_rprop_delta_max(struct fann *ann);
 
 
 /* Function: fann_set_rprop_delta_max
 
-   The maximum stepsize (default 50.0). */ 
-FANN_EXTERNAL void FANN_API fann_set_rprop_delta_max(struct fann *ann, float rprop_delta_max);
+   The maximum step-size is a positive number determining how large the maximum step-size may be.
 
+   See also:
+   	<fann_get_rprop_delta_max>, <fann_get_rprop_delta_min>
+
+   This function appears in FANN >= 1.2.0.
+*/
+FANN_EXTERNAL void FANN_API fann_set_rprop_delta_max(struct fann *ann, float rprop_delta_max);
 
 #endif

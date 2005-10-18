@@ -162,6 +162,9 @@ void fann_error(struct fann_error *errdat, const enum fann_errno_enum errno_f, .
 	case FANN_E_TRAIN_DATA_SUBSET:
 		vsprintf(errstr, "Subset from %d of length %d not valid in training set of length %d.\n", ap);
 		break;
+	case FANN_E_INDEX_OUT_OF_BOUND:
+		vsprintf(errstr, "Index %d is out of bound.\n", ap);
+		break;
 	}
 	va_end(ap);
 
