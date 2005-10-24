@@ -102,7 +102,7 @@ void performance_benchmark_fann_noopt(FILE * out, fann_type * input,
 	unsigned int i, total_connections;
 	fann_type *output;
 
-	struct fann *ann = fann_create(1, 0.7, 4,
+	struct fann *ann = fann_create_standard(4,
 								   num_neurons, num_neurons, num_neurons, num_neurons);
 
 	//just to fool the optimizer into thinking that the network is not fully connected
@@ -130,7 +130,7 @@ void performance_benchmark_fann_thres(FILE * out, fann_type * input,
 	unsigned int i, total_connections;
 	fann_type *output;
 
-	struct fann *ann = fann_create(1, 0.7, 4,
+	struct fann *ann = fann_create_standard(4,
 								   num_neurons, num_neurons, num_neurons, num_neurons);
 
 	fann_set_activation_function_hidden(ann, FANN_THRESHOLD);
@@ -160,7 +160,7 @@ void performance_benchmark_fann(bool stepwise, FILE * out, fann_type * input,
 	unsigned int i, total_connections;
 	fann_type *output;
 
-	struct fann *ann = fann_create(1, 0.7, 4,
+	struct fann *ann = fann_create_standard(4,
 								   num_neurons, num_neurons, num_neurons, num_neurons);
 
 	if(stepwise)

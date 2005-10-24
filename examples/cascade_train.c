@@ -45,7 +45,7 @@ int FANN_API print_callback(struct fann *ann, struct fann_train_data *train,
 
 int main()
 {
-	const float desired_error = (const float) 0.00001;
+	const float desired_error = (const float) 0.001;
 	unsigned int max_neurons = 40;
 	unsigned int neurons_between_reports = 1;
 	struct fann_train_data *test = NULL;
@@ -76,12 +76,6 @@ int main()
 	train_data = fann_read_train_from_file("../benchmarks/datasets/gene.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/gene.test");
 
-	train_data = fann_read_train_from_file("../benchmarks/datasets/building.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/building.test");
-
-	train_data = fann_read_train_from_file("../benchmarks/datasets/robot.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/robot.test");
-
 	train_data = fann_read_train_from_file("../benchmarks/datasets/thyroid.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/thyroid.test");
 
@@ -94,13 +88,17 @@ int main()
 	train_data = fann_read_train_from_file("xor.data");
 	test_data = fann_read_train_from_file("xor.data");
 	
+	train_data = fann_read_train_from_file("../benchmarks/datasets/building.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/building.test");
+
+	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral.test");
+
+	train_data = fann_read_train_from_file("../benchmarks/datasets/robot.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/robot.test");
+
 	fann_scale_train_data(train_data, 0, 1);
 	fann_scale_train_data(test_data, 0, 1);
-
-	test = fann_subset_train_data(train_data, 0, 2);
-	test_data = fann_subset_train_data(train_data, 2, 2);
-	test = fann_merge_train_data(test, test_data);
-	fann_save_train(test, "test_test.data");
 
 	printf("Creating network.\n");
 
@@ -115,9 +113,8 @@ int main()
 	fann_set_activation_steepness_hidden(ann, 0.5);
 	fann_set_activation_steepness_output(ann, 0.5);
 
-
 	fann_set_train_error_function(ann, FANN_ERRORFUNC_LINEAR);
-	fann_set_train_stop_function(ann, FANN_STOPFUNC_BIT);
+/*	fann_set_train_stop_function(ann, FANN_STOPFUNC_BIT);*/	
 
 	fann_set_rprop_increase_factor(ann, 1.2);
 	fann_set_rprop_decrease_factor(ann, 0.5);

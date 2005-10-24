@@ -274,7 +274,7 @@ void fann_compute_MSE(struct fann *ann, fann_type * desired_output)
 */
 void fann_backpropagate_MSE(struct fann *ann)
 {
-	fann_type neuron_value, tmp_error;
+	fann_type tmp_error;
 	unsigned int i;
 	struct fann_layer *layer_it;
 	struct fann_neuron *neuron_it, *last_neuron;
@@ -340,12 +340,11 @@ void fann_backpropagate_MSE(struct fann *ann)
 
 		for(neuron_it = (layer_it - 1)->first_neuron; neuron_it != last_neuron; neuron_it++)
 		{
-			neuron_value = neuron_it->value;
-			/* *error_prev_layer *= fann_activation(ann, 0, neuron_value); */
-			*error_prev_layer *=
-				fann_activation(ann, neuron_it->activation_function,
-								neuron_it->activation_steepness, neuron_value);
+			*error_prev_layer *= fann_activation_derived(neuron_it->activation_function, 
+				neuron_it->activation_steepness, neuron_it->value, neuron_it->sum);
+			error_prev_layer++;
 		}
+		
 	}
 }
 

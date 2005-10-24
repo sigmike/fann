@@ -13,21 +13,21 @@ function benchmark_algorithm() {
 function benchmark_problem() {
     #rm -f *_fixed.net
     algo="fann_cascade"; benchmark_algorithm;
-#    algo="fann_rprop"; benchmark_algorithm;
+    algo="fann_rprop"; benchmark_algorithm;
     #./quality_fixed $prob.$algo.train.out_fixed_train $prob.$algo.train.out_fixed_test $prob.$algo.fixed_train.out $prob.$algo.fixed_test.out *_fixed.net
     
 	
-#	algo="fann_rprop_stepwise"; benchmark_algorithm;
-#    algo="fann_quickprop"; benchmark_algorithm;
-    #algo="fann_quickprop_stepwise"; benchmark_algorithm;
-#    algo="fann_batch"; benchmark_algorithm;
-    #algo="fann_batch_stepwise"; benchmark_algorithm;
-#    algo="fann_incremental"; benchmark_algorithm;
-    #algo="fann_incremental_stepwise"; benchmark_algorithm;
+    algo="fann_rprop_stepwise"; benchmark_algorithm;
+    algo="fann_quickprop"; benchmark_algorithm;
+    algo="fann_quickprop_stepwise"; benchmark_algorithm;
+    algo="fann_batch"; benchmark_algorithm;
+    algo="fann_batch_stepwise"; benchmark_algorithm;
+    algo="fann_incremental"; benchmark_algorithm;
+    algo="fann_incremental_stepwise"; benchmark_algorithm;
 
     #comment out two following lines if the libraries are not available
-#    algo="lwnn"; benchmark_algorithm;
-#    algo="jneural"; benchmark_algorithm;
+    algo="lwnn"; benchmark_algorithm;
+    algo="jneural"; benchmark_algorithm;
 }
 
 #comment out some of the lines below if some of the problems should not be benchmarked

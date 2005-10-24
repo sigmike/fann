@@ -152,7 +152,7 @@ void quality_benchmark_jneural(struct fann_train_data *train_data,
 }
 #endif
 
-void quality_benchmark_fann(bool stepwise, int training_algorithm,
+void quality_benchmark_fann(bool stepwise, fann_train_enum training_algorithm,
 							char *filename,
 							struct fann_train_data *train_data,
 							struct fann_train_data *test_data,
@@ -172,12 +172,12 @@ void quality_benchmark_fann(bool stepwise, int training_algorithm,
 
 	if(num_neurons_hidden2)
 	{
-		ann = fann_create(1, 0.7, 4,
+		ann = fann_create_standard(4,
 						  num_input, num_neurons_hidden1, num_neurons_hidden2, num_output);
 	}
 	else
 	{
-		ann = fann_create(1, 0.7, 3, num_input, num_neurons_hidden1, num_output);
+		ann = fann_create_standard(3, num_input, num_neurons_hidden1, num_output);
 	}
 
 	fann_set_training_algorithm(ann, training_algorithm);
@@ -275,7 +275,7 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 	fann_type *output;
 	struct fann *ann;
 
-	ann = fann_create_shortcut(0.7, 2, num_input, num_output);
+	ann = fann_create_shortcut(2, num_input, num_output);
 
 	fann_set_training_algorithm(ann, FANN_TRAIN_RPROP);
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
@@ -289,10 +289,13 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 	fann_set_rprop_delta_min(ann, 0.0);
 	fann_set_rprop_delta_max(ann, 50.0);
 
-	ann->cascade_change_fraction = 0.01;
-	ann->cascade_stagnation_epochs = 12;
-	ann->cascade_num_candidates = 16;
-	ann->cascade_weight_multiplier = 0.5;
+	fann_set_cascade_change_fraction(ann, 0.01);
+	fann_set_cascade_stagnation_epochs(ann, 12);
+	fann_set_cascade_weight_multiplier(ann, 0.4);
+ 	fann_set_cascade_candidate_limit(ann, 1000.0);
+	fann_set_cascade_max_out_epochs(ann, 150);
+	fann_set_cascade_max_cand_epochs(ann, 150);
+	fann_set_cascade_num_candidate_groups(ann, 1);
 
 	calibrate_timer();
 
@@ -303,7 +306,7 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 		start_timer();
 		while(elapsed < (double) seconds_between_reports)
 		{
-			fann_cascadetrain_on_data_callback(ann, train_data, 0, NULL, 150, 150, 1, 0);
+			fann_cascadetrain_on_data(ann, train_data, 1, 1, 0);
 
 			elapsed = time_elapsed();
 			epochs++;

@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 FANN_EXTERNAL void fann_cascadetrain_on_data(struct fann *ann,
 													  struct fann_train_data *data,
-													  unsigned int max_out_epochs,
+													  unsigned int max_neurons,
 													  unsigned int neurons_between_reports,
 													  float desired_error);
 
