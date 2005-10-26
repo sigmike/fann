@@ -2,7 +2,7 @@
 
 date;
 
-max_seconds_training=1000;
+max_seconds_training=200;
 secs_between_reports=0.01;
 
 function benchmark_algorithm() {
@@ -36,8 +36,8 @@ function benchmark_problem() {
 #benchmark_problem;
 #exit;
 
-prob="building"; n1=16; n2=0; sec_train=$max_seconds_training;
-benchmark_problem;
+#prob="building"; n1=16; n2=0; sec_train=$max_seconds_training;
+#benchmark_problem;
 
 prob="diabetes"; n1=4; n2=0; sec_train=$max_seconds_training;
 benchmark_problem;
