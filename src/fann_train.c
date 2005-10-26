@@ -354,22 +354,36 @@ void fann_backpropagate_MSE(struct fann *ann)
 void fann_update_weights(struct fann *ann)
 {
 	struct fann_neuron *neuron_it, *last_neuron, *prev_neurons, **connections;
-	fann_type tmp_error, *weights;
+	fann_type tmp_error, delta_w, *weights;
 	struct fann_layer *layer_it;
 	unsigned int i;
 	unsigned int num_connections;
 
 	/* store some variabels local for fast access */
 	const float learning_rate = ann->learning_rate;
+    const float learning_momentum = ann->learning_momentum;        
 	struct fann_neuron *first_neuron = ann->first_layer->first_neuron;
 	struct fann_layer *first_layer = ann->first_layer;
 	const struct fann_layer *last_layer = ann->last_layer;
 	fann_type *error_begin = ann->train_errors;
+	fann_type *deltas_begin, *weights_deltas;
+
+	/* if no room allocated for the deltas, allocate it now */
+	if(ann->prev_weights_deltas == NULL)
+	{
+		ann->prev_weights_deltas =
+			(fann_type *) calloc(ann->total_connections_allocated, sizeof(fann_type));
+		if(ann->prev_weights_deltas == NULL)
+		{
+			fann_error((struct fann_error *) ann, FANN_E_CANT_ALLOCATE_MEM);
+			return;
+		}		
+	}
 
 #ifdef DEBUGTRAIN
 	printf("\nupdate weights\n");
 #endif
-
+	deltas_begin = ann->prev_weights_deltas;
 	prev_neurons = first_neuron;
 	for(layer_it = (first_layer + 1); layer_it != last_layer; layer_it++)
 	{
@@ -388,9 +402,12 @@ void fann_update_weights(struct fann *ann)
 				tmp_error = error_begin[neuron_it - first_neuron] * learning_rate;
 				num_connections = neuron_it->last_con - neuron_it->first_con;
 				weights = ann->weights + neuron_it->first_con;
+				weights_deltas = deltas_begin + neuron_it->first_con;
 				for(i = 0; i != num_connections; i++)
 				{
-					weights[i] += tmp_error * prev_neurons[i].value;
+					delta_w = tmp_error * prev_neurons[i].value + learning_momentum * weights_deltas[i];
+					weights[i] += delta_w ;
+					weights_deltas[i] = delta_w;
 				}
 			}
 		}
@@ -402,9 +419,12 @@ void fann_update_weights(struct fann *ann)
 				num_connections = neuron_it->last_con - neuron_it->first_con;
 				weights = ann->weights + neuron_it->first_con;
 				connections = ann->connections + neuron_it->first_con;
+				weights_deltas = deltas_begin + neuron_it->first_con;
 				for(i = 0; i != num_connections; i++)
 				{
-					weights[i] += tmp_error * connections[i]->value;
+					delta_w = tmp_error * prev_neurons[i].value + learning_momentum * weights_deltas[i];
+					weights[i] += delta_w;
+					weights_deltas[i] = delta_w;
 				}
 			}
 		}
@@ -922,3 +942,4 @@ FANN_GET_SET(float, rprop_delta_min)
 FANN_GET_SET(float, rprop_delta_max)
 FANN_GET_SET(enum fann_stopfunc_enum, train_stop_function)
 FANN_GET_SET(fann_type, bit_fail_limit)
+FANN_GET_SET(float, learning_momentum)

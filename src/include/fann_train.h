@@ -464,6 +464,36 @@ FANN_EXTERNAL float FANN_API fann_get_learning_rate(struct fann *ann);
  */ 
 FANN_EXTERNAL void FANN_API fann_set_learning_rate(struct fann *ann, float learning_rate);
 
+/* Function: fann_get_learning_momentum
+
+   Get the learning momentum.
+   
+   The learning momentum can be used to speed up FANN_TRAIN_INCREMENTAL training.
+   A too high momentum will however not benefit training. Setting momentum to 0 will
+   be the same as not using the momentum parameter. The recommended value of this parameter
+   is between 0.0 and 1.0.
+
+   The default momentum is 0.
+   
+   See also:
+   <fann_set_learning_momentum>, <fann_set_training_algorithm>
+
+   This function appears in FANN >= 2.0.0.   	
+ */ 
+FANN_EXTERNAL float FANN_API fann_get_learning_momentum(struct fann *ann);
+
+
+/* Function: fann_set_learning_momentum
+
+   Set the learning momentum.
+
+   More info available in <fann_get_learning_momentum>
+
+   This function appears in FANN >= 2.0.0.   	
+ */ 
+FANN_EXTERNAL void FANN_API fann_set_learning_momentum(struct fann *ann, float learning_momentum);
+
+
 /* Function: fann_set_activation_function
 
    Set the activation function for neuron number *neuron* in layer number *layer*, 

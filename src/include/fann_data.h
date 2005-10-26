@@ -409,6 +409,9 @@ struct fann
 	/* the learning rate of the network */
 	float learning_rate;
 
+	/* The learning momentum used for backpropagation algorithm. */
+	float learning_momentum;
+
 	/* the connection rate of the network
 	 * between 0 and 1, 1 meaning fully connected
 	 */
@@ -621,7 +624,8 @@ struct fann
 
 	/* The initial stepsize */
 	float rprop_delta_zero;
-
+                
+        
 	/* Used to contain the slope errors used during batch training
 	 * Is allocated during first training session,
 	 * which means that if we do not train, it is never allocated.
@@ -637,6 +641,13 @@ struct fann
 	 * Not allocated if not used.
 	 */
 	fann_type *prev_train_slopes;
+        
+	/* The last delta applied to a connection weight.
+	 * This is used for the momentum term in the backpropagation algorithm.
+	 * Not allocated if not used.	 
+	 */
+	fann_type *prev_weights_deltas;
+	
 };
 
 #endif

@@ -159,7 +159,8 @@ void quality_benchmark_fann(bool stepwise, fann_train_enum training_algorithm,
 							FILE * train_out, FILE * test_out,
 							unsigned int num_input, unsigned int num_neurons_hidden1,
 							unsigned int num_neurons_hidden2, unsigned int num_output,
-							unsigned int seconds_of_training, double seconds_between_reports)
+							unsigned int seconds_of_training, double seconds_between_reports, 
+							float momentum = 0)
 {
 	float train_error, test_error;
 	unsigned int i, decimal_point, j, train_bit_fail, test_bit_fail;
@@ -181,6 +182,7 @@ void quality_benchmark_fann(bool stepwise, fann_train_enum training_algorithm,
 	}
 
 	fann_set_training_algorithm(ann, training_algorithm);
+	fann_set_learning_momentum(ann, momentum);
 
 	if(stepwise)
 	{
@@ -497,6 +499,14 @@ int main(int argc, char *argv[])
 							   train_data->num_input, num_neurons_hidden1,
 							   num_neurons_hidden2, train_data->num_output,
 							   seconds_of_training, seconds_between_reports);
+	}
+	else if(strcmp(argv[1], "fann_incremental_momentum") == 0)
+	{
+		quality_benchmark_fann(false, FANN_TRAIN_INCREMENTAL, NULL, train_data, test_data,
+							   train_out, test_out,
+							   train_data->num_input, num_neurons_hidden1,
+							   num_neurons_hidden2, train_data->num_output,
+							   seconds_of_training, seconds_between_reports, 0.4);
 	}
 	else if(strcmp(argv[1], "fann_quickprop") == 0)
 	{

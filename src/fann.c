@@ -766,6 +766,7 @@ FANN_EXTERNAL void FANN_API fann_destroy(struct fann *ann)
 	fann_safe_free(ann->train_slopes);
 	fann_safe_free(ann->prev_train_slopes);
 	fann_safe_free(ann->prev_steps);
+	fann_safe_free(ann->prev_weights_deltas);
 	fann_safe_free(ann->errstr);
 	fann_safe_free(ann->cascade_activation_functions);
 	fann_safe_free(ann->cascade_activation_steepnesses);
@@ -974,6 +975,7 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("Bit fail limit             :%4d\n", ann->bit_fail_limit);
 #else
 	printf("Learning rate              :  %5.2f\n", ann->learning_rate);
+	printf("Learning momentum          :  %5.2f\n", ann->learning_momentum);
 	printf("Quickprop decay            :  %9.6f\n", ann->quickprop_decay);
 	printf("Quickprop mu               :  %5.2f\n", ann->quickprop_mu);
 	printf("RPROP increase factor      :  %5.2f\n", ann->rprop_increase_factor);
@@ -1100,6 +1102,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->error_log = NULL;
 	ann->errstr = NULL;
 	ann->learning_rate = 0.7;
+	ann->learning_momentum = 0.0;
 	ann->total_neurons = 0;
 	ann->total_connections = 0;
 	ann->num_input = 0;
@@ -1108,6 +1111,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->train_slopes = NULL;
 	ann->prev_steps = NULL;
 	ann->prev_train_slopes = NULL;
+	ann->prev_weights_deltas = NULL;
 	ann->training_algorithm = FANN_TRAIN_RPROP;
 	ann->num_MSE = 0;
 	ann->MSE_value = 0;
@@ -1172,7 +1176,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->rprop_delta_min = 0.0;
 	ann->rprop_delta_max = 50.0;
 	ann->rprop_delta_zero = 0.5;
-
+	
 	fann_init_error_data((struct fann_error *) ann);
 
 #ifdef FIXEDFANN
