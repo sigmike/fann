@@ -230,7 +230,8 @@ plot "thyroid.fann_rprop.test.out" title "fann rprop test" with lines -1, \
  "thyroid.lwnn.train.out" title "lwnn incremental train" with lines 8, \
  "thyroid.jneural.train.out" title "jneural incremental train" with lines 9
 
-set logscale x
+set nologscale
+
 #set output "two-spiral.ps"
 set title "two-spiral"
 plot "two-spiral.fann_rprop.test.out" title "fann rprop test" with lines -1, \
