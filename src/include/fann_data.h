@@ -531,12 +531,23 @@ struct fann
 	 * fraction of its old value to count as a
 	 * significant change.
 	 */
-	float cascade_change_fraction;
+	float cascade_output_change_fraction;
 
 	/* No change in this number of epochs will cause
 	 * stagnation.
 	 */
-	unsigned int cascade_stagnation_epochs;
+	unsigned int cascade_output_stagnation_epochs;
+
+	/* The error must change by at least this
+	 * fraction of its old value to count as a
+	 * significant change.
+	 */
+	float cascade_candidate_change_fraction;
+
+	/* No change in this number of epochs will cause
+	 * stagnation.
+	 */
+	unsigned int cascade_candidate_stagnation_epochs;
 
 	/* The current best candidate, which will be installed.
 	 */

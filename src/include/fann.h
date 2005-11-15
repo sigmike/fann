@@ -305,10 +305,12 @@ FANN_EXTERNAL void FANN_API fann_init_weights(struct fann *ann, struct fann_trai
 	of the ann.
 
 	The output from fann_print_connections on a small (2 2 1) network trained on the xor problem
-	> Layer / Neuron 012345
-	> L   1 / N    3 ddb...
-	> L   1 / N    4 bbb...
-	> L   2 / N    6 ...cda
+	>Layer / Neuron 012345
+	>L   1 / N    3 BBa...
+	>L   1 / N    4 BBA...
+	>L   1 / N    5 ......
+	>L   2 / N    6 ...BBA
+	>L   2 / N    7 ......
 		  
 	This network have five real neurons and two bias neurons. This gives a total of seven neurons 
 	named from 0 to 6. The connections between these neurons can be seen in the matrix. "." is a 
@@ -316,7 +318,7 @@ FANN_EXTERNAL void FANN_API fann_init_weights(struct fann *ann, struct fann_trai
 	scale from a-z. The two real neurons in the hidden layer (neuron 3 and 4 in layer 1) has 
 	connection from the three neurons in the previous layer as is visible in the first two lines. 
 	The output neuron (6) has connections form the three neurons in the hidden layer 3 - 5 as is 
-	visible in the last line.
+	visible in the fourth line.
 
 	To simplify the matrix output neurons is not visible as neurons that connections can come from, 
 	and input and bias neurons are not visible as neurons that connections can go to.

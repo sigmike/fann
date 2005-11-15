@@ -59,7 +59,7 @@ void fann_print_connections_raw(struct fann *ann)
    The connected_neurons pointers are not valid during training,
    but they will be again after training.
  */
-void fann_cascadetrain_on_data(struct fann *ann, struct fann_train_data *data,
+FANN_EXTERNAL void FANN_API fann_cascadetrain_on_data(struct fann *ann, struct fann_train_data *data,
 										unsigned int max_neurons,
 										unsigned int neurons_between_reports,
 										float desired_error)
@@ -164,6 +164,21 @@ void fann_cascadetrain_on_data(struct fann *ann, struct fann_train_data *data,
 	fann_set_shortcut_connections(ann);
 }
 
+FANN_EXTERNAL void FANN_API fann_cascadetrain_on_file(struct fann *ann, const char *filename,
+													  unsigned int max_neurons,
+													  unsigned int neurons_between_reports,
+													  float desired_error)
+{
+	struct fann_train_data *data = fann_read_train_from_file(filename);
+
+	if(data == NULL)
+	{
+		return;
+	}
+	fann_cascadetrain_on_data(ann, data, max_neurons, neurons_between_reports, desired_error);
+	fann_destroy_train(data);
+}
+
 int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float desired_error)
 {
 	float error, initial_error, error_improvement;
@@ -205,9 +220,9 @@ int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float des
 		{
 			/*printf("error_improvement=%f, target_improvement=%f, backslide_improvement=%f, stagnation=%d\n", error_improvement, target_improvement, backslide_improvement, stagnation); */
 
-			target_improvement = error_improvement * (1.0 + ann->cascade_change_fraction);
-			backslide_improvement = error_improvement * (1.0 - ann->cascade_change_fraction);
-			stagnation = i + ann->cascade_stagnation_epochs;
+			target_improvement = error_improvement * (1.0 + ann->cascade_output_change_fraction);
+			backslide_improvement = error_improvement * (1.0 - ann->cascade_output_change_fraction);
+			stagnation = i + ann->cascade_output_stagnation_epochs;
 		}
 
 		/* No improvement in allotted period, so quit */
@@ -500,8 +515,10 @@ int fann_train_candidates(struct fann *ann, struct fann_train_data *data)
 
 		if(best_cand_score / ann->MSE_value > ann->cascade_candidate_limit)
 		{
+#ifdef CASCADE_DEBUG
 			printf("above candidate limit %f/%f > %f", best_cand_score, ann->MSE_value,
 				   ann->cascade_candidate_limit);
+#endif
 			return i + 1;
 		}
 
@@ -513,9 +530,9 @@ int fann_train_candidates(struct fann *ann, struct fann_train_data *data)
 			/* printf("best_cand_score=%f, target_cand_score=%f, backslide_cand_score=%f, stagnation=%d\n", best_cand_score, target_cand_score, backslide_cand_score, stagnation); */
 #endif
 
-			target_cand_score = best_cand_score * (1.0 + ann->cascade_change_fraction);
-			backslide_cand_score = best_cand_score * (1.0 - ann->cascade_change_fraction);
-			stagnation = i + ann->cascade_stagnation_epochs;
+			target_cand_score = best_cand_score * (1.0 + ann->cascade_candidate_change_fraction);
+			backslide_cand_score = best_cand_score * (1.0 - ann->cascade_candidate_change_fraction);
+			stagnation = i + ann->cascade_candidate_stagnation_epochs;
 		}
 
 		/* No improvement in allotted period, so quit */
@@ -954,8 +971,10 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_num_candidates(struct fann 
 		ann->cascade_num_candidate_groups;
 }
 
-FANN_GET_SET(float, cascade_change_fraction)
-FANN_GET_SET(unsigned int, cascade_stagnation_epochs)
+FANN_GET_SET(float, cascade_output_change_fraction)
+FANN_GET_SET(unsigned int, cascade_output_stagnation_epochs)
+FANN_GET_SET(float, cascade_candidate_change_fraction)
+FANN_GET_SET(unsigned int, cascade_candidate_stagnation_epochs)
 FANN_GET_SET(unsigned int, cascade_num_candidate_groups)
 FANN_GET_SET(fann_type, cascade_weight_multiplier)
 FANN_GET_SET(fann_type, cascade_candidate_limit)

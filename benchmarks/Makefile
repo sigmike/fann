@@ -9,9 +9,9 @@ CFLAGS = -O3 -finline-functions -funroll-loops -Werror
 
 LFLAGS = -lm
 
-JNEURALDIR = ../libraries/jneural/
+JNEURALDIR = ../../libraries/jneural/
 
-LWNNDIR = ../libraries/lwneuralnet-0.6/source/
+LWNNDIR = ../../libraries/lwneuralnet-0.6/source/
 
 all: $(TARGETS)
 

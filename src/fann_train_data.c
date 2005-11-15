@@ -28,7 +28,7 @@
 /*
  * Reads training data from a file. 
  */
-FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(char *configuration_file)
+FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(const char *configuration_file)
 {
 	struct fann_train_data *data;
 	FILE *file = fopen(configuration_file, "r");
@@ -47,7 +47,7 @@ FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(char *c
 /*
  * Save training data to a file 
  */
-FANN_EXTERNAL void FANN_API fann_save_train(struct fann_train_data *data, char *filename)
+FANN_EXTERNAL void FANN_API fann_save_train(struct fann_train_data *data, const char *filename)
 {
 	fann_save_train_internal(data, filename, 0, 0);
 }
@@ -56,7 +56,7 @@ FANN_EXTERNAL void FANN_API fann_save_train(struct fann_train_data *data, char *
  * Save training data to a file in fixed point algebra. (Good for testing
  * a network in fixed point) 
  */
-FANN_EXTERNAL void FANN_API fann_save_train_to_fixed(struct fann_train_data *data, char *filename,
+FANN_EXTERNAL void FANN_API fann_save_train_to_fixed(struct fann_train_data *data, const char *filename,
 													 unsigned int decimal_point)
 {
 	fann_save_train_internal(data, filename, 1, decimal_point);
@@ -69,8 +69,10 @@ FANN_EXTERNAL void FANN_API fann_destroy_train(struct fann_train_data *data)
 {
 	if(data == NULL)
 		return;
-	fann_safe_free(data->input[0]);
-	fann_safe_free(data->output[0]);
+	if(data->input != NULL)
+		fann_safe_free(data->input[0]);
+	if(data->output != NULL)
+		fann_safe_free(data->output[0]);
 	fann_safe_free(data->input);
 	fann_safe_free(data->output);
 	fann_safe_free(data);
@@ -259,7 +261,7 @@ FANN_EXTERNAL void FANN_API fann_train_on_data(struct fann *ann, struct fann_tra
 	}
 }
 
-FANN_EXTERNAL void FANN_API fann_train_on_file(struct fann *ann, char *filename,
+FANN_EXTERNAL void FANN_API fann_train_on_file(struct fann *ann, const char *filename,
 											   unsigned int max_epochs,
 											   unsigned int epochs_between_reports,
 											   float desired_error)
@@ -628,7 +630,7 @@ FANN_EXTERNAL unsigned int FANN_API fann_num_output_train_data(struct fann_train
 /*
  * INTERNAL FUNCTION Reads training data from a file descriptor. 
  */
-struct fann_train_data *fann_read_train_from_fd(FILE * file, char *filename)
+struct fann_train_data *fann_read_train_from_fd(FILE * file, const char *filename)
 {
 	unsigned int num_input, num_output, num_data, i, j;
 	unsigned int line = 1;
@@ -728,11 +730,11 @@ int fann_desired_error_reached(struct fann *ann, float desired_error)
 	switch (ann->train_stop_function)
 	{
 	case FANN_STOPFUNC_MSE:
-		if(fann_get_MSE(ann) < desired_error)
+		if(fann_get_MSE(ann) <= desired_error)
 			return 0;
 		break;
 	case FANN_STOPFUNC_BIT:
-		if(ann->num_bit_fail < desired_error)
+		if(ann->num_bit_fail <= (unsigned int)desired_error)
 			return 0;
 		break;
 	}

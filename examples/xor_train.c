@@ -36,9 +36,9 @@ int main()
 	const unsigned int num_output = 1;
 	const unsigned int num_layers = 3;
 	const unsigned int num_neurons_hidden = 3;
-	const float desired_error = (const float) 0.00001;
-	const unsigned int max_epochs = 100000;
-	const unsigned int epochs_between_reports = 1000;
+	const float desired_error = (const float) 0;
+	const unsigned int max_epochs = 1000;
+	const unsigned int epochs_between_reports = 10;
 	struct fann *ann;
 	struct fann_train_data *data;
 
@@ -55,16 +55,14 @@ int main()
 
 	fann_set_activation_steepness_hidden(ann, 1);
 	fann_set_activation_steepness_output(ann, 1);
-	fann_set_rprop_delta_max(ann, 50);
 
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
 	fann_set_activation_function_output(ann, FANN_GAUSSIAN_SYMMETRIC);
 
-	fann_init_weights(ann, data);
+	fann_set_train_stop_function(ann, FANN_STOPFUNC_BIT);
+	fann_set_bit_fail_limit(ann, 0.1);
 
-	/*fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP); */
-	
-	fann_set_callback(ann, test_callback);
+	fann_init_weights(ann, data);
 	
 	fann_train_on_data(ann, data, max_epochs, epochs_between_reports, desired_error);
 

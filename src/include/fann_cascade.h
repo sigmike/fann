@@ -21,116 +21,353 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __fann_cascade_h__
 
 /* Section: FANN Cascade Training
-   test info about cascade training
+   Cascade training differs from ordinary training in the sense that it starts with an empty neural network
+   and then adds neurons one by one, while it trains the neural network. The main benefit of this approach,
+   is that you do not have to guess the number of hidden layers and neurons prior to training, but cascade 
+   training have also proved better at solving some problems.
+   
+   The basic idea of cascade training is that a number of candidate neurons are trained separate from the 
+   real network, then the most promissing of these candidate neurons is inserted into the neural network. 
+   Then the output connections are trained and new candidate neurons is prepared. The candidate neurons are 
+   created as shorcut connected neurons in a new hidden layer, which means that the final neural network
+   will consist of a number of hidden layers with one shorcut connected neuron in each.
 */
 
 /* Group: Cascade Training */
 
 /* Function: fann_cascadetrain_on_data
+
+   Trains on an entire dataset, for a period of time using the Cascade2 training algorithm.
+   This algorithm adds neurons to the neural network while training, which means that it
+   needs to start with an ANN without any hidden layers. The neural network should also use
+   shortcut connections, so <fann_create_shortcut> should be used to create the ANN like this:
+   >struct fann *ann = fann_create_shortcut(2, fann_num_input_train_data(train_data), fann_num_input_train_data(train_data));
+   
+   This training uses the parameters set using the fann_set_cascade_..., but it also uses another
+   training algorithm as it's internal training algorithm. This algorithm can be set to either
+   FANN_TRAIN_RPROP or FANN_TRAIN_QUICKPROP by <fann_set_training_algorithm>, and the parameters 
+   set for these training algorithms will also affect the cascade training.
+   
+   Parameters:
+   		ann - The neural network
+   		data - The data, which should be used during training
+   		max_neuron - The maximum number of neurons to be added to neural network
+   		neurons_between_reports - The number of neurons between printing a status report to stdout.
+   			A value of zero means no reports should be printed.
+   		desired_error - The desired <fann_get_MSE> or <fann_get_bit_fail>, depending on which stop function
+   			is chosen by <fann_set_train_stop_function>.
+
+	Instead of printing out reports every neurons_between_reports, a callback function can be called 
+	(see <fann_set_callback>).
+	
+	See also:
+		<fann_train_on_data>, <fann_cascadetrain_on_file>, <Parameters>
+
+	This function appears in FANN >= 2.0.0. 
 */
-FANN_EXTERNAL void fann_cascadetrain_on_data(struct fann *ann,
+FANN_EXTERNAL void FANN_API fann_cascadetrain_on_data(struct fann *ann,
 													  struct fann_train_data *data,
+													  unsigned int max_neurons,
+													  unsigned int neurons_between_reports,
+													  float desired_error);
+
+/* Function: fann_cascadetrain_on_file
+   
+   Does the same as <fann_cascadetrain_on_data>, but reads the training data directly from a file.
+   
+   See also:
+   		<fann_cascadetrain_on_data>
+
+	This function appears in FANN >= 2.0.0.
+*/ 
+FANN_EXTERNAL void FANN_API fann_cascadetrain_on_file(struct fann *ann, const char *filename,
 													  unsigned int max_neurons,
 													  unsigned int neurons_between_reports,
 													  float desired_error);
 
 /* Group: Parameters */
 													  
-/* Function: fann_get_cascade_num_candidates
+/* Function: fann_get_cascade_output_change_fraction
 
-   The number of candidates (calculated from cascade_activation_functions_count,
-   cascade_activation_steepnesses_count and cascade_num_candidate_groups). 
- */ 
-FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_num_candidates(struct fann *ann);
+   The cascade output change fraction is a number between 0 and 1 determining how large a fraction
+   the <fann_get_MSE> value should change within <fann_get_cascade_output_stagnation_epochs> during
+   training of the output connections, in order for the training not to stagnate. If the training 
+   stagnates, the training of the output connections will be ended and new candidates will be prepared.
+   
+   This means:
+   If the MSE does not change by a fraction of <fann_get_cascade_output_change_fraction> during a 
+   period of <fann_get_cascade_output_stagnation_epochs>, the training of the output connections
+   is stopped because the training has stagnated.
 
-/* Function: fann_get_cascade_change_fraction
+   If the cascade output change fraction is low, the output connections will be trained more and if the
+   fraction is high they will be trained less.
+   
+   The default cascade output change fraction is 0.01, which is equalent to a 1% change in MSE.
+
+   See also:
+   		<fann_set_cascade_output_change_fraction>, <fann_get_MSE>, <fann_get_cascade_output_stagnation_epochs>
+
+	This function appears in FANN >= 2.0.0.
  */
-FANN_EXTERNAL float FANN_API fann_get_cascade_change_fraction(struct fann *ann);
+FANN_EXTERNAL float FANN_API fann_get_cascade_output_change_fraction(struct fann *ann);
 
 
-/* Function: fann_set_cascade_change_fraction
+/* Function: fann_set_cascade_output_change_fraction
+
+   Sets the cascade output change fraction.
+   
+   See also:
+   		<fann_get_cascade_output_change_fraction>
+
+	This function appears in FANN >= 2.0.0.
  */
-FANN_EXTERNAL void FANN_API fann_set_cascade_change_fraction(struct fann *ann, 
-															 float cascade_change_fraction);
+FANN_EXTERNAL void FANN_API fann_set_cascade_output_change_fraction(struct fann *ann, 
+															 float cascade_output_change_fraction);
 
-/* Function: fann_get_cascade_stagnation_epochs
+/* Function: fann_get_cascade_output_stagnation_epochs
+
+   The number of cascade output stagnation epochs determines the number of epochs training is allowed to
+   continue without changing the MSE by a fraction of <fann_get_cascade_output_change_fraction>.
+   
+   See more info about this parameter in <fann_get_cascade_output_change_fraction>.
+   
+   The default number of cascade output stagnation epochs is 12.
+
+   See also:
+   		<fann_set_cascade_output_stagnation_epochs>, <fann_get_cascade_output_change_fraction>
+
+	This function appears in FANN >= 2.0.0.
  */
-FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_stagnation_epochs(struct fann *ann);
+FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_output_stagnation_epochs(struct fann *ann);
 
 
-/* Function: fann_set_cascade_stagnation_epochs
+/* Function: fann_set_cascade_output_stagnation_epochs
+
+   Sets the number of cascade output stagnation epochs.
+   
+   See also:
+   		<fann_get_cascade_output_stagnation_epochs>
+
+	This function appears in FANN >= 2.0.0.
  */
-FANN_EXTERNAL void FANN_API fann_set_cascade_stagnation_epochs(struct fann *ann, 
-															 unsigned int cascade_stagnation_epochs);
+FANN_EXTERNAL void FANN_API fann_set_cascade_output_stagnation_epochs(struct fann *ann, 
+															 unsigned int cascade_output_stagnation_epochs);
 
 
-/* Function: fann_get_cascade_num_candidate_groups
+/* Function: fann_get_cascade_candidate_change_fraction
+
+   The cascade candidate change fraction is a number between 0 and 1 determining how large a fraction
+   the <fann_get_MSE> value should change within <fann_get_cascade_candidate_stagnation_epochs> during
+   training of the candidate neurons, in order for the training not to stagnate. If the training 
+   stagnates, the training of the candidate neurons will be ended and the best candidate will be selected.
+   
+   This means:
+   If the MSE does not change by a fraction of <fann_get_cascade_candidate_change_fraction> during a 
+   period of <fann_get_cascade_candidate_stagnation_epochs>, the training of the candidate neurons
+   is stopped because the training has stagnated.
+
+   If the cascade candidate change fraction is low, the candidate neurons will be trained more and if the
+   fraction is high they will be trained less.
+   
+   The default cascade candidate change fraction is 0.01, which is equalent to a 1% change in MSE.
+
+   See also:
+   		<fann_set_cascade_candidate_change_fraction>, <fann_get_MSE>, <fann_get_cascade_candidate_stagnation_epochs>
+
+	This function appears in FANN >= 2.0.0.
  */
-FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_num_candidate_groups(struct fann *ann);
+FANN_EXTERNAL float FANN_API fann_get_cascade_candidate_change_fraction(struct fann *ann);
 
 
-/* Function: fann_set_cascade_num_candidate_groups
+/* Function: fann_set_cascade_candidate_change_fraction
+
+   Sets the cascade candidate change fraction.
+   
+   See also:
+   		<fann_get_cascade_candidate_change_fraction>
+
+	This function appears in FANN >= 2.0.0.
  */
-FANN_EXTERNAL void FANN_API fann_set_cascade_num_candidate_groups(struct fann *ann, 
-															 unsigned int cascade_num_candidate_groups);
+FANN_EXTERNAL void FANN_API fann_set_cascade_candidate_change_fraction(struct fann *ann, 
+															 float cascade_candidate_change_fraction);
+
+/* Function: fann_get_cascade_candidate_stagnation_epochs
+
+   The number of cascade candidate stagnation epochs determines the number of epochs training is allowed to
+   continue without changing the MSE by a fraction of <fann_get_cascade_candidate_change_fraction>.
+   
+   See more info about this parameter in <fann_get_cascade_candidate_change_fraction>.
+
+   The default number of cascade candidate stagnation epochs is 12.
+
+   See also:
+   		<fann_set_cascade_candidate_stagnation_epochs>, <fann_get_cascade_candidate_change_fraction>
+
+	This function appears in FANN >= 2.0.0.
+ */
+FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_candidate_stagnation_epochs(struct fann *ann);
+
+
+/* Function: fann_set_cascade_candidate_stagnation_epochs
+
+   Sets the number of cascade candidate stagnation epochs.
+   
+   See also:
+   		<fann_get_cascade_candidate_stagnation_epochs>
+
+	This function appears in FANN >= 2.0.0.
+ */
+FANN_EXTERNAL void FANN_API fann_set_cascade_candidate_stagnation_epochs(struct fann *ann, 
+															 unsigned int cascade_candidate_stagnation_epochs);
 
 
 /* Function: fann_get_cascade_weight_multiplier
+
+   The weight multiplier is a parameter which is used to multiply the weights from the candidate neuron
+   before adding the neuron to the neural network. This parameter is usually between 0 and 1, and is used
+   to make the training a bit less aggressive.
+
+   The default weight multiplier is 0.4
+
+   See also:
+   		<fann_set_cascade_weight_multiplier>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL fann_type FANN_API fann_get_cascade_weight_multiplier(struct fann *ann);
 
 
 /* Function: fann_set_cascade_weight_multiplier
+   
+   Sets the weight multiplier.
+   
+   See also:
+   		<fann_get_cascade_weight_multiplier>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL void FANN_API fann_set_cascade_weight_multiplier(struct fann *ann, 
 															 fann_type cascade_weight_multiplier);
 
 
 /* Function: fann_get_cascade_candidate_limit
+
+   The candidate limit is a limit for how much the candidate neuron may be trained.
+   The limit is a limit on the proportion between the MSE and candidate score.
+   
+   Set this to a lower value to avoid overfitting and to a higher if overfitting is
+   not a problem.
+   
+   The default candidate limit is 1000.0
+
+   See also:
+   		<fann_set_cascade_candidate_limit>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL fann_type FANN_API fann_get_cascade_candidate_limit(struct fann *ann);
 
 
 /* Function: fann_set_cascade_candidate_limit
+
+   Sets the candidate limit.
+  
+   See also:
+   		<fann_get_cascade_candidate_limit>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL void FANN_API fann_set_cascade_candidate_limit(struct fann *ann, 
 															 fann_type cascade_candidate_limit);
 
 
 /* Function: fann_get_cascade_max_out_epochs
+
+   The maximum out epochs determines the maximum number of epochs the output connections
+   may be trained after adding a new candidate neuron.
+   
+   The default
+
+   See also:
+   		<fann_set_cascade_max_out_epochs>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_max_out_epochs(struct fann *ann);
 
 
 /* Function: fann_set_cascade_max_out_epochs
+
+   See also:
+   		<fann_get_cascade_max_out_epochs>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL void FANN_API fann_set_cascade_max_out_epochs(struct fann *ann, 
 															 unsigned int cascade_max_out_epochs);
 
 
 /* Function: fann_get_cascade_max_cand_epochs
+
+   See also:
+   		<fann_set_cascade_max_cand_epochs>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_max_cand_epochs(struct fann *ann);
 
 
 /* Function: fann_set_cascade_max_cand_epochs
+
+   See also:
+   		<fann_get_cascade_max_cand_epochs>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL void FANN_API fann_set_cascade_max_cand_epochs(struct fann *ann, 
 															 unsigned int cascade_max_cand_epochs);
 
 
+/* Function: fann_get_cascade_num_candidates
+
+   The number of candidates used during training (calculated from cascade_activation_functions_count,
+   cascade_activation_steepnesses_count and cascade_num_candidate_groups). 
+
+   See also:
+   		<fann_get_cascade_activation_functions_count>, <fann_get_cascade_activation_steepnesses_count>,
+   		<fann_get_cascade_num_candidate_groups>
+
+	This function appears in FANN >= 2.0.0.
+ */ 
+FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_num_candidates(struct fann *ann);
+
 /* Function: fann_get_cascade_activation_functions_count
+
+   See also:
+   		<fann_get_cascade_activation_functions>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_activation_functions_count(struct fann *ann);
 
 
 /* Function: fann_get_cascade_activation_functions
+
+   See also:
+   		<fann_get_cascade_activation_functions_count>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL enum fann_activationfunc_enum * FANN_API fann_get_cascade_activation_functions(
 															struct fann *ann);
 
 
 /* Function: fann_set_cascade_activation_functions
+
+   See also:
+   		<fann_get_cascade_activation_steepnesses_count>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL void fann_set_cascade_activation_functions(struct fann *ann,
 														 enum fann_activationfunc_enum *
@@ -140,21 +377,57 @@ FANN_EXTERNAL void fann_set_cascade_activation_functions(struct fann *ann,
 
 
 /* Function: fann_get_cascade_activation_steepnesses_count
+
+   See also:
+   		<fann_set_cascade_activation_functions>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_activation_steepnesses_count(struct fann *ann);
 
 
 /* Function: fann_get_cascade_activation_steepnesses
+
+   See also:
+   		<fann_set_cascade_activation_steepnesses>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL fann_type * FANN_API fann_get_cascade_activation_steepnesses(struct fann *ann);
 																
 
 /* Function: fann_set_cascade_activation_steepnesses
+
+   See also:
+   		<fann_get_cascade_activation_steepnesses>
+
+	This function appears in FANN >= 2.0.0.
  */
 FANN_EXTERNAL void fann_set_cascade_activation_steepnesses(struct fann *ann,
 														   fann_type *
 														   cascade_activation_steepnesses,
 														   unsigned int 
 														   cascade_activation_steepnesses_count);
+
+/* Function: fann_get_cascade_num_candidate_groups
+
+   See also:
+   		<fann_set_cascade_num_candidate_groups>
+
+	This function appears in FANN >= 2.0.0.
+ */
+FANN_EXTERNAL unsigned int FANN_API fann_get_cascade_num_candidate_groups(struct fann *ann);
+
+
+/* Function: fann_set_cascade_num_candidate_groups
+
+   See also:
+   		<fann_get_cascade_num_candidate_groups>
+
+	This function appears in FANN >= 2.0.0.
+ */
+FANN_EXTERNAL void FANN_API fann_set_cascade_num_candidate_groups(struct fann *ann, 
+															 unsigned int cascade_num_candidate_groups);
+
 
 #endif

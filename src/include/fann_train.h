@@ -187,7 +187,7 @@ FANN_EXTERNAL void FANN_API fann_train_on_data(struct fann *ann, struct fann_tra
 
 	This function appears in FANN >= 1.0.0.
 */ 
-FANN_EXTERNAL void FANN_API fann_train_on_file(struct fann *ann, char *filename,
+FANN_EXTERNAL void FANN_API fann_train_on_file(struct fann *ann, const char *filename,
 											   unsigned int max_epochs,
 											   unsigned int epochs_between_reports,
 											   float desired_error);
@@ -249,7 +249,7 @@ FANN_EXTERNAL float FANN_API fann_test_data(struct fann *ann, struct fann_train_
 
     This function appears in FANN >= 1.0.0
 */ 
-FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(char *filename);
+FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(const char *filename);
 
 
 /* Function: fann_destroy_train
@@ -366,7 +366,7 @@ FANN_EXTERNAL unsigned int FANN_API fann_length_train_data(struct fann_train_dat
  */ 
 FANN_EXTERNAL unsigned int FANN_API fann_num_input_train_data(struct fann_train_data *data);
 	
-/* Function: fann_num_input_train_data
+/* Function: fann_num_output_train_data
    
    Returns the number of outputs in each of the training patterns in the <struct fann_train_data>.
    
@@ -386,7 +386,7 @@ FANN_EXTERNAL unsigned int FANN_API fann_num_output_train_data(struct fann_train
 	
    This function appears in FANN >= 1.0.0.   	
  */ 
-FANN_EXTERNAL void FANN_API fann_save_train(struct fann_train_data *data, char *filename);
+FANN_EXTERNAL void FANN_API fann_save_train(struct fann_train_data *data, const char *filename);
 
 
 /* Function: fann_save_train_to_fixed
@@ -400,7 +400,7 @@ FANN_EXTERNAL void FANN_API fann_save_train(struct fann_train_data *data, char *
 
    This function appears in FANN >= 1.0.0.   	
  */ 
-FANN_EXTERNAL void FANN_API fann_save_train_to_fixed(struct fann_train_data *data, char *filename,
+FANN_EXTERNAL void FANN_API fann_save_train_to_fixed(struct fann_train_data *data, const char *filename,
 													 unsigned int decimal_point);
 
 

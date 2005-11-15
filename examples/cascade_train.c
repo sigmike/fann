@@ -32,10 +32,10 @@ int FANN_API print_callback(struct fann *ann, struct fann_train_data *train,
 	float mse1, mse2;
 
 	mse2 = fann_test_data(ann, test_data);
-	bit2 = ann->num_bit_fail;
+	bit2 = fann_get_bit_fail(ann);
 
 	mse1 = fann_test_data(ann, train);
-	bit1 = ann->num_bit_fail;
+	bit1 = fann_get_bit_fail(ann);
 
 	printf("Nerons     %4d. Epochs: %7d ", 
 		fann_get_total_neurons(ann)-(fann_get_num_input(ann)+fann_get_num_output(ann)), epochs);
@@ -48,7 +48,6 @@ int main()
 	const float desired_error = (const float) 0.001;
 	unsigned int max_neurons = 40;
 	unsigned int neurons_between_reports = 1;
-	struct fann_train_data *test = NULL;
 
 	printf("Reading data.\n");
 
@@ -102,7 +101,7 @@ int main()
 
 	printf("Creating network.\n");
 
-	ann = fann_create_shortcut(2, train_data->num_input, train_data->num_output);
+	ann = fann_create_shortcut(2, fann_num_input_train_data(train_data), fann_num_input_train_data(train_data));
 
 	fann_set_training_algorithm(ann, FANN_TRAIN_BATCH);
 	fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP);
@@ -121,8 +120,10 @@ int main()
 	fann_set_rprop_delta_min(ann, 0.0);
 	fann_set_rprop_delta_max(ann, 50.0);
 
-	fann_set_cascade_change_fraction(ann, 0.01);
-	fann_set_cascade_stagnation_epochs(ann, 12);
+	fann_set_cascade_output_change_fraction(ann, 0.01);
+	fann_set_cascade_output_stagnation_epochs(ann, 12);
+	fann_set_cascade_candidate_change_fraction(ann, 0.01);
+	fann_set_cascade_candidate_stagnation_epochs(ann, 12);
 	fann_set_cascade_weight_multiplier(ann, 0.4);
  	fann_set_cascade_candidate_limit(ann, 1000.0);
 	fann_set_cascade_max_out_epochs(ann, 150);

@@ -63,9 +63,9 @@ int fann_save_internal(struct fann *ann, const char *configuration_file,
 					   unsigned int save_as_fixed);
 int fann_save_internal_fd(struct fann *ann, FILE * conf, const char *configuration_file,
 						  unsigned int save_as_fixed);
-void fann_save_train_internal(struct fann_train_data *data, char *filename,
+void fann_save_train_internal(struct fann_train_data *data, const char *filename,
 							  unsigned int save_as_fixed, unsigned int decimal_point);
-void fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, char *filename,
+void fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, const char *filename,
 								 unsigned int save_as_fixed, unsigned int decimal_point);
 
 void fann_seed_rand();
@@ -76,7 +76,7 @@ void fann_error(struct fann_error *errdat, const enum fann_errno_enum errno_f, .
 void fann_init_error_data(struct fann_error *errdat);
 
 struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file);
-struct fann_train_data *fann_read_train_from_fd(FILE * file, char *filename);
+struct fann_train_data *fann_read_train_from_fd(FILE * file, const char *filename);
 
 void fann_compute_MSE(struct fann *ann, fann_type * desired_output);
 void fann_update_output_weights(struct fann *ann);

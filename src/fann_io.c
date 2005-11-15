@@ -271,7 +271,7 @@ int fann_save_internal_fd(struct fann *ann, FILE * conf, const char *configurati
 /* INTERNAL FUNCTION
    Save the train data structure.
  */
-void fann_save_train_internal(struct fann_train_data *data, char *filename,
+void fann_save_train_internal(struct fann_train_data *data, const char *filename,
 							  unsigned int save_as_fixed, unsigned int decimal_point)
 {
 	FILE *file = fopen(filename, "w");
@@ -288,7 +288,7 @@ void fann_save_train_internal(struct fann_train_data *data, char *filename,
 /* INTERNAL FUNCTION
    Save the train data structure.
  */
-void fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, char *filename,
+void fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, const char *filename,
 								 unsigned int save_as_fixed, unsigned int decimal_point)
 {
 	unsigned int num_data = data->num_data;

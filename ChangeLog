@@ -7,6 +7,9 @@ libfann (2.0.0) stable; urgency=low
 	* Removed some depricated functions
 	* New set of fann_create functions
 	* Altered the way the callback function works
+	* Training can be stopped by counting the number of datasets that fail instead of just MSE
+	* Fixed a memory leak when copying training data
+	* More activation functions
 
 libfann (1.2.0) stable; urgency=low
 	* Fixes for better compability with different compilers
