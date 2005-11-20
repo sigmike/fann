@@ -20,7 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __fann_io_h__
 #define __fann_io_h__
 	
-/* Section: FANN File Input/Output */	
+/* Section: FANN File Input/Output 
+   
+   It is possible to save an entire ann to a file with <fann_save> for future loading with <fann_create_from_file>.
+ */	
 
 /* Group: File Input and Output */	
 

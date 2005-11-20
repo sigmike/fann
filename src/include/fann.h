@@ -23,7 +23,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    floatfann.h was included.
 */ 
 
-/* Section: FANN Creation/Execution */
+/* Section: FANN Creation/Execution
+   
+   The FANN library is designed to be very easy to use. 
+   A feedforward ann can be created by a simple <fann_create_standard> function, while
+   other ANNs can be created just as easily. The ANNs can be trained by <fann_train_on_file>
+   and executed by <fann_run>.
+   
+   All of this can be done without much knowledge of the internals of ANNs, although the ANNs created will
+   still be powerfull and effective. If you have more knowledge about ANNs, and desire more control, almost
+   every part of the ANNs can be parametized to create specialized and highly optimal ANNs.
+ */
 /* Group: Creation, Destruction & Execution */
 	
 #ifndef FANN_INCLUDE

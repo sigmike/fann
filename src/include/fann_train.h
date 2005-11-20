@@ -42,7 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	Structure used to store data, for use with training.
 	
 	The data inside this structure should never be manipulated directly, but should use some 
-	of the supplied functions in <Training Data>.
+	of the supplied functions in <Training Data Manipulation>.
 	
 	The training data structure is very usefull for storing data during training and testing of a
 	neural network.

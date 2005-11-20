@@ -51,9 +51,6 @@ int main()
 
 	printf("Reading data.\n");
 
-	train_data = fann_read_train_from_file("../benchmarks/datasets/parity8.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/parity8.test");
-
 	train_data = fann_read_train_from_file("../benchmarks/datasets/pumadyn-32fm.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/pumadyn-32fm.test");
 
@@ -68,9 +65,6 @@ int main()
 
 	train_data = fann_read_train_from_file("../benchmarks/datasets/diabetes.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/diabetes.test");
-
-	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral.test");
 
 	train_data = fann_read_train_from_file("../benchmarks/datasets/gene.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/gene.test");
@@ -90,18 +84,21 @@ int main()
 	train_data = fann_read_train_from_file("../benchmarks/datasets/building.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/building.test");
 
+	train_data = fann_read_train_from_file("../benchmarks/datasets/robot.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/robot.test");
+
 	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral.train");
 	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral.test");
 
-	train_data = fann_read_train_from_file("../benchmarks/datasets/robot.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/robot.test");
+	train_data = fann_read_train_from_file("../benchmarks/datasets/parity8.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/parity8.test");
 
 	fann_scale_train_data(train_data, 0, 1);
 	fann_scale_train_data(test_data, 0, 1);
 
 	printf("Creating network.\n");
 
-	ann = fann_create_shortcut(2, fann_num_input_train_data(train_data), fann_num_input_train_data(train_data));
+	ann = fann_create_shortcut(2, fann_num_input_train_data(train_data), fann_num_output_train_data(train_data));
 
 	fann_set_training_algorithm(ann, FANN_TRAIN_BATCH);
 	fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP);
@@ -130,7 +127,7 @@ int main()
 	fann_set_cascade_max_cand_epochs(ann, 150);
 	fann_set_cascade_num_candidate_groups(ann, 1);
 
-	fann_set_callback(ann, print_callback);
+	/*fann_set_callback(ann, print_callback);*/
 
 	fann_print_parameters(ann);
 	/*fann_print_connections(ann); */

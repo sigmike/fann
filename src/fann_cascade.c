@@ -26,20 +26,6 @@
 /* #define CASCADE_DEBUG */
 /* #define CASCADE_DEBUG_FULL */
 
-int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float desired_error);
-
-float fann_train_outputs_epoch(struct fann *ann, struct fann_train_data *data);
-
-int fann_train_candidates(struct fann *ann, struct fann_train_data *data);
-
-float fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data);
-
-void fann_install_candidate(struct fann *ann);
-
-int fann_initialize_candidates(struct fann *ann);
-
-void fann_set_shortcut_connections(struct fann *ann);
-
 void fann_print_connections_raw(struct fann *ann)
 {
 	unsigned int i;
@@ -71,7 +57,7 @@ FANN_EXTERNAL void FANN_API fann_cascadetrain_on_data(struct fann *ann, struct f
 
 	if(neurons_between_reports && ann->callback == NULL)
 	{
-		printf("Max neurons %6d. Desired error: %.6f\n", max_neurons, desired_error);
+		printf("Max neurons %3d. Desired error: %.6f\n", max_neurons, desired_error);
 	}
 
 	for(i = 1; i <= max_neurons; i++)
@@ -102,15 +88,22 @@ FANN_EXTERNAL void FANN_API fann_cascadetrain_on_data(struct fann *ann, struct f
 			if(ann->callback == NULL)
 			{
 				printf
-					("Neurons     %6d. Current error: %.6f. Total error: %.6f. Epochs %6d. Bit fail %d.\n",
+					("Neurons     %3d. Current error: %.6f. Total error:%8.4f. Epochs %5d. Bit fail %3d",
 					 i, error, ann->MSE_value, total_epochs, ann->num_bit_fail);
+				if((ann->last_layer-2) != ann->first_layer)
+				{
+					printf(". candidate steepness %.2f. function %s", 
+					   (ann->last_layer-2)->first_neuron->activation_steepness,
+					   FANN_ACTIVATIONFUNC_NAMES[(ann->last_layer-2)->first_neuron->activation_function]);
+				}
+				printf("\n");
 			}
 			else if((*ann->callback) (ann, data, max_neurons, 
 				neurons_between_reports, desired_error, total_epochs) == -1) 
 			{
 				/* you can break the training by returning -1 */
 				break;
-			}
+			}					 
 		}
 
 #ifdef CASCADE_DEBUG_FULL
@@ -153,7 +146,7 @@ FANN_EXTERNAL void FANN_API fann_cascadetrain_on_data(struct fann *ann, struct f
 
 	if(neurons_between_reports && ann->callback == NULL)
 	{
-		printf("Train outputs       Current error: %.6f. Epochs %6d\n", fann_get_MSE(ann),
+		printf("Train outputs    Current error: %.6f. Epochs %6d\n", fann_get_MSE(ann),
 			   total_epochs);
 	}
 
@@ -446,7 +439,6 @@ int fann_initialize_candidates(struct fann *ann)
 				neurons[candidate_index].value = 0;
 				neurons[candidate_index].sum = 0;
 				
-				/* TODO should be some kind of parameter (random?) */
 				neurons[candidate_index].activation_function =
 					ann->cascade_activation_functions[i];
 				neurons[candidate_index].activation_steepness =
@@ -920,13 +912,11 @@ void fann_add_candidate_neuron(struct fann *ann, struct fann_layer *layer)
 	neuron_place->activation_steepness = candidate->activation_steepness;
 	neuron_place->last_con = (neuron_place + 1)->first_con;
 	neuron_place->first_con = neuron_place->last_con - num_connections_in;
+#ifdef CASCADE_DEBUG_FULL
 	printf("neuron[%d] = weights[%d ... %d] activation: %s, steepness: %f\n",
 		   neuron_place - ann->first_layer->first_neuron, neuron_place->first_con,
 		   neuron_place->last_con - 1, FANN_ACTIVATIONFUNC_NAMES[neuron_place->activation_function],
-		   neuron_place->activation_steepness);
-#ifdef CASCADE_DEBUG_FULL
-	printf("neuron[%d] = weights[%d ... %d]\n", neuron_place - ann->first_layer->first_neuron,
-		   neuron_place->first_con, neuron_place->last_con - 1);
+		   neuron_place->activation_steepness);/* TODO remove */
 #endif
 
 	candidate_con = candidate->first_con;

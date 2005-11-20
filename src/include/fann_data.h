@@ -22,7 +22,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdio.h>
 
-/* Section: FANN Datatypes */
+/* Section: FANN Datatypes
+
+   The two main datatypes used in the fann library is <struct fann>, 
+   which represents an artificial neural network, and <struct fann_train_data>,
+   which represent training data.
+ */
 
 
 /* Type: fann_type

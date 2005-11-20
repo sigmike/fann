@@ -25,7 +25,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define FANN_ERRSTR_MAX 128
 struct fann_error;
 
-/* Section: FANN Error Handling */
+/* Section: FANN Error Handling
+
+   Errors from the fann library are usually reported on stderr. 
+   It is however possible to redirect these error messages to a file, 
+   or completely ignore them by the <fann_set_error_log> function.
+   
+   It is also possible to inspect the last error message by using the
+   <fann_get_errno> and <fann_get_errstr> functions.
+ */
 
 /* Enum: fann_errno_enum
 	Used to define error events on <struct fann> and <struct fann_train_data>. 

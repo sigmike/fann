@@ -102,6 +102,21 @@ fann_type fann_activation_derived(unsigned int activation_function,
 
 int fann_desired_error_reached(struct fann *ann, float desired_error);
 
+/* Some functions for cascade */
+int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float desired_error);
+
+float fann_train_outputs_epoch(struct fann *ann, struct fann_train_data *data);
+
+int fann_train_candidates(struct fann *ann, struct fann_train_data *data);
+
+float fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data);
+
+void fann_install_candidate(struct fann *ann);
+
+int fann_initialize_candidates(struct fann *ann);
+
+void fann_set_shortcut_connections(struct fann *ann);
+
 /* called fann_max, in order to not interferre with predefined versions of max */
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))
 #define fann_min(x, y) (((x) < (y)) ? (x) : (y))
