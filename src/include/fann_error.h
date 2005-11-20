@@ -78,44 +78,74 @@ enum fann_errno_enum
 	
 /* Function: fann_set_error_log
 
-   change where errors are logged to
+   Change where errors are logged to. Both <struct fann> and <struct fann_data> can be 
+   casted to <struct fann_error>, so this function can be used to set either of these.
+   
+   If log_file is NULL, no errors will be printed.
+   
+   If errdata is NULL, the default log will be set. The default log is the log used when creating 
+   <struct fann> and <struct fann_data>. This default log will also be the default for all new structs
+   that are created.
+   
+   The default behavior is to log them to stderr.
+   
+   See also:
+    <struct fann_error>
+   
+   This function appears in FANN >= 1.1.0.   
  */ 
 FANN_EXTERNAL void FANN_API fann_set_error_log(struct fann_error *errdat, FILE * log_file);
 
 
 /* Function: fann_get_errno
 
-   returns the last error number
+   Returns the last error number.
+   
+   See also:
+    <fann_errno_enum>, <fann_reset_errno>
+    
+   This function appears in FANN >= 1.1.0.   
  */ 
 FANN_EXTERNAL enum fann_errno_enum FANN_API fann_get_errno(struct fann_error *errdat);
 
 
 /* Function: fann_reset_errno
 
-   resets the last error number
+   Resets the last error number.
+   
+   This function appears in FANN >= 1.1.0.   
  */ 
 FANN_EXTERNAL void FANN_API fann_reset_errno(struct fann_error *errdat);
 
 
 /* Function: fann_reset_errstr
 
-   resets the last error string
+   Resets the last error string.
+
+   This function appears in FANN >= 1.1.0.   
  */ 
 FANN_EXTERNAL void FANN_API fann_reset_errstr(struct fann_error *errdat);
 
 
 /* Function: fann_get_errstr
 
-   returns the last errstr.
- * This function calls fann_reset_errno and fann_reset_errstr
+   Returns the last errstr.
+  
+   This function calls <fann_reset_errno> and <fann_reset_errstr>
+
+   This function appears in FANN >= 1.1.0.   
  */ 
 FANN_EXTERNAL char *FANN_API fann_get_errstr(struct fann_error *errdat);
 
 
 /* Function: fann_print_error
 
-   prints the last error to stderr
+   Prints the last error to stderr.
+
+   This function appears in FANN >= 1.1.0.   
  */ 
 FANN_EXTERNAL void FANN_API fann_print_error(struct fann_error *errdat);
+
+extern FILE * fann_default_error_log;
 
 #endif

@@ -30,6 +30,8 @@
 #define snprintf _snprintf
 #endif
 
+FILE * fann_default_error_log = (FILE *)-1;
+
 /* resets the last error number
  */
 FANN_EXTERNAL void FANN_API fann_reset_errno(struct fann_error *errdat)
@@ -69,16 +71,19 @@ FANN_EXTERNAL char *FANN_API fann_get_errstr(struct fann_error *errdat)
  */
 FANN_EXTERNAL void FANN_API fann_set_error_log(struct fann_error *errdat, FILE * log_file)
 {
-	errdat->error_log = log_file;
+	if(errdat == NULL)
+		fann_default_error_log = log_file;
+	else
+		errdat->error_log = log_file;
 }
 
-/* prints the last error to the error log (default stderr)
+/* prints the last error to stderr
  */
 FANN_EXTERNAL void FANN_API fann_print_error(struct fann_error *errdat)
 {
-	if((errdat->errno_f != FANN_E_NO_ERROR) && (errdat->error_log != NULL))
+	if(errdat->errno_f != FANN_E_NO_ERROR && errdat->errstr != NULL)
 	{
-		fputs(errdat->errstr, errdat->error_log);
+		fprintf(stderr, "FANN Error %d: %s", errdat->errno_f, errdat->errstr);
 	}
 }
 
@@ -89,6 +94,7 @@ void fann_error(struct fann_error *errdat, const enum fann_errno_enum errno_f, .
 {
 	va_list ap;
 	char *errstr;
+	FILE * error_log = fann_default_error_log;
 
 	if(errdat != NULL)
 		errdat->errno_f = errno_f;
@@ -168,17 +174,20 @@ void fann_error(struct fann_error *errdat, const enum fann_errno_enum errno_f, .
 	}
 	va_end(ap);
 
-	if(errdat == NULL)
+	if(errdat != NULL)
+	{
+		errdat->errstr = errstr;
+		error_log = errdat->error_log;
+		printf("setting errorlog\n");		
+	}
+
+	if(error_log == (FILE *)-1) /* This is the default behavior and will give stderr */
 	{
 		fprintf(stderr, "FANN Error %d: %s", errno_f, errstr);
 	}
-	else
+	else if(error_log != NULL)
 	{
-		errdat->errstr = errstr;
-		if(errdat->error_log != NULL)
-		{
-			fprintf(errdat->error_log, "FANN Error %d: %s", errno_f, errstr);
-		}
+		fprintf(error_log, "FANN Error %d: %s", errno_f, errstr);
 	}
 }
 
@@ -189,5 +198,5 @@ void fann_init_error_data(struct fann_error *errdat)
 {
 	errdat->errstr = NULL;
 	errdat->errno_f = FANN_E_NO_ERROR;
-	errdat->error_log = stderr;
+	errdat->error_log = fann_default_error_log;
 }

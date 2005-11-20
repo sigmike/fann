@@ -10,6 +10,8 @@ libfann (2.0.0) stable; urgency=low
 	* Training can be stopped by counting the number of datasets that fail instead of just MSE
 	* Fixed a memory leak when copying training data
 	* More activation functions
+	* Enums used instead of integers for several parameters.
+	* Possebility to set default logging facility
 
 libfann (1.2.0) stable; urgency=low
 	* Fixes for better compability with different compilers

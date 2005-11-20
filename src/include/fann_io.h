@@ -23,20 +23,33 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /* Section: FANN File Input/Output */	
 
 /* Group: File Input and Output */	
-	
+
 /* Function: fann_create_from_file
+   
    Constructs a backpropagation neural network from a configuration file.
- */ 
+   
+   See also:
+   	<fann_save>, <fann_save_to_fixed>
+   	
+   This function appears in FANN >= 1.0.0.
+ */
 FANN_EXTERNAL struct fann *FANN_API fann_create_from_file(const char *configuration_file);
 
 
 /* Function: fann_save
+
    Save the entire network to a configuration file.
- */ 
+   
+   See also:
+    <fann_create_from_file>, <fann_save_to_fixed>
+
+   This function appears in FANN >= 1.0.0.
+ */
 FANN_EXTERNAL void FANN_API fann_save(struct fann *ann, const char *configuration_file);
 
 
 /* Function: fann_save_to_fixed
+
    Saves the entire network to a configuration file.
    But it is saved in fixed point format no matter which
    format it is currently in.
@@ -61,6 +74,11 @@ FANN_EXTERNAL void FANN_API fann_save(struct fann *ann, const char *configuratio
    The fixed point use of this network is only intended for use on machines that
    have no floating point processor, like an iPAQ. On normal computers the floating
    point version is actually faster.
+
+   See also:
+    <fann_create_from_file>, <fann_save>
+
+   This function appears in FANN >= 1.0.0.
 */ 
 FANN_EXTERNAL int FANN_API fann_save_to_fixed(struct fann *ann, const char *configuration_file);
 	

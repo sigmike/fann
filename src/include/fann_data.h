@@ -26,6 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 /* Type: fann_type
+   fann_type is the type used for the weights, inputs and outputs of the neural network.
+   
 	fann_type is defined as a:
 	float - if you include fann.h or floatfann.h
 	double - if you include doublefann.h
@@ -373,7 +375,10 @@ struct fann_layer
 /* Struct: struct fann_error
    
 	Structure used to store error-related information, both
-	<struct fann> and <struct fann_train_data> can be casted to this type so 
+	<struct fann> and <struct fann_train_data> can be casted to this type.
+	
+	See also:
+		<fann_set_error_log>, <fann_get_errno>
 */
 struct fann_error
 {

@@ -1101,7 +1101,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	}
 
 	ann->errno_f = FANN_E_NO_ERROR;
-	ann->error_log = NULL;
+	ann->error_log = fann_default_error_log;
 	ann->errstr = NULL;
 	ann->learning_rate = 0.7;
 	ann->learning_momentum = 0.0;
