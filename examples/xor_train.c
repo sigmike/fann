@@ -57,10 +57,10 @@ int main()
 	fann_set_activation_steepness_output(ann, 1);
 
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
-	fann_set_activation_function_output(ann, FANN_GAUSSIAN_SYMMETRIC);
+	fann_set_activation_function_output(ann, FANN_SIGMOID_SYMMETRIC);
 
 	fann_set_train_stop_function(ann, FANN_STOPFUNC_BIT);
-	fann_set_bit_fail_limit(ann, 0.1);
+	fann_set_bit_fail_limit(ann, 0.01);
 
 	fann_init_weights(ann, data);
 	

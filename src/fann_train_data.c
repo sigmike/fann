@@ -626,6 +626,94 @@ FANN_EXTERNAL unsigned int FANN_API fann_num_output_train_data(struct fann_train
 	return data->num_output;
 }
 
+/* INTERNAL FUNCTION
+   Save the train data structure.
+ */
+void fann_save_train_internal(struct fann_train_data *data, const char *filename,
+							  unsigned int save_as_fixed, unsigned int decimal_point)
+{
+	FILE *file = fopen(filename, "w");
+
+	if(!file)
+	{
+		fann_error((struct fann_error *) data, FANN_E_CANT_OPEN_TD_W, filename);
+		return;
+	}
+	fann_save_train_internal_fd(data, file, filename, save_as_fixed, decimal_point);
+	fclose(file);
+}
+
+/* INTERNAL FUNCTION
+   Save the train data structure.
+ */
+void fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, const char *filename,
+								 unsigned int save_as_fixed, unsigned int decimal_point)
+{
+	unsigned int num_data = data->num_data;
+	unsigned int num_input = data->num_input;
+	unsigned int num_output = data->num_output;
+	unsigned int i, j;
+
+#ifndef FIXEDFANN
+	unsigned int multiplier = 1 << decimal_point;
+#endif
+
+	fprintf(file, "%u %u %u\n", data->num_data, data->num_input, data->num_output);
+
+	for(i = 0; i < num_data; i++)
+	{
+		for(j = 0; j < num_input; j++)
+		{
+#ifndef FIXEDFANN
+			if(save_as_fixed)
+			{
+				fprintf(file, "%d ", (int) (data->input[i][j] * multiplier));
+			}
+			else
+			{
+				if(((int) floor(data->input[i][j] + 0.5) * 1000000) ==
+				   ((int) floor(data->input[i][j] * 1000000.0 + 0.5)))
+				{
+					fprintf(file, "%d ", (int) data->input[i][j]);
+				}
+				else
+				{
+					fprintf(file, "%f ", data->input[i][j]);
+				}
+			}
+#else
+			fprintf(file, FANNPRINTF " ", data->input[i][j]);
+#endif
+		}
+		fprintf(file, "\n");
+
+		for(j = 0; j < num_output; j++)
+		{
+#ifndef FIXEDFANN
+			if(save_as_fixed)
+			{
+				fprintf(file, "%d ", (int) (data->output[i][j] * multiplier));
+			}
+			else
+			{
+				if(((int) floor(data->output[i][j] + 0.5) * 1000000) ==
+				   ((int) floor(data->output[i][j] * 1000000.0 + 0.5)))
+				{
+					fprintf(file, "%d ", (int) data->output[i][j]);
+				}
+				else
+				{
+					fprintf(file, "%f ", data->output[i][j]);
+				}
+			}
+#else
+			fprintf(file, FANNPRINTF " ", data->output[i][j]);
+#endif
+		}
+		fprintf(file, "\n");
+	}
+}
+
 
 /*
  * INTERNAL FUNCTION Reads training data from a file descriptor. 

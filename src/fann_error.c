@@ -130,7 +130,7 @@ void fann_error(struct fann_error *errdat, const enum fann_errno_enum errno_f, .
 				 ap);
 		break;
 	case FANN_E_CANT_READ_CONFIG:
-		vsprintf(errstr, "Error reading info from configuration file \"%s\".\n", ap);
+		vsprintf(errstr, "Error reading \"%s\" from configuration file \"%s\".\n", ap);
 		break;
 	case FANN_E_CANT_READ_NEURON:
 		vsprintf(errstr, "Error reading neuron info from configuration file \"%s\".\n", ap);
