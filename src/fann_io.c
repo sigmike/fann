@@ -165,15 +165,13 @@ int fann_save_internal_fd(struct fann *ann, FILE * conf, const char *configurati
 #endif
 
 		/* save the decimal_point on a seperate line */
-		fprintf(conf, "%u\n", decimal_point);
+		fprintf(conf, "decimal_point=%u\n", decimal_point);
 	}
 #else
 	/* save the decimal_point on a seperate line */
-	fprintf(conf, "%u\n", ann->decimal_point);
+	fprintf(conf, "decimal_point=%u\n", ann->decimal_point);
 
 #endif
-/*	fprintf(conf, "%u %f %f %u\n", ann->last_layer - ann->first_layer, ann->learning_rate,
-			ann->connection_rate, ann->shortcut_connections);*/
 
 	/* Save network parameters */
 	fprintf(conf, "num_layers=%u\n", ann->last_layer - ann->first_layer);
@@ -181,6 +179,7 @@ int fann_save_internal_fd(struct fann *ann, FILE * conf, const char *configurati
 	fprintf(conf, "connection_rate=%f\n", ann->connection_rate);
 	fprintf(conf, "shortcut_connections=%u\n", ann->shortcut_connections);
 
+	fprintf(conf, "layer_sizes=");
 	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++)
 	{
 		/* the number of neurons in the layers (in the last layer, there is always one too many neurons, because of an unused bias) */
@@ -189,30 +188,31 @@ int fann_save_internal_fd(struct fann *ann, FILE * conf, const char *configurati
 	fprintf(conf, "\n");
 
 
+	fprintf(conf, "neurons (num_inputs, activation_function, activation_steepness)=");
 	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++)
 	{
-		/* the number of connections to each neuron */
+		/* the neurons */
 		for(neuron_it = layer_it->first_neuron; neuron_it != layer_it->last_neuron; neuron_it++)
 		{
 #ifndef FIXEDFANN
 			if(save_as_fixed)
 			{
-				fprintf(conf, "%u %u %u ", neuron_it->last_con - neuron_it->first_con,
+				fprintf(conf, "(%u, %u, %u) ", neuron_it->last_con - neuron_it->first_con,
 						neuron_it->activation_function,
 						(int) floor((neuron_it->activation_steepness * fixed_multiplier) + 0.5));
 			}
 			else
 			{
-				fprintf(conf, "%u %u " FANNPRINTF " ", neuron_it->last_con - neuron_it->first_con,
+				fprintf(conf, "(%u, %u, " FANNPRINTF ") ", neuron_it->last_con - neuron_it->first_con,
 						neuron_it->activation_function, neuron_it->activation_steepness);
 			}
 #else
-			fprintf(conf, "%u %u " FANNPRINTF " ", neuron_it->last_con - neuron_it->first_con,
+			fprintf(conf, "(%u, %u, " FANNPRINTF ") ", neuron_it->last_con - neuron_it->first_con,
 					neuron_it->activation_function, neuron_it->activation_steepness);
 #endif
 		}
-		fprintf(conf, "\n");
 	}
+	fprintf(conf, "\n");
 
 	connected_neurons = ann->connections;
 	weights = ann->weights;
@@ -227,24 +227,25 @@ int fann_save_internal_fd(struct fann *ann, FILE * conf, const char *configurati
 	 * Especially an iPAQ does not use the same binary
 	 * representation as an i386 machine.
 	 */
+	fprintf(conf, "connections (connected_to_neuron, weight)=");
 	for(i = 0; i < ann->total_connections; i++)
 	{
 #ifndef FIXEDFANN
 		if(save_as_fixed)
 		{
 			/* save the connection "(source weight) " */
-			fprintf(conf, "(%u %d) ",
+			fprintf(conf, "(%u, %d) ",
 					connected_neurons[i] - first_neuron,
 					(int) floor((weights[i] * fixed_multiplier) + 0.5));
 		}
 		else
 		{
 			/* save the connection "(source weight) " */
-			fprintf(conf, "(%u " FANNPRINTF ") ", connected_neurons[i] - first_neuron, weights[i]);
+			fprintf(conf, "(%u, " FANNPRINTF ") ", connected_neurons[i] - first_neuron, weights[i]);
 		}
 #else
 		/* save the connection "(source weight) " */
-		fprintf(conf, "(%u " FANNPRINTF ") ", connected_neurons[i] - first_neuron, weights[i]);
+		fprintf(conf, "(%u, " FANNPRINTF ") ", connected_neurons[i] - first_neuron, weights[i]);
 #endif
 
 	}
@@ -270,12 +271,11 @@ struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file
  */
 struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 {
-	unsigned int num_layers, layer_size, input_neuron, i, shortcut_connections, num_connections;
+	unsigned int num_layers, layer_size, input_neuron, i, num_connections;
 
 #ifdef FIXEDFANN
 	unsigned int decimal_point, multiplier;
 #endif
-	float learning_rate, connection_rate;
 	struct fann_neuron *first_neuron, *neuron_it, *last_neuron, **connected_neurons;
 	fann_type *weights;
 	struct fann_layer *layer_it;
@@ -315,25 +315,11 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 	free(read_version);
 
 #ifdef FIXEDFANN
-	if(fscanf(conf, "%u\n", &decimal_point) != 1)
-	{
-		fann_error(NULL, FANN_E_CANT_READ_CONFIG, configuration_file);
-		return NULL;
-	}
+    fann_scanf("%u", "decimal_point", decimal_point);
 	multiplier = 1 << decimal_point;
 #endif
 
     fann_scanf("%u", "num_layers", num_layers);
-
-/*
-	if(fscanf
-	   (conf, "%u %f %f %u\n", &num_layers, &learning_rate, &connection_rate,
-		&shortcut_connections) != 4)
-	{
-		fann_error(NULL, FANN_E_CANT_READ_CONFIG, configuration_file);
-		return NULL;
-	}
-	*/
 
 	ann = fann_allocate_structure(num_layers);
 	if(ann == NULL)
@@ -355,16 +341,17 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 #endif
 
 #ifdef DEBUG
-	printf("creating network with learning rate %f\n", learning_rate);
+	printf("creating network with %d layers\n", num_layers);
 	printf("input\n");
 #endif
 
+	fscanf(conf, "layer_sizes=");
 	/* determine how many neurons there should be in each layer */
 	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++)
 	{
 		if(fscanf(conf, "%u ", &layer_size) != 1)
 		{
-			fann_error((struct fann_error *) ann, FANN_E_CANT_READ_NEURON, configuration_file);
+			fann_error((struct fann_error *) ann, FANN_E_CANT_READ_CONFIG, "layer_sizes", configuration_file);
 			fann_destroy(ann);
 			return NULL;
 		}
@@ -402,10 +389,11 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 	}
 
 	last_neuron = (ann->last_layer - 1)->last_neuron;
+	fscanf(conf, "neurons (num_inputs, activation_function, activation_steepness)=");
 	for(neuron_it = ann->first_layer->first_neuron; neuron_it != last_neuron; neuron_it++)
 	{
 		if(fscanf
-		   (conf, "%u %u " FANNSCANF " ", &num_connections, (unsigned int *)&neuron_it->activation_function,
+		   (conf, "(%u, %u, " FANNSCANF ") ", &num_connections, (unsigned int *)&neuron_it->activation_function,
 			&neuron_it->activation_steepness) != 3)
 		{
 			fann_error((struct fann_error *) ann, FANN_E_CANT_READ_NEURON, configuration_file);
@@ -428,9 +416,10 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 	weights = ann->weights;
 	first_neuron = ann->first_layer->first_neuron;
 
+	fscanf(conf, "connections (connected_to_neuron, weight)=");
 	for(i = 0; i < ann->total_connections; i++)
 	{
-		if(fscanf(conf, "(%u " FANNSCANF ") ", &input_neuron, &weights[i]) != 2)
+		if(fscanf(conf, "(%u, " FANNSCANF ") ", &input_neuron, &weights[i]) != 2)
 		{
 			fann_error((struct fann_error *) ann, FANN_E_CANT_READ_CONNECTIONS, configuration_file);
 			fann_destroy(ann);
@@ -438,13 +427,6 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 		}
 		connected_neurons[i] = first_neuron + input_neuron;
 	}
-
-	/*
-	 * fann_set_activation_steepness_hidden(ann, activation_steepness_hidden);
-	 * fann_set_activation_steepness_output(ann, activation_steepness_output);
-	 * fann_set_activation_function_hidden(ann, activation_function_hidden);
-	 * fann_set_activation_function_output(ann, activation_function_output);
-	 */
 
 #ifdef DEBUG
 	printf("output\n");
@@ -473,7 +455,7 @@ struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file
 #ifdef FIXEDFANN
 	if(fscanf(conf, "%u\n", &decimal_point) != 1)
 	{
-		fann_error(NULL, FANN_E_CANT_READ_CONFIG, configuration_file);
+		fann_error(NULL, FANN_E_CANT_READ_CONFIG, "decimal_point", configuration_file);
 		return NULL;
 	}
 	multiplier = 1 << decimal_point;
@@ -484,7 +466,7 @@ struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file
 		&activation_function_output, &activation_steepness_hidden,
 		&activation_steepness_output) != 8)
 	{
-		fann_error(NULL, FANN_E_CANT_READ_CONFIG, configuration_file);
+		fann_error(NULL, FANN_E_CANT_READ_CONFIG, "parameters", configuration_file);
 		return NULL;
 	}
 
