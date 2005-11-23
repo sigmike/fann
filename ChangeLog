@@ -12,6 +12,8 @@ libfann (2.0.0) stable; urgency=low
 	* More activation functions
 	* Enums used instead of integers for several parameters.
 	* Possebility to set default logging facility
+	* All parameters are saved to configuration file and not just the parameters needed to execute the ANN
+	* More readable configuration file
 
 libfann (1.2.0) stable; urgency=low
 	* Fixes for better compability with different compilers

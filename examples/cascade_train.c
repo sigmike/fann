@@ -48,6 +48,7 @@ int main()
 	const float desired_error = (const float) 0.001;
 	unsigned int max_neurons = 40;
 	unsigned int neurons_between_reports = 1;
+	fann_type steepnesses[] = {0.1,0.2,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1};
 
 	printf("Reading data.\n");
 
@@ -125,6 +126,7 @@ int main()
  	fann_set_cascade_candidate_limit(ann, 1000.0);
 	fann_set_cascade_max_out_epochs(ann, 150);
 	fann_set_cascade_max_cand_epochs(ann, 150);
+	fann_set_cascade_activation_steepnesses(ann, steepnesses, 10);
 	fann_set_cascade_num_candidate_groups(ann, 1);
 
 	/*fann_set_callback(ann, print_callback);*/
