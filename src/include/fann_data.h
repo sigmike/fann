@@ -645,7 +645,6 @@ struct fann
 
 	/* The initial stepsize */
 	float rprop_delta_zero;
-                
         
 	/* Used to contain the slope errors used during batch training
 	 * Is allocated during first training session,

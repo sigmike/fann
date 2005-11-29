@@ -1038,27 +1038,24 @@ void fann_update_stepwise(struct fann *ann)
 	 * results 0.005, 0.05, 0.25, 0.75, 0.95, 0.995
 	 */
 	ann->sigmoid_results[0] = fann_max((fann_type) (ann->multiplier / 200.0 + 0.5), 1);
-	ann->sigmoid_results[1] = (fann_type) (ann->multiplier / 20.0 + 0.5);
-	ann->sigmoid_results[2] = (fann_type) (ann->multiplier / 4.0 + 0.5);
-	ann->sigmoid_results[3] = ann->multiplier - (fann_type) (ann->multiplier / 4.0 + 0.5);
-	ann->sigmoid_results[4] = ann->multiplier - (fann_type) (ann->multiplier / 20.0 + 0.5);
-	ann->sigmoid_results[5] =
-		fann_min(ann->multiplier - (fann_type) (ann->multiplier / 200.0 + 0.5),
-				 ann->multiplier - 1);
+	ann->sigmoid_results[1] = fann_max((fann_type) (ann->multiplier / 20.0 + 0.5), 1);
+	ann->sigmoid_results[2] = fann_max((fann_type) (ann->multiplier / 4.0 + 0.5), 1);
+	ann->sigmoid_results[3] = fann_min(ann->multiplier - (fann_type) (ann->multiplier / 4.0 + 0.5), ann->multiplier - 1);
+	ann->sigmoid_results[4] = fann_min(ann->multiplier - (fann_type) (ann->multiplier / 20.0 + 0.5), ann->multiplier - 1);
+	ann->sigmoid_results[5] = fann_min(ann->multiplier - (fann_type) (ann->multiplier / 200.0 + 0.5), ann->multiplier - 1);
 
-	ann->sigmoid_symmetric_results[0] =
-		fann_max((fann_type) ((ann->multiplier / 100.0) - ann->multiplier - 0.5),
-				 (fann_type) (1 - (fann_type) ann->multiplier));
-	ann->sigmoid_symmetric_results[1] =
-		(fann_type) ((ann->multiplier / 10.0) - ann->multiplier - 0.5);
-	ann->sigmoid_symmetric_results[2] =
-		(fann_type) ((ann->multiplier / 2.0) - ann->multiplier - 0.5);
-	ann->sigmoid_symmetric_results[3] = ann->multiplier - (fann_type) (ann->multiplier / 2.0 + 0.5);
-	ann->sigmoid_symmetric_results[4] =
-		ann->multiplier - (fann_type) (ann->multiplier / 10.0 + 0.5);
-	ann->sigmoid_symmetric_results[5] =
-		fann_min(ann->multiplier - (fann_type) (ann->multiplier / 100.0 + 1.0),
-				 ann->multiplier - 1);
+	ann->sigmoid_symmetric_results[0] = fann_max((fann_type) ((ann->multiplier / 100.0) - ann->multiplier - 0.5),
+				                                 (fann_type) (1 - (fann_type) ann->multiplier));
+	ann->sigmoid_symmetric_results[1] =	fann_max((fann_type) ((ann->multiplier / 10.0) - ann->multiplier - 0.5),
+				                                 (fann_type) (1 - (fann_type) ann->multiplier));
+	ann->sigmoid_symmetric_results[2] =	fann_max((fann_type) ((ann->multiplier / 2.0) - ann->multiplier - 0.5),
+                                				 (fann_type) (1 - (fann_type) ann->multiplier));
+	ann->sigmoid_symmetric_results[3] = fann_min(ann->multiplier - (fann_type) (ann->multiplier / 2.0 + 0.5),
+				 							     ann->multiplier - 1);
+	ann->sigmoid_symmetric_results[4] = fann_min(ann->multiplier - (fann_type) (ann->multiplier / 10.0 + 0.5),
+				 							     ann->multiplier - 1);
+	ann->sigmoid_symmetric_results[5] = fann_min(ann->multiplier - (fann_type) (ann->multiplier / 100.0 + 1.0),
+				 							     ann->multiplier - 1);
 
 	for(i = 0; i < 6; i++)
 	{

@@ -51,12 +51,15 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_from_file(const char *configurat
    to the file because they cannot safely be ported to a different location. Also temporary
    parameters generated during training like <fann_get_MSE> is not saved.
    
+   Return:
+   The function returns 0 on success and -1 on failure.
+   
    See also:
     <fann_create_from_file>, <fann_save_to_fixed>
 
    This function appears in FANN >= 1.0.0.
  */
-FANN_EXTERNAL void FANN_API fann_save(struct fann *ann, const char *configuration_file);
+FANN_EXTERNAL int FANN_API fann_save(struct fann *ann, const char *configuration_file);
 
 
 /* Function: fann_save_to_fixed

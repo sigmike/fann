@@ -21,6 +21,9 @@ quality: quality.cc
 quality_fixed: quality_fixed.c
 	$(GCC) $(CFLAGS) $(LFLAGS) $< -o $@ -lfixedfann
 
+quality_fixed_debug: quality_fixed.c
+	$(GCC) -ggdb -lm -DDEBUG -Wall -ansi -I../src/ -I../src/include/ ../src/fixedfann.c $< -o $@
+
 performance: performance.cc
 	$(G++) $(CFLAGS) $(LFLAGS) -I$(JNEURALDIR)include/ -L$(JNEURALDIR) -I$(LWNNDIR) -L$(LWNNDIR) $< -o $@ -lfloatfann -llwneuralnet -ljneural -lfl
 

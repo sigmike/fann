@@ -47,19 +47,19 @@ FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(const c
 /*
  * Save training data to a file 
  */
-FANN_EXTERNAL void FANN_API fann_save_train(struct fann_train_data *data, const char *filename)
+FANN_EXTERNAL int FANN_API fann_save_train(struct fann_train_data *data, const char *filename)
 {
-	fann_save_train_internal(data, filename, 0, 0);
+	return fann_save_train_internal(data, filename, 0, 0);
 }
 
 /*
  * Save training data to a file in fixed point algebra. (Good for testing
  * a network in fixed point) 
  */
-FANN_EXTERNAL void FANN_API fann_save_train_to_fixed(struct fann_train_data *data, const char *filename,
+FANN_EXTERNAL int FANN_API fann_save_train_to_fixed(struct fann_train_data *data, const char *filename,
 													 unsigned int decimal_point)
 {
-	fann_save_train_internal(data, filename, 1, decimal_point);
+	return fann_save_train_internal(data, filename, 1, decimal_point);
 }
 
 /*
@@ -76,6 +76,23 @@ FANN_EXTERNAL void FANN_API fann_destroy_train(struct fann_train_data *data)
 	fann_safe_free(data->input);
 	fann_safe_free(data->output);
 	fann_safe_free(data);
+}
+
+/*
+ * Test a set of training data and calculate the MSE 
+ */
+FANN_EXTERNAL float FANN_API fann_test_data(struct fann *ann, struct fann_train_data *data)
+{
+	unsigned int i;
+
+	fann_reset_MSE(ann);
+
+	for(i = 0; i != data->num_data; i++)
+	{
+		fann_test(ann, data->input[i], data->output[i]);
+	}
+
+	return fann_get_MSE(ann);
 }
 
 #ifndef FIXEDFANN
@@ -189,23 +206,6 @@ FANN_EXTERNAL float FANN_API fann_train_epoch(struct fann *ann, struct fann_trai
 		return fann_train_epoch_incremental(ann, data);
 	}
 	return 0;
-}
-
-/*
- * Test a set of training data and calculate the MSE 
- */
-FANN_EXTERNAL float FANN_API fann_test_data(struct fann *ann, struct fann_train_data *data)
-{
-	unsigned int i;
-
-	fann_reset_MSE(ann);
-
-	for(i = 0; i != data->num_data; i++)
-	{
-		fann_test(ann, data->input[i], data->output[i]);
-	}
-
-	return fann_get_MSE(ann);
 }
 
 FANN_EXTERNAL void FANN_API fann_train_on_data(struct fann *ann, struct fann_train_data *data,
@@ -629,30 +629,34 @@ FANN_EXTERNAL unsigned int FANN_API fann_num_output_train_data(struct fann_train
 /* INTERNAL FUNCTION
    Save the train data structure.
  */
-void fann_save_train_internal(struct fann_train_data *data, const char *filename,
+int fann_save_train_internal(struct fann_train_data *data, const char *filename,
 							  unsigned int save_as_fixed, unsigned int decimal_point)
 {
+	int retval = 0;
 	FILE *file = fopen(filename, "w");
 
 	if(!file)
 	{
 		fann_error((struct fann_error *) data, FANN_E_CANT_OPEN_TD_W, filename);
-		return;
+		return -1;
 	}
-	fann_save_train_internal_fd(data, file, filename, save_as_fixed, decimal_point);
+	retval = fann_save_train_internal_fd(data, file, filename, save_as_fixed, decimal_point);
 	fclose(file);
+	
+	return retval;
 }
 
 /* INTERNAL FUNCTION
    Save the train data structure.
  */
-void fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, const char *filename,
+int fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, const char *filename,
 								 unsigned int save_as_fixed, unsigned int decimal_point)
 {
 	unsigned int num_data = data->num_data;
 	unsigned int num_input = data->num_input;
 	unsigned int num_output = data->num_output;
 	unsigned int i, j;
+	int retval = 0;
 
 #ifndef FIXEDFANN
 	unsigned int multiplier = 1 << decimal_point;
@@ -712,6 +716,8 @@ void fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, cons
 		}
 		fprintf(file, "\n");
 	}
+	
+	return retval;
 }
 
 

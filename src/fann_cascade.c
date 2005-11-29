@@ -62,23 +62,10 @@ FANN_EXTERNAL void FANN_API fann_cascadetrain_on_data(struct fann *ann, struct f
 
 	for(i = 1; i <= max_neurons; i++)
 	{
-#ifdef CASCADE_DEBUG_FULL
-		fann_set_shortcut_connections(ann);	/* update connections before printout */
-		fann_print_connections(ann);
-		fann_print_connections_raw(ann);
-#endif
-
 		/* train output neurons */
-#ifdef CASCADE_DEBUG_FULL
-		printf("training outputs\n");
-#endif
 		total_epochs += fann_train_outputs(ann, data, desired_error);
 		error = fann_get_MSE(ann);
 		desired_error_reached = fann_desired_error_reached(ann, desired_error);
-
-#ifdef CASCADE_DEBUG
-		printf("\n");
-#endif
 
 		/* print current error */
 		if(neurons_between_reports &&
@@ -106,12 +93,6 @@ FANN_EXTERNAL void FANN_API fann_cascadetrain_on_data(struct fann *ann, struct f
 			}					 
 		}
 
-#ifdef CASCADE_DEBUG_FULL
-		fann_set_shortcut_connections(ann);	/* update connections before printout */
-		fann_print_connections(ann);
-		fann_print_connections_raw(ann);
-#endif
-
 		if(desired_error_reached == 0)
 			break;
 
@@ -122,23 +103,10 @@ FANN_EXTERNAL void FANN_API fann_cascadetrain_on_data(struct fann *ann, struct f
 		}
 
 		/* train new candidates */
-#ifdef CASCADE_DEBUG_FULL
-		printf("training candidates\n");
-#endif
 		total_epochs += fann_train_candidates(ann, data);
-
-#ifdef CASCADE_DEBUG_FULL
-		fann_set_shortcut_connections(ann);	/* update connections before printout */
-		fann_print_connections(ann);
-		fann_print_connections_raw(ann);
-#endif
 
 		/* this installs the best candidate */
 		fann_install_candidate(ann);
-
-#ifdef CASCADE_DEBUG
-		printf("Sum error after candidate install: %.6f\n", fann_test_data(ann, data));
-#endif
 	}
 
 	/* Train outputs one last time but without any desired error */

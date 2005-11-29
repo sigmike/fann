@@ -380,13 +380,16 @@ FANN_EXTERNAL unsigned int FANN_API fann_num_output_train_data(struct fann_train
 /* Function: fann_save_train
    
    Save the training structure to a file, with the format as specified in <fann_read_train_from_file>
-   
+
+   Return:
+   The function returns 0 on success and -1 on failure.
+      
    See also:
    	<fann_read_train_from_file>, <fann_save_train_to_fixed>
 	
    This function appears in FANN >= 1.0.0.   	
  */ 
-FANN_EXTERNAL void FANN_API fann_save_train(struct fann_train_data *data, const char *filename);
+FANN_EXTERNAL int FANN_API fann_save_train(struct fann_train_data *data, const char *filename);
 
 
 /* Function: fann_save_train_to_fixed
@@ -395,12 +398,15 @@ FANN_EXTERNAL void FANN_API fann_save_train(struct fann_train_data *data, const 
  
    This function is very usefull for testing the quality of a fixed point network.
    
+   Return:
+   The function returns 0 on success and -1 on failure.
+   
    See also:
    	<fann_save_train>
 
    This function appears in FANN >= 1.0.0.   	
  */ 
-FANN_EXTERNAL void FANN_API fann_save_train_to_fixed(struct fann_train_data *data, const char *filename,
+FANN_EXTERNAL int FANN_API fann_save_train_to_fixed(struct fann_train_data *data, const char *filename,
 													 unsigned int decimal_point);
 
 

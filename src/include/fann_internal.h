@@ -63,9 +63,9 @@ int fann_save_internal(struct fann *ann, const char *configuration_file,
 					   unsigned int save_as_fixed);
 int fann_save_internal_fd(struct fann *ann, FILE * conf, const char *configuration_file,
 						  unsigned int save_as_fixed);
-void fann_save_train_internal(struct fann_train_data *data, const char *filename,
+int fann_save_train_internal(struct fann_train_data *data, const char *filename,
 							  unsigned int save_as_fixed, unsigned int decimal_point);
-void fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, const char *filename,
+int fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, const char *filename,
 								 unsigned int save_as_fixed, unsigned int decimal_point);
 
 void fann_seed_rand();

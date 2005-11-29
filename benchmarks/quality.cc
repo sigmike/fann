@@ -291,8 +291,6 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 	fann_set_rprop_delta_min(ann, 0.0);
 	fann_set_rprop_delta_max(ann, 50.0);
 
-	fann_set_cascade_change_fraction(ann, 0.01);
-	fann_set_cascade_stagnation_epochs(ann, 12);
 	fann_set_cascade_weight_multiplier(ann, 0.4);
  	fann_set_cascade_candidate_limit(ann, 1000.0);
 	fann_set_cascade_max_out_epochs(ann, 150);
@@ -308,10 +306,16 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 		start_timer();
 		while(elapsed < (double) seconds_between_reports)
 		{
-			fann_cascadetrain_on_data(ann, train_data, 1, 1, 0);
+			epochs += fann_train_outputs(ann, train_data, 0);
+			if(fann_initialize_candidates(ann) == -1)
+				break;
+	
+			epochs += fann_train_candidates(ann, train_data);
+			fann_install_candidate(ann);
+
+			fann_cascadetrain_on_data(ann, train_data, 1, 0, 0);
 
 			elapsed = time_elapsed();
-			epochs++;
 		}
 		stop_timer();
 		total_elapsed += getSecs();
@@ -550,7 +554,7 @@ int main(int argc, char *argv[])
 	}
 	else if(strcmp(argv[1], "fann_rprop_stepwise") == 0)
 	{
-		quality_benchmark_fann(true, FANN_TRAIN_RPROP, NULL, train_data, test_data,
+		quality_benchmark_fann(true, FANN_TRAIN_RPROP, argv[4], train_data, test_data,
 							   train_out, test_out,
 							   train_data->num_input, num_neurons_hidden1,
 							   num_neurons_hidden2, train_data->num_output,

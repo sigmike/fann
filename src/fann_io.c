@@ -44,9 +44,9 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_from_file(const char *configurat
 
 /* Save the network.
  */
-FANN_EXTERNAL void FANN_API fann_save(struct fann *ann, const char *configuration_file)
+FANN_EXTERNAL int FANN_API fann_save(struct fann *ann, const char *configuration_file)
 {
-	fann_save_internal(ann, configuration_file, 0);
+	return fann_save_internal(ann, configuration_file, 0);
 }
 
 /* Save the network as fixed point data.
