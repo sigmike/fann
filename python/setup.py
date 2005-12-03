@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from distutils.core import setup, Extension
 import glob
 #from compiler.pycodegen import compileFile

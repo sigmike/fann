@@ -3,7 +3,7 @@
 
 ROOT=/
 
-all: install
+all: build
 
 linux:
 	@(cd pyfann && make)
@@ -11,6 +11,7 @@ linux:
 clean:
 	@(cd pyfann && make clean)
 	@rm -fr dist build setup.pyc
+	@rm -fr examples/{nets,pyfann/}
 
 msvc:
 	@(cd pyfann && make -f makefile.msvc)
@@ -27,3 +28,7 @@ install: build
 ../Makefile:
 	@(cd .. && ./configure)
 
+test: build
+	@-mkdir examples/nets
+	@python setup.py install --install-lib examples 
+	@cd examples && python simple_train.py && python mushroom.py

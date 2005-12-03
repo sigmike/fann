@@ -5,6 +5,12 @@
 
 %{
 #include "fann.h"
+#include "fann_io.h"
+#include "fann_train.h"
+#include "fann_data.h"
+#include "fann_cascade.h"
+#include "fann_error.h"
+#include "fann_activation.h"
 %}
 
 %define CHECKED_FLOAT_ARRAY(typemap_name, expected_length)
@@ -87,6 +93,10 @@ typedef double fann_type;
 %include "../../src/include/fann.h"
 %include "../../src/include/fann_data.h"
 %include "../../src/include/fann_activation.h"
+%include "../../src/include/fann_train.h"
+%include "../../src/include/fann_io.h"
+%include "../../src/include/fann_cascade.h"
+%include "../../src/include/fann_error.h"
 
 // Helper functions
 PyObject* fann_run2(struct fann *ann, fann_type *input);

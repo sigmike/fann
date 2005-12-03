@@ -1,5 +1,7 @@
 #!/usr/bin/python
-import fann
+import os
+import sys
+from pyfann import fann
 
 def print_callback(epochs, error):
 	print "Epochs     %8d. Current MSE-Error: %.10f\n" % (epochs, error)
@@ -15,8 +17,8 @@ iterations_between_reports = 1
 
 # create training data, and ann object
 print "Creating network."	
-train_data = fann.read_train_from_file("datasets/mushroom.train")
-ann = fann.create(connection_rate, learning_rate, (train_data.get_num_input(), num_neurons_hidden, train_data.get_num_output()))
+train_data = fann.read_train_from_file(os.path.join("..","..","benchmarks","datasets","mushroom.train"))
+ann = fann.create(connection_rate, (train_data.get_num_input(), num_neurons_hidden, train_data.get_num_output()))
 
 # start training the network
 print "Training network"
@@ -28,7 +30,7 @@ ann.train_on_data(train_data, max_iterations, iterations_between_reports, desire
 	
 # test outcome
 print "Testing network"
-test_data = fann.read_train_from_file("datasets/mushroom.test")
+test_data = fann.read_train_from_file(os.path.join("..","..","benchmarks","datasets","mushroom.test"))
 
 ann.reset_MSE()
 for i in range(test_data.get_num_data()):
@@ -38,5 +40,5 @@ print "MSE error on test data: %f" % ann.get_MSE()
 
 # save network to disk
 print "Saving network"
-ann.save("mushroom_float.net")
+ann.save(os.path.join("nets","mushroom_float.net"))
 

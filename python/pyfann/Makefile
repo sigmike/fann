@@ -19,4 +19,4 @@ pyfann_wrap.c: pyfann.i
 	swig -python $<
 
 clean:
-	rm -f $(TARGETS) *_wrap.* fann_helper.o fann.pyc *.so libfann.*
+	rm -f $(TARGETS) *_wrap.* fann_helper.o *.py{c,o} *.so libfann.*

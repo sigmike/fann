@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import fann
+from pyfann import fann
 
 connection_rate = 1
 learning_rate = 0.7
@@ -11,10 +11,10 @@ desired_error = 0.0001
 max_iterations = 100000
 iterations_between_reports = 1000
 
-ann = fann.create(connection_rate, learning_rate, (num_input, num_neurons_hidden, num_output))
+ann = fann.create(connection_rate, (num_input, num_neurons_hidden, num_output))
 ann.set_activation_function_output(fann.SIGMOID_SYMMETRIC_STEPWISE)
 
-ann.train_on_file("datasets/xor.data", max_iterations, iterations_between_reports, desired_error)
+ann.train_on_file("../../examples/xor.data", max_iterations, iterations_between_reports, desired_error)
 
-ann.save("xor_float.net")
+ann.save("nets/xor_float.net")
 

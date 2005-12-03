@@ -313,7 +313,7 @@ class train_class:
         outcome = libfann.fann_duplicate_train_data(self.__train_dat)
         return train_class(outcome)
 
-def create(connection_rate, learning_rate, layers):
+def create(connRate, layers):
     """
     Constructs a backpropagation neural network, from an connection rate,
     a learning rate, and number of neurons in each layer.
@@ -326,7 +326,7 @@ def create(connection_rate, learning_rate, layers):
     and this bias neuron will be connected to all neurons in the next layer.
     When running the network, the bias nodes always emits 1
     """
-    ann = libfann.fann_create_array(connection_rate, learning_rate, len(layers), layers)
+    ann = libfann.fann_create_sparse_array(connRate,len(layers), layers)
     if libfann.fann_is_NULL(ann):
         return None # probably won't happen
     return fann_class(ann)
