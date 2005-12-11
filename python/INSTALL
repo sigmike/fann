@@ -9,11 +9,15 @@ installed. After you compiled the fann library...
 
 
 
+<<<<<<< INSTALL
 BUILDING AND INSTALLING USING MAKE (preferred)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-run the following commands as root
+run the following command:
 
-# make
+$ make
+
+then as root run
+
 # make install
 
 BUILDING AND INSTALLING USING DISTUTILS (second alternative)
@@ -22,9 +26,11 @@ run the following command as root
 
 # python setyp.py install
 
-########## ** ** ** ** ** ** ** ** ** ** ** ** ** ** #########
-####### The wrapper should be installed using distutils #######
-###### The following instructions are for advanced users ######
+
+
+######### ** ** ** ** ** ** ** ** ** ** ** ** ** ** ##########
+##### The wrapper should be installed uing above methods #####
+##### The following instructions are for advanced users  #####
 
 
 BUILD USING LINUX MAKEFILES
@@ -41,11 +47,4 @@ run the following command
 
 $ make msvc
 
-
-
-INSTALL
-^^^^^^^
-
-to install you have to copy fann.py libfann.py and _libfann.so where python 
-can find them.
 
