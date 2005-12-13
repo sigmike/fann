@@ -1,17 +1,4 @@
-Stuff for the next release
-* Implement cascade correlation.
-* More flexible use of training data
-* Save everything in save file
-
-* Implement SuperSAB
-* Implement the activation functions defined in fann_activation.h
-* More checks to see if train data is properly formatted in the file (some have experienced nasty problems because a number was missing in one line).
-* C++ wrapper.
-* COM Component.
-* Wrappers for other languages.
-* Implement optimal brain damage.
-* Write GTK+ interface
-* Allow recurrent networks.
+For a look at current TODO items look at: http://sourceforge.net/tracker/?group_id=93562&atid=604725
 
 If you want to contribute to the library, please contact me at lukesky@diku.dk
 
