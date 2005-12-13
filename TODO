@@ -46,7 +46,7 @@ Things TODO when releasing a new version (mostly for fann developers)
 
 * Debian packages should be created (from tgz package)
 	#Example of make command
-	rm -rf fann-2.0.0.* test && mkdir test && make distclean && make dist && cp fann-2.0.0.*gz test && cd test && tar xvzf *gz && cd fann-2.0.0 
+	rm -rf fann-2.0.0.* test && mkdir test  && ./configure && make distclean && ./configure && make dist && cp fann-2.0.0.*gz test && cd test && tar xvzf *gz && cd fann-2.0.0 
 	su
 	pbuilder update --distribution sid
 	pdebuild --distribution sid

@@ -17,7 +17,6 @@ EXTRA_DIST = benchmarks examples MSVC++ vs.net2003 src/include/config.h \
 	doc/advancedusage.txt doc/gettingstarted.txt doc/theory.txt \
 	doc/fixedpointusage.txt doc/installation.txt doc/fann_en.pdf
 
-
 dist-hook:
 	rm -rf `find $(distdir) -name "*~" -o -name ".#*"`
 	(cd $(distdir)/examples && make clean)
