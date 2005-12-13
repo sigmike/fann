@@ -1769,7 +1769,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=fann
- VERSION=1.2.0
+ VERSION=2.0.0
 
 
 cat >>confdefs.h <<_ACEOF

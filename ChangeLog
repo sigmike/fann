@@ -15,6 +15,8 @@ libfann (2.0.0) stable; urgency=low
 	* All parameters are saved to configuration file and not just the parameters needed to execute the ANN
 	* More readable configuration file
 
+ -- Steffen Nissen <sn@leenissen.dk> Tue, 13 Dec 2005 20:33:59 +0100
+	
 libfann (1.2.0) stable; urgency=low
 	* Fixes for better compability with different compilers
 	* Shortcut connections that skip layers
