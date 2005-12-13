@@ -1,3 +1,9 @@
+libfann2 (2.0.0-1) unstable; urgency=low
+
+  * Debian package for version 2.0.0
+
+ -- Steffen Nissen <sn@leenissen.dk>  Tue, 13 Dec 2005 23:25:14 +0100
+
 libfann1 (1.2.0-2) unstable; urgency=low
 
   * Added python bindings package 

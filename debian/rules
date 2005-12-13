@@ -43,10 +43,8 @@ build-stamp:  config.status
 	dh_testdir
 
 	# Add here commands to compile the package.
-	cd doc && $(MAKE) html
-
 	$(MAKE)
-	
+
 	cd python && make build
 
 	touch build-stamp

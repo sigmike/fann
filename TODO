@@ -48,8 +48,8 @@ Things TODO when releasing a new version (mostly for fann developers)
 	#Example of make command
 	rm -rf fann-2.0.0.* test && mkdir test  && ./configure && make distclean && ./configure && make dist && cp fann-2.0.0.*gz test && cd test && tar xvzf *gz && cd fann-2.0.0 
 	su
-	pbuilder update --distribution sid
-	pdebuild --distribution sid
+	pbuilder update --distribution unstable
+	pdebuild
 	exit
 	cd .. && cp /var/cache/pbuilder/result/*deb . && lintian *deb
 

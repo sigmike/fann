@@ -55,24 +55,24 @@ int main()
 	data = fann_read_train_from_file("xor.data");
 #endif
 
-	for(i = 0; i < data->num_data; i++)
+	for(i = 0; i < fann_length_train_data(data); i++)
 	{
 		fann_reset_MSE(ann);
 		calc_out = fann_test(ann, data->input[i], data->output[i]);
 #ifdef FIXEDFANN
 		printf("XOR test (%d, %d) -> %d, should be %d, difference=%f\n",
-			   data->input[i][0], data->input[i][1], *calc_out, data->output[i][0],
-			   (float) fann_abs(*calc_out - data->output[i][0]) / fann_get_multiplier(ann));
+			   data->input[i][0], data->input[i][1], calc_out[0], data->output[i][0],
+			   (float) fann_abs(calc_out[0] - data->output[i][0]) / fann_get_multiplier(ann));
 
-		if((float) fann_abs(*calc_out - data->output[i][0]) / fann_get_multiplier(ann) > 0.2)
+		if((float) fann_abs(calc_out[0] - data->output[i][0]) / fann_get_multiplier(ann) > 0.2)
 		{
 			printf("Test failed\n");
 			ret = -1;
 		}
 #else
 		printf("XOR test (%f, %f) -> %f, should be %f, difference=%f\n",
-			   data->input[i][0], data->input[i][1], *calc_out, data->output[i][0],
-			   (float) fann_abs(*calc_out - data->output[i][0]));
+			   data->input[i][0], data->input[i][1], calc_out[0], data->output[i][0],
+			   (float) fann_abs(calc_out[0] - data->output[i][0]));
 #endif
 	}
 

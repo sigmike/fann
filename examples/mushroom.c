@@ -54,10 +54,11 @@ int main()
 	test_data = fann_read_train_from_file("../benchmarks/datasets/mushroom.test");
 
 	fann_reset_MSE(ann);
-	for(i = 0; i < test_data->num_data; i++)
+	for(i = 0; i < fann_length_train_data(test_data); i++)
 	{
 		fann_test(ann, test_data->input[i], test_data->output[i]);
 	}
+	
 	printf("MSE error on test data: %f\n", fann_get_MSE(ann));
 
 	printf("Saving network.\n");

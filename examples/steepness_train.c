@@ -98,12 +98,12 @@ int main()
 	fann_set_activation_function_hidden(ann, FANN_THRESHOLD_SYMMETRIC);
 	fann_set_activation_function_output(ann, FANN_THRESHOLD_SYMMETRIC);
 
-	for(i = 0; i != data->num_data; i++)
+	for(i = 0; i != fann_length_train_data(data); i++)
 	{
 		calc_out = fann_run(ann, data->input[i]);
 		printf("XOR test (%f, %f) -> %f, should be %f, difference=%f\n",
-			   data->input[i][0], data->input[i][1], *calc_out, data->output[i][0],
-			   (float) fann_abs(*calc_out - data->output[i][0]));
+			   data->input[i][0], data->input[i][1], calc_out[0], data->output[i][0],
+			   (float) fann_abs(calc_out[0] - data->output[i][0]));
 	}
 
 

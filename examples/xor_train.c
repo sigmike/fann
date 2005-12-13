@@ -69,12 +69,12 @@ int main()
 
 	printf("Testing network. %f\n", fann_test_data(ann, data));
 
-	for(i = 0; i < data->num_data; i++)
+	for(i = 0; i < fann_length_train_data(data); i++)
 	{
 		calc_out = fann_run(ann, data->input[i]);
 		printf("XOR test (%f,%f) -> %f, should be %f, difference=%f\n",
-			   data->input[i][0], data->input[i][1], *calc_out, data->output[i][0],
-			   fann_abs(*calc_out - data->output[i][0]));
+			   data->input[i][0], data->input[i][1], calc_out[0], data->output[i][0],
+			   fann_abs(calc_out[0] - data->output[i][0]));
 	}
 
 	printf("Saving network.\n");
