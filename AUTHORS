@@ -27,7 +27,10 @@ Gil Megidish (gil@megidish.net)
 Joslwah (joslwah@gmail.com)
  - Optimised port for ppc64/altivec
 
-SÃ¸ren Hauberg (hauberg _at_ gmail _dot_ com)
+Maurício Pereira Maia (mauricio@uaisol.com.br)
+ - Delphi Bindings
+
+Søren Hauberg (hauberg _at_ gmail _dot_ com)
  - Bindings for GNU Octave
  
 Thomas Leibovici (thomas.leibovici@free.fr)

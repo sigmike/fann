@@ -102,10 +102,10 @@ static char const *const FANN_TRAIN_NAMES[] = {
    
 	The activation functions used for the neurons during training. The activation functions
 	can either be defined for a group of neurons by <fann_set_activation_function_hidden> and
-	<fann_set_activation_function_output> or it can be defined for a single neuron by <TODO>.
+	<fann_set_activation_function_output> or it can be defined for a single neuron by <fann_set_activation_function>.
 
 	The steepness of an activation function is defined in the same way by 
-	<fann_set_activation_steepness_hidden>, <fann_set_activation_steepness_output>
+	<fann_set_activation_steepness_hidden>, <fann_set_activation_steepness_output> and <fann_set_activation_steepness>.
    
    The functions are described with functions where:
    * x is the input to the activation function,
