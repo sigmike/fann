@@ -13,8 +13,7 @@ function benchmark_algorithm() {
 function benchmark_problem() {
     rm -f *_fixed.net
     algo="fann_rprop_stepwise"; benchmark_algorithm;
-    echo "./quality_fixed $prob.$algo.train.out_fixed_train $prob.$algo.train.out_fixed_test $prob.$algo.fixed_train.out $prob.$algo.fixed_test.out *_fixed.net"
-    	
+    #echo "./quality_fixed $prob.$algo.train.out_fixed_train $prob.$algo.train.out_fixed_test $prob.$algo.fixed_train.out $prob.$algo.fixed_test.out *_fixed.net"    	
     algo="fann_cascade"; benchmark_algorithm;
     algo="fann_rprop"; benchmark_algorithm;
     algo="fann_quickprop"; benchmark_algorithm;

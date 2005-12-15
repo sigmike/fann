@@ -89,7 +89,7 @@ plot "gene.fann_rprop.test.out" title "fann rprop test" with lines -1, \
  "gene.jneural.train.out" title "jneural incremental train" with lines 9
 set nologscale
 
-set logscale y
+set logscale x
 #set output "mushroom.ps"
 set title "mushroom"
 plot "mushroom.fann_rprop.test.out" title "fann rprop test" with lines -1, \
