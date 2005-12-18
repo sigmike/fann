@@ -103,8 +103,8 @@ binary-arch: build install
 	dh_compress
 	dh_fixperms
 #	dh_perl
-#	dh_python
 	dh_makeshlibs -V
+	dh_python
 	dh_installdeb
 	dh_shlibdeps -L libfann
 	dh_gencontrol

@@ -3,15 +3,15 @@ Section: libdevel
 Priority: optional
 Maintainer: Steffen Nissen <lukesky@diku.dk>
 Standards-Version: 3.6.0
-Build-Depends: docbook-utils, debhelper (>= 4.0.0), python-dev, swig
+Build-Depends: docbook-utils, debhelper (>= 4.1.67), python-dev, swig
 
 Package: libfann2-dev
 Section: libdevel
 Architecture: any
 Depends: libfann2 (= ${Source-Version})
-Description: Fast Artificial Neural Network Library is a free open
- source neural network library, which implements multilayer artificial
- neural networks in C with support for both fully connected and
+Description: Fast Artificial Neural Network Library 
+ is a free open source neural network library, which implements multilayer 
+ artificial neural networks in C with support for both fully connected and
  sparsely connected networks. Cross-platform execution in both fixed
  and floating point are supported. It includes a framework for easy
  handling of training data sets. It is easy to use, versatile, well
@@ -29,9 +29,9 @@ Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
 Suggests: libfann2-dev (= ${Source-Version})
-Description: Fast Artificial Neural Network Library is a free open
- source neural network library, which implements multilayer artificial
- neural networks in C with support for both fully connected and
+Description: Fast Artificial Neural Network Library 
+ is a free open source neural network library, which implements multilayer 
+ artificial neural networks in C with support for both fully connected and
  sparsely connected networks. Cross-platform execution in both fixed
  and floating point are supported. It includes a framework for easy
  handling of training data sets. It is easy to use, versatile, well
@@ -46,7 +46,7 @@ Description: Fast Artificial Neural Network Library is a free open
 Package: libfann2-py
 Section: python
 Architecture: any
-Depends: ${shlibs:Depends}, libfann2
+Depends: ${shlibs:Depends}, libfann2, ${python:Depends}
 Suggests: libfann2-dev (= ${Source-Version})
 Description: Python FANN Bindings (pyfann)
  Fast Artificial Neural Network Library is a free open
