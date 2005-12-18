@@ -60,7 +60,7 @@ int main()
 	fann_set_activation_function_output(ann, FANN_SIGMOID_SYMMETRIC);
 
 	fann_set_train_stop_function(ann, FANN_STOPFUNC_BIT);
-	fann_set_bit_fail_limit(ann, 0.01);
+	fann_set_bit_fail_limit(ann, 0.01f);
 
 	fann_init_weights(ann, data);
 	

@@ -93,9 +93,8 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight,
 
 void fann_clear_train_arrays(struct fann *ann);
 
-fann_type fann_activation_old(struct fann *ann, unsigned int is_output_layer, fann_type value);
-fann_type fann_activation_new(struct fann *ann, unsigned int activation_function,
-							  fann_type steepness, fann_type value);
+fann_type fann_activation(struct fann * ann, unsigned int activation_function, fann_type steepness,
+						  fann_type value);
 
 fann_type fann_activation_derived(unsigned int activation_function,
 								  fann_type steepness, fann_type value, fann_type sum);
@@ -124,7 +123,7 @@ void fann_set_shortcut_connections(struct fann *ann);
 #define fann_clip(x, lo, hi) (((x) < (lo)) ? (lo) : (((x) > (hi)) ? (hi) : (x)))
 /*#define fann_clip(x, lo, hi) (x)*/
 
-#define fann_rand(min_value, max_value) (((double)(min_value))+(((double)(max_value)-((double)(min_value)))*rand()/(RAND_MAX+1.0)))
+#define fann_rand(min_value, max_value) (((float)(min_value))+(((float)(max_value)-((float)(min_value)))*rand()/(RAND_MAX+1.0f)))
 
 #define fann_abs(value) (((value) > 0) ? (value) : -(value))
 
@@ -139,7 +138,7 @@ void fann_set_shortcut_connections(struct fann *ann);
 
 #define fann_mult(x,y) (x*y)
 #define fann_div(x,y) (x/y)
-#define fann_random_weight() (fann_rand(-0.1,0.1))
+#define fann_random_weight() (fann_rand(-0.1f,0.1f))
 
 #endif
 

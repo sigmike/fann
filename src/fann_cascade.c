@@ -144,7 +144,7 @@ int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float des
 {
 	float error, initial_error, error_improvement;
 	float target_improvement = 0.0;
-	float backslide_improvement = -1.0e20;
+	float backslide_improvement = -1.0e20f;
 	unsigned int i;
 	unsigned int max_epochs = ann->cascade_max_out_epochs;
 	unsigned int stagnation = max_epochs;
@@ -181,8 +181,8 @@ int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float des
 		{
 			/*printf("error_improvement=%f, target_improvement=%f, backslide_improvement=%f, stagnation=%d\n", error_improvement, target_improvement, backslide_improvement, stagnation); */
 
-			target_improvement = error_improvement * (1.0 + ann->cascade_output_change_fraction);
-			backslide_improvement = error_improvement * (1.0 - ann->cascade_output_change_fraction);
+			target_improvement = error_improvement * (1.0f + ann->cascade_output_change_fraction);
+			backslide_improvement = error_improvement * (1.0f - ann->cascade_output_change_fraction);
 			stagnation = i + ann->cascade_output_stagnation_epochs;
 		}
 
@@ -453,7 +453,7 @@ int fann_train_candidates(struct fann *ann, struct fann_train_data *data)
 {
 	float best_cand_score = 0.0;
 	float target_cand_score = 0.0;
-	float backslide_cand_score = -1.0e20;
+	float backslide_cand_score = -1.0e20f;
 	unsigned int i;
 	unsigned int max_epochs = ann->cascade_max_cand_epochs;
 	unsigned int stagnation = max_epochs;
@@ -490,8 +490,8 @@ int fann_train_candidates(struct fann *ann, struct fann_train_data *data)
 			/* printf("best_cand_score=%f, target_cand_score=%f, backslide_cand_score=%f, stagnation=%d\n", best_cand_score, target_cand_score, backslide_cand_score, stagnation); */
 #endif
 
-			target_cand_score = best_cand_score * (1.0 + ann->cascade_candidate_change_fraction);
-			backslide_cand_score = best_cand_score * (1.0 - ann->cascade_candidate_change_fraction);
+			target_cand_score = best_cand_score * (1.0f + ann->cascade_candidate_change_fraction);
+			backslide_cand_score = best_cand_score * (1.0f - ann->cascade_candidate_change_fraction);
 			stagnation = i + ann->cascade_candidate_stagnation_epochs;
 		}
 
@@ -593,7 +593,7 @@ void fann_update_candidate_slopes(struct fann *ann)
 #ifdef CASCADE_DEBUG_FULL
 			/* printf("diff = %f = (%f * %f) - %f;\n", diff, activation, cand_out_weights[j], output_train_errors[j]); */
 #endif
-			cand_out_slopes[j] -= 2.0 * diff * activation;
+			cand_out_slopes[j] -= 2.0f * diff * activation;
 #ifdef CASCADE_DEBUG_FULL
 			/* printf("cand_out_slopes[%d] <= %f += %f * %f;\n", j, cand_out_slopes[j], diff, activation); */
 #endif

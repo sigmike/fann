@@ -1100,7 +1100,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->errno_f = FANN_E_NO_ERROR;
 	ann->error_log = fann_default_error_log;
 	ann->errstr = NULL;
-	ann->learning_rate = 0.7;
+	ann->learning_rate = 0.7f;
 	ann->learning_momentum = 0.0;
 	ann->total_neurons = 0;
 	ann->total_connections = 0;
@@ -1115,20 +1115,20 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->num_MSE = 0;
 	ann->MSE_value = 0;
 	ann->num_bit_fail = 0;
-	ann->bit_fail_limit = 0.35;
+	ann->bit_fail_limit = 0.35f;
 	ann->shortcut_connections = 0;
 	ann->train_error_function = FANN_ERRORFUNC_TANH;
 	ann->train_stop_function = FANN_STOPFUNC_MSE;
 	ann->callback = NULL;
 
 	/* variables used for cascade correlation (reasonable defaults) */
-	ann->cascade_output_change_fraction = 0.01;
-	ann->cascade_candidate_change_fraction = 0.01;
+	ann->cascade_output_change_fraction = 0.01f;
+	ann->cascade_candidate_change_fraction = 0.01f;
 	ann->cascade_output_stagnation_epochs = 12;
 	ann->cascade_candidate_stagnation_epochs = 12;
 	ann->cascade_num_candidate_groups = 2;
-	ann->cascade_weight_multiplier = 0.4;
-	ann->cascade_candidate_limit = 1000.0;
+	ann->cascade_weight_multiplier = 0.4f;
+	ann->cascade_candidate_limit = 1000.0f;
 	ann->cascade_max_out_epochs = 150;
 	ann->cascade_max_cand_epochs = 150;
 	ann->cascade_candidate_scores = NULL;
