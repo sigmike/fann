@@ -64,7 +64,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "..\src\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "..\src\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FR /YX /FD /GZ /c
 # ADD BASE RSC /l 0x813 /d "_DEBUG"
 # ADD RSC /l 0x813 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -89,15 +89,11 @@ SOURCE=..\src\fann.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fann_cascade.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\fann_error.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\fann_options.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\fann_train_data.c
 # End Source File
 # Begin Source File
 
@@ -106,6 +102,10 @@ SOURCE=..\src\fann_io.c
 # Begin Source File
 
 SOURCE=..\src\fann_train.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\fann_train_data.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -121,11 +121,31 @@ SOURCE=..\src\include\fann.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\include\fann_activation.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\include\fann_cascade.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\include\fann_data.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\include\fann_error.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\include\fann_internal.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\include\fann_io.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\include\fann_train.h
 # End Source File
 # Begin Source File
 
