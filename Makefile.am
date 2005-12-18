@@ -3,7 +3,7 @@ SUBDIRS = src
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = fann.pc
 
-EXTRA_DIST = benchmarks examples MSVC++ vs.net2003 src/include/config.h \
+EXTRA_DIST = benchmarks examples MicrosoftVisualC++6.0 vs.net2003 src/include/config.h \
 	debian/changelog debian/compat debian/control debian/copyright \
 	debian/docs debian/libfann2-dev.dirs debian/libfann2-dev.examples \
 	debian/libfann2-dev.files debian/libfann2-dev.install \
@@ -21,14 +21,9 @@ EXTRA_DIST = benchmarks examples MSVC++ vs.net2003 src/include/config.h \
 	python
 
 dist-hook:
-	rm -rf `find $(distdir) -name "*~" -o -name ".#*"`
+	rm -rf `find $(distdir) -name "*~" -o -name ".#*" -o -name "CVS"`
 	(cd $(distdir)/examples && make clean)
-	rm -rf `find $(distdir)/examples -name CVS`
 	(cd $(distdir)/python && make clean)
-	rm -rf `find $(distdir)/python -name CVS`
 	(cd $(distdir)/benchmarks && make clean)
-	rm -rf `find $(distdir)/benchmarks -name CVS`
-	rm -rf `find $(distdir)/MSVC++ -name CVS`
-	rm -rf `find $(distdir)/vs.net2003 -name CVS`
 	zip -9 -r $(distdir).zip $(distdir)
 	tar chojf $(distdir).tar.bz2 $(distdir)
