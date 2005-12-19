@@ -2,6 +2,7 @@
 # GNU platforms (cygwin included.)
 
 ROOT=/
+PYTHON=python
 
 all: build
 
@@ -17,10 +18,10 @@ msvc:
 	@(cd pyfann && make -f makefile.msvc)
 
 build: ../src/fann.o
-	@python setup.py build
+	@$(PYTHON) setup.py build
 
 install: build
-	@python setup.py install --root $(ROOT)
+	@$(PYTHON) setup.py install --root $(ROOT)
 
 ../src/fann.o: ../Makefile
 	@(cd .. && make )
@@ -30,5 +31,5 @@ install: build
 
 test: build
 	@-mkdir examples/nets
-	@python setup.py install --install-lib examples 
-	@cd examples && python simple_train.py && python mushroom.py
+	@$(PYTHON) setup.py install --install-lib examples 
+	@cd examples && $(PYTHON) simple_train.py && $(PYTHON) mushroom.py
