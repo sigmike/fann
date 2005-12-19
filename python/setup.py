@@ -40,6 +40,6 @@ setup(
     url='http://sourceforge.net/projects/fann/',
     license='GNU LESSER GENERAL PUBLIC LICENSE (LGPL)',
     py_modules=['pyfann.libfann','pyfann.fann'],
-    ext_modules=[Extension('pyfann._libfann',['pyfann/pyfann.i','pyfann/fann_helper.c'], include_dirs=['../src/include'], extra_objects=hunt_files('../src','fann*.o') )]
+    ext_modules=[Extension('pyfann._libfann',['pyfann/pyfann.i','pyfann/fann_helper.c'], include_dirs=['../src/include'], extra_objects=['../src/doublefann.o']) ]
 )
 

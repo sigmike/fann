@@ -19,6 +19,8 @@ iterations_between_reports = 1
 print "Creating network."	
 train_data = fann.read_train_from_file(os.path.join("..","..","benchmarks","datasets","mushroom.train"))
 ann = fann.create(connection_rate, (train_data.get_num_input(), num_neurons_hidden, train_data.get_num_output()))
+ann.set_learning_rate(learning_rate)
+
 
 # start training the network
 print "Training network"
