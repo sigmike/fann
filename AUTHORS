@@ -2,39 +2,5 @@ Project Administrator:
 Steffen Nissen (lukesky@diku.dk)
  - Creator and maintainer of the fann library
 
-Contributors (Alphabetically):
-Adrian Spilca (adsp@users.sourceforge.net)
- - Testing and insightful comments
-
-Davide Morelli (info at davidemorelli.it)
- - Pure Data (PD) bindings
-
-Evan Nemerson (evan@coeus-group.com)
- - Added functionality to the C library
- - Documentation
- - PHP extension
-
-Freegoldbar (freegoldbar at yahoo com)
- - Added functionality to the C library
- - Visual Studio files
- - Mathematica extension
- - Soap interface (With examples in Standard ML, VB.Net, C#)
- - C++ wrapper
- 
-Gil Megidish (gil@megidish.net)
- - Updates to python bindings
-
-Joslwah (joslwah@gmail.com)
- - Optimised port for ppc64/altivec
-
-Maurício Pereira Maia (mauricio@uaisol.com.br)
- - Delphi Bindings
-
-Søren Hauberg (hauberg _at_ gmail _dot_ com)
- - Bindings for GNU Octave
- 
-Thomas Leibovici (thomas.leibovici@free.fr)
- - Momentum training
- 
-Vincenzo Di Massa (hawk.it at_domain tiscali.it)
- - Python extension
+Contributors:
+For a list of contributors see http://leenissen.dk/fann/authors.php
