@@ -1,17 +1,17 @@
 /*
   Fast Artificial Neural Network Library (fann)
   Copyright (C) 2003 Steffen Nissen (lukesky@diku.dk)
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
   version 2.1 of the License, or (at your option) any later version.
-  
+
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -89,14 +89,16 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_sparse(float connection_rate,
 }
 
 FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_rate,
-														     unsigned int num_layers, 
+															 unsigned int num_layers,
 															 unsigned int *layers)
 {
 	struct fann_layer *layer_it, *last_layer, *prev_layer;
 	struct fann *ann;
-	struct fann_neuron *neuron_it, *first_neuron, *last_neuron, *random_neuron, *bias_neuron;
-	unsigned int prev_layer_size, i, j;
-	unsigned int num_neurons_in, num_neurons_out;
+	struct fann_neuron *neuron_it, *last_neuron, *random_neuron, *bias_neuron;
+#ifdef DEBUG
+	unsigned int prev_layer_size;
+#endif
+	unsigned int num_neurons_in, num_neurons_out, i, j;
 	unsigned int min_connections, max_connections, num_connections;
 	unsigned int connections_per_neuron, allocated_connections;
 	unsigned int random_number, found_connection;
@@ -213,11 +215,11 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_ra
 		return NULL;
 	}
 
-	first_neuron = ann->first_layer->first_neuron;
-
 	if(connection_rate >= 1)
 	{
+#ifdef DEBUG
 		prev_layer_size = ann->num_input + 1;
+#endif
 		prev_layer = ann->first_layer;
 		last_layer = ann->last_layer;
 		for(layer_it = ann->first_layer + 1; layer_it != last_layer; layer_it++)
@@ -234,7 +236,9 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_ra
 					ann->connections[i] = prev_layer->first_neuron + (i - neuron_it->first_con);
 				}
 			}
+#ifdef DEBUG
 			prev_layer_size = layer_it->last_neuron - layer_it->first_neuron;
+#endif
 			prev_layer = layer_it;
 #ifdef DEBUG
 			printf("  layer       : %d neurons, 1 bias\n", prev_layer_size - 1);
@@ -1115,7 +1119,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->num_MSE = 0;
 	ann->MSE_value = 0;
 	ann->num_bit_fail = 0;
-	ann->bit_fail_limit = 0.35f;
+	ann->bit_fail_limit = (fann_type)0.35;
 	ann->shortcut_connections = 0;
 	ann->train_error_function = FANN_ERRORFUNC_TANH;
 	ann->train_stop_function = FANN_STOPFUNC_MSE;
@@ -1127,8 +1131,8 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->cascade_output_stagnation_epochs = 12;
 	ann->cascade_candidate_stagnation_epochs = 12;
 	ann->cascade_num_candidate_groups = 2;
-	ann->cascade_weight_multiplier = 0.4f;
-	ann->cascade_candidate_limit = 1000.0f;
+	ann->cascade_weight_multiplier = (fann_type)0.4;
+	ann->cascade_candidate_limit = (fann_type)1000.0;
 	ann->cascade_max_out_epochs = 150;
 	ann->cascade_max_cand_epochs = 150;
 	ann->cascade_candidate_scores = NULL;
@@ -1162,10 +1166,10 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 		return NULL;
 	}
 	
-	ann->cascade_activation_steepnesses[0] = 0.25;
-	ann->cascade_activation_steepnesses[1] = 0.5;
-	ann->cascade_activation_steepnesses[2] = 0.75;
-	ann->cascade_activation_steepnesses[3] = 1.0;
+	ann->cascade_activation_steepnesses[0] = (fann_type)0.25;
+	ann->cascade_activation_steepnesses[1] = (fann_type)0.5;
+	ann->cascade_activation_steepnesses[2] = (fann_type)0.75;
+	ann->cascade_activation_steepnesses[3] = (fann_type)1.0;
 
 	/* Variables for use with with Quickprop training (reasonable defaults) */
 	ann->quickprop_decay = (float) -0.0001;
@@ -1263,6 +1267,7 @@ void fann_allocate_connections(struct fann *ann)
 	}
 }
 
+
 /* INTERNAL FUNCTION
    Seed the random function.
  */
@@ -1292,3 +1297,4 @@ void fann_seed_rand()
 	srand(GetTickCount());
 #endif
 }
+

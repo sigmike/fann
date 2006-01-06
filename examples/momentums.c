@@ -29,8 +29,6 @@ int main()
 	struct fann *ann;
 	struct fann_train_data *train_data, *test_data;
 
-	unsigned int i = 0;
-
 	float momentum;
 
 	train_data = fann_read_train_from_file("../benchmarks/datasets/robot.train");

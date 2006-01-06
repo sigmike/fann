@@ -52,6 +52,7 @@ FANN_EXTERNAL void FANN_API fann_set_ ## name(struct fann *ann, type value) \
 FANN_GET(type, name) \
 FANN_SET(type, name)
 
+
 struct fann_train_data;
 
 struct fann *fann_allocate_structure(unsigned int num_layers);
@@ -68,9 +69,8 @@ int fann_save_train_internal(struct fann_train_data *data, const char *filename,
 int fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, const char *filename,
 								 unsigned int save_as_fixed, unsigned int decimal_point);
 
-void fann_seed_rand();
-
 void fann_update_stepwise(struct fann *ann);
+void fann_seed_rand();
 
 void fann_error(struct fann_error *errdat, const enum fann_errno_enum errno_f, ...);
 void fann_init_error_data(struct fann_error *errdat);
@@ -108,7 +108,7 @@ float fann_train_outputs_epoch(struct fann *ann, struct fann_train_data *data);
 
 int fann_train_candidates(struct fann *ann, struct fann_train_data *data);
 
-float fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data);
+fann_type fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data);
 
 void fann_install_candidate(struct fann *ann);
 

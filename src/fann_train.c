@@ -100,7 +100,7 @@ FANN_EXTERNAL void FANN_API fann_train(struct fann *ann, fann_type * input,
 */
 fann_type fann_update_MSE(struct fann *ann, struct fann_neuron* neuron, fann_type neuron_diff)
 {
-	fann_type neuron_diff2;
+	float neuron_diff2;
 	
 	switch (neuron->activation_function)
 	{
@@ -110,7 +110,7 @@ fann_type fann_update_MSE(struct fann *ann, struct fann_neuron* neuron, fann_typ
 		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
 		case FANN_ELLIOT_SYMMETRIC:
 		case FANN_GAUSSIAN_SYMMETRIC:
-			neuron_diff /= 2.0;
+			neuron_diff /= (fann_type)2.0;
 			break;
 		case FANN_THRESHOLD:
 		case FANN_LINEAR:
@@ -353,7 +353,7 @@ void fann_backpropagate_MSE(struct fann *ann)
 */
 void fann_update_weights(struct fann *ann)
 {
-	struct fann_neuron *neuron_it, *last_neuron, *prev_neurons, **connections;
+	struct fann_neuron *neuron_it, *last_neuron, *prev_neurons;
 	fann_type tmp_error, delta_w, *weights;
 	struct fann_layer *layer_it;
 	unsigned int i;
@@ -418,7 +418,6 @@ void fann_update_weights(struct fann *ann)
 				tmp_error = error_begin[neuron_it - first_neuron] * learning_rate;
 				num_connections = neuron_it->last_con - neuron_it->first_con;
 				weights = ann->weights + neuron_it->first_con;
-				connections = ann->connections + neuron_it->first_con;
 				weights_deltas = deltas_begin + neuron_it->first_con;
 				for(i = 0; i != num_connections; i++)
 				{
@@ -441,7 +440,7 @@ void fann_update_slopes_batch(struct fann *ann, struct fann_layer *layer_begin,
 							  struct fann_layer *layer_end)
 {
 	struct fann_neuron *neuron_it, *last_neuron, *prev_neurons, **connections;
-	fann_type tmp_error, *weights_begin;
+	fann_type tmp_error;
 	unsigned int i, num_connections;
 
 	/* store some variabels local for fast access */
@@ -472,7 +471,6 @@ void fann_update_slopes_batch(struct fann *ann, struct fann_layer *layer_begin,
 	}
 
 	slope_begin = ann->train_slopes;
-	weights_begin = ann->weights;
 
 #ifdef DEBUGTRAIN
 	printf("\nupdate slopes\n");

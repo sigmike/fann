@@ -46,10 +46,7 @@ int main()
 	unsigned int decimal_point;
 
 	printf("Creating network.\n");
-
 	ann = fann_create_standard(num_layers, num_input, num_neurons_hidden, num_output);
-
-	printf("Training network.\n");
 
 	data = fann_read_train_from_file("xor.data");
 
@@ -64,8 +61,8 @@ int main()
 
 	fann_init_weights(ann, data);
 	
+	printf("Training network.\n");
 	fann_train_on_data(ann, data, max_epochs, epochs_between_reports, desired_error);
-
 
 	printf("Testing network. %f\n", fann_test_data(ann, data));
 

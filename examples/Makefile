@@ -15,7 +15,7 @@ all: $(TARGETS)
 	$(GCC) -O3 -lm -lfixedfann -DFIXEDFANN $< -o $@
 
 clean:
-	rm -f $(TARGETS) $(DEBUG_TARGETS) xor_fixed.data *.net *~
+	rm -f $(TARGETS) $(DEBUG_TARGETS) xor_fixed.data *.net *~ *.obj *.exe *.tds
 
 runtest: $(TARGETS)
 	@echo

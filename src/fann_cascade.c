@@ -451,9 +451,9 @@ int fann_initialize_candidates(struct fann *ann)
 
 int fann_train_candidates(struct fann *ann, struct fann_train_data *data)
 {
-	float best_cand_score = 0.0;
-	float target_cand_score = 0.0;
-	float backslide_cand_score = -1.0e20f;
+	fann_type best_cand_score = 0.0;
+	fann_type target_cand_score = 0.0;
+	fann_type backslide_cand_score = -1.0e20f;
 	unsigned int i;
 	unsigned int max_epochs = ann->cascade_max_cand_epochs;
 	unsigned int stagnation = max_epochs;
@@ -641,7 +641,7 @@ void fann_update_candidate_weights(struct fann *ann, unsigned int num_data)
 	}
 }
 
-float fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data)
+fann_type fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data)
 {
 	unsigned int i, j;
 	unsigned int best_candidate;

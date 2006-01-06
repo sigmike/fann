@@ -752,7 +752,7 @@ FANN_EXTERNAL void FANN_API fann_set_bit_fail_limit(struct fann *ann, fann_type 
 
    This function appears in FANN >= 2.0.0.
  */
-FANN_EXTERNAL void fann_set_callback(struct fann *ann, fann_callback_type callback);
+FANN_EXTERNAL void FANN_API fann_set_callback(struct fann *ann, fann_callback_type callback);
 
 /* Function: fann_get_quickprop_decay
 
