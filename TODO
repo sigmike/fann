@@ -40,8 +40,6 @@ Things TODO when releasing a new version (mostly for fann developers)
 
 * All relevant files should be in CVS (all other removed)
 
-* CVS branch for release
-
 * TGZ/BZ/ZIP packages should be created
 
 * Debian packages should be created (from tgz package)
@@ -61,7 +59,7 @@ Things TODO when releasing a new version (mostly for fann developers)
 
 * Commit for CVS
 
-* CVS branch for release
+* CVS tag for release
 
 * Upload to sf
 
