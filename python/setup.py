@@ -9,7 +9,7 @@ import glob
 import os
 
 NAME='pyfann'
-VERSION='1.2.0'
+VERSION='2.0.0'
 
 LONG_DESCRIPTION="""\
 Fast Artificial Neural Network Library implements multilayer

@@ -1,7 +1,7 @@
 Source: libfann2
 Section: libdevel
 Priority: optional
-Maintainer: Steffen Nissen <lukesky@diku.dk>
+Maintainer: Steffen Nissen <sn@leenissen.dk>
 Standards-Version: 3.6.0
 Build-Depends: docbook-utils, debhelper (>= 4.1.67), python-dev, swig
 
@@ -9,6 +9,7 @@ Package: libfann2-dev
 Section: libdevel
 Architecture: any
 Depends: libfann2 (= ${Source-Version})
+Conflicts: libfann1-dev
 Description: Fast Artificial Neural Network Library 
  is a free open source neural network library, which implements multilayer 
  artificial neural networks in C with support for both fully connected and
