@@ -1,4 +1,6 @@
-*.net *.out *_fixed_test_* *_fixed_train_*
+*.net 
+*_fixed_test_*
+*_fixed_train_*
 *.out
 parity
 performance
