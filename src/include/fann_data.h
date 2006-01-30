@@ -302,7 +302,7 @@ struct fann;
 struct fann_train_data;
 /* Type: fann_callback_type
    This callback function can be called during training when using <fann_train_on_data>, 
-   <fann_train_on_file> or <fann_cascade_train>.
+   <fann_train_on_file> or <fann_cascadetrain_on_data>.
 	
 	>typedef int (FANN_API * fann_callback_type) (struct fann *ann, struct fann_train_data *train, 
 	>											  unsigned int max_epochs, 
