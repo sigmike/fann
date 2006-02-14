@@ -275,7 +275,7 @@ FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(const c
      <fann_read_train_from_file>, <fann_train_on_data>, <fann_destroy_train>,
      <fann_save_train>
 
-    This function appears in FANN >= 2.0.0
+    This function appears in FANN >= 2.1.0
 */ 
 struct fann_train_data *fann_create_train_from_callback(unsigned int num_data,
                                           unsigned int num_input,

@@ -1,3 +1,6 @@
+libfann (2.1.0) stable; urgency=low
+	* Added fann_create_train_from_callback for creating training data from a callback function
+
 libfann (2.0.0) stable; urgency=low
 	* Added Delphi bindings
 	* Cascade training
