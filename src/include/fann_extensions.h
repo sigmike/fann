@@ -62,6 +62,8 @@ extern "C" {
 
    See Also:
       <fann_get_network_type>
+
+   This enumeration appears in FANN >= 2.1.0
 */
 enum fann_network_types
 {
@@ -79,6 +81,8 @@ enum fann_network_types
 
    See Also:
       <fann_get_network_type>
+
+   This constant appears in FANN >= 2.1.0
 */
 static char const *const FANN_NETWORK_TYPE_NAMES[] = {
 	"FANN_LAYER",
@@ -95,6 +99,8 @@ static char const *const FANN_NETWORK_TYPE_NAMES[] = {
 
     See Also:
         <fann_get_connection_array>, <fann_set_weight_array>
+
+   This structure appears in FANN >= 2.1.0
 */
 struct fann_connection
 {
@@ -123,6 +129,8 @@ struct fann_connection
 
     See Also:
         <fann_network_types>
+
+   This function appears in FANN >= 2.1.0
 */
 enum fann_network_types fann_get_network_type(struct fann *ann);
 
@@ -136,6 +144,8 @@ enum fann_network_types fann_get_network_type(struct fann *ann);
 
 	Returns:
         The connection rate
+
+   This function appears in FANN >= 2.1.0
 */
 float fann_get_connection_rate(struct fann *ann);
 
@@ -156,6 +166,8 @@ float fann_get_connection_rate(struct fann *ann);
 		> // Obtain the number of layers in a neural network
 		> struct fann *ann = fann_create_standard(4, 2, 8, 9, 1);
         > unsigned int num_layers = fann_get_num_layers(ann);
+
+   This function appears in FANN >= 2.1.0
 */
 unsigned int fann_get_num_layers(struct fann *ann);
 
@@ -171,6 +183,8 @@ unsigned int fann_get_num_layers(struct fann *ann);
 
     The layers array must be preallocated to at least
     sizeof(unsigned int) * fann_num_layers() long.
+
+   This function appears in FANN >= 2.1.0
 */
 void fann_get_layer_array(struct fann *ann, unsigned int *layers);
 
@@ -184,6 +198,8 @@ void fann_get_layer_array(struct fann *ann, unsigned int *layers);
 
     The bias array must be preallocated to at least
     sizeof(unsigned int) * fann_num_layers() long.
+
+   This function appears in FANN >= 2.1.0
 */
 void fann_get_bias_array(struct fann *ann, unsigned int *bias);
 
@@ -197,6 +213,8 @@ void fann_get_bias_array(struct fann *ann, unsigned int *bias);
 
     The connections array must be preallocated to at least
     sizeof(struct fann_connection) * fann_get_total_connections() long.
+
+   This function appears in FANN >= 2.1.0
 */
 void fann_get_connection_array(struct fann *ann, struct fann_connection *connections);
 
@@ -212,6 +230,8 @@ void fann_get_connection_array(struct fann *ann, struct fann_connection *connect
     if they do not already exist in the network.
 
     The array must have sizeof(struct fann_connection) * num_connections size.
+
+   This function appears in FANN >= 2.1.0
 */
 void fann_set_weight_array(struct fann *ann,
     struct fann_connection *connections, unsigned int num_connections);
@@ -226,6 +246,8 @@ void fann_set_weight_array(struct fann *ann,
 
     Only the weights can be changed. The connection/weight is
     ignored if it does not already exist in the network.
+
+   This function appears in FANN >= 2.1.0
 */
 void fann_set_weight(struct fann *ann,
     unsigned int from_neuron, unsigned int to_neuron, fann_type weight);
@@ -246,7 +268,7 @@ void fann_set_weight(struct fann *ann,
    	<fann_set_activation_function_layer>, <fann_set_activation_function_hidden>,
    	<fann_set_activation_function_output>, <fann_set_activation_steepness>
 
-   This function appears in FANN >= 2.0.1.
+   This function appears in FANN >= 2.1.0
  */ 
 FANN_EXTERNAL enum fann_activationfunc_enum FANN_API fann_get_activation_function(struct fann *ann,
 																int layer,
@@ -275,7 +297,7 @@ FANN_EXTERNAL enum fann_activationfunc_enum FANN_API fann_get_activation_functio
    	<fann_set_activation_steepness_layer>, <fann_set_activation_steepness_hidden>,
    	<fann_set_activation_steepness_output>, <fann_set_activation_function>
 
-   This function appears in FANN >= 2.0.1.
+   This function appears in FANN >= 2.1.0
  */ 
 FANN_EXTERNAL fann_type FANN_API fann_get_activation_steepness(struct fann *ann,
 																int layer,
