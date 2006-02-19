@@ -167,12 +167,22 @@ static char const *const FANN_TRAIN_NAMES[] = {
 	 * d = s*1/((1+|x*s|)*(1+|x*s|))
 
 	FANN_LINEAR_PIECE - Bounded linear activation function.
-	 * span: 0 < y < 1
+	 * span: 0 <= y <= 1
 	 * y = x*s, d = 1*s
 	 
-	FANN_LINEAR_PIECE_SYMMETRIC - Bounded Linear activation function.
-	 * span: -1 < y < 1
+	FANN_LINEAR_PIECE_SYMMETRIC - Bounded linear activation function.
+	 * span: -1 <= y <= 1
 	 * y = x*s, d = 1*s
+	
+	FANN_SIN_SYMMETRIC - Periodical sinus activation function.
+	 * span: -1 <= y <= 1
+	 * y = sin(x*s)
+	 * d = s*cos(x*s)
+	 
+	FANN_COS_SYMMETRIC - Periodical cosinus activation function.
+	 * span: -1 <= y <= 1
+	 * y = cos(x*s)
+	 * d = s*-sin(x*s)
 	 
 	See also:
 		<fann_set_activation_function_hidden>,
@@ -197,7 +207,9 @@ enum fann_activationfunc_enum
 	FANN_ELLIOT,
 	FANN_ELLIOT_SYMMETRIC,
 	FANN_LINEAR_PIECE,
-	FANN_LINEAR_PIECE_SYMMETRIC
+	FANN_LINEAR_PIECE_SYMMETRIC,
+	FANN_SIN_SYMMETRIC,
+	FANN_COS_SYMMETRIC
 };
 
 /* Constant: FANN_ACTIVATIONFUNC_NAMES
@@ -225,7 +237,9 @@ static char const *const FANN_ACTIVATIONFUNC_NAMES[] = {
 	"FANN_ELLIOT",
 	"FANN_ELLIOT_SYMMETRIC",
 	"FANN_LINEAR_PIECE",
-	"FANN_LINEAR_PIECE_SYMMETRIC"
+	"FANN_LINEAR_PIECE_SYMMETRIC",
+	"FANN_SIN_SYMMETRIC",
+	"FANN_COS_SYMMETRIC"
 };
 
 /* Enum: fann_errorfunc_enum
@@ -297,22 +311,22 @@ static char const *const FANN_STOPFUNC_NAMES[] = {
 	"FANN_STOPFUNC_BIT"
 };
 
-/* Enum: fann_network_types
+/* Enum: fann_network_type_enum
 
     Definition of network types used by <fann_get_network_type>
 
-    FANN_LAYER - Each layer only has connections to the next layer
-    FANN_SHORTCUT - Each layer has connections to all following layers
+    FANN_NETTYPE_LAYER - Each layer only has connections to the next layer
+    FANN_NETTYPE_SHORTCUT - Each layer has connections to all following layers
 
    See Also:
       <fann_get_network_type>
 
    This enumeration appears in FANN >= 2.1.0
 */
-enum fann_network_types
+enum fann_nettype_enum
 {
-    FANN_LAYER = 0, /* Each layer only has connections to the next layer */
-    FANN_SHORTCUT /* Each layer has connections to all following layers */
+    FANN_NETTYPE_LAYER = 0, /* Each layer only has connections to the next layer */
+    FANN_NETTYPE_SHORTCUT /* Each layer has connections to all following layers */
 };
 
 /* Constant: FANN_NETWORK_TYPE_NAMES
@@ -328,9 +342,9 @@ enum fann_network_types
 
    This constant appears in FANN >= 2.1.0
 */
-static char const *const FANN_NETWORK_TYPE_NAMES[] = {
-	"FANN_LAYER",
-	"FANN_SHORTCUT"
+static char const *const FANN_NETTYPE_NAMES[] = {
+	"FANN_NETTYPE_LAYER",
+	"FANN_NETTYPE_SHORTCUT"
 };
 
 
@@ -469,7 +483,7 @@ struct fann
 	 * A fully connected ann with shortcut connections are a ann where
 	 * neurons have connections to all neurons in all later layers.
 	 */
-	unsigned int shortcut_connections;
+	enum fann_nettype_enum network_type;
 
 	/* pointer to the first layer (input layer) in an array af all the layers,
 	 * including the input and outputlayers 

@@ -683,6 +683,8 @@ fann_type fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *
 				case FANN_THRESHOLD_SYMMETRIC:
 				case FANN_ELLIOT_SYMMETRIC:
 				case FANN_GAUSSIAN_SYMMETRIC:
+				case FANN_SIN_SYMMETRIC:
+				case FANN_COS_SYMMETRIC:
 					output_train_errors[j] /= 2.0;
 					break;
 				case FANN_LINEAR:

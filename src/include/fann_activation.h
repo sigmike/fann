@@ -33,38 +33,46 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define fann_stepwise(v1, v2, v3, v4, v5, v6, r1, r2, r3, r4, r5, r6, min, max, sum) (sum < v5 ? (sum < v3 ? (sum < v2 ? (sum < v1 ? min : fann_linear_func(v1, r1, v2, r2, sum)) : fann_linear_func(v2, r2, v3, r3, sum)) : (sum < v4 ? fann_linear_func(v3, r3, v4, r4, sum) : fann_linear_func(v4, r4, v5, r5, sum))) : (sum < v6 ? fann_linear_func(v5, r5, v6, r6, sum) : max))
 
 /* FANN_LINEAR */
-#define fann_linear(steepness, sum) fann_mult(steepness, sum)
+/* #define fann_linear(steepness, sum) fann_mult(steepness, sum) */
 #define fann_linear_derive(steepness, value) (steepness)
 
 /* FANN_SIGMOID */
-#define fann_sigmoid(steepness, sum) (1.0f/(1.0f + exp(-2.0f * steepness * sum)))
+/* #define fann_sigmoid(steepness, sum) (1.0f/(1.0f + exp(-2.0f * steepness * sum))) */
 #define fann_sigmoid_real(sum) (1.0f/(1.0f + exp(-2.0f * sum)))
 #define fann_sigmoid_derive(steepness, value) (2.0f * steepness * value * (1.0f - value))
 
 /* FANN_SIGMOID_SYMMETRIC */
-#define fann_sigmoid_symmetric(steepness, sum) (2.0f/(1.0f + exp(-2.0f * steepness * sum)) - 1.0f)
+/* #define fann_sigmoid_symmetric(steepness, sum) (2.0f/(1.0f + exp(-2.0f * steepness * sum)) - 1.0f) */
 #define fann_sigmoid_symmetric_real(sum) (2.0f/(1.0f + exp(-2.0f * sum)) - 1.0f)
 #define fann_sigmoid_symmetric_derive(steepness, value) steepness * (1.0f - (value*value))
 
 /* FANN_GAUSSIAN */
-#define fann_gaussian(steepness, sum) (exp(-sum * steepness * sum * steepness))
+/* #define fann_gaussian(steepness, sum) (exp(-sum * steepness * sum * steepness)) */
 #define fann_gaussian_real(sum) (exp(-sum * sum))
 #define fann_gaussian_derive(steepness, value, sum) (-2.0f * sum * value * steepness)
 
 /* FANN_GAUSSIAN_SYMMETRIC */
-#define fann_gaussian_symmetric(steepness, sum) ((exp(-sum * steepness * sum * steepness)*2.0)-1.0)
-#define fann_gaussian_symmetric_real(sum) ((exp(-sum * sum)*2.0)-1.0)
+/* #define fann_gaussian_symmetric(steepness, sum) ((exp(-sum * steepness * sum * steepness)*2.0)-1.0) */
+#define fann_gaussian_symmetric_real(sum) ((exp(-sum * sum)*2.0f)-1.0f)
 #define fann_gaussian_symmetric_derive(steepness, value, sum) (-2.0f * sum * (value+1.0f) * steepness)
 
 /* FANN_ELLIOT */
-#define fann_elliot(steepness, sum) (((sum * steepness) / 2.0f) / (1.0f + fann_abs(sum * steepness)) + 0.5f)
+/* #define fann_elliot(steepness, sum) (((sum * steepness) / 2.0f) / (1.0f + fann_abs(sum * steepness)) + 0.5f) */
 #define fann_elliot_real(sum) (((sum) / 2.0f) / (1.0f + fann_abs(sum)) + 0.5f)
 #define fann_elliot_derive(steepness, value, sum) (steepness * 1.0f / (2.0f * (1.0f + fann_abs(sum)) * (1.0f + fann_abs(sum))))
 
 /* FANN_ELLIOT_SYMMETRIC */
-#define fann_elliot_symmetric(steepness, sum) ((sum * steepness) / (1.0f + fann_abs(sum * steepness)))
+/* #define fann_elliot_symmetric(steepness, sum) ((sum * steepness) / (1.0f + fann_abs(sum * steepness)))*/
 #define fann_elliot_symmetric_real(sum) ((sum) / (1.0f + fann_abs(sum)))
 #define fann_elliot_symmetric_derive(steepness, value, sum) (steepness * 1.0f / ((1.0f + fann_abs(sum)) * (1.0f + fann_abs(sum))))
+
+/* FANN_SIN_SYMMETRIC */
+#define fann_sin_real(sum) (sin(sum))
+#define fann_sin_derive(steepness, sum) (steepness*cos(sum*steepness))
+
+/* FANN_COS_SYMMETRIC */
+#define fann_cos_real(sum) (cos(sum))
+#define fann_cos_derive(steepness, sum) (steepness*-sin(steepness*sum))
 
 #define fann_activation_switch(ann, activation_function, value, result) \
 switch(activation_function) \
@@ -107,6 +115,11 @@ switch(activation_function) \
 	    break; \
 	case FANN_ELLIOT_SYMMETRIC: \
 		result = (fann_type)fann_elliot_symmetric_real(value); \
+        break; \
+	case FANN_SIN_SYMMETRIC: \
+		result = (fann_type)fann_sin_real(value); \
+	case FANN_COS_SYMMETRIC: \
+		result = (fann_type)fann_cos_real(value); \
         break; \
 }
 

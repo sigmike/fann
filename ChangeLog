@@ -3,6 +3,7 @@ libfann (2.1.0) stable; urgency=low
 	* Amended fann_create_train_from_callback for dynamic link library compatibility
 	* Added fann_get_activation_function and fann_get_activation_steepness matching the set functions
 	* Added a set of functions to allow restricted access to neural network layout, connections, and weights.
+	* Added FANN_SIN_SYMMETRIC and FANN_COS_SYMMETRIC activation functions
 
 libfann (2.0.0) stable; urgency=low
 	* Added Delphi bindings

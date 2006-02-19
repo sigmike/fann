@@ -61,6 +61,10 @@ fann_type fann_activation_derived(unsigned int activation_function,
 		case FANN_ELLIOT_SYMMETRIC:
 			value = fann_clip(value, -0.98f, 0.98f);
 			return (fann_type) fann_elliot_symmetric_derive(steepness, value, sum);
+		case FANN_SIN_SYMMETRIC:
+			return (fann_type) fann_sin_derive(steepness, sum);
+		case FANN_COS_SYMMETRIC:
+			return (fann_type) fann_cos_derive(steepness, sum);
 		case FANN_THRESHOLD:
 			fann_error(NULL, FANN_E_CANT_TRAIN_ACTIVATION);
 	}
@@ -110,6 +114,8 @@ fann_type fann_update_MSE(struct fann *ann, struct fann_neuron* neuron, fann_typ
 		case FANN_SIGMOID_SYMMETRIC_STEPWISE:
 		case FANN_ELLIOT_SYMMETRIC:
 		case FANN_GAUSSIAN_SYMMETRIC:
+		case FANN_SIN_SYMMETRIC:
+		case FANN_COS_SYMMETRIC:
 			neuron_diff /= (fann_type)2.0;
 			break;
 		case FANN_THRESHOLD:
@@ -296,7 +302,7 @@ void fann_backpropagate_MSE(struct fann *ann)
 		/* for each connection in this layer, propagate the error backwards */
 		if(ann->connection_rate >= 1)
 		{
-			if(!ann->shortcut_connections)
+			if(ann->network_type == FANN_NETTYPE_LAYER)
 			{
 				error_prev_layer = error_begin + ((layer_it - 1)->first_neuron - first_neuron);
 			}
@@ -393,7 +399,7 @@ void fann_update_weights(struct fann *ann)
 		last_neuron = layer_it->last_neuron;
 		if(ann->connection_rate >= 1)
 		{
-			if(!ann->shortcut_connections)
+			if(ann->network_type == FANN_NETTYPE_LAYER)
 			{
 				prev_neurons = (layer_it - 1)->first_neuron;
 			}
@@ -486,7 +492,7 @@ void fann_update_slopes_batch(struct fann *ann, struct fann_layer *layer_begin,
 		last_neuron = layer_begin->last_neuron;
 		if(ann->connection_rate >= 1)
 		{
-			if(!ann->shortcut_connections)
+			if(ann->network_type == FANN_NETTYPE_LAYER)
 			{
 				prev_neurons = (layer_begin - 1)->first_neuron;
 			}
@@ -832,7 +838,7 @@ FANN_EXTERNAL enum fann_activationfunc_enum FANN_API
 	struct fann_neuron* neuron_it = fann_get_neuron(ann, layer, neuron);
 	if (neuron_it == NULL)
     {
-		return -1; /* layer or neuron out of bounds */
+		return (enum fann_activationfunc_enum)-1; /* layer or neuron out of bounds */
     }
     else
     {

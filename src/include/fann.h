@@ -391,14 +391,14 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_total_connections(struct fann *ann)
             type <struct fann> pointer.
 
 	Returns:
-        The neural network type from enum <fann_network_types>
+        The neural network type from enum <fann_network_type_enum>
 
     See Also:
-        <fann_network_types>
+        <fann_network_type_enum>
 
    This function appears in FANN >= 2.1.0
 */
-enum fann_network_types fann_get_network_type(struct fann *ann);
+enum fann_nettype_enum fann_get_network_type(struct fann *ann);
 
 /* Function: fann_get_connection_rate
 

@@ -413,7 +413,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut_array(unsigned int num_
 	}
 
 	ann->connection_rate = 1;
-	ann->shortcut_connections = 1;
+	ann->network_type = FANN_NETTYPE_SHORTCUT;
 #ifdef FIXEDFANN
 	decimal_point = ann->decimal_point;
 	multiplier = ann->multiplier;
@@ -595,7 +595,7 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 
 			if(ann->connection_rate >= 1)
 			{
-				if(ann->shortcut_connections)
+				if(ann->network_type == FANN_NETTYPE_SHORTCUT)
 				{
 					neurons = ann->first_layer->first_neuron;
 				}
@@ -902,7 +902,7 @@ FANN_EXTERNAL void FANN_API fann_init_weights(struct fann *ann, struct fann_trai
 	{
 		last_neuron = layer_it->last_neuron;
 
-		if(!ann->shortcut_connections)
+		if(ann->network_type == FANN_NETTYPE_LAYER)
 		{
 			bias_neuron = (layer_it - 1)->last_neuron - 1;
 		}
@@ -951,7 +951,7 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("Input layer                          :%4d neurons, 1 bias\n", ann->num_input);
 	for(layer_it = ann->first_layer + 1; layer_it != ann->last_layer - 1; layer_it++)
 	{
-		if(ann->shortcut_connections)
+		if(ann->network_type == FANN_NETTYPE_SHORTCUT)
 		{
 			printf("  Hidden layer                       :%4d neurons, 0 bias\n",
 				   layer_it->last_neuron - layer_it->first_neuron);
@@ -966,7 +966,7 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("Total neurons and biases             :%4d\n", fann_get_total_neurons(ann));
 	printf("Total connections                    :%4d\n", ann->total_connections);
 	printf("Connection rate                      :%8.3f\n", ann->connection_rate);
-	printf("Shortcut connections                 :%4d\n", ann->shortcut_connections);
+	printf("Network type                         :   %s\n", FANN_NETTYPE_NAMES[ann->network_type]);
 #ifdef FIXEDFANN
 	printf("Decimal point                        :%4d\n", ann->decimal_point);
 	printf("Multiplier                           :%4d\n", ann->multiplier);
@@ -1011,7 +1011,7 @@ FANN_GET(unsigned int, num_output)
 
 FANN_EXTERNAL unsigned int FANN_API fann_get_total_neurons(struct fann *ann)
 {
-	if(ann->shortcut_connections)
+	if(ann->network_type)
 	{
 		return ann->total_neurons;
 	}
@@ -1024,11 +1024,11 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_total_neurons(struct fann *ann)
 
 FANN_GET(unsigned int, total_connections)
 
-FANN_EXTERNAL unsigned int FANN_API fann_get_network_type(struct fann *ann)
+FANN_EXTERNAL enum fann_nettype_enum FANN_API fann_get_network_type(struct fann *ann)
 {
     /* Currently two types: LAYER = 0, SHORTCUT = 1 */
     /* Enum network_types must be set to match the return values  */
-    return ann->shortcut_connections;
+    return ann->network_type;
 }
 
 FANN_EXTERNAL float FANN_API fann_get_connection_rate(struct fann *ann)
@@ -1049,11 +1049,11 @@ FANN_EXTERNAL void FANN_API fann_get_layer_array(struct fann *ann, unsigned int 
         unsigned int count = layer_it->last_neuron - layer_it->first_neuron;
         /* Remove the bias from the count of neurons. */
         switch (fann_get_network_type(ann)) {
-            case FANN_LAYER: {
+            case FANN_NETTYPE_LAYER: {
                 --count;
                 break;
             }
-            case FANN_SHORTCUT: {
+            case FANN_NETTYPE_SHORTCUT: {
                 --count;
                 break;
             }
@@ -1072,7 +1072,7 @@ FANN_EXTERNAL void FANN_API fann_get_bias_array(struct fann *ann, unsigned int *
 
     for (layer_it = ann->first_layer; layer_it != ann->last_layer; ++layer_it, ++bias) {
         switch (fann_get_network_type(ann)) {
-            case FANN_LAYER: {
+            case FANN_NETTYPE_LAYER: {
                 /* Report one bias in each layer except the last */
                 if (layer_it != ann->last_layer-1)
                     *bias = 1;
@@ -1080,7 +1080,7 @@ FANN_EXTERNAL void FANN_API fann_get_bias_array(struct fann *ann, unsigned int *
                     *bias = 0;
                 break;
             }
-            case FANN_SHORTCUT: {
+            case FANN_NETTYPE_SHORTCUT: {
                 /* Bias for current shortcut net is the same as for a layered net */
                 /* NOTE If shortcut is changed to have one bias in first layer change to:
                     if (layer_it == ann->first_layer) */
@@ -1279,7 +1279,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->MSE_value = 0;
 	ann->num_bit_fail = 0;
 	ann->bit_fail_limit = (fann_type)0.35;
-	ann->shortcut_connections = 0;
+	ann->network_type = FANN_NETTYPE_LAYER;
 	ann->train_error_function = FANN_ERRORFUNC_TANH;
 	ann->train_stop_function = FANN_STOPFUNC_MSE;
 	ann->callback = NULL;
@@ -1295,7 +1295,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->cascade_max_out_epochs = 150;
 	ann->cascade_max_cand_epochs = 150;
 	ann->cascade_candidate_scores = NULL;
-	ann->cascade_activation_functions_count = 6;
+	ann->cascade_activation_functions_count = 8;
 	ann->cascade_activation_functions = 
 		(enum fann_activationfunc_enum *)calloc(ann->cascade_activation_functions_count, 
 							   sizeof(enum fann_activationfunc_enum));
@@ -1312,6 +1312,8 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->cascade_activation_functions[3] = FANN_GAUSSIAN_SYMMETRIC;
 	ann->cascade_activation_functions[4] = FANN_ELLIOT;
 	ann->cascade_activation_functions[5] = FANN_ELLIOT_SYMMETRIC;
+	ann->cascade_activation_functions[6] = FANN_SIN_SYMMETRIC;
+	ann->cascade_activation_functions[7] = FANN_COS_SYMMETRIC;
 
 	ann->cascade_activation_steepnesses_count = 4;
 	ann->cascade_activation_steepnesses = 

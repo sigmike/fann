@@ -60,7 +60,7 @@ int main()
 
 	printf("Saving network.\n");
 
-	fann_save(ann, "two_spirali.net");
+	fann_save(ann, "two_spiral.net");
 
 	printf("Cleaning up.\n");
 	fann_destroy_train(train_data);
