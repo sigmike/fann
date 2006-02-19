@@ -246,9 +246,13 @@ FANN_EXTERNAL enum fann_activationfunc_enum FANN_API
 {
 	struct fann_neuron* neuron_it = fann_get_neuron(ann, layer, neuron);
 	if (neuron_it == NULL)
+    {
 		return -1;
+    }
     else
+    {
 	    return neuron_it->activation_function;
+    }
 }
 
 /** Get the activation steepness for a neuron in a layer, counting the input layer as layer 0.
@@ -258,9 +262,13 @@ FANN_EXTERNAL fann_type FANN_API
 {
 	struct fann_neuron* neuron_it = fann_get_neuron(ann, layer, neuron);
 	if(neuron_it == NULL)
+    {
 		return -1;
+    }
     else
+    {
         return neuron_it->activation_steepness;
+    }
 }
 
 /*****************************************************************************/
