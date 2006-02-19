@@ -297,6 +297,43 @@ static char const *const FANN_STOPFUNC_NAMES[] = {
 	"FANN_STOPFUNC_BIT"
 };
 
+/* Enum: fann_network_types
+
+    Definition of network types used by <fann_get_network_type>
+
+    FANN_LAYER - Each layer only has connections to the next layer
+    FANN_SHORTCUT - Each layer has connections to all following layers
+
+   See Also:
+      <fann_get_network_type>
+
+   This enumeration appears in FANN >= 2.1.0
+*/
+enum fann_network_types
+{
+    FANN_LAYER = 0, /* Each layer only has connections to the next layer */
+    FANN_SHORTCUT /* Each layer has connections to all following layers */
+};
+
+/* Constant: FANN_NETWORK_TYPE_NAMES
+   
+   Constant array consisting of the names for the network types, so that the name of an
+   network type can be received by:
+   (code)
+   char *network_type_name = FANN_NETWORK_TYPE_NAMES[fann_get_network_type(ann)];
+   (end)
+
+   See Also:
+      <fann_get_network_type>
+
+   This constant appears in FANN >= 2.1.0
+*/
+static char const *const FANN_NETWORK_TYPE_NAMES[] = {
+	"FANN_LAYER",
+	"FANN_SHORTCUT"
+};
+
+
 /* forward declarations for use with the callback */
 struct fann;
 struct fann_train_data;
@@ -668,6 +705,29 @@ struct fann
 	 */
 	fann_type *prev_weights_deltas;
 	
+};
+
+/* Type: fann_connection
+
+    Describes a connection between two neurons and its weight
+
+    from_neuron - Unique number used to identify source neuron
+    to_neuron - Unique number used to identify destination neuron
+    weight - The numerical value of the weight
+
+    See Also:
+        <fann_get_connection_array>, <fann_set_weight_array>
+
+   This structure appears in FANN >= 2.1.0
+*/
+struct fann_connection
+{
+    /* Unique number used to identify source neuron */
+    unsigned int from_neuron;
+    /* Unique number used to identify destination neuron */
+    unsigned int to_neuron;
+    /* The numerical value of the weight */
+    fann_type weight;
 };
 
 #endif
