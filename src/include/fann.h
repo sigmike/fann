@@ -382,6 +382,140 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_total_neurons(struct fann *ann);
 */ 
 FANN_EXTERNAL unsigned int FANN_API fann_get_total_connections(struct fann *ann);
 
+/* Function: fann_get_network_type
+
+    Get the type of neural network it was created as.
+
+    Parameters:
+		ann - A previously created neural network structure of
+            type <struct fann> pointer.
+
+	Returns:
+        The neural network type from enum <fann_network_types>
+
+    See Also:
+        <fann_network_types>
+
+   This function appears in FANN >= 2.1.0
+*/
+enum fann_network_types fann_get_network_type(struct fann *ann);
+
+/* Function: fann_get_connection_rate
+
+    Get the connection rate used when the network was created
+
+    Parameters:
+		ann - A previously created neural network structure of
+            type <struct fann> pointer.
+
+	Returns:
+        The connection rate
+
+   This function appears in FANN >= 2.1.0
+*/
+float fann_get_connection_rate(struct fann *ann);
+
+/* Function: fann_get_num_layers
+
+    Get the number of layers in the network
+
+    Parameters:
+		ann - A previously created neural network structure of
+            type <struct fann> pointer.
+			
+	Returns:
+		The number of layers in the neural network
+			
+	Example:
+		> // Obtain the number of layers in a neural network
+		> struct fann *ann = fann_create_standard(4, 2, 8, 9, 1);
+        > unsigned int num_layers = fann_get_num_layers(ann);
+
+   This function appears in FANN >= 2.1.0
+*/
+unsigned int fann_get_num_layers(struct fann *ann);
+
+/*Function: fann_get_layer_array
+
+    Get the number of neurons in each layer in the network.
+
+    Bias is not included so the layers match the fann_create functions.
+
+    Parameters:
+		ann - A previously created neural network structure of
+            type <struct fann> pointer.
+
+    The layers array must be preallocated to at least
+    sizeof(unsigned int) * fann_num_layers() long.
+
+   This function appears in FANN >= 2.1.0
+*/
+void fann_get_layer_array(struct fann *ann, unsigned int *layers);
+
+/* Function: fann_get_bias_array
+
+    Get the number of bias in each layer in the network.
+
+    Parameters:
+		ann - A previously created neural network structure of
+            type <struct fann> pointer.
+
+    The bias array must be preallocated to at least
+    sizeof(unsigned int) * fann_num_layers() long.
+
+   This function appears in FANN >= 2.1.0
+*/
+void fann_get_bias_array(struct fann *ann, unsigned int *bias);
+
+/* Function: fann_get_connection_array
+
+    Get the connections in the network.
+
+    Parameters:
+		ann - A previously created neural network structure of
+            type <struct fann> pointer.
+
+    The connections array must be preallocated to at least
+    sizeof(struct fann_connection) * fann_get_total_connections() long.
+
+   This function appears in FANN >= 2.1.0
+*/
+void fann_get_connection_array(struct fann *ann, struct fann_connection *connections);
+
+/* Function: fann_set_weight_array
+
+    Set connections in the network.
+
+    Parameters:
+		ann - A previously created neural network structure of
+            type <struct fann> pointer.
+
+    Only the weights can be changed, connections and weights are ignored
+    if they do not already exist in the network.
+
+    The array must have sizeof(struct fann_connection) * num_connections size.
+
+   This function appears in FANN >= 2.1.0
+*/
+void fann_set_weight_array(struct fann *ann,
+    struct fann_connection *connections, unsigned int num_connections);
+
+/* Function: fann_set_weight
+
+    Set a connection in the network.
+
+    Parameters:
+		ann - A previously created neural network structure of
+            type <struct fann> pointer.
+
+    Only the weights can be changed. The connection/weight is
+    ignored if it does not already exist in the network.
+
+   This function appears in FANN >= 2.1.0
+*/
+void fann_set_weight(struct fann *ann,
+    unsigned int from_neuron, unsigned int to_neuron, fann_type weight);
+
 #ifdef FIXEDFANN
 	
 /* Function: fann_get_decimal_point

@@ -1024,6 +1024,165 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_total_neurons(struct fann *ann)
 
 FANN_GET(unsigned int, total_connections)
 
+FANN_EXTERNAL unsigned int FANN_API fann_get_network_type(struct fann *ann)
+{
+    /* Currently two types: LAYER = 0, SHORTCUT = 1 */
+    /* Enum network_types must be set to match the return values  */
+    return ann->shortcut_connections;
+}
+
+FANN_EXTERNAL float FANN_API fann_get_connection_rate(struct fann *ann)
+{
+    return ann->connection_rate;
+}
+
+FANN_EXTERNAL unsigned int FANN_API fann_get_num_layers(struct fann *ann)
+{
+    return ann->last_layer - ann->first_layer;
+}
+
+FANN_EXTERNAL void FANN_API fann_get_layer_array(struct fann *ann, unsigned int *layers)
+{
+    struct fann_layer *layer_it;
+
+    for (layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++) {
+        unsigned int count = layer_it->last_neuron - layer_it->first_neuron;
+        /* Remove the bias from the count of neurons. */
+        switch (fann_get_network_type(ann)) {
+            case FANN_LAYER: {
+                --count;
+                break;
+            }
+            case FANN_SHORTCUT: {
+                --count;
+                break;
+            }
+            default: {
+                /* Unknown network type, assume no bias present  */
+                break;
+            }
+        }
+        *layers++ = count;
+    }
+}
+
+FANN_EXTERNAL void FANN_API fann_get_bias_array(struct fann *ann, unsigned int *bias)
+{
+    struct fann_layer *layer_it;
+
+    for (layer_it = ann->first_layer; layer_it != ann->last_layer; ++layer_it, ++bias) {
+        switch (fann_get_network_type(ann)) {
+            case FANN_LAYER: {
+                /* Report one bias in each layer except the last */
+                if (layer_it != ann->last_layer-1)
+                    *bias = 1;
+                else
+                    *bias = 0;
+                break;
+            }
+            case FANN_SHORTCUT: {
+                /* Bias for current shortcut net is the same as for a layered net */
+                /* NOTE If shortcut is changed to have one bias in first layer change to:
+                    if (layer_it == ann->first_layer) */
+                if (layer_it != ann->last_layer-1)
+                    *bias = 1;
+                else
+                    *bias = 0;
+                break;
+            }
+            default: {
+                /* Unknown network type, assume no bias present  */
+                *bias = 0;
+                break;
+            }
+        }
+    }
+}
+
+FANN_EXTERNAL void FANN_API fann_get_connection_array(struct fann *ann, struct fann_connection *connections)
+{
+    struct fann_neuron *first_neuron;
+    struct fann_layer *layer_it;
+    struct fann_neuron *neuron_it;
+    unsigned int index;
+    unsigned int source_index;
+    unsigned int destination_index;
+
+    first_neuron = ann->first_layer->first_neuron;
+
+    source_index = 0;
+    destination_index = 0;
+    
+    /* The following assumes that the last unused bias has no connections */
+
+    /* for each layer */
+    for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
+        /* for each neuron */
+        for(neuron_it = layer_it->first_neuron; neuron_it != layer_it->last_neuron; neuron_it++){
+            /* for each connection */
+            for (index = neuron_it->first_con; index < neuron_it->last_con; index++){
+                /* Assign the source, destination and weight */
+                connections->from_neuron = ann->connections[source_index] - first_neuron;
+                connections->to_neuron = destination_index;
+                connections->weight = ann->weights[source_index];
+
+                connections++;
+                source_index++;
+            }
+            destination_index++;
+        }
+    }
+}
+
+FANN_EXTERNAL void FANN_API fann_set_weight_array(struct fann *ann,
+    struct fann_connection *connections, unsigned int num_connections)
+{
+    unsigned int index;
+
+    for (index = 0; index < num_connections; index++) {
+        fann_set_weight(ann, connections[index].from_neuron,
+            connections[index].to_neuron, connections[index].weight);
+    }
+}
+
+FANN_EXTERNAL void FANN_API fann_set_weight(struct fann *ann,
+    unsigned int from_neuron, unsigned int to_neuron, fann_type weight)
+{
+    struct fann_neuron *first_neuron;
+    struct fann_layer *layer_it;
+    struct fann_neuron *neuron_it;
+    unsigned int index;
+    unsigned int source_index;
+    unsigned int destination_index;
+
+    first_neuron = ann->first_layer->first_neuron;
+
+    source_index = 0;
+    destination_index = 0;
+
+    /* Find the connection, simple brute force search through the network
+       for one or more connections that match to minimize datastructure dependencies.
+       Nothing is done if the connection does not already exist in the network. */
+
+    /* for each layer */
+    for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
+        /* for each neuron */
+        for(neuron_it = layer_it->first_neuron; neuron_it != layer_it->last_neuron; neuron_it++){
+            /* for each connection */
+            for (index = neuron_it->first_con; index < neuron_it->last_con; index++){
+                /* If the source and destination neurons match, assign the weight */
+                if (((int)from_neuron == ann->connections[source_index] - first_neuron) &&
+                    (to_neuron == destination_index))
+                {
+                    ann->weights[source_index] = weight;
+                }
+                source_index++;
+            }
+            destination_index++;
+        }
+    }
+}
+
 #ifdef FIXEDFANN
 
 FANN_GET(unsigned int, decimal_point)
