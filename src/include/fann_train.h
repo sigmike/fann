@@ -277,10 +277,10 @@ FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(const c
 
     This function appears in FANN >= 2.1.0
 */ 
-struct fann_train_data *fann_create_train_from_callback(unsigned int num_data,
+FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_from_callback(unsigned int num_data,
                                           unsigned int num_input,
                                           unsigned int num_output,
-                                          void (*user_function)( unsigned int,
+                                          FANN_EXTERNAL void (FANN_API *user_function)( unsigned int,
                                                                  unsigned int,
                                                                  unsigned int,
                                                                  fann_type * ,
@@ -534,6 +534,29 @@ FANN_EXTERNAL float FANN_API fann_get_learning_momentum(struct fann *ann);
 FANN_EXTERNAL void FANN_API fann_set_learning_momentum(struct fann *ann, float learning_momentum);
 
 
+/* Function: fann_get_activation_function
+
+   Get the activation function for neuron number *neuron* in layer number *layer*, 
+   counting the input layer as layer 0. 
+   
+   It is not possible to get activation functions for the neurons in the input layer.
+   
+   Information about the individual activation functions is available at <fann_activationfunc_enum>.
+
+   Returns:
+    The activation function for the neuron or -1 if the neuron is not defined in the neural network.
+   
+   See also:
+   	<fann_set_activation_function_layer>, <fann_set_activation_function_hidden>,
+   	<fann_set_activation_function_output>, <fann_set_activation_steepness>,
+    <fann_set_activation_function>
+
+   This function appears in FANN >= 2.1.0
+ */ 
+FANN_EXTERNAL enum fann_activationfunc_enum FANN_API fann_get_activation_function(struct fann *ann,
+																int layer,
+																int neuron);
+
 /* Function: fann_set_activation_function
 
    Set the activation function for neuron number *neuron* in layer number *layer*, 
@@ -551,7 +574,8 @@ FANN_EXTERNAL void FANN_API fann_set_learning_momentum(struct fann *ann, float l
    
    See also:
    	<fann_set_activation_function_layer>, <fann_set_activation_function_hidden>,
-   	<fann_set_activation_function_output>, <fann_set_activation_steepness>
+   	<fann_set_activation_function_output>, <fann_set_activation_steepness>,
+    <fann_get_activation_function>
 
    This function appears in FANN >= 2.0.0.
  */ 
@@ -608,6 +632,36 @@ FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann
 																enum fann_activationfunc_enum
 																activation_function);
 
+/* Function: fann_get_activation_steepness
+
+   Get the activation steepness for neuron number *neuron* in layer number *layer*, 
+   counting the input layer as layer 0. 
+   
+   It is not possible to get activation steepness for the neurons in the input layer.
+   
+   The steepness of an activation function says something about how fast the activation function 
+   goes from the minimum to the maximum. A high value for the activation function will also
+   give a more agressive training.
+   
+   When training neural networks where the output values should be at the extremes (usually 0 and 1, 
+   depending on the activation function), a steep activation function can be used (e.g. 1.0).
+   
+   The default activation steepness is 0.5.
+   
+   Returns:
+    The activation steepness for the neuron or -1 if the neuron is not defined in the neural network.
+   
+   See also:
+   	<fann_set_activation_steepness_layer>, <fann_set_activation_steepness_hidden>,
+   	<fann_set_activation_steepness_output>, <fann_set_activation_function>,
+    <fann_set_activation_steepness>
+
+   This function appears in FANN >= 2.1.0
+ */ 
+FANN_EXTERNAL fann_type FANN_API fann_get_activation_steepness(struct fann *ann,
+																int layer,
+																int neuron);
+
 /* Function: fann_set_activation_steepness
 
    Set the activation steepness for neuron number *neuron* in layer number *layer*, 
@@ -626,7 +680,8 @@ FANN_EXTERNAL void FANN_API fann_set_activation_function_output(struct fann *ann
    
    See also:
    	<fann_set_activation_steepness_layer>, <fann_set_activation_steepness_hidden>,
-   	<fann_set_activation_steepness_output>, <fann_set_activation_function>
+   	<fann_set_activation_steepness_output>, <fann_set_activation_function>,
+    <fann_get_activation_steepness>
 
    This function appears in FANN >= 2.0.0.
  */ 
