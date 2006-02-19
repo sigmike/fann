@@ -1,5 +1,8 @@
 libfann (2.1.0) stable; urgency=low
 	* Added fann_create_train_from_callback for creating training data from a callback function
+	* Amended fann_create_train_from_callback for dynamic link library compatibility
+	* Added fann_get_activation_function and fann_get_activation_steepness matching the set functions
+	* Added a set of functions to allow restricted access to neural network layout, connections, and weights.
 
 libfann (2.0.0) stable; urgency=low
 	* Added Delphi bindings
