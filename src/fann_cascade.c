@@ -944,7 +944,7 @@ FANN_GET_SET(unsigned int, cascade_max_cand_epochs)
 FANN_GET(unsigned int, cascade_activation_functions_count)
 FANN_GET(enum fann_activationfunc_enum *, cascade_activation_functions)
 
-FANN_EXTERNAL void fann_set_cascade_activation_functions(struct fann *ann,
+FANN_EXTERNAL void FANN_API fann_set_cascade_activation_functions(struct fann *ann,
 														 enum fann_activationfunc_enum *
 														 cascade_activation_functions,
 														 unsigned int 
@@ -972,7 +972,7 @@ FANN_EXTERNAL void fann_set_cascade_activation_functions(struct fann *ann,
 FANN_GET(unsigned int, cascade_activation_steepnesses_count)
 FANN_GET(fann_type *, cascade_activation_steepnesses)
 
-FANN_EXTERNAL void fann_set_cascade_activation_steepnesses(struct fann *ann,
+FANN_EXTERNAL void FANN_API fann_set_cascade_activation_steepnesses(struct fann *ann,
 														   fann_type *
 														   cascade_activation_steepnesses,
 														   unsigned int 

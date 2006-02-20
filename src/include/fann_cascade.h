@@ -409,7 +409,7 @@ FANN_EXTERNAL enum fann_activationfunc_enum * FANN_API fann_get_cascade_activati
 
 	This function appears in FANN >= 2.0.0.
  */
-FANN_EXTERNAL void fann_set_cascade_activation_functions(struct fann *ann,
+FANN_EXTERNAL void FANN_API fann_set_cascade_activation_functions(struct fann *ann,
 														 enum fann_activationfunc_enum *
 														 cascade_activation_functions,
 														 unsigned int 
@@ -461,7 +461,7 @@ FANN_EXTERNAL fann_type * FANN_API fann_get_cascade_activation_steepnesses(struc
 
 	This function appears in FANN >= 2.0.0.
  */
-FANN_EXTERNAL void fann_set_cascade_activation_steepnesses(struct fann *ann,
+FANN_EXTERNAL void FANN_API fann_set_cascade_activation_steepnesses(struct fann *ann,
 														   fann_type *
 														   cascade_activation_steepnesses,
 														   unsigned int 
