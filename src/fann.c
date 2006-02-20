@@ -55,7 +55,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_standard(unsigned int num_layers
 }
 
 FANN_EXTERNAL struct fann *FANN_API fann_create_standard_array(unsigned int num_layers, 
-															   unsigned int *layers)
+															   const unsigned int *layers)
 {
 	return fann_create_sparse_array(1, num_layers, layers);	
 }
@@ -90,7 +90,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_sparse(float connection_rate,
 
 FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_rate,
 															 unsigned int num_layers,
-															 unsigned int *layers)
+															 const unsigned int *layers)
 {
 	struct fann_layer *layer_it, *last_layer, *prev_layer;
 	struct fann *ann;
@@ -387,7 +387,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut(unsigned int num_layers
 }
 
 FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut_array(unsigned int num_layers,
-															   unsigned int *layers)
+															   const unsigned int *layers)
 {
 	struct fann_layer *layer_it, *layer_it2, *last_layer;
 	struct fann *ann;

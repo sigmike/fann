@@ -185,7 +185,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_standard(unsigned int num_layers
 	This function appears in FANN >= 2.0.0.
 */ 
 FANN_EXTERNAL struct fann *FANN_API fann_create_standard_array(unsigned int num_layers,
-													           unsigned int *layers);
+													           const unsigned int *layers);
 
 /* Function: fann_create_sparse
 
@@ -225,7 +225,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_sparse(float connection_rate,
 */
 FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_rate, 
 	                                                         unsigned int num_layers, 
-															 unsigned int *layers);
+															 const unsigned int *layers);
 
 /* Function: fann_create_shortcut
 
@@ -257,7 +257,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut(unsigned int num_layers
 	This function appears in FANN >= 2.0.0.
 */
 FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut_array(unsigned int num_layers,
-															   unsigned int *layers);
+															   const unsigned int *layers);
 /* Function: fann_destroy
    Destroys the entire network and properly freeing all the associated memmory.
 
