@@ -131,7 +131,7 @@ FANN_EXTERNAL float FANN_API fann_get_MSE(struct fann *ann);
 
 	This function appears in FANN >= 2.0.0
 */
-FANN_EXTERNAL unsigned int fann_get_bit_fail(struct fann *ann);
+FANN_EXTERNAL unsigned int FANN_API fann_get_bit_fail(struct fann *ann);
 
 /* Function: fann_reset_MSE
    Resets the mean square error from the network.

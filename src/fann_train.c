@@ -190,7 +190,7 @@ FANN_EXTERNAL float FANN_API fann_get_MSE(struct fann *ann)
 	}
 }
 
-FANN_EXTERNAL unsigned int fann_get_bit_fail(struct fann *ann)
+FANN_EXTERNAL unsigned int FANN_API fann_get_bit_fail(struct fann *ann)
 {
 	return ann->num_bit_fail;	
 }
