@@ -4,6 +4,8 @@ libfann (2.1.0) stable; urgency=low
 	* Added fann_get_activation_function and fann_get_activation_steepness matching the set functions
 	* Added a set of functions to allow restricted access to neural network layout, connections, and weights.
 	* Added FANN_SIN_SYMMETRIC and FANN_COS_SYMMETRIC activation functions
+	* Changed the create_array functions to indicate that the layers array parameter is const i.e. input only
+	* Added FANN_API calling convention to fann_get_bit_fail for compatibility with dynamic link libraries
 
 libfann (2.0.0) stable; urgency=low
 	* Added Delphi bindings
