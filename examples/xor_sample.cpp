@@ -1,12 +1,10 @@
-/**
+/*
  *
- *  @file   xor_sample.cpp
- *
- *  @brief  Fast Artificial Neural Network (fann) C++ Wrapper Sample
+ *  Fast Artificial Neural Network (fann) C++ Wrapper Sample
  *
  *  C++ wrapper XOR sample with functionality similar to xor_train.c
  *
- *  Copyright (C) 2004 created by freegoldbar (at) yahoo dot com
+ *  Copyright (C) 2004-2006 created by freegoldbar (at) yahoo dot com
  *
  *  This wrapper is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -40,18 +38,17 @@ using std::showpos;
 using std::noshowpos;
 
 
-/* Callback function that simply prints the information to cout */
-int FANN_API print_callback(struct fann *ann, struct fann_train_data *train, 
-                            unsigned int max_epochs, 
-						    unsigned int epochs_between_reports, 
-						    float desired_error, unsigned int epochs)
+// Callback function that simply prints the information to cout
+int print_callback(FANN::neural_net &net, FANN::training_data &train,
+    unsigned int max_epochs, unsigned int epochs_between_reports,
+    float desired_error, unsigned int epochs, void *user_data)
 {
     cout << "Epochs     " << setw(8) << epochs << ". "
-         << "Current Error: " << left << fann_get_MSE(ann) << right << endl; // TODO Use C++
+         << "Current Error: " << left << net.get_MSE() << right << endl;
     return 0;
 }
 
-/* Test function that demonstrates usage of the fann C++ wrapper */
+// Test function that demonstrates usage of the fann C++ wrapper
 void xor_test()
 {
     cout << endl << "XOR test started." << endl;
@@ -77,9 +74,11 @@ void xor_test()
     
     net.set_activation_function_hidden(FANN::SIGMOID_SYMMETRIC_STEPWISE);
     net.set_activation_function_output(FANN::SIGMOID_SYMMETRIC_STEPWISE);
-    
+
+    // Set additional properties such as the training algorithm
     //net.set_training_algorithm(FANN::TRAIN_QUICKPROP);
 
+    // Output network type and parameters
     cout << endl << "Network Type                         :  ";
     switch (net.get_network_type())
     {
@@ -100,13 +99,12 @@ void xor_test()
     FANN::training_data data;
     if (data.read_train_from_file("xor.data"))
     {
+        // Initialize and train the network with the data
         net.init_weights(data);
-
-        //net.train_on_data(data, max_iterations, iterations_between_reports, desired_error);
 
         cout << "Max Epochs " << setw(8) << max_iterations << ". "
             << "Desired Error: " << left << desired_error << right << endl;
-        net.set_callback(print_callback);
+        net.set_callback(print_callback, NULL);
         net.train_on_data(data, max_iterations,
             iterations_between_reports, desired_error);
 
@@ -114,6 +112,7 @@ void xor_test()
 
         for (unsigned int i = 0; i < data.length_train_data(); ++i)
         {
+            // Run the network on the test data
             fann_type *calc_out = net.run(data.get_input()[i]);
 
             cout << "XOR test (" << showpos << data.get_input()[i][0] << ", " 
@@ -125,6 +124,7 @@ void xor_test()
         
         cout << endl << "Saving network." << endl;
 
+        // Save the network in floating point and fixed point
         net.save("xor_float.net");
         unsigned int decimal_point = net.save_to_fixed("xor_fixed.net");
         data.save_train_to_fixed("xor_fixed.data", decimal_point);
@@ -137,7 +137,6 @@ void xor_test()
    and reports any exceptions */
 int main(int argc, char **argv)
 {
-    argc = argc; argv = argv; // Suppress unused argument warning
     try
     {
         std::ios::sync_with_stdio(); // Syncronize cout and printf output
