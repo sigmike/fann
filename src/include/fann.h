@@ -398,7 +398,7 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_total_connections(struct fann *ann)
 
    This function appears in FANN >= 2.1.0
 */
-enum fann_nettype_enum fann_get_network_type(struct fann *ann);
+FANN_EXTERNAL enum FANN_API fann_nettype_enum fann_get_network_type(struct fann *ann);
 
 /* Function: fann_get_connection_rate
 
@@ -413,7 +413,7 @@ enum fann_nettype_enum fann_get_network_type(struct fann *ann);
 
    This function appears in FANN >= 2.1.0
 */
-float fann_get_connection_rate(struct fann *ann);
+FANN_EXTERNAL float FANN_API fann_get_connection_rate(struct fann *ann);
 
 /* Function: fann_get_num_layers
 
@@ -433,7 +433,7 @@ float fann_get_connection_rate(struct fann *ann);
 
    This function appears in FANN >= 2.1.0
 */
-unsigned int fann_get_num_layers(struct fann *ann);
+FANN_EXTERNAL unsigned int FANN_API fann_get_num_layers(struct fann *ann);
 
 /*Function: fann_get_layer_array
 
@@ -450,7 +450,7 @@ unsigned int fann_get_num_layers(struct fann *ann);
 
    This function appears in FANN >= 2.1.0
 */
-void fann_get_layer_array(struct fann *ann, unsigned int *layers);
+FANN_EXTERNAL void FANN_API fann_get_layer_array(struct fann *ann, unsigned int *layers);
 
 /* Function: fann_get_bias_array
 
@@ -465,7 +465,7 @@ void fann_get_layer_array(struct fann *ann, unsigned int *layers);
 
    This function appears in FANN >= 2.1.0
 */
-void fann_get_bias_array(struct fann *ann, unsigned int *bias);
+FANN_EXTERNAL void FANN_API fann_get_bias_array(struct fann *ann, unsigned int *bias);
 
 /* Function: fann_get_connection_array
 
@@ -480,7 +480,8 @@ void fann_get_bias_array(struct fann *ann, unsigned int *bias);
 
    This function appears in FANN >= 2.1.0
 */
-void fann_get_connection_array(struct fann *ann, struct fann_connection *connections);
+FANN_EXTERNAL void FANN_API fann_get_connection_array(struct fann *ann,
+    struct fann_connection *connections);
 
 /* Function: fann_set_weight_array
 
@@ -497,7 +498,7 @@ void fann_get_connection_array(struct fann *ann, struct fann_connection *connect
 
    This function appears in FANN >= 2.1.0
 */
-void fann_set_weight_array(struct fann *ann,
+FANN_EXTERNAL void FANN_API fann_set_weight_array(struct fann *ann,
     struct fann_connection *connections, unsigned int num_connections);
 
 /* Function: fann_set_weight
@@ -513,8 +514,41 @@ void fann_set_weight_array(struct fann *ann,
 
    This function appears in FANN >= 2.1.0
 */
-void fann_set_weight(struct fann *ann,
+FANN_EXTERNAL void FANN_API fann_set_weight(struct fann *ann,
     unsigned int from_neuron, unsigned int to_neuron, fann_type weight);
+
+/* Function: fann_set_user_data
+
+    Store a pointer to user defined data. The pointer can be
+    retrieved with <fann_get_user_data> for example in a
+    callback. It is the user's responsibility to allocate and
+    deallocate any data that the pointer might point to.
+
+    Parameters:
+		ann - A previously created neural network structure of
+            type <struct fann> pointer.
+		user_data - A void pointer to user defined data.
+
+   This function appears in FANN >= 2.1.0
+*/
+FANN_EXTERNAL void FANN_API fann_set_user_data(struct fann *ann, void *user_data);
+
+/* Function: fann_get_user_data
+
+    Get a pointer to user defined data that was previously set
+    with <fann_set_user_data>. It is the user's responsibility to
+    allocate and deallocate any data that the pointer might point to.
+
+    Parameters:
+		ann - A previously created neural network structure of
+            type <struct fann> pointer.
+
+    Returns:
+        A void pointer to user defined data.
+
+   This function appears in FANN >= 2.1.0
+*/
+FANN_EXTERNAL void * FANN_API fann_get_user_data(struct fann *ann);
 
 #ifdef FIXEDFANN
 	
