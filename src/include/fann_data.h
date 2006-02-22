@@ -586,7 +586,11 @@ struct fann
 	*/
 	fann_callback_type callback;
 
-	/* Variables for use with Cascade Correlation */
+    /* A pointer to user defined data. (default NULL)
+    */
+    void *user_data;
+
+    /* Variables for use with Cascade Correlation */
 
 	/* The error must change by at least this
 	 * fraction of its old value to count as a
