@@ -6,7 +6,10 @@ libfann (2.1.0) stable; urgency=low
 	* Added FANN_SIN_SYMMETRIC and FANN_COS_SYMMETRIC activation functions
 	* Changed the create_array functions to indicate that the layers array parameter is const i.e. input only
 	* Added FANN_API calling convention to fann_get_bit_fail and two cascade functions for dll compatibility
-	* Added interim C++ wrapper and sample C++ program
+	* Added FANN_EXTERNAL/FANN_API calling convention to previous extension functions for dll compatibility
+	* Removed warning from fann_print_connections with explicit casts
+	* Added fann_set/get_user_data to allow user programs to refer to their own data during callbacks
+	* Added documented C++ wrapper and sample C++ program
 	
 libfann (2.0.0) stable; urgency=low
 	* Added Delphi bindings
