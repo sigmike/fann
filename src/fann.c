@@ -838,7 +838,7 @@ FANN_EXTERNAL void FANN_API fann_print_connections(struct fann *ann)
 #endif
 					if(value < -25)
 						value = -25;
-					neurons[ann->connections[i] - ann->first_layer->first_neuron] = 'a' - value;
+					neurons[ann->connections[i] - ann->first_layer->first_neuron] = (char)('a' - value);
 				}
 				else
 				{
@@ -849,7 +849,7 @@ FANN_EXTERNAL void FANN_API fann_print_connections(struct fann *ann)
 #endif
 					if(value > 25)
 						value = 25;
-					neurons[ann->connections[i] - ann->first_layer->first_neuron] = 'A' + value;
+					neurons[ann->connections[i] - ann->first_layer->first_neuron] = (char)('A' + value);
 				}
 			}
 			printf("L %3d / N %4d %s\n", layer_it - ann->first_layer,
@@ -1183,6 +1183,8 @@ FANN_EXTERNAL void FANN_API fann_set_weight(struct fann *ann,
     }
 }
 
+FANN_GET_SET(void *, user_data)
+
 #ifdef FIXEDFANN
 
 FANN_GET(unsigned int, decimal_point)
@@ -1283,6 +1285,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->train_error_function = FANN_ERRORFUNC_TANH;
 	ann->train_stop_function = FANN_STOPFUNC_MSE;
 	ann->callback = NULL;
+    ann->user_data = NULL; /* User is responsible for deallocation */
 
 	/* variables used for cascade correlation (reasonable defaults) */
 	ann->cascade_output_change_fraction = 0.01f;
