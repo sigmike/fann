@@ -47,9 +47,10 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_from_file(const char *configurat
    <fann_create_from_file> to create an exact copy of the neural network and all of the
    parameters associated with the neural network.
    
-   These two parameters (<fann_set_callback>, <fann_set_error_log>) are *NOT* saved 
-   to the file because they cannot safely be ported to a different location. Also temporary
-   parameters generated during training like <fann_get_MSE> is not saved.
+   These three parameters (<fann_set_callback>, <fann_set_error_log>,
+   <fann_set_user_data>) are *NOT* saved  to the file because they cannot safely be
+   ported to a different location. Also temporary parameters generated during training
+   like <fann_get_MSE> is not saved.
    
    Return:
    The function returns 0 on success and -1 on failure.
