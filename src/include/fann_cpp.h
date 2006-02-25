@@ -320,7 +320,7 @@ namespace FANN
     	
         >typedef int (*callback_type) (neural_net &net, training_data &train,
         >    unsigned int max_epochs, unsigned int epochs_between_reports,
-        >    float desired_error, unsigned int epochs);
+        >    float desired_error, unsigned int epochs, void *user_data);
     	
 	    The callback can be set by using <neural_net::set_callback> and is very usefull for doing custom 
 	    things during training. It is recommended to use this function when implementing custom 
@@ -331,10 +331,10 @@ namespace FANN
 	    The callback function should return an integer, if the callback function returns -1, the training
 	    will terminate.
     	
-	    Example of a callback function that simply prints information to cout:
+	    Example of a callback function that prints information to cout:
             >int print_callback(FANN::neural_net &net, FANN::training_data &train,
             >    unsigned int max_epochs, unsigned int epochs_between_reports,
-            >    float desired_error, unsigned int epochs)
+            >    float desired_error, unsigned int epochs, void *user_data)
             >{
             >    cout << "Epochs     " << setw(8) << epochs << ". "
             >         << "Current Error: " << left << net.get_MSE() << right << endl;
