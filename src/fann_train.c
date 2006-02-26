@@ -548,7 +548,7 @@ void fann_clear_train_arrays(struct fann *ann)
 	}
 	else
 	{
-		memset(ann->train_slopes, 0, (ann->total_connections) * sizeof(fann_type));
+		memset(ann->train_slopes, 0, (ann->total_connections_allocated) * sizeof(fann_type));
 	}
 
 	/* if no room allocated for the variabels, allocate it now */
@@ -563,7 +563,7 @@ void fann_clear_train_arrays(struct fann *ann)
 	}
 	else
 	{
-		memset(ann->prev_steps, 0, (ann->total_connections) * sizeof(fann_type));
+		memset(ann->prev_steps, 0, (ann->total_connections_allocated) * sizeof(fann_type));
 	}
 
 	/* if no room allocated for the variabels, allocate it now */
@@ -581,14 +581,14 @@ void fann_clear_train_arrays(struct fann *ann)
 	if(ann->training_algorithm == FANN_TRAIN_RPROP)
 	{
 		delta_zero = ann->rprop_delta_zero;
-		for(i = 0; i < ann->total_connections; i++)
+		for(i = 0; i < ann->total_connections_allocated; i++)
 		{
 			ann->prev_train_slopes[i] = delta_zero;
 		}
 	}
 	else
 	{
-		memset(ann->prev_train_slopes, 0, (ann->total_connections) * sizeof(fann_type));
+		memset(ann->prev_train_slopes, 0, (ann->total_connections_allocated) * sizeof(fann_type));
 	}
 }
 
@@ -638,12 +638,6 @@ void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data,
 		prev_slope = prev_train_slopes[i];
 		next_step = 0.0;
 
-		if(prev_step > 999 || prev_step < -999)
-		{
-			/* Used for BP */
-			prev_step = prev_steps[i];
-		}
-
 		/* The step must always be in direction opposite to the slope. */
 		if(prev_step > 0.001)
 		{
@@ -689,9 +683,9 @@ void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data,
 			next_step += epsilon * slope;
 		}
 
+		/*
 		if(next_step > 1000 || next_step < -1000)
 		{
-			/*
 			printf("quickprop[%d] weight=%f, slope=%f, prev_slope=%f, next_step=%f, prev_step=%f\n",
 				   i, weights[i], slope, prev_slope, next_step, prev_step);
 			
@@ -699,8 +693,8 @@ void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data,
 			   next_step = 1000;
 			   else
 			   next_step = -1000;
-			 */
 		}
+    	*/
 
 		/* update global data arrays */
 		prev_steps[i] = next_step;
@@ -730,7 +724,6 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight, un
 
 	fann_type prev_step, slope, prev_slope, next_step, same_sign;
 
-	/* These should be set from variables */
 	float increase_factor = ann->rprop_increase_factor;	/*1.2; */
 	float decrease_factor = ann->rprop_decrease_factor;	/*0.5; */
 	float delta_min = ann->rprop_delta_min;	/*0.0; */
