@@ -40,7 +40,7 @@ parity: parity.c
 	$(GCC) $(CFLAGS) $(LFLAGS) $< -o $@
 
 clean: 
-	rm -rf -- $(TARGETS) *.net *fixed_test* *fixed_train* *~
+	rm -rf -- $(TARGETS) *~
 
 distclean: clean
-	rm -rf *.ps *.out
+	rm -rf *.ps *.out *.net *fixed_test* *fixed_train*

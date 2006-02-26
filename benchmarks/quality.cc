@@ -195,7 +195,7 @@ void quality_benchmark_fann(bool stepwise, fann_train_enum training_algorithm,
 		fann_set_activation_function_output(ann, FANN_SIGMOID);
 	}
 
-	if(training_algorithm == FANN_TRAIN_INCREMENTAL)
+	if(training_algorithm == FANN_TRAIN_INCREMENTAL || training_algorithm == FANN_TRAIN_QUICKPROP)
 	{
 		fann_set_train_error_function(ann, FANN_ERRORFUNC_LINEAR);
 	}
@@ -266,7 +266,8 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 							   struct fann_train_data *test_data,
 							   FILE * train_out, FILE * test_out,
 							   unsigned int num_input, unsigned int num_output,
-							   unsigned int seconds_of_training, double seconds_between_reports)
+							   unsigned int seconds_of_training, double seconds_between_reports, 
+							   enum fann_train_enum train_function)
 {
 	float train_error = 0;
 	float test_error = 0;
@@ -279,13 +280,14 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 
 	ann = fann_create_shortcut(2, num_input, num_output);
 
-	fann_set_training_algorithm(ann, FANN_TRAIN_RPROP);
+	fann_set_training_algorithm(ann, train_function);
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
-	fann_set_activation_function_output(ann, FANN_LINEAR_PIECE);
+	fann_set_activation_function_output(ann, FANN_LINEAR);
+	fann_set_train_error_function(ann, FANN_ERRORFUNC_LINEAR);
+
 	fann_set_activation_steepness_hidden(ann, 0.5);
 	fann_set_activation_steepness_output(ann, 0.5);
 
-	fann_set_train_error_function(ann, FANN_ERRORFUNC_LINEAR);
 	fann_set_rprop_increase_factor(ann, 1.2);
 	fann_set_rprop_decrease_factor(ann, 0.5);
 	fann_set_rprop_delta_min(ann, 0.0);
@@ -301,19 +303,21 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 
 	while(total_elapsed < (double) seconds_of_training)
 	{
+		/* Train with FANN_LINEAR */
+		fann_set_activation_function_output(ann, FANN_LINEAR);
 		/* train */
 		elapsed = 0;
 		start_timer();
 		while(elapsed < (double) seconds_between_reports)
 		{
 			epochs += fann_train_outputs(ann, train_data, 0);
+
 			if(fann_initialize_candidates(ann) == -1)
 				break;
 	
 			epochs += fann_train_candidates(ann, train_data);
-			fann_install_candidate(ann);
 
-			fann_cascadetrain_on_data(ann, train_data, 1, 0, 0);
+			fann_install_candidate(ann);
 
 			elapsed = time_elapsed();
 		}
@@ -321,7 +325,8 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 		total_elapsed += getSecs();
 
 		/* make report */
-
+		/* But test with FANN_LINEAR_PIECE */
+		fann_set_activation_function_output(ann, FANN_LINEAR_PIECE);
 		clear_error();
 		for(i = 0; i != test_data->num_data; i++)
 		{
@@ -347,7 +352,7 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 	}
 
 	fprintf(stdout, "\nepochs: %d, epochs/sec: %f\n", epochs, epochs / total_elapsed);
-
+ 
 	fann_destroy(ann);
 }
 
@@ -565,7 +570,14 @@ int main(int argc, char *argv[])
 		quality_benchmark_cascade(train_data, test_data,
 								  train_out, test_out,
 								  train_data->num_input, train_data->num_output,
-								  seconds_of_training, seconds_between_reports);
+								  seconds_of_training, seconds_between_reports, FANN_TRAIN_RPROP);
+	}
+	else if(strcmp(argv[1], "fann_cascade_quickprop") == 0)
+	{
+		quality_benchmark_cascade(train_data, test_data,
+								  train_out, test_out,
+								  train_data->num_input, train_data->num_output,
+								  seconds_of_training, seconds_between_reports, FANN_TRAIN_QUICKPROP);
 #ifdef LWNN
 	}
 	else if(strcmp(argv[1], "lwnn") == 0)
