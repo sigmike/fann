@@ -10,6 +10,7 @@ libfann (2.1.0) stable; urgency=low
 	* Removed warning from fann_print_connections with explicit casts
 	* Added fann_set/get_user_data to allow user programs to refer to their own data during callbacks
 	* Added documented C++ wrapper and sample C++ program
+	* Fixed bias count for shortcut networks in fann_get_layer_array and fann_get_bias_array
 	
 libfann (2.0.0) stable; urgency=low
 	* Added Delphi bindings

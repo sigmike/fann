@@ -1054,7 +1054,9 @@ FANN_EXTERNAL void FANN_API fann_get_layer_array(struct fann *ann, unsigned int 
                 break;
             }
             case FANN_NETTYPE_SHORTCUT: {
-                --count;
+                /* The bias in the first layer is reused for all layers */
+                if (layer_it == ann->first_layer)
+                    --count;
                 break;
             }
             default: {
@@ -1081,10 +1083,8 @@ FANN_EXTERNAL void FANN_API fann_get_bias_array(struct fann *ann, unsigned int *
                 break;
             }
             case FANN_NETTYPE_SHORTCUT: {
-                /* Bias for current shortcut net is the same as for a layered net */
-                /* NOTE If shortcut is changed to have one bias in first layer change to:
-                    if (layer_it == ann->first_layer) */
-                if (layer_it != ann->last_layer-1)
+                /* The bias in the first layer is reused for all layers */
+                if (layer_it == ann->first_layer)
                     *bias = 1;
                 else
                     *bias = 0;
