@@ -398,7 +398,7 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_total_connections(struct fann *ann)
 
    This function appears in FANN >= 2.1.0
 */
-FANN_EXTERNAL enum FANN_API fann_nettype_enum fann_get_network_type(struct fann *ann);
+FANN_EXTERNAL enum fann_nettype_enum FANN_API fann_get_network_type(struct fann *ann);
 
 /* Function: fann_get_connection_rate
 

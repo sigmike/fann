@@ -101,7 +101,7 @@ FANN_EXTERNAL float FANN_API fann_test_data(struct fann *ann, struct fann_train_
 FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_from_callback(unsigned int num_data,
                                           unsigned int num_input,
                                           unsigned int num_output,
-                                          FANN_EXTERNAL void (FANN_API *user_function)( unsigned int,
+                                          void (FANN_API *user_function)( unsigned int,
                                                                  unsigned int,
                                                                  unsigned int,
                                                                  fann_type * ,
