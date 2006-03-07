@@ -978,6 +978,7 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 #ifdef FIXEDFANN
 	printf("Bit fail limit                       :%4d\n", ann->bit_fail_limit);
 #else
+	printf("Bit fail limit                       :%8.3f\n", ann->bit_fail_limit);
 	printf("Learning rate                        :%8.3f\n", ann->learning_rate);
 	printf("Learning momentum                    :%8.3f\n", ann->learning_momentum);
 	printf("Quickprop decay                      :%11.6f\n", ann->quickprop_decay);
@@ -1322,7 +1323,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->cascade_activation_steepnesses = 
 		(fann_type *)calloc(ann->cascade_activation_steepnesses_count, 
 							   sizeof(fann_type));
-	if(ann->cascade_activation_functions == NULL)
+	if(ann->cascade_activation_steepnesses == NULL)
 	{
 		fann_safe_free(ann->cascade_activation_functions);
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
