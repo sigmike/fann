@@ -627,7 +627,7 @@ void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data,
 	float decay = ann->quickprop_decay;	/*-0.0001;*/
 	float mu = ann->quickprop_mu;	/*1.75; */
 	float shrink_factor = (float) (mu / (1.0 + mu));
-
+	
 	unsigned int i = first_weight;
 
 	for(; i != past_end; i++)
@@ -637,51 +637,34 @@ void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data,
 		slope = train_slopes[i] + decay * w;
 		prev_slope = prev_train_slopes[i];
 		next_step = 0.0;
-
+		
 		/* The step must always be in direction opposite to the slope. */
 		if(prev_step > 0.001)
 		{
 			/* If last step was positive...  */
-			if(slope > 0.0)
-			{
-				/*  Add in linear term if current slope is still positive. */
+			if(slope > 0.0) /*  Add in linear term if current slope is still positive. */
 				next_step += epsilon * slope;
-			}
 
 			/*If current slope is close to or larger than prev slope...  */
 			if(slope > (shrink_factor * prev_slope))
-			{
 				next_step += mu * prev_step;	/* Take maximum size negative step. */
-			}
 			else
-			{
 				next_step += prev_step * slope / (prev_slope - slope);	/* Else, use quadratic estimate. */
-			}
 		}
 		else if(prev_step < -0.001)
 		{
 			/* If last step was negative...  */
-			if(slope < 0.0)
-			{
-				/*  Add in linear term if current slope is still negative. */
+			if(slope < 0.0) /*  Add in linear term if current slope is still negative. */
 				next_step += epsilon * slope;
-			}
 
 			/* If current slope is close to or more neg than prev slope... */
 			if(slope < (shrink_factor * prev_slope))
-			{
 				next_step += mu * prev_step;	/* Take maximum size negative step. */
-			}
 			else
-			{
 				next_step += prev_step * slope / (prev_slope - slope);	/* Else, use quadratic estimate. */
-			}
 		}
-		else
-		{
-			/* Last step was zero, so use only linear term. */
-			next_step += epsilon * slope;
-		}
+		else /* Last step was zero, so use only linear term. */
+			next_step += epsilon * slope; 
 
 		/*
 		if(next_step > 1000 || next_step < -1000)
@@ -700,12 +683,15 @@ void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data,
 		prev_steps[i] = next_step;
 
 		w += next_step;
+		/*
 		if(w > 1500)
 			weights[i] = 1500;
 		else if(w < -1500)
 			weights[i] = -1500;
 		else
 			weights[i] = w;
+		*/
+		weights[i] = w;
 
 		prev_train_slopes[i] = slope;
 		train_slopes[i] = 0.0;
