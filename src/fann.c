@@ -720,13 +720,29 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 												  -multiplier, multiplier, neuron_sum);
 					break;
 				case FANN_THRESHOLD:
-					neuron_it->value = (fann_type) ((neuron_sum < 0) ? 0 : 1);
+					neuron_it->value = (fann_type) ((neuron_sum < 0) ? 0 : multiplier);
 					break;
 				case FANN_THRESHOLD_SYMMETRIC:
-					neuron_it->value = (fann_type) ((neuron_sum < 0) ? -1 : 1);
+					neuron_it->value = (fann_type) ((neuron_sum < 0) ? -multiplier : multiplier);
+					break;
+				case FANN_LINEAR:
+					neuron_it->value = neuron_sum;
+					break;
+				case FANN_LINEAR_PIECE:
+					neuron_it->value = (fann_type)((neuron_sum < 0) ? 0 : (neuron_sum > multiplier) ? multiplier : neuron_sum);
+					break;
+				case FANN_LINEAR_PIECE_SYMMETRIC:
+					neuron_it->value = (fann_type)((neuron_sum < -multiplier) ? -multiplier : (neuron_sum > multiplier) ? multiplier : neuron_sum);
 					break;
 				case FANN_ELLIOT:
+				case FANN_ELLIOT_SYMMETRIC:
+				case FANN_GAUSSIAN:
+				case FANN_GAUSSIAN_SYMMETRIC:
+				case FANN_GAUSSIAN_STEPWISE:
+				case FANN_SIN_SYMMETRIC:
+				case FANN_COS_SYMMETRIC:
 					fann_error((struct fann_error *) ann, FANN_E_CANT_USE_ACTIVATION);
+					break;
 			}
 			last_steepness = steepness;
 			last_activation_function = activation_function;
@@ -774,6 +790,19 @@ FANN_EXTERNAL void FANN_API fann_destroy(struct fann *ann)
 	fann_safe_free(ann->errstr);
 	fann_safe_free(ann->cascade_activation_functions);
 	fann_safe_free(ann->cascade_activation_steepnesses);
+	
+#ifndef FIXEDFANN
+	fann_safe_free( ann->scale_mean_in );
+	fann_safe_free( ann->scale_deviation_in );
+	fann_safe_free( ann->scale_new_min_in );
+	fann_safe_free( ann->scale_factor_in );
+
+	fann_safe_free( ann->scale_mean_out );
+	fann_safe_free( ann->scale_deviation_out );
+	fann_safe_free( ann->scale_new_min_out );
+	fann_safe_free( ann->scale_factor_out );
+#endif
+	
 	fann_safe_free(ann);
 }
 
@@ -1004,6 +1033,8 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 		
 	printf("Cascade candidate groups             :%4d\n", ann->cascade_num_candidate_groups);
 	printf("Cascade no. of candidates            :%4d\n", fann_get_cascade_num_candidates(ann));
+	
+	/* TODO: dump scale parameters */
 #endif
 }
 
@@ -1287,7 +1318,20 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->train_stop_function = FANN_STOPFUNC_MSE;
 	ann->callback = NULL;
     ann->user_data = NULL; /* User is responsible for deallocation */
-
+	ann->weights = NULL;
+	ann->connections = NULL;
+	ann->output = NULL;
+#ifndef FIXEDFANN
+	ann->scale_mean_in = NULL;
+	ann->scale_deviation_in = NULL;
+	ann->scale_new_min_in = NULL;
+	ann->scale_factor_in = NULL;
+	ann->scale_mean_out = NULL;
+	ann->scale_deviation_out = NULL;
+	ann->scale_new_min_out = NULL;
+	ann->scale_factor_out = NULL;
+#endif	
+	
 	/* variables used for cascade correlation (reasonable defaults) */
 	ann->cascade_output_change_fraction = 0.01f;
 	ann->cascade_candidate_change_fraction = 0.01f;
@@ -1368,6 +1412,42 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->last_layer = ann->first_layer + num_layers;
 
 	return ann;
+}
+
+/* INTERNAL FUNCTION
+   Allocates room for the scaling parameters.
+ */
+int fann_allocate_scale(struct fann *ann)
+{
+	/* todo this should only be allocated when needed */
+#ifndef FIXEDFANN
+	unsigned int i = 0;
+#define SCALE_ALLOCATE( what, where, default_value )		    			\
+		ann->what##_##where = (float *)calloc(								\
+			ann->num_##where##put,											\
+			sizeof( float )													\
+			);																\
+		if( ann->what##_##where == NULL )									\
+		{																	\
+			fann_error( NULL, FANN_E_CANT_ALLOCATE_MEM );					\
+			fann_destroy( ann );                            				\
+			return 1;														\
+		}																	\
+		for( i = 0; i < ann->num_##where##put; i++ )						\
+			ann->what##_##where[ i ] = ( default_value );
+
+	SCALE_ALLOCATE( scale_mean,		in,		0.0 )
+	SCALE_ALLOCATE( scale_deviation,	in,		1.0 )
+	SCALE_ALLOCATE( scale_new_min,	in,		-1.0 )
+	SCALE_ALLOCATE( scale_factor,		in,		1.0 )
+
+	SCALE_ALLOCATE( scale_mean,		out,	0.0 )
+	SCALE_ALLOCATE( scale_deviation,	out,	1.0 )
+	SCALE_ALLOCATE( scale_new_min,	out,	-1.0 )
+	SCALE_ALLOCATE( scale_factor,		out,	1.0 )
+#undef SCALE_ALLOCATE
+#endif	
+	return 0;
 }
 
 /* INTERNAL FUNCTION

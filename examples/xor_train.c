@@ -53,7 +53,7 @@ int main()
 	fann_set_activation_steepness_hidden(ann, 1);
 	fann_set_activation_steepness_output(ann, 1);
 
-	fann_set_activation_function_hidden(ann, FANN_COS_SYMMETRIC);
+	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
 	fann_set_activation_function_output(ann, FANN_SIGMOID_SYMMETRIC);
 
 	fann_set_train_stop_function(ann, FANN_STOPFUNC_BIT);

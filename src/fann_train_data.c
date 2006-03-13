@@ -908,3 +908,203 @@ int fann_desired_error_reached(struct fann *ann, float desired_error)
 	}
 	return -1;
 }
+
+#ifndef FIXEDFANN
+/*
+ * Scale data in input vector before feed it to ann based on previously calculated parameters.
+ */
+FANN_EXTERNAL void FANN_API fann_scale2_input_vector_in( struct fann *ann, fann_type *vector )
+{
+	unsigned cur_neuron;
+	if(ann->scale_mean_in == NULL)
+	{
+		fann_error( (struct fann_error *) ann, FANN_E_SCALE_NOT_PRESENT );
+		return;
+	}
+	
+	for( cur_neuron = 0; cur_neuron < ann->num_input; cur_neuron++ )
+		vector[ cur_neuron ] =
+			(
+				( vector[ cur_neuron ] - ann->scale_mean_in[ cur_neuron ] )
+				/ ann->scale_deviation_in[ cur_neuron ]
+				- ( -1.0 ) /* This is old_min */
+			)
+			* ann->scale_factor_in[ cur_neuron ]
+			+ ann->scale_new_min_in[ cur_neuron ];
+}
+
+/*
+ * Scale data in output vector before feed it to ann based on previously calculated parameters.
+ */
+FANN_EXTERNAL void FANN_API fann_scale2_output_vector_in( struct fann *ann, fann_type *vector )
+{
+	unsigned cur_neuron;
+	if(ann->scale_mean_in == NULL)
+	{
+		fann_error( (struct fann_error *) ann, FANN_E_SCALE_NOT_PRESENT );
+		return;
+	}
+
+	for( cur_neuron = 0; cur_neuron < ann->num_output; cur_neuron++ )
+		vector[ cur_neuron ] =
+			(
+				( vector[ cur_neuron ] - ann->scale_mean_out[ cur_neuron ] )
+				/ ann->scale_deviation_out[ cur_neuron ]
+				- ( -1.0 ) /* This is old_min */
+			)
+			* ann->scale_factor_out[ cur_neuron ]
+			+ ann->scale_new_min_out[ cur_neuron ];
+}
+
+/*
+ * Scale data in output vector after get it from ann based on previously calculated parameters.
+ */
+FANN_EXTERNAL void FANN_API fann_scale2_output_vector_out( struct fann *ann, fann_type *vector )
+{
+	unsigned cur_neuron;
+	if(ann->scale_mean_in == NULL)
+	{
+		fann_error( (struct fann_error *) ann, FANN_E_SCALE_NOT_PRESENT );
+		return;
+	}
+
+	for( cur_neuron = 0; cur_neuron < ann->num_output; cur_neuron++ )
+		vector[ cur_neuron ] =
+			(
+				(
+					vector[ cur_neuron ]
+					- ann->scale_new_min_out[ cur_neuron ]
+				)
+				/ ann->scale_factor_out[ cur_neuron ]
+			)
+			* ann->scale_deviation_out[ cur_neuron ]
+			+ ann->scale_mean_out[ cur_neuron ];
+}
+
+/*
+ * Scale input and output data based on previously calculated parameters.
+ */
+FANN_EXTERNAL void FANN_API fann_scale2_train_data( struct fann *ann, struct fann_train_data *data )
+{
+	unsigned cur_sample;
+	if(ann->scale_mean_in == NULL)
+	{
+		fann_error( (struct fann_error *) ann, FANN_E_SCALE_NOT_PRESENT );
+		return;
+	}
+	/* Check that we have good training data. */
+	/* No need for if( !params || !ann ) */
+	if(    data->num_input != ann->num_input
+		|| data->num_output != ann->num_output
+		)
+	{
+		fann_error( (struct fann_error *) ann, FANN_E_TRAIN_DATA_MISMATCH );
+		return;
+	}
+
+	for( cur_sample = 0; cur_sample < data->num_data; cur_sample++ )
+	{
+		fann_scale2_input_vector_in( ann, data->input[ cur_sample ] );
+		fann_scale2_output_vector_in( ann, data->output[ cur_sample ] );
+	}
+}
+
+/*
+ * Calculate scaling parameters for future use based on training data.
+ */
+FANN_EXTERNAL void FANN_API fann_get_scaling_params(
+	const struct fann_train_data *data,
+	unsigned is_input_scale_needed,
+	unsigned is_output_scale_needed,
+	float new_input_min,
+	float new_input_max,
+	float new_output_min,
+	float new_output_max,
+	struct fann *ann
+	)
+{
+	unsigned cur_neuron, cur_sample;
+
+	/* Check that we have good training data. */
+	/* No need for if( !params || !ann ) */
+	if(    data->num_input != ann->num_input
+		|| data->num_output != ann->num_output
+		)
+	{
+		fann_error( (struct fann_error *) ann, FANN_E_TRAIN_DATA_MISMATCH );
+		return;
+	}
+
+	if(ann->scale_mean_in == NULL)
+		fann_allocate_scale(ann);
+	
+	if(ann->scale_mean_in == NULL)
+		return;
+		
+	/* First of all reset everything to default values. */
+	#define SCALE_RESET( what, where, default_value )							\
+		for( cur_neuron = 0; cur_neuron < ann->num_##where##put; cur_neuron++ )	\
+			ann->what##_##where[ cur_neuron ] = ( default_value );
+
+	SCALE_RESET( scale_mean,		in,		0.0 )
+	SCALE_RESET( scale_deviation,	in,		1.0 )
+	SCALE_RESET( scale_new_min,		in,		-1.0 )
+	SCALE_RESET( scale_factor,		in,		1.0 )
+
+	SCALE_RESET( scale_mean,		out,	0.0 )
+	SCALE_RESET( scale_deviation,	out,	1.0 )
+	SCALE_RESET( scale_new_min,		out,	-1.0 )
+	SCALE_RESET( scale_factor,		out,	1.0 )
+	#undef SCALE_RESET
+
+	if( !data->num_data )
+		return;
+
+	#define SCALE_GET_PARAM( where )																		\
+		/* Calculate mean: sum(x)/length */																	\
+		for( cur_neuron = 0; cur_neuron < ann->num_##where##put; cur_neuron++ )								\
+			ann->scale_mean_##where[ cur_neuron ] = 0.0;													\
+		for( cur_neuron = 0; cur_neuron < ann->num_##where##put; cur_neuron++ )								\
+			for( cur_sample = 0; cur_sample < data->num_data; cur_sample++ )								\
+				ann->scale_mean_##where[ cur_neuron ] += data->where##put[ cur_sample ][ cur_neuron ];		\
+		for( cur_neuron = 0; cur_neuron < ann->num_##where##put; cur_neuron++ )								\
+			ann->scale_mean_##where[ cur_neuron ] /= (float)data->num_data;									\
+		/* Calculate deviation: sqrt(sum((x-mean)^2)/length) */												\
+		for( cur_neuron = 0; cur_neuron < ann->num_##where##put; cur_neuron++ )								\
+			ann->scale_deviation_##where[ cur_neuron ] = 0.0; 												\
+		for( cur_neuron = 0; cur_neuron < ann->num_##where##put; cur_neuron++ )								\
+			for( cur_sample = 0; cur_sample < data->num_data; cur_sample++ )								\
+				ann->scale_deviation_##where[ cur_neuron ] += 												\
+					/* Another local variable in macro? Oh no! */											\
+					( 																						\
+						data->where##put[ cur_sample ][ cur_neuron ] 										\
+						- ann->scale_mean_##where[ cur_neuron ] 											\
+					) 																						\
+					*																						\
+					( 																						\
+						data->where##put[ cur_sample ][ cur_neuron ] 										\
+						- ann->scale_mean_##where[ cur_neuron ] 											\
+					); 																						\
+		for( cur_neuron = 0; cur_neuron < ann->num_##where##put; cur_neuron++ )								\
+			ann->scale_deviation_##where[ cur_neuron ] =													\
+				sqrt( ann->scale_deviation_##where[ cur_neuron ] / (float)data->num_data ); 				\
+		/* Calculate factor: (new_max-new_min)/(old_max(1)-old_min(-1)) */									\
+		/* Looks like we dont need whole array of factors? */												\
+		for( cur_neuron = 0; cur_neuron < ann->num_##where##put; cur_neuron++ )								\
+			ann->scale_factor_##where[ cur_neuron ] =														\
+				( new_##where##put_max - new_##where##put_min )												\
+				/																							\
+				( 1.0 - ( -1.0 ) );																			\
+		/* Copy new minimum. */																				\
+		/* Looks like we dont need whole array of new minimums? */											\
+		for( cur_neuron = 0; cur_neuron < ann->num_##where##put; cur_neuron++ )								\
+			ann->scale_new_min_##where[ cur_neuron ] = new_##where##put_min;
+
+	if( is_input_scale_needed )
+		SCALE_GET_PARAM( in );
+
+	if( is_output_scale_needed )
+		SCALE_GET_PARAM( out );
+	#undef SCALE_GET_PARAM
+}
+#endif

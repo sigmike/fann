@@ -240,7 +240,36 @@ int fann_save_internal_fd(struct fann *ann, FILE * conf, const char *configurati
 	}
 	fprintf(conf, "\n");
 
+#ifndef FIXEDFANN
+	/* 2.1 */
+	#define SCALE_SAVE( what, where )										\
+		fprintf( conf, #what "_" #where "=" );								\
+		for( i = 0; i < ann->num_##where##put; i++ )						\
+			fprintf( conf, "%f ", ann->what##_##where[ i ] );				\
+		fprintf( conf, "\n" );
 
+	if(!save_as_fixed)
+	{
+		if(ann->scale_mean_in != NULL)
+		{
+			fprintf(conf, "scale_included=1\n");
+			SCALE_SAVE( scale_mean,			in )
+			SCALE_SAVE( scale_deviation,	in )
+			SCALE_SAVE( scale_new_min,		in )
+			SCALE_SAVE( scale_factor,		in )
+		
+			SCALE_SAVE( scale_mean,			out )
+			SCALE_SAVE( scale_deviation,	out )
+			SCALE_SAVE( scale_new_min,		out )
+			SCALE_SAVE( scale_factor,		out )
+		}
+		else
+			fprintf(conf, "scale_included=0\n");
+	}
+#undef SCALE_SAVE
+#endif	
+
+	/* 2.0 */
 	fprintf(conf, "neurons (num_inputs, activation_function, activation_steepness)=");
 	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++)
 	{
@@ -325,9 +354,10 @@ struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file
 struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 {
 	unsigned int num_layers, layer_size, input_neuron, i, num_connections;
-
 #ifdef FIXEDFANN
 	unsigned int decimal_point, multiplier;
+#else
+	unsigned int scale_included;
 #endif
 	struct fann_neuron *first_neuron, *neuron_it, *last_neuron, **connected_neurons;
 	fann_type *weights;
@@ -359,10 +389,20 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 			return fann_create_from_fd_1_1(conf, configuration_file);
 		}
 
-		free(read_version);
-		fann_error(NULL, FANN_E_WRONG_CONFIG_VERSION, configuration_file);
+#ifndef FIXEDFANN
+		/* Maintain compatibility with 2.0 version that doesnt have scale parameters. */
+		if(strncmp(read_version, "FANN_FLO_2.0\n", strlen("FANN_FLO_2.0\n")) != 0 &&
+		   strncmp(read_version, "FANN_FLO_2.1\n", strlen("FANN_FLO_2.1\n")) != 0)
+#else
+		if(strncmp(read_version, "FANN_FIX_2.0\n", strlen("FANN_FIX_2.0\n")) != 0 &&
+		   strncmp(read_version, "FANN_FIX_2.1\n", strlen("FANN_FIX_2.1\n")) != 0)
+#endif
+		{
+			free(read_version);
+			fann_error(NULL, FANN_E_WRONG_CONFIG_VERSION, configuration_file);
 
-		return NULL;
+			return NULL;
+		}
 	}
 
 	free(read_version);
@@ -490,6 +530,35 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 		ann->num_output--;
 	}
 
+#ifndef FIXEDFANN
+#define SCALE_LOAD( what, where )											\
+	fscanf( conf, #what "_" #where "=" );									\
+	for(i = 0; i < ann->num_##where##put; i++)								\
+	{																		\
+		if(fscanf( conf, "%f ", (float *)&ann->what##_##where[ i ] ) != 1)  \
+		{																	\
+			fann_error((struct fann_error *) ann, FANN_E_CANT_READ_CONFIG, #what "_" #where, configuration_file); \
+			fann_destroy(ann); 												\
+			return NULL;													\
+		}																	\
+	}
+	
+	if(fscanf(conf, "scale_included=%u\n", &scale_included) == 1 && scale_included == 1)
+	{
+		fann_allocate_scale(ann);
+		SCALE_LOAD( scale_mean,			in )
+		SCALE_LOAD( scale_deviation,	in )
+		SCALE_LOAD( scale_new_min,		in )
+		SCALE_LOAD( scale_factor,		in )
+	
+		SCALE_LOAD( scale_mean,			out )
+		SCALE_LOAD( scale_deviation,	out )
+		SCALE_LOAD( scale_new_min,		out )
+		SCALE_LOAD( scale_factor,		out )
+	}
+#undef SCALE_LOAD
+#endif
+	
 	/* allocate room for the actual neurons */
 	fann_allocate_neurons(ann);
 	if(ann->errno_f == FANN_E_CANT_ALLOCATE_MEM)

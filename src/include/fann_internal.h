@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "fann_data.h"
 
 #define FANN_FIX_VERSION "FANN_FIX_2.0"
-#define FANN_FLO_VERSION "FANN_FLO_2.0"
+#define FANN_FLO_VERSION "FANN_FLO_2.1"
 
 #ifdef FIXEDFANN
 #define FANN_CONF_VERSION FANN_FIX_VERSION
@@ -115,6 +115,8 @@ void fann_install_candidate(struct fann *ann);
 int fann_initialize_candidates(struct fann *ann);
 
 void fann_set_shortcut_connections(struct fann *ann);
+
+int fann_allocate_scale(struct fann *ann);
 
 /* called fann_max, in order to not interferre with predefined versions of max */
 #define fann_max(x, y) (((x) > (y)) ? (x) : (y))

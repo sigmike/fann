@@ -59,6 +59,7 @@ struct fann_error;
 	FANN_E_CANT_USE_TRAIN_ALG - Unable to use the selected training algorithm
 	FANN_E_TRAIN_DATA_SUBSET - Trying to take subset which is not within the training set
 	FANN_E_INDEX_OUT_OF_BOUND - Index is out of bound
+	FANN_E_SCALE_NOT_PRESENT - Scaling parameters not present
 */
 enum fann_errno_enum
 {
@@ -79,7 +80,8 @@ enum fann_errno_enum
 	FANN_E_TRAIN_DATA_MISMATCH,
 	FANN_E_CANT_USE_TRAIN_ALG,
 	FANN_E_TRAIN_DATA_SUBSET,
-	FANN_E_INDEX_OUT_OF_BOUND
+	FANN_E_INDEX_OUT_OF_BOUND,
+	FANN_E_SCALE_NOT_PRESENT
 };
 
 /* Group: Error Handling */
