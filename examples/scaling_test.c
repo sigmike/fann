@@ -25,9 +25,9 @@ int main( int argc, char** argv )
 		/* Just pass any param to perform scaling */
 		if( argc > 1 )
 		{
-			fann_scale2_input_vector_in( ann, data->input[i] );
+			fann_scale_input_vector_in( ann, data->input[i] );
 			calc_out = fann_run( ann, data->input[i] );
-			fann_scale2_output_vector_out( ann, calc_out );
+			fann_scale_output_vector_out( ann, calc_out );
 			printf("Scaling test -> %f, should be %f, difference=%f\n",
 				calc_out[0], data->output[i][0],
 				(float) fann_abs(calc_out[0] - data->output[i][0]));

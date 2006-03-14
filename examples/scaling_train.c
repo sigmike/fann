@@ -18,17 +18,15 @@ int main( int argc, char** argv )
 	/* Just pass any param to perform scaling */
 	if( argc > 1 )
 	{
-		fann_get_scaling_params( 
+		fann_set_scaling_params(
+		    ann,
 			data,
-			1,	/* Scale input */
-			1,	/* Scale output */
 			-1,	/* New input minimum */
 			1,	/* New input maximum */
 			-1,	/* New output minimum */
-			1,	/* New output maximum */
-			ann
-			);
-		fann_scale2_train_data( ann, data );
+			1);	/* New output maximum */
+
+		fann_scale_train( ann, data );
 	}
 	fann_train_on_data(ann, data, max_epochs, epochs_between_reports, desired_error);
 	free( data );
