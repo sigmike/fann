@@ -311,6 +311,12 @@ FANN_EXTERNAL void FANN_API fann_shuffle_train_data(struct fann_train_data *trai
  */
 FANN_EXTERNAL void FANN_API fann_scale_train( struct fann *ann, struct fann_train_data *data );
 
+/* Function: fann_scale_train
+
+   Descale input and output data based on previously calculated parameters.
+ */
+FANN_EXTERNAL void FANN_API fann_descale_train( struct fann *ann, struct fann_train_data *data );
+
 /* Function: fann_set_input_scaling_params
 
    Calculate scaling parameters for future use based on training data.
@@ -343,23 +349,35 @@ FANN_EXTERNAL int FANN_API fann_set_scaling_params(
 	float new_output_min,
 	float new_output_max);
 
-/* Function: fann_scale_input_vector_in
+/* Function: fann_clear_scaling_params
+
+   Clears scaling parameters.
+ */
+FANN_EXTERNAL int FANN_API fann_clear_scaling_params(struct fann *ann);
+
+/* Function: fann_scale_input
 
    Scale data in input vector before feed it to ann based on previously calculated parameters.
  */
-FANN_EXTERNAL void FANN_API fann_scale_input_vector_in( struct fann *ann, fann_type *vector );
+FANN_EXTERNAL void FANN_API fann_scale_input( struct fann *ann, fann_type *input_vector );
 
-/* Function: fann_scale_output_vector_in
+/* Function: fann_scale_output
 
    Scale data in output vector before feed it to ann based on previously calculated parameters.
  */
-FANN_EXTERNAL void FANN_API fann_scale_output_vector_in( struct fann *ann, fann_type *vector );
+FANN_EXTERNAL void FANN_API fann_scale_output( struct fann *ann, fann_type *output_vector );
 
-/* Function: fann_scale_output_vector_out
+/* Function: fann_descale_input
+
+   Scale data in input vector after get it from ann based on previously calculated parameters.
+ */
+FANN_EXTERNAL void FANN_API fann_descale_input( struct fann *ann, fann_type *input_vector );
+
+/* Function: fann_descale_output
 
    Scale data in output vector after get it from ann based on previously calculated parameters.
  */
-FANN_EXTERNAL void FANN_API fann_scale_output_vector_out( struct fann *ann, fann_type *vector );
+FANN_EXTERNAL void FANN_API fann_descale_output( struct fann *ann, fann_type *output_vector );
 
 #endif
 
