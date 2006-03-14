@@ -27,6 +27,12 @@ int main( int argc, char** argv )
 			1);	/* New output maximum */
 
 		fann_scale_train( ann, data );
+
+		/*		
+		fann_save_train(data, "scaled_scaling.data");
+		fann_descale_train( ann, data );
+		fann_save_train(data, "descaled_scaling.data");
+		*/
 	}
 	fann_train_on_data(ann, data, max_epochs, epochs_between_reports, desired_error);
 	free( data );

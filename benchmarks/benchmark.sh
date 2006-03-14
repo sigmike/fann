@@ -2,7 +2,7 @@
 
 date;
 
-max_seconds_training=300;
+max_seconds_training=30;
 secs_between_reports=0.1;
 
 function benchmark_algorithm() {
@@ -14,8 +14,12 @@ function benchmark_problem() {
     rm -f *_fixed.net
 #    algo="fann_rprop_stepwise"; benchmark_algorithm;
     #echo "./quality_fixed $prob.$algo.train.out_fixed_train $prob.$algo.train.out_fixed_test $prob.$algo.fixed_train.out $prob.$algo.fixed_test.out *_fixed.net"    	
-    algo="fann_cascade"; benchmark_algorithm;
-    algo="fann_cascade_quickprop"; benchmark_algorithm;
+    algo="fann_cascade_rprop_one_activation"; benchmark_algorithm;
+    algo="fann_cascade_rprop_multi_activation"; benchmark_algorithm;
+    algo="fann_cascade_quickprop_one_activation"; benchmark_algorithm;
+    algo="fann_cascade_quickprop_multi_activation"; benchmark_algorithm;
+#    algo="fann_cascade_batch_one_activation"; benchmark_algorithm;
+#    algo="fann_cascade_batch_multi_activation"; benchmark_algorithm;
     algo="fann_rprop"; benchmark_algorithm;
     algo="fann_quickprop"; benchmark_algorithm;
     #algo="fann_quickprop_stepwise"; benchmark_algorithm;

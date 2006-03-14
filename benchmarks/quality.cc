@@ -267,7 +267,7 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 							   FILE * train_out, FILE * test_out,
 							   unsigned int num_input, unsigned int num_output,
 							   unsigned int seconds_of_training, double seconds_between_reports, 
-							   enum fann_train_enum train_function)
+							   enum fann_train_enum train_function, bool multi)
 {
 	float train_error = 0;
 	float test_error = 0;
@@ -285,6 +285,17 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 	fann_set_activation_function_output(ann, FANN_LINEAR);
 	fann_set_train_error_function(ann, FANN_ERRORFUNC_LINEAR);
 
+	if(!multi)
+	{
+		fann_type steepness = 0.5;
+		fann_set_cascade_activation_steepnesses(ann, &steepness, 1);
+		fann_activationfunc_enum activation = FANN_SIGMOID_SYMMETRIC;
+		fann_set_cascade_activation_functions(ann, &activation, 1);
+		
+		fann_set_cascade_num_candidate_groups(ann, 8);
+	}
+
+/*
 	fann_set_activation_steepness_hidden(ann, 0.5);
 	fann_set_activation_steepness_output(ann, 0.5);
 
@@ -297,7 +308,7 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
  	fann_set_cascade_candidate_limit(ann, 1000.0);
 	fann_set_cascade_max_out_epochs(ann, 150);
 	fann_set_cascade_max_cand_epochs(ann, 150);
-	fann_set_cascade_num_candidate_groups(ann, 1);
+*/
 
 	calibrate_timer();
 
@@ -565,19 +576,47 @@ int main(int argc, char *argv[])
 							   num_neurons_hidden2, train_data->num_output,
 							   seconds_of_training, seconds_between_reports);
 	}
-	else if(strcmp(argv[1], "fann_cascade") == 0)
+	else if(strcmp(argv[1], "fann_cascade_rprop_one_activation") == 0)
 	{
 		quality_benchmark_cascade(train_data, test_data,
 								  train_out, test_out,
 								  train_data->num_input, train_data->num_output,
-								  seconds_of_training, seconds_between_reports, FANN_TRAIN_RPROP);
+								  seconds_of_training, seconds_between_reports, FANN_TRAIN_RPROP, false);
 	}
-	else if(strcmp(argv[1], "fann_cascade_quickprop") == 0)
+	else if(strcmp(argv[1], "fann_cascade_rprop_multi_activation") == 0)
 	{
 		quality_benchmark_cascade(train_data, test_data,
 								  train_out, test_out,
 								  train_data->num_input, train_data->num_output,
-								  seconds_of_training, seconds_between_reports, FANN_TRAIN_QUICKPROP);
+								  seconds_of_training, seconds_between_reports, FANN_TRAIN_RPROP, true);
+	}
+	else if(strcmp(argv[1], "fann_cascade_quickprop_one_activation") == 0)
+	{
+		quality_benchmark_cascade(train_data, test_data,
+								  train_out, test_out,
+								  train_data->num_input, train_data->num_output,
+								  seconds_of_training, seconds_between_reports, FANN_TRAIN_QUICKPROP, false);
+	}
+	else if(strcmp(argv[1], "fann_cascade_quickprop_multi_activation") == 0)
+	{
+		quality_benchmark_cascade(train_data, test_data,
+								  train_out, test_out,
+								  train_data->num_input, train_data->num_output,
+								  seconds_of_training, seconds_between_reports, FANN_TRAIN_QUICKPROP, true);
+	}
+	else if(strcmp(argv[1], "fann_cascade_batch_one_activation") == 0)
+	{
+		quality_benchmark_cascade(train_data, test_data,
+								  train_out, test_out,
+								  train_data->num_input, train_data->num_output,
+								  seconds_of_training, seconds_between_reports, FANN_TRAIN_BATCH, false);
+	}
+	else if(strcmp(argv[1], "fann_cascade_batch_multi_activation") == 0)
+	{
+		quality_benchmark_cascade(train_data, test_data,
+								  train_out, test_out,
+								  train_data->num_input, train_data->num_output,
+								  seconds_of_training, seconds_between_reports, FANN_TRAIN_BATCH, true);
 #ifdef LWNN
 	}
 	else if(strcmp(argv[1], "lwnn") == 0)

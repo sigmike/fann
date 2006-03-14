@@ -311,7 +311,7 @@ FANN_EXTERNAL void FANN_API fann_shuffle_train_data(struct fann_train_data *trai
  */
 FANN_EXTERNAL void FANN_API fann_scale_train( struct fann *ann, struct fann_train_data *data );
 
-/* Function: fann_scale_train
+/* Function: fann_descale_train
 
    Descale input and output data based on previously calculated parameters.
  */
