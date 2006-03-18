@@ -808,7 +808,7 @@ public:
 
         /*********************************************************************/
 
-    private:
+    protected:
         /* The neural_net class has direct access to the training data */
         friend class neural_net;
 
@@ -3268,7 +3268,7 @@ public:
                 return -1; // This should not occur except if out of memory
             }
         }
-
+    protected:
         // Pointer the encapsulated fann neural net structure
         struct fann *ann;
     };
