@@ -45,7 +45,6 @@ setup(
                             extra_objects=['../src/doublefann.o'],
                             define_macros=[("SWIG_COMPILE",None)]
                             ),
-                Extension("pyfann.helpers", ["pyfann/helper_array.cpp"])
                 ]
 )
 

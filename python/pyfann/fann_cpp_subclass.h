@@ -45,8 +45,8 @@ namespace FANN
             void set (T ** arrays, unsigned int len, unsigned int nun)
             {
                 this->arrays=arrays;
-                this->len=len;
-                this->num=num;
+                this->array_len=array_len;
+                this->array_num=array_num;
             }
             T** arrays;
             unsigned int array_len;
