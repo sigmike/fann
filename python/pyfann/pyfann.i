@@ -2,105 +2,189 @@
 %module libfann
 
 %include "typemaps.i"
+%include "stl.i"
 
 %{
-#include "fann.h"
+#include "doublefann.h"
 #include "fann_io.h"
 #include "fann_train.h"
 #include "fann_data.h"
 #include "fann_cascade.h"
 #include "fann_error.h"
 #include "fann_activation.h"
+#include "fann_cpp_subclass.h"
 %}
 
-%define CHECKED_FLOAT_ARRAY(typemap_name, expected_length)
-%typemap(in) typemap_name {
-  int i;
-  if (!PySequence_Check($input)) {
-    PyErr_SetString(PyExc_ValueError,"Expected a sequence");
-    SWIG_fail;
-  }
-  if (PySequence_Length($input) != expected_length) {
-    PyErr_SetString(PyExc_ValueError,"Sequence has wrong length");
-    SWIG_fail;
-  }
-  $1 = (float *) malloc(PySequence_Length($input)*sizeof(float));
-  for (i = 0; i < PySequence_Length($input); i++) {
-    PyObject *o = PySequence_GetItem($input,i);
-    if (PyNumber_Check(o)) {
-      $1[i] = (float) PyFloat_AsDouble(o);
-    } else {
-      PyErr_SetString(PyExc_ValueError,"Sequence elements must be numbers");      
-      Py_DECREF(o);
-      SWIG_fail;
+%define HELPER_ARRAY_TEMPLATE( templ , T, GetFunc, SetFunc, cast) 
+    %typemap(in) templ<T> *  (templ<T> temp){
+        // templ<T>* type_map in
+        int i;
+        if (!PySequence_Check($input)) {
+            PyErr_SetString(PyExc_ValueError,"Expected a sequence");
+            SWIG_fail;
+        }
+        if (PySequence_Length($input) == 0) {
+            PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected some elements");
+            SWIG_fail;
+        }
+        $1=&temp;
+        $1->array_len=PySequence_Length($input);
+        $1->array = (T *) malloc($1->array_len*sizeof(T));
+        for (i = 0; i < PySequence_Length($input); i++) {
+            PyObject *o = PySequence_GetItem($input,i);
+            if (PyNumber_Check(o)) {
+                $1->array[i] = (T) GetFunc(o);
+            } else {
+                PyErr_SetString(PyExc_ValueError,"Sequence elements must be numbers");      
+                Py_DECREF(o);
+                SWIG_fail;
+            }
+            Py_DECREF(o);
+        }
     }
-    Py_DECREF(o);
-  }
+%typemap(freearg) templ<T>* {
+    // templ<T>* type_map freearg
+    if ($1 && $1->array && $1->can_delete) 
+    {	
+        free($1->array);
+    }
 }
-%typemap(freearg) typemap_name {
-   if ($1) free($1);
+
+%typemap(out) templ<T>* {
+    // templ* type_map out
+    $result= PyList_New( $1->array_len );
+    for (unsigned int i = 0; i < $1->array_len; i++) 
+    {
+        PyObject *o = SetFunc( (cast) $1->array[i]);
+        PyList_SetItem($result,i,o);
+        Py_DECREF(o);
+    }
+    if ($1 && $1->array && $1->can_delete) 
+    {	
+        free($1->array);
+    }
+    if ($1) delete $1;
+  
+}
+
+%typemap(argout)  templ<T>* ARGOUT{
+    // templ* type_map out
+    $result= PyList_New( $1->array_len );
+    for (unsigned int i = 0; i < $1->array_len; i++) 
+    {
+        PyObject *o = SetFunc( (cast) $1->array[i]);
+        PyList_SetItem($result,i,o);
+    }
+    if ($1 && $1->array && $1->can_delete) 
+    {	
+        free($1->array);
+    }
+    if ($1) delete $1;
+}
+
+%enddef
+
+%define HELPER_ARRAY_ARRAY_TEMPLATE(templ, T,  GetFunc, SetFunc, cast) 
+%typemap(in) templ< T >* ( templ<T> temp) {
+    // templ<T>* type_map
+    unsigned int i;  
+    unsigned int j;
+    unsigned int dim;
+    unsigned int num;
+    if (!PySequence_Check($input)) {
+        PyErr_SetString(PyExc_ValueError,"Expected a sequence");
+        SWIG_fail;
+    }
+    if (PySequence_Length($input) == 0) {
+        PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected some elements");
+        SWIG_fail;
+    }
+    $1=&temp;
+    num=PySequence_Length($input);
+    $1->array_num=num;
+    dim=PySequence_Length(PySequence_GetItem($input,0));
+    $1->array_len=dim;
+    $1->arrays = (T **) calloc(num,sizeof(T*));
+  
+    for (j = 0; j< num; j++)
+    {
+        PyObject* o1=PySequence_GetItem($input,j);
+        if ((unsigned int)PySequence_Length(o1) == dim) {
+            PyErr_SetString(PyExc_ValueError,"Size mismatch. All items must be of the same size");
+            SWIG_fail;
+        }
+        $1->arrays[j] = (T*) malloc(dim*sizeof(T));
+        for (i = 0; i < dim; i++) {
+            PyObject *o = PySequence_GetItem(o1,i);
+            if (PyNumber_Check(o)) {
+                $1->arrays[j][i] = (T) GetFunc(o);
+            } else {
+                PyErr_SetString(PyExc_ValueError,"Sequence elements must be numbers");      
+                Py_DECREF(o);
+                SWIG_fail;
+            }
+            Py_DECREF(o);
+        }
+    }
+}
+%typemap(freearg) templ< T >* {
+    // templ* type_map freearg
+    unsigned int i;
+    if ($1 && $1->arrays && $1->can_delete) 
+    {
+        for (i=0; i < $1->array_num;++i)
+        	if ($1->arrays[i]) 
+                free($1->arrays[i]);
+        free($1->arrays);
+    }
+}
+%typemap(out) templ<T>* {
+    // templ* type_map out
+    $result= PyList_New( $1->array_num );
+    for (unsigned int j = 0; j < $1->array_num; ++j) 
+    {
+        PyObject *l= PyList_New( $1->array_len );
+        PyList_SetItem($result,j,l);
+        for (unsigned int i = 0; i < $1->array_len; i++) 
+        {
+            PyObject *o = SetFunc($1->arrays[j][i] );
+            //PyObject *o = SetFunc($1->arrays[i][j] );
+            PyList_SetItem(l,i,o);
+        }
+    }
+    unsigned int i;
+    if ($1 && $1->arrays && $1->can_delete) 
+    {
+        for (i=0; i < $1->array_num;++i)
+        	if ($1->arrays[i]) 
+                free($1->arrays[i]);
+        free($1->arrays);
+    }
+    if ($1) delete $1;
 }
 %enddef
 
-CHECKED_FLOAT_ARRAY(fann_type *input, arg1->num_input)
-CHECKED_FLOAT_ARRAY(fann_type *desired_output, arg1->num_output)
+%import "../../src/include/doublefann.h"
+%import "../../src/include/fann.h"
+%import "../../src/include/fann_io.h"
+%import "../../src/include/fann_train.h"
+%import "../../src/include/fann_data.h"
+%import "../../src/include/fann_cascade.h"
+%import "../../src/include/fann_error.h"
+%import "../../src/include/fann_activation.h"
 
-%typemap(in) int[ANY] {
-  int i;
-  if (!PySequence_Check($input)) {
-    PyErr_SetString(PyExc_ValueError,"Expected a sequence");
-    SWIG_fail;
-  }
-  if (PySequence_Length($input) == 0) {
-    PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected some elements");
-    SWIG_fail;
-  }
-  $1 = (unsigned int *) malloc(PySequence_Length($input)*sizeof(unsigned int));
-  for (i = 0; i < PySequence_Length($input); i++) {
-    PyObject *o = PySequence_GetItem($input,i);
-    if (PyNumber_Check(o)) {
-      $1[i] = (int) PyInt_AsLong(o);
-    } else {
-      PyErr_SetString(PyExc_ValueError,"Sequence elements must be numbers");      
-      Py_DECREF(o);
-      SWIG_fail;
-    }
-    Py_DECREF(o);
-  }
-}
-%typemap(freearg) int[ANY] {
-   if ($1) free($1);
-}
-%apply int[ANY] {int *, unsigned int*};
+HELPER_ARRAY_TEMPLATE( FANN::helper_array, unsigned int, PyInt_AsLong    , PyInt_FromLong    , long   );
+HELPER_ARRAY_TEMPLATE( FANN::helper_array, fann_type   , PyFloat_AsDouble, PyFloat_FromDouble, double );
 
-typedef double fann_type; 
+HELPER_ARRAY_ARRAY_TEMPLATE( FANN::helper_array_array, fann_type   , PyFloat_AsDouble, PyFloat_FromDouble, double );
 
-%typemap(out) PyObject* {
-  $result = $1;
-}
+%rename(neural_net_parent) FANN::neural_net;
+%rename(neural_net) FANN::Neural_net;
 
-// create_array is used instead
-%ignore fann_create;
-%ignore fann_create_shortcut;
+%rename(training_data_parent) FANN::training_data;
+%rename(training_data) FANN::Training_data;
 
-%rename(fann_run_old) fann_run;
-%rename(fann_run) fann_run2;
+%include "../../src/include/fann_cpp.h"
+%include "fann_cpp_subclass.h"
 
-%rename(fann_test_old) fann_test;
-%rename(fann_test) fann_test2;
-
-#define FANN_INCLUDE
-%include "../../src/include/fann.h"
-%include "../../src/include/fann_data.h"
-%include "../../src/include/fann_activation.h"
-%include "../../src/include/fann_train.h"
-%include "../../src/include/fann_io.h"
-%include "../../src/include/fann_cascade.h"
-%include "../../src/include/fann_error.h"
-
-// Helper functions
-PyObject* fann_run2(struct fann *ann, fann_type *input);
-PyObject* fann_test2(struct fann *ann, fann_type *input, fann_type *desired_output);
-PyObject* get_train_data_input(struct fann_train_data *ann, int row);
-PyObject* get_train_data_output(struct fann_train_data *ann, int row);
-int fann_is_NULL(struct fann *ann);
+/* ex: set ts=4: set sw=4: set cin */

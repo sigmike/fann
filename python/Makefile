@@ -32,4 +32,8 @@ install: build
 test: build
 	@-mkdir examples/nets
 	@$(PYTHON) setup.py install --install-lib examples 
-	@cd examples && $(PYTHON) simple_train.py && $(PYTHON) mushroom.py
+	@cd examples && \
+		$(PYTHON) simple_train.py && \
+		$(PYTHON) mushroom.py &&\
+		$(PYTHON) cascade_train.py
+.PHONY: test build install msvc clean linux all

@@ -8,8 +8,6 @@ You are required to have swig and python development files
 installed. After you compiled the fann library...
 
 
-
-<<<<<<< INSTALL
 BUILDING AND INSTALLING USING MAKE (preferred)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 run the following command:

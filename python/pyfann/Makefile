@@ -15,8 +15,8 @@ _%.so: pyfann_wrap.o fann_helper.o
 %.o: %.c 
 	gcc -fPIC -shared -c $< -I/usr/include/$(PYTHON)/ -I$(FANN_DIR)/src/include/
 
-pyfann_wrap.c: pyfann.i 
-	swig -python $<
+pyfann_wrap.cpp: pyfann.i 
+	swig -c++ -python $<
 
 clean:
-	rm -f $(TARGETS) *_wrap.* fann_helper.o *.py{c,o} *.so libfann.*
+	rm -f $(TARGETS) *_wrap.* *.py{c,o} *.so libfann.*

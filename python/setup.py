@@ -20,8 +20,8 @@ documented, and fast.
 """
 
 #These lines are needed to circumvent a bug in distutils
-swig_cmd = 'swig -python pyfann/pyfann.i'
-#print 'running SWIG:', swig_cmd
+swig_cmd = 'swig -c++ -python pyfann/pyfann.i'
+print 'Running SWIG before:', swig_cmd
 os.system(swig_cmd)
 
 #This utility function searches for files
@@ -39,7 +39,13 @@ setup(
     maintainer_email='gil@megidish.net & hawk.it@tiscali,it',
     url='http://sourceforge.net/projects/fann/',
     license='GNU LESSER GENERAL PUBLIC LICENSE (LGPL)',
-    py_modules=['pyfann.libfann','pyfann.fann'],
-    ext_modules=[Extension('pyfann._libfann',['pyfann/pyfann.i','pyfann/fann_helper.c'], include_dirs=['../src/include'], extra_objects=['../src/doublefann.o']) ]
+    py_modules=['pyfann.libfann'],
+    ext_modules=[Extension('pyfann._libfann',['pyfann/pyfann_wrap.cxx'], 
+                            include_dirs=['../src/include'], 
+                            extra_objects=['../src/doublefann.o'],
+                            define_macros=[("SWIG_COMPILE",None)]
+                            ),
+                Extension("pyfann.helpers", ["pyfann/helper_array.cpp"])
+                ]
 )
 
