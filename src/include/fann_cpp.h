@@ -2533,7 +2533,7 @@ public:
            This algorithm adds neurons to the neural network while training, which means that it
            needs to start with an ANN without any hidden layers. The neural network should also use
            shortcut connections, so <create_shortcut> should be used to create the ANN like this:
-           >net.create_shortcut(2, train_data.num_input_train_data(), train_data.num_input_train_data());
+           >net.create_shortcut(2, train_data.num_input_train_data(), train_data.num_output_train_data());
            
            This training uses the parameters set using the set_cascade_..., but it also uses another
            training algorithm as it's internal training algorithm. This algorithm can be set to either
@@ -3150,6 +3150,191 @@ public:
                 fann_set_cascade_num_candidate_groups(ann, cascade_num_candidate_groups);
             }
         }
+
+        /*********************************************************************/
+
+#ifndef FIXEDFANN
+        /* Method: scale_train
+
+           Scale input and output data based on previously calculated parameters.
+
+           See also:
+   		        <descale_train>, <fann_scale_train>
+
+	        This function appears in FANN >= 2.1.0.
+         */
+        void scale_train(training_data &data)
+        {
+            if (ann != NULL)
+            {
+                fann_scale_train(ann, data.train_data);
+            }
+        }
+
+        /* Method: descale_train
+
+           Descale input and output data based on previously calculated parameters.
+
+           See also:
+   		        <scale_train>, <fann_descale_train>
+
+	        This function appears in FANN >= 2.1.0.
+         */
+        void descale_train(training_data &data)
+        {
+            if (ann != NULL)
+            {
+                fann_descale_train(ann, data.train_data);
+            }
+        }
+
+        /* Method: set_input_scaling_params
+
+           Calculate scaling parameters for future use based on training data.
+
+           See also:
+   		        <set_output_scaling_params>, <fann_set_input_scaling_params>
+
+	        This function appears in FANN >= 2.1.0.
+         */
+        bool set_input_scaling_params(const training_data &data, float new_input_min, float new_input_max)
+        {
+            bool status = false;
+            if (ann != NULL)
+            {
+                status = (fann_set_input_scaling_params(ann, data.train_data, new_input_min, new_input_max) != -1);
+            }
+            return status;
+        }
+
+        /* Method: set_output_scaling_params
+
+           Calculate scaling parameters for future use based on training data.
+
+           See also:
+   		        <set_input_scaling_params>, <fann_set_output_scaling_params>
+
+	        This function appears in FANN >= 2.1.0.
+         */
+        bool set_output_scaling_params(const training_data &data, float new_output_min, float new_output_max)
+        {
+            bool status = false;
+            if (ann != NULL)
+            {
+                status = (fann_set_output_scaling_params(ann, data.train_data, new_output_min, new_output_max) != -1);
+            }
+            return status;
+        }
+
+        /* Method: set_scaling_params
+
+           Calculate scaling parameters for future use based on training data.
+
+           See also:
+   		        <clear_scaling_params>, <fann_set_scaling_params>
+
+	        This function appears in FANN >= 2.1.0.
+         */
+        bool set_scaling_params(const training_data &data,
+	        float new_input_min, float new_input_max, float new_output_min, float new_output_max)
+        {
+            bool status = false;
+            if (ann != NULL)
+            {
+                status = (fann_set_scaling_params(ann, data.train_data,
+                    new_input_min, new_input_max, new_output_min, new_output_max) != -1);
+            }
+            return status;
+        }
+
+        /* Method: clear_scaling_params
+
+           Clears scaling parameters.
+
+           See also:
+   		        <set_scaling_params>, <fann_clear_scaling_params>
+
+	        This function appears in FANN >= 2.1.0.
+         */
+        bool clear_scaling_params()
+        {
+            bool status = false;
+            if (ann != NULL)
+            {
+                status = (fann_clear_scaling_params(ann) != -1);
+            }
+            return status;
+        }
+
+        /* Method: scale_input
+
+           Scale data in input vector before feed it to ann based on previously calculated parameters.
+
+           See also:
+   		        <descale_input>, <scale_output>, <fann_scale_input>
+
+	        This function appears in FANN >= 2.1.0.
+         */
+        void scale_input(fann_type *input_vector)
+        {
+            if (ann != NULL)
+            {
+                fann_scale_input(ann, input_vector );
+            }
+        }
+
+        /* Method: scale_output
+
+           Scale data in output vector before feed it to ann based on previously calculated parameters.
+
+           See also:
+   		        <descale_output>, <scale_input>, <fann_scale_output>
+
+	        This function appears in FANN >= 2.1.0.
+         */
+        void scale_output(fann_type *output_vector)
+        {
+            if (ann != NULL)
+            {
+                fann_scale_output(ann, output_vector );
+            }
+        }
+
+        /* Method: descale_input
+
+           Scale data in input vector after get it from ann based on previously calculated parameters.
+
+           See also:
+   		        <scale_input>, <descale_output>, <fann_descale_input>
+
+	        This function appears in FANN >= 2.1.0.
+         */
+        void descale_input(fann_type *input_vector)
+        {
+            if (ann != NULL)
+            {
+                fann_descale_input(ann, input_vector );
+            }
+        }
+
+        /* Method: descale_output
+
+           Scale data in output vector after get it from ann based on previously calculated parameters.
+
+           See also:
+   		        <scale_output>, <descale_input>, <fann_descale_output>
+
+	        This function appears in FANN >= 2.1.0.
+         */
+        void descale_output(fann_type *output_vector)
+        {
+            if (ann != NULL)
+            {
+                fann_descale_output(ann, output_vector );
+            }
+        }
+
+#endif /* FIXEDFANN */
 
         /*********************************************************************/
 
