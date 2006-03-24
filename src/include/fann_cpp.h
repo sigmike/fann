@@ -637,7 +637,14 @@ namespace FANN
             A copy of the data is made so there are no restrictions on the
             allocation of the input/output data and the caller is responsible
             for the deallocation of the data pointed to by input and output.
-            
+
+           Parameters:
+             num_data      - The number of training data
+             num_input     - The number of inputs per training data
+             num_output    - The number of ouputs per training data
+             input      - The set of inputs (a pointer to an array of pointers to arrays of floating point data)
+             output     - The set of desired outputs (a pointer to an array of pointers to arrays of floating point data)
+
             See also:
                 <get_input>, <get_output>
         */
@@ -717,7 +724,7 @@ public:
         void create_train_from_callback(unsigned int num_data,
                                                   unsigned int num_input,
                                                   unsigned int num_output,
-                                                  FANN_EXTERNAL void (FANN_API *user_function)( unsigned int,
+                                                  void (FANN_API *user_function)( unsigned int,
                                                                          unsigned int,
                                                                          unsigned int,
                                                                          fann_type * ,
