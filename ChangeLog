@@ -13,7 +13,9 @@ libfann (2.1.0) stable; urgency=low
 	* Fixed bias count for shortcut networks in fann_get_layer_array and fann_get_bias_array
 	* Minor fixes of FANN_EXTERNAL/FANN_API for windows dll compatibility
 	* More advanced scaling functionality
-	
+	* Added advanced scaling functionality to fann_cpp.h
+	* Additional documentation and fix of FANN_EXTERNAL for create train callback in fann_cpp.h
+
 libfann (2.0.0) stable; urgency=low
 	* Added Delphi bindings
 	* Cascade training
