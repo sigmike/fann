@@ -312,6 +312,7 @@ namespace FANN
             helper_array<fann_type>* res= new helper_array<fann_type>;
             res->array=fann_run(ann, input->array);
             res->array_len=ann->num_output;
+            res->can_delete=false;
             return res;
          }
 
@@ -359,14 +360,14 @@ namespace FANN
 
          helper_array<fann_type>* test(helper_array<fann_type> *input, helper_array<fann_type>* desired_output)
          {
-            helper_array<fann_type>* res= new helper_array<fann_type>;
             if (ann == NULL)
             {
                 return NULL;
             }
+            helper_array<fann_type>* res= new helper_array<fann_type>;
             res->array=fann_test(ann, input->array, desired_output->array);
             res->array_len=ann->num_output;
-	    res->can_delete=false;
+            res->can_delete=false;
             return res;
         }
 
