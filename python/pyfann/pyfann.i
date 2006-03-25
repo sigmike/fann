@@ -57,7 +57,6 @@
     {
         PyObject *o = SetFunc( (cast) $1->array[i]);
         PyList_SetItem($result,i,o);
-        Py_DECREF(o);
     }
     if ($1 && $1->array && $1->can_delete) 
     {	

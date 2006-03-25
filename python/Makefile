@@ -4,7 +4,8 @@
 ROOT=/
 PYTHON=python
 
-all: build
+SOURCES = pyfann/*.i pyfann/*.h
+all: build-stamp
 
 linux:
 	@(cd pyfann && make)
@@ -13,27 +14,31 @@ clean:
 	@(cd pyfann && make clean)
 	@rm -fr dist build setup.pyc
 	@rm -fr examples/{nets,pyfann/}
-
+	@rm -f build-stamp
+	
 msvc:
 	@(cd pyfann && make -f makefile.msvc)
 
-build: ../src/fann.o
+build-stamp: ../src/doublefann.o $(SOURCES)
 	@$(PYTHON) setup.py build
+	@touch build-stamp
 
-install: build
+install: build-stamp
 	@$(PYTHON) setup.py install --root $(ROOT)
 
-../src/fann.o: ../Makefile
+../src/doublefann.o: ../Makefile
 	@(cd .. && make )
 
 ../Makefile:
 	@(cd .. && ./configure)
 
-test: build
+copy: build-stamp
 	@-mkdir examples/nets
-	@$(PYTHON) setup.py install --install-lib examples 
+	@cp build/lib.*/pyfann/ -a examples
+    
+test: copy
 	@cd examples && \
 		$(PYTHON) simple_train.py && \
 		$(PYTHON) mushroom.py &&\
 		$(PYTHON) cascade_train.py
-.PHONY: test build install msvc clean linux all
+.PHONY: test install msvc clean linux all
