@@ -423,7 +423,9 @@ FANN_EXTERNAL int FANN_API fann_clear_scaling_params(struct fann *ann);
    
    See also:
      <fann_descale_input>, <fann_scale_output>
- */
+
+    This function appears in FANN >= 2.1.0
+*/
 FANN_EXTERNAL void FANN_API fann_scale_input( struct fann *ann, fann_type *input_vector );
 
 /* Function: fann_scale_output
