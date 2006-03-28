@@ -983,7 +983,7 @@ FANN_EXTERNAL void FANN_API fann_descale_input( struct fann *ann, fann_type *inp
 }
 
 /*
- * Scale data in output vector after get it from ann based on previously calculated parameters.
+ * Descale data in output vector after get it from ann based on previously calculated parameters.
  */
 FANN_EXTERNAL void FANN_API fann_descale_output( struct fann *ann, fann_type *output_vector )
 {

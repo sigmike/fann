@@ -308,18 +308,47 @@ FANN_EXTERNAL void FANN_API fann_shuffle_train_data(struct fann_train_data *trai
 /* Function: fann_scale_train
 
    Scale input and output data based on previously calculated parameters.
- */
+   
+   Parameters:
+     ann      - ann for which were calculated trained parameters before
+     data     - training data that needs to be scaled
+     
+   See also:
+   	<fann_descale_train>, <fann_set_scaling_params>
+
+    This function appears in FANN >= 2.1.0
+*/
 FANN_EXTERNAL void FANN_API fann_scale_train( struct fann *ann, struct fann_train_data *data );
 
 /* Function: fann_descale_train
 
    Descale input and output data based on previously calculated parameters.
+   
+   Parameters:
+     ann      - ann for which were calculated trained parameters before
+     data     - training data that needs to be descaled
+     
+   See also:
+   	<fann_scale_train>, <fann_set_scaling_params>
+
+    This function appears in FANN >= 2.1.0
  */
 FANN_EXTERNAL void FANN_API fann_descale_train( struct fann *ann, struct fann_train_data *data );
 
 /* Function: fann_set_input_scaling_params
 
-   Calculate scaling parameters for future use based on training data.
+   Calculate input scaling parameters for future use based on training data.
+   
+   Parameters:
+   	 ann           - ann for wgich parameters needs to be calculated
+   	 data          - training data that will be used to calculate scaling parameters
+   	 new_input_min - desired lower bound in input data after scaling (not strictly followed)
+   	 new_input_max - desired upper bound in input data after scaling (not strictly followed)
+   	 
+   See also:
+   	 <fann_set_output_scaling_params>
+
+    This function appears in FANN >= 2.1.0
  */
 FANN_EXTERNAL int FANN_API fann_set_input_scaling_params(
 	struct fann *ann,
@@ -329,7 +358,18 @@ FANN_EXTERNAL int FANN_API fann_set_input_scaling_params(
 
 /* Function: fann_set_output_scaling_params
 
-   Calculate scaling parameters for future use based on training data.
+   Calculate output scaling parameters for future use based on training data.
+   
+   Parameters:
+   	 ann            - ann for wgich parameters needs to be calculated
+   	 data           - training data that will be used to calculate scaling parameters
+   	 new_output_min - desired lower bound in input data after scaling (not strictly followed)
+   	 new_output_max - desired upper bound in input data after scaling (not strictly followed)
+   	 
+   See also:
+   	 <fann_set_input_scaling_params>
+
+    This function appears in FANN >= 2.1.0
  */
 FANN_EXTERNAL int FANN_API fann_set_output_scaling_params(
 	struct fann *ann,
@@ -339,7 +379,20 @@ FANN_EXTERNAL int FANN_API fann_set_output_scaling_params(
 
 /* Function: fann_set_scaling_params
 
-   Calculate scaling parameters for future use based on training data.
+   Calculate input and output scaling parameters for future use based on training data.
+
+   Parameters:
+   	 ann            - ann for wgich parameters needs to be calculated
+   	 data           - training data that will be used to calculate scaling parameters
+   	 new_input_min  - desired lower bound in input data after scaling (not strictly followed)
+   	 new_input_max  - desired upper bound in input data after scaling (not strictly followed)
+   	 new_output_min - desired lower bound in input data after scaling (not strictly followed)
+   	 new_output_max - desired upper bound in input data after scaling (not strictly followed)
+   	 
+   See also:
+   	 <fann_set_input_scaling_params>, <fann_set_output_scaling_params>
+
+    This function appears in FANN >= 2.1.0
  */
 FANN_EXTERNAL int FANN_API fann_set_scaling_params(
 	struct fann *ann,
@@ -352,30 +405,69 @@ FANN_EXTERNAL int FANN_API fann_set_scaling_params(
 /* Function: fann_clear_scaling_params
 
    Clears scaling parameters.
+   
+   Parameters:
+     ann - ann for which to clear scaling parameters
+
+    This function appears in FANN >= 2.1.0
  */
 FANN_EXTERNAL int FANN_API fann_clear_scaling_params(struct fann *ann);
 
 /* Function: fann_scale_input
 
    Scale data in input vector before feed it to ann based on previously calculated parameters.
+   
+   Parameters:
+     ann          - for which scaling parameters were calculated
+     input_vector - input vector that will be scaled
+   
+   See also:
+     <fann_descale_input>, <fann_scale_output>
  */
 FANN_EXTERNAL void FANN_API fann_scale_input( struct fann *ann, fann_type *input_vector );
 
 /* Function: fann_scale_output
 
    Scale data in output vector before feed it to ann based on previously calculated parameters.
+   
+   Parameters:
+     ann           - for which scaling parameters were calculated
+     output_vector - output vector that will be scaled
+   
+   See also:
+     <fann_descale_output>, <fann_scale_input>
+
+    This function appears in FANN >= 2.1.0
  */
 FANN_EXTERNAL void FANN_API fann_scale_output( struct fann *ann, fann_type *output_vector );
 
 /* Function: fann_descale_input
 
    Scale data in input vector after get it from ann based on previously calculated parameters.
+   
+   Parameters:
+     ann          - for which scaling parameters were calculated
+     input_vector - input vector that will be descaled
+   
+   See also:
+     <fann_scale_input>, <fann_descale_output>
+
+    This function appears in FANN >= 2.1.0
  */
 FANN_EXTERNAL void FANN_API fann_descale_input( struct fann *ann, fann_type *input_vector );
 
 /* Function: fann_descale_output
 
    Scale data in output vector after get it from ann based on previously calculated parameters.
+   
+   Parameters:
+     ann           - for which scaling parameters were calculated
+     output_vector - output vector that will be descaled
+   
+   See also:
+     <fann_scale_output>, <fann_descale_input>
+
+    This function appears in FANN >= 2.1.0
  */
 FANN_EXTERNAL void FANN_API fann_descale_output( struct fann *ann, fann_type *output_vector );
 
