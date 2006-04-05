@@ -33,7 +33,7 @@ install: build-stamp
 	@(cd .. && ./configure)
 
 copy: build-stamp
-	@-mkdir examples/nets
+	@- [ -d examples/nets ] || mkdir examples/nets
 	@cp build/lib.*/pyfann/ -a examples
     
 test: copy
