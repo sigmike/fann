@@ -19,6 +19,7 @@ clean:
 msvc:
 	@(cd pyfann && make -f makefile.msvc)
 
+build:
 build-stamp: ../src/doublefann.o $(SOURCES)
 	@$(PYTHON) setup.py build
 	@touch build-stamp
