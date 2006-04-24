@@ -28,17 +28,14 @@ int main( int argc, char** argv )
 			fann_scale_input( ann, data->input[i] );
 			calc_out = fann_run( ann, data->input[i] );
 			fann_descale_output( ann, calc_out );
-			printf("Scaling test -> %f, should be %f, difference=%f\n",
-				calc_out[0], data->output[i][0],
-				(float) fann_abs(calc_out[0] - data->output[i][0]));
 		}
 		else
 		{
 			calc_out = fann_test(ann, data->input[i], data->output[i]);
-			printf("Scaling test (%f, %f, %f) -> %f, should be %f, difference=%f\n",
-				data->input[i][0], data->input[i][1], data->input[i][2], calc_out[0], data->output[i][0],
-				(float) fann_abs(calc_out[0] - data->output[i][0]));
 		}
+		printf("Result %f original %f error %f\n",
+			calc_out[0], data->output[i][0],
+			(float) fann_abs(calc_out[0] - data->output[i][0]));
 	}
 	printf("Cleaning up.\n");
 	fann_destroy_train(data);
