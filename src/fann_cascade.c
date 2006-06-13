@@ -439,8 +439,8 @@ int fann_initialize_candidates(struct fann *ann)
 	}
 	for(i = first_candidate_connection; i < num_connections; i++)
 	{
-		ann->weights[i] = fann_random_weight();
-		/*ann->weights[i] = fann_rand(-0.25,0.25);*/
+		/*ann->weights[i] = fann_random_weight();*/
+		ann->weights[i] = fann_rand(-4.0,4.0);
 		ann->train_slopes[i] = 0;
 		ann->prev_steps[i] = 0;
 		ann->prev_train_slopes[i] = initial_slope;

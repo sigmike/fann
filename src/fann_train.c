@@ -794,7 +794,7 @@ FANN_EXTERNAL struct fann_layer* FANN_API fann_get_layer(struct fann *ann, int l
 
 FANN_EXTERNAL struct fann_neuron* FANN_API fann_get_neuron_layer(struct fann *ann, struct fann_layer* layer, int neuron)
 {
-	if(neuron >= (layer->first_neuron - layer->last_neuron))
+	if(neuron >= (layer->last_neuron - layer->first_neuron))
 	{
 		fann_error((struct fann_error *) ann, FANN_E_INDEX_OUT_OF_BOUND, neuron);
 		return NULL;	
