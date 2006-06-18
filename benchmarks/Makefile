@@ -11,7 +11,7 @@ LFLAGS = -lm
 
 JNEURALDIR = ../../libraries/jneural/
 
-LWNNDIR = ../../libraries/lwneuralnet-0.6/source/
+LWNNDIR = ../../libraries/lwneuralnet-0.8/source/
 
 all: $(TARGETS)
 

@@ -63,8 +63,9 @@ void update_error(fann_type * output, fann_type * desired_output, unsigned int n
 		{
 			num_bit_fail++;
 		}
+
+		num_errors++;
 	}
-	num_errors++;
 }
 
 double mean_error()
@@ -289,7 +290,7 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 	{
 		fann_type steepness = 0.5;
 		fann_set_cascade_activation_steepnesses(ann, &steepness, 1);
-		fann_activationfunc_enum activation = FANN_SIGMOID_SYMMETRIC;
+		fann_activationfunc_enum activation = FANN_SIGMOID;
 		fann_set_cascade_activation_functions(ann, &activation, 1);
 		
 		fann_set_cascade_num_candidate_groups(ann, 8);
@@ -483,6 +484,14 @@ int main(int argc, char *argv[])
 
 	train_data = fann_read_train_from_file(argv[2]);
 	test_data = fann_read_train_from_file(argv[3]);
+
+	/*
+	fann *ann = fann_create_standard(2, train_data->num_input, train_data->num_output);
+	fann_set_scaling_params(ann, train_data, 0, 1, 0, 1);
+	fann_scale_train(ann, train_data);
+	fann_scale_train(ann, test_data);
+	fann_destroy(ann);
+	*/
 
 	if(strlen(argv[4]) == 1 && argv[4][0] == '-')
 	{
