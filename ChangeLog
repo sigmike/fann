@@ -3,7 +3,7 @@ libfann (2.1.0) stable; urgency=low
 	* Amended fann_create_train_from_callback for dynamic link library compatibility
 	* Added fann_get_activation_function and fann_get_activation_steepness matching the set functions
 	* Added a set of functions to allow restricted access to neural network layout, connections, and weights.
-	* Added FANN_SIN_SYMMETRIC and FANN_COS_SYMMETRIC activation functions
+	* Added FANN_SIN, FANN_COS, FANN_SIN_SYMMETRIC and FANN_COS_SYMMETRIC activation functions
 	* Changed the create_array functions to indicate that the layers array parameter is const i.e. input only
 	* Added FANN_API calling convention to fann_get_bit_fail and two cascade functions for dll compatibility
 	* Added FANN_EXTERNAL/FANN_API calling convention to previous extension functions for dll compatibility
@@ -15,6 +15,12 @@ libfann (2.1.0) stable; urgency=low
 	* More advanced scaling functionality
 	* Added advanced scaling functionality to fann_cpp.h
 	* Additional documentation and fix of FANN_EXTERNAL for create train callback in fann_cpp.h
+	* Fixed problems with FANN_GAUSSIAN and FANN_GAUSSIAN_SYMMETRIC activation functions
+	* Added semi Widrow + Nguyen to initialization of cascade weights
+	* Fixed problem with RPROP, which makes it go suboptimal in the beginning
+	* Changed definition of MSE, so that it calculates a value pr output, and not a sum for all outputs. (MSE = MSE/ann->num_output)
+	* Added more benchmark data
+	* Changed so that RPROP and Quickprop may not alter a weight to more than 1500
 
 libfann (2.0.0) stable; urgency=low
 	* Added Delphi bindings
