@@ -49,12 +49,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /* FANN_GAUSSIAN */
 /* #define fann_gaussian(steepness, sum) (exp(-sum * steepness * sum * steepness)) */
 #define fann_gaussian_real(sum) (exp(-sum * sum))
-#define fann_gaussian_derive(steepness, value, sum) (-2.0f * sum * value * steepness)
+#define fann_gaussian_derive(steepness, value, sum) (-2.0f * sum * value * steepness * steepness)
 
 /* FANN_GAUSSIAN_SYMMETRIC */
 /* #define fann_gaussian_symmetric(steepness, sum) ((exp(-sum * steepness * sum * steepness)*2.0)-1.0) */
 #define fann_gaussian_symmetric_real(sum) ((exp(-sum * sum)*2.0f)-1.0f)
-#define fann_gaussian_symmetric_derive(steepness, value, sum) (-2.0f * sum * (value+1.0f) * steepness)
+#define fann_gaussian_symmetric_derive(steepness, value, sum) (-2.0f * sum * (value+1.0f) * steepness * steepness)
 
 /* FANN_ELLIOT */
 /* #define fann_elliot(steepness, sum) (((sum * steepness) / 2.0f) / (1.0f + fann_abs(sum * steepness)) + 0.5f) */
@@ -67,14 +67,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define fann_elliot_symmetric_derive(steepness, value, sum) (steepness * 1.0f / ((1.0f + fann_abs(sum)) * (1.0f + fann_abs(sum))))
 
 /* FANN_SIN_SYMMETRIC */
-#define fann_sin_real(sum) (sin(sum))
-#define fann_sin_derive(steepness, sum) (steepness*cos(sum*steepness))
+#define fann_sin_symmetric_real(sum) (sin(sum))
+#define fann_sin_symmetric_derive(steepness, sum) (steepness*cos(steepness*sum))
 
 /* FANN_COS_SYMMETRIC */
-#define fann_cos_real(sum) (cos(sum))
-#define fann_cos_derive(steepness, sum) (steepness*-sin(steepness*sum))
+#define fann_cos_symmetric_real(sum) (cos(sum))
+#define fann_cos_symmetric_derive(steepness, sum) (steepness*-sin(steepness*sum))
 
-#define fann_activation_switch(ann, activation_function, value, result) \
+/* FANN_SIN */
+#define fann_sin_real(sum) (sin(sum)/2.0f+0.5f)
+#define fann_sin_derive(steepness, sum) (steepness*cos(steepness*sum)/2.0f)
+
+/* FANN_COS */
+#define fann_cos_real(sum) (cos(sum)/2.0f+0.5f)
+#define fann_cos_derive(steepness, sum) (steepness*-sin(steepness*sum)/2.0f)
+
+#define fann_activation_switch(activation_function, value, result) \
 switch(activation_function) \
 { \
 	case FANN_LINEAR: \
@@ -117,9 +125,19 @@ switch(activation_function) \
 		result = (fann_type)fann_elliot_symmetric_real(value); \
         break; \
 	case FANN_SIN_SYMMETRIC: \
-		result = (fann_type)fann_sin_real(value); \
+		result = (fann_type)fann_sin_symmetric_real(value); \
+        break; \
 	case FANN_COS_SYMMETRIC: \
+		result = (fann_type)fann_cos_symmetric_real(value); \
+        break; \
+	case FANN_SIN: \
+		result = (fann_type)fann_sin_real(value); \
+        break; \
+	case FANN_COS: \
 		result = (fann_type)fann_cos_real(value); \
+        break; \
+	case FANN_GAUSSIAN_STEPWISE: \
+        result = 0; \
         break; \
 }
 

@@ -133,14 +133,15 @@ int fann_allocate_scale(struct fann *ann);
 
 #define fann_mult(x,y) ((x*y) >> decimal_point)
 #define fann_div(x,y) (((x) << decimal_point)/y)
-#define fann_random_weight() (fann_type)(fann_rand((0-multiplier)/10,multiplier/10))
-/* sigmoid calculated with use of floats, only as reference */
+#define fann_random_weight() (fann_type)(fann_rand(0,multiplier/10))
+#define fann_random_bias_weight() (fann_type)(fann_rand((0-multiplier)/10,multiplier/10))
 
 #else
 
 #define fann_mult(x,y) (x*y)
 #define fann_div(x,y) (x/y)
 #define fann_random_weight() (fann_rand(-0.1f,0.1f))
+#define fann_random_bias_weight() (fann_rand(-0.1f,0.1f))
 
 #endif
 

@@ -50,10 +50,10 @@ fann_type fann_activation_derived(unsigned int activation_function,
 			value = fann_clip(value, -0.98f, 0.98f);
 			return (fann_type) fann_sigmoid_symmetric_derive(steepness, value);
 		case FANN_GAUSSIAN:
-			value = fann_clip(value, 0.01f, 0.99f);
+			/* value = fann_clip(value, 0.01f, 0.99f); */
 			return (fann_type) fann_gaussian_derive(steepness, value, sum);
 		case FANN_GAUSSIAN_SYMMETRIC:
-			value = fann_clip(value, -0.98f, 0.98f);
+			/* value = fann_clip(value, -0.98f, 0.98f); */
 			return (fann_type) fann_gaussian_symmetric_derive(steepness, value, sum);
 		case FANN_ELLIOT:
 			value = fann_clip(value, 0.01f, 0.99f);
@@ -62,8 +62,12 @@ fann_type fann_activation_derived(unsigned int activation_function,
 			value = fann_clip(value, -0.98f, 0.98f);
 			return (fann_type) fann_elliot_symmetric_derive(steepness, value, sum);
 		case FANN_SIN_SYMMETRIC:
-			return (fann_type) fann_sin_derive(steepness, sum);
+			return (fann_type) fann_sin_symmetric_derive(steepness, sum);
 		case FANN_COS_SYMMETRIC:
+			return (fann_type) fann_cos_symmetric_derive(steepness, sum);
+		case FANN_SIN:
+			return (fann_type) fann_sin_derive(steepness, sum);
+		case FANN_COS:
 			return (fann_type) fann_cos_derive(steepness, sum);
 		case FANN_THRESHOLD:
 			fann_error(NULL, FANN_E_CANT_TRAIN_ACTIVATION);
@@ -79,7 +83,7 @@ fann_type fann_activation(struct fann * ann, unsigned int activation_function, f
 						  fann_type value)
 {
 	value = fann_mult(steepness, value);
-	fann_activation_switch(ann, activation_function, value, value);
+	fann_activation_switch(activation_function, value, value);
 	return value;
 }
 
@@ -126,6 +130,8 @@ fann_type fann_update_MSE(struct fann *ann, struct fann_neuron* neuron, fann_typ
 		case FANN_GAUSSIAN_STEPWISE:
 		case FANN_ELLIOT:
 		case FANN_LINEAR_PIECE:
+		case FANN_SIN:
+		case FANN_COS:
 			break;
 	}
 
@@ -268,8 +274,9 @@ void fann_compute_MSE(struct fann *ann, fann_type * desired_output)
 
 		desired_output++;
 		error_it++;
+
+		ann->num_MSE++;
 	}
-	ann->num_MSE++;
 }
 
 /* INTERNAL FUNCTION
@@ -581,9 +588,12 @@ void fann_clear_train_arrays(struct fann *ann)
 	if(ann->training_algorithm == FANN_TRAIN_RPROP)
 	{
 		delta_zero = ann->rprop_delta_zero;
+		
 		for(i = 0; i < ann->total_connections_allocated; i++)
 		{
 			ann->prev_train_slopes[i] = delta_zero;
+			/* TODO this should be more optimal, and should use a parameter */
+			ann->prev_steps[i] = 0.1;
 		}
 	}
 	else
@@ -683,15 +693,15 @@ void fann_update_weights_quickprop(struct fann *ann, unsigned int num_data,
 		prev_steps[i] = next_step;
 
 		w += next_step;
-		/*
+
 		if(w > 1500)
 			weights[i] = 1500;
 		else if(w < -1500)
 			weights[i] = -1500;
 		else
 			weights[i] = w;
-		*/
-		weights[i] = w;
+
+		/*weights[i] = w;*/
 
 		prev_train_slopes[i] = slope;
 		train_slopes[i] = 0.0;
@@ -719,33 +729,33 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight, un
 
 	for(; i != past_end; i++)
 	{
-		prev_step = fann_max(prev_steps[i], (fann_type) 0.001);	/* prev_step may not be zero because then the training will stop */
+		prev_step = fann_max(prev_steps[i], (fann_type) 0.0001);	/* prev_step may not be zero because then the training will stop */
 		slope = train_slopes[i];
 		prev_slope = prev_train_slopes[i];
 
 		same_sign = prev_slope * slope;
 
-		if(same_sign > 0.0)
-		{
+		if(same_sign >= 0.0)
 			next_step = fann_min(prev_step * increase_factor, delta_max);
-		}
 		else if(same_sign < 0.0)
 		{
 			next_step = fann_max(prev_step * decrease_factor, delta_min);
 			slope = 0;
 		}
 		else
-		{
 			next_step = 0.0;
-		}
 
 		if(slope < 0)
 		{
 			weights[i] -= next_step;
+			if(weights[i] < -1500)
+				weights[i] = -1500;
 		}
 		else
 		{
 			weights[i] += next_step;
+			if(weights[i] > 1500)
+				weights[i] = 1500;
 		}
 
 		/*if(i == 2){

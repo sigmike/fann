@@ -410,6 +410,7 @@ void fann_scale_data(fann_type ** data, unsigned int num_data, unsigned int num_
 	old_span = old_max - old_min;
 	new_span = new_max - new_min;
 	factor = new_span / old_span;
+	/*printf("max %f, min %f, factor %f\n", old_max, old_min, factor);*/
 
 	for(dat = 0; dat < num_data; dat++)
 	{
