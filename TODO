@@ -36,9 +36,18 @@ Things TODO when releasing a new version (mostly for fann developers)
 
 * Changelog should be updated and timestamp should be set
 
-* All relevant files should be in CVS (all other removed)
+* All relevant files should be in CVS
 
-* TGZ/BZ/ZIP packages should be created
+* TGZ/BZ/ZIP packages should be created from CVS
+cvs -d :ext:looksirdroids@fann.cvs.sourceforge.net:/cvsroot/fann checkout fann
+cd fann/
+aclocal-1.9
+libtoolize --force
+autoheader2.50
+autoconf2.50
+automake-1.9  --add-missing --copy
+./configure
+make dist
 
 * Debian packages should be created (from tgz package)
 	#Example of make command
