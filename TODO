@@ -12,9 +12,7 @@ Things TODO when releasing a new version (mostly for fann developers)
 
 * Everything should compile and install ok
 	./configure && make
-	su
-	make install
-	exit
+	sudo make install
 	cd examples
 	make runtest
 
