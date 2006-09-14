@@ -20,6 +20,7 @@ libfann (2.1.0) stable; urgency=low
 	* Fixed problem with RPROP, which makes it go suboptimal in the beginning
 	* Changed definition of MSE, so that it calculates a value pr output, and not a sum for all outputs. (MSE = MSE/ann->num_output)
 	* Added more benchmark data
+	* Added possebility to make benchmark as average of several
 	* Changed so that RPROP and Quickprop may not alter a weight to more than 1500
 
 libfann (2.0.0) stable; urgency=low

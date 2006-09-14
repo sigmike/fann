@@ -2,11 +2,14 @@
 
 date;
 
+#rm -f summary.txt;
+
 max_seconds_training=300;
 secs_between_reports=0.1;
+number_of_runs=4;
 
 function benchmark_algorithm() {
-    ./quality $algo datasets/$prob.train datasets/$prob.test $prob.$algo.train.out $prob.$algo.test.out $n1 $n2 $sec_train $secs_between_reports
+    ./quality $algo datasets/$prob.train datasets/$prob.test $prob.$algo.train.out $prob.$algo.test.out $n1 $n2 $sec_train $secs_between_reports $number_of_runs
     date;
 }
 
@@ -30,10 +33,13 @@ function benchmark_problem() {
     #algo="fann_incremental_stepwise"; benchmark_algorithm;
 
     #comment out two following lines if the libraries are not available
-#    algo="lwnn"; benchmark_algorithm;
-#    algo="jneural"; benchmark_algorithm;
+    algo="lwnn"; benchmark_algorithm;
+    algo="jneural"; benchmark_algorithm;
 }
 
+prob="two-spiral"; n1=20; n2=10; sec_train=$max_seconds_training;
+benchmark_problem;
+exit;
 #comment out some of the lines below if some of the problems should not be benchmarked
 
 prob="abelone"; n1=16; n2=0; sec_train=$max_seconds_training;
@@ -69,7 +75,7 @@ benchmark_problem;
 prob="parity13"; n1=26; n2=0; sec_train=$max_seconds_training;
 benchmark_problem;
 
-prob="pumadyn-32fm"; n1=10; n2=0; sec_train=30;
+prob="pumadyn-32fm"; n1=10; n2=0; sec_train=$max_seconds_training;
 benchmark_problem;
 
 prob="robot"; n1=96; n2=0; sec_train=$max_seconds_training;

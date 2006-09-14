@@ -1396,7 +1396,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->rprop_decrease_factor = 0.5;
 	ann->rprop_delta_min = 0.0;
 	ann->rprop_delta_max = 50.0;
-	ann->rprop_delta_zero = 0.5;
+	ann->rprop_delta_zero = 0.1;
 	
 	fann_init_error_data((struct fann_error *) ann);
 

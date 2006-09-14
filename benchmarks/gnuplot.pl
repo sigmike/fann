@@ -112,22 +112,25 @@ sub print_plot {
   print "\nset nologscale\n";
 }
 
-&print_plot("abelone", "logscale x", 1, 1, $own_file);
-&print_plot("bank32fm", "logscale x", 1, 1, $own_file);
-&print_plot("bank32nh", "logscale x", 1, 1, $own_file);
-&print_plot("building", "logscale x", 1, 1, $own_file);
-&print_plot("census-house", "logscale x", 1, 1, $own_file);
-&print_plot("diabetes", "logscale x", 1, 1, $own_file);
-&print_plot("gene", "logscale x", 1, 1, $own_file);
-&print_plot("kin32fm", "logscale x", 1, 1, $own_file);
-&print_plot("mushroom", "logscale x", 1, 1, $own_file);
-&print_plot("parity8", "logscale x", 0, 1, $own_file);
-&print_plot("parity13", "logscale x", 0, 1, $own_file);
-&print_plot("pumadyn-32fm", "logscale y", 1, 1, $own_file);
-&print_plot("robot", "logscale", 1, 1, $own_file);
-&print_plot("soybean", "logscale x", 1, 1, $own_file);
-&print_plot("thyroid", "logscale y", 1, 1, $own_file);
-&print_plot("two-spiral", "logscale x", 1, 1, $own_file);
+for($own_file = 0; $own_file < 2; $own_file++)
+{
+    &print_plot("abelone", "logscale x", 1, 1, $own_file);
+    &print_plot("bank32fm", "logscale x", 1, 1, $own_file);
+    &print_plot("bank32nh", "logscale x", 1, 1, $own_file);
+    &print_plot("building", "logscale x", 1, 1, $own_file);
+    &print_plot("census-house", "logscale x", 1, 1, $own_file);
+    &print_plot("diabetes", "logscale x", 1, 1, $own_file);
+    &print_plot("gene", "logscale x", 1, 1, $own_file);
+    &print_plot("kin32fm", "logscale x", 1, 1, $own_file);
+    &print_plot("mushroom", "logscale x", 1, 1, $own_file);
+    &print_plot("parity8", "logscale x", 0, 1, $own_file);
+    &print_plot("parity13", "logscale x", 0, 1, $own_file);
+    &print_plot("pumadyn-32fm", "logscale y", 1, 1, $own_file);
+    &print_plot("robot", "logscale", 1, 1, $own_file);
+    &print_plot("soybean", "logscale x", 1, 1, $own_file);
+    &print_plot("thyroid", "logscale y", 1, 1, $own_file);
+    &print_plot("two-spiral", "logscale x", 1, 1, $own_file);
+}
 
 
 print "\nset output\n";

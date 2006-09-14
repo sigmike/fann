@@ -27,15 +27,19 @@ int main()
 	struct fann *ann;
 	struct fann_train_data *train_data, *test_data;
 	const float desired_error = (const float) 0.001;
-	unsigned int max_neurons = 10;
+	unsigned int max_neurons = 30;
 	unsigned int neurons_between_reports = 1;
 	fann_type *steepnesses = NULL;
 	
 	printf("Reading data.\n");
 	
-	train_data = fann_read_train_from_file("../benchmarks/datasets/parity8.train");
-	test_data = fann_read_train_from_file("../benchmarks/datasets/parity8.test");
-	
+	train_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/two-spiral.test");
+	train_data = fann_read_train_from_file("../benchmarks/datasets/parity13.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/parity13.test");
+	train_data = fann_read_train_from_file("../benchmarks/datasets/building.train");
+	test_data = fann_read_train_from_file("../benchmarks/datasets/building.test");
+
 	fann_scale_train_data(train_data, -1, 1);
 	fann_scale_train_data(test_data, -1, 1);
 	
@@ -51,7 +55,7 @@ int main()
 	fann_set_bit_fail_limit(ann, 0.35);
 	fann_set_activation_steepness_output(ann, 1);
 
-	fann_set_training_algorithm(ann, FANN_TRAIN_QUICKPROP);
+	fann_set_training_algorithm(ann, FANN_TRAIN_RPROP);
 
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
 

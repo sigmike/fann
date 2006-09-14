@@ -176,8 +176,9 @@ FANN_EXTERNAL fann_type *FANN_API fann_test(struct fann *ann, fann_type * input,
 		
 		desired_output++;
 		output_neuron++;
+
+		ann->num_MSE++;
 	}
-	ann->num_MSE++;
 
 	return output_begin;
 }
@@ -561,24 +562,8 @@ void fann_clear_train_arrays(struct fann *ann)
 	/* if no room allocated for the variabels, allocate it now */
 	if(ann->prev_steps == NULL)
 	{
-		ann->prev_steps = (fann_type *) calloc(ann->total_connections_allocated, sizeof(fann_type));
+		ann->prev_steps = (fann_type *) malloc(ann->total_connections_allocated * sizeof(fann_type));
 		if(ann->prev_steps == NULL)
-		{
-			fann_error((struct fann_error *) ann, FANN_E_CANT_ALLOCATE_MEM);
-			return;
-		}
-	}
-	else
-	{
-		memset(ann->prev_steps, 0, (ann->total_connections_allocated) * sizeof(fann_type));
-	}
-
-	/* if no room allocated for the variabels, allocate it now */
-	if(ann->prev_train_slopes == NULL)
-	{
-		ann->prev_train_slopes =
-			(fann_type *) malloc(ann->total_connections_allocated * sizeof(fann_type));
-		if(ann->prev_train_slopes == NULL)
 		{
 			fann_error((struct fann_error *) ann, FANN_E_CANT_ALLOCATE_MEM);
 			return;
@@ -590,10 +575,22 @@ void fann_clear_train_arrays(struct fann *ann)
 		delta_zero = ann->rprop_delta_zero;
 		
 		for(i = 0; i < ann->total_connections_allocated; i++)
+			ann->prev_steps[i] = delta_zero;
+	}
+	else
+	{
+		memset(ann->prev_steps, 0, (ann->total_connections_allocated) * sizeof(fann_type));
+	}
+
+	/* if no room allocated for the variabels, allocate it now */
+	if(ann->prev_train_slopes == NULL)
+	{
+		ann->prev_train_slopes =
+			(fann_type *) calloc(ann->total_connections_allocated, sizeof(fann_type));
+		if(ann->prev_train_slopes == NULL)
 		{
-			ann->prev_train_slopes[i] = delta_zero;
-			/* TODO this should be more optimal, and should use a parameter */
-			ann->prev_steps[i] = 0.1;
+			fann_error((struct fann_error *) ann, FANN_E_CANT_ALLOCATE_MEM);
+			return;
 		}
 	}
 	else
@@ -737,13 +734,11 @@ void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight, un
 
 		if(same_sign >= 0.0)
 			next_step = fann_min(prev_step * increase_factor, delta_max);
-		else if(same_sign < 0.0)
+		else
 		{
 			next_step = fann_max(prev_step * decrease_factor, delta_min);
 			slope = 0;
 		}
-		else
-			next_step = 0.0;
 
 		if(slope < 0)
 		{
@@ -961,6 +956,7 @@ FANN_GET_SET(float, rprop_increase_factor)
 FANN_GET_SET(float, rprop_decrease_factor)
 FANN_GET_SET(float, rprop_delta_min)
 FANN_GET_SET(float, rprop_delta_max)
+FANN_GET_SET(float, rprop_delta_zero)
 FANN_GET_SET(enum fann_stopfunc_enum, train_stop_function)
 FANN_GET_SET(fann_type, bit_fail_limit)
 FANN_GET_SET(float, learning_momentum)

@@ -1175,4 +1175,29 @@ FANN_EXTERNAL float FANN_API fann_get_rprop_delta_max(struct fann *ann);
 */
 FANN_EXTERNAL void FANN_API fann_set_rprop_delta_max(struct fann *ann, float rprop_delta_max);
 
+/* Function: fann_get_rprop_delta_zero
+
+   The initial step-size is a positive number determining the initial step size.
+
+   The default delta zero is 0.1.
+
+   See also:
+   	<fann_set_rprop_delta_zero>, <fann_get_rprop_delta_min>, <fann_get_rprop_delta_max>
+
+   This function appears in FANN >= 2.1.0.
+*/ 
+FANN_EXTERNAL float FANN_API fann_get_rprop_delta_zero(struct fann *ann);
+
+
+/* Function: fann_set_rprop_delta_zero
+
+   The initial step-size is a positive number determining the initial step size.
+
+   See also:
+   	<fann_get_rprop_delta_zero>, <fann_get_rprop_delta_zero>
+
+   This function appears in FANN >= 2.1.0.
+*/
+FANN_EXTERNAL void FANN_API fann_set_rprop_delta_zero(struct fann *ann, float rprop_delta_max);
+
 #endif

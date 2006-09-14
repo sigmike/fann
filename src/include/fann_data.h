@@ -184,9 +184,20 @@ static char const *const FANN_TRAIN_NAMES[] = {
 	 * y = cos(x*s)
 	 * d = s*-sin(x*s)
 	 
+	FANN_SIN - Periodical sinus activation function.
+	 * span: 0 <= y <= 1
+	 * y = sin(x*s)/2+0.5
+	 * d = s*cos(x*s)/2
+	 
+	FANN_COS - Periodical cosinus activation function.
+	 * span: 0 <= y <= 1
+	 * y = cos(x*s)/2+0.5
+	 * d = s*-sin(x*s)/2
+	 
 	See also:
-		<fann_set_activation_function_hidden>,
-		<fann_set_activation_function_output>
+   	<fann_set_activation_function_layer>, <fann_set_activation_function_hidden>,
+   	<fann_set_activation_function_output>, <fann_set_activation_steepness>,
+    <fann_set_activation_function>
 */
 enum fann_activationfunc_enum
 {

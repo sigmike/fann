@@ -36,10 +36,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ctimer.h"
 #include "floatfann.h"
+#include "benchdata.h"
 
 unsigned int num_errors = 0;
 unsigned int num_bit_fail = 0;
 double error_value = 0;
+
+BenchDataCollector *train_collector = new BenchDataCollector();
+BenchDataCollector *test_collector = new BenchDataCollector();
 
 void clear_error()
 {
@@ -71,6 +75,18 @@ void update_error(fann_type * output, fann_type * desired_output, unsigned int n
 double mean_error()
 {
 	return error_value / (double) num_errors;
+}
+
+double mean_bit_fail()
+{
+	return num_bit_fail / (double) num_errors;
+}
+
+void report_error(double time, unsigned int epochs, FILE * out, BenchDataCollector *collector, unsigned int numNeurons)
+{
+	BenchData *data = new BenchData(time, epochs, mean_error(), num_bit_fail, mean_bit_fail(), numNeurons);
+	data->printBench(out);
+	collector->addBench(data);
 }
 
 
@@ -130,6 +146,8 @@ void quality_benchmark_jneural(struct fann_train_data *train_data,
 		}
 		train_error = mean_error();
 		train_bit_fail = num_bit_fail;
+		
+		report_error(total_elapsed, epochs, train_out, train_collector, num_neurons_hidden1+num_neurons_hidden2);
 
 		clear_error();
 		for(i = 0; i != test_data->num_data; i++)
@@ -141,8 +159,8 @@ void quality_benchmark_jneural(struct fann_train_data *train_data,
 		test_error = mean_error();
 		test_bit_fail = num_bit_fail;
 
-		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
-		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);
+		report_error(total_elapsed, epochs, test_out, test_collector, num_neurons_hidden1+num_neurons_hidden2);
+
 		fprintf(stderr, "secs: %8.2f, train: %8.6f (%4d), test: %8.6f (%4d), epochs: %5d\r",
 				total_elapsed, train_error, train_bit_fail, test_error, test_bit_fail, epochs);
 	}
@@ -228,6 +246,8 @@ void quality_benchmark_fann(bool stepwise, fann_train_enum training_algorithm,
 		test_error = mean_error();
 		test_bit_fail = num_bit_fail;
 
+		report_error(total_elapsed, epochs, test_out, test_collector, num_neurons_hidden1+num_neurons_hidden2);
+
 		clear_error();
 		for(i = 0; i != train_data->num_data; i++)
 		{
@@ -237,8 +257,8 @@ void quality_benchmark_fann(bool stepwise, fann_train_enum training_algorithm,
 		train_error = mean_error();
 		train_bit_fail = num_bit_fail;
 
-		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
-		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);
+		report_error(total_elapsed, epochs, train_out, train_collector, num_neurons_hidden1+num_neurons_hidden2);
+	
 		fprintf(stderr, "secs: %8.2f, train: %8.6f (%4d), test: %8.6f (%4d), epochs: %5d\r",
 				total_elapsed, train_error, train_bit_fail, test_error, test_bit_fail, epochs);
 
@@ -347,6 +367,8 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 		}
 		test_error = mean_error();
 		test_bit_fail = num_bit_fail;
+		
+		report_error(total_elapsed, epochs, test_out, test_collector, ann->total_neurons-ann->num_input-ann->num_output);
 
 		clear_error();
 		for(i = 0; i != train_data->num_data; i++)
@@ -356,11 +378,11 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 		}
 		train_error = mean_error();
 		train_bit_fail = num_bit_fail;
+		
+		report_error(total_elapsed, epochs, train_out, train_collector, ann->total_neurons-ann->num_input-ann->num_output);
 
-		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
-		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);
-		fprintf(stderr, "secs: %8.2f, train: %8.6f (%4d), test: %8.6f (%4d), epochs: %5d\r",
-				total_elapsed, train_error, train_bit_fail, test_error, test_bit_fail, epochs);
+		fprintf(stderr, "secs: %8.2f, train: %8.6f (%4d), test: %8.6f (%4d), epochs: %5d, neurons: %d\r",
+				total_elapsed, train_error, train_bit_fail, test_error, test_bit_fail, epochs, ann->total_neurons-ann->num_input-ann->num_output);
 	}
 
 	fprintf(stdout, "\nepochs: %d, epochs/sec: %f\n", epochs, epochs / total_elapsed);
@@ -436,6 +458,8 @@ void quality_benchmark_lwnn(struct fann_train_data *train_data,
 		train_error = mean_error();
 		train_bit_fail = num_bit_fail;
 
+		report_error(total_elapsed, epochs, train_out, train_collector, num_neurons_hidden1+num_neurons_hidden2);
+
 		clear_error();
 		for(i = 0; i != test_data->num_data; i++)
 		{
@@ -445,9 +469,8 @@ void quality_benchmark_lwnn(struct fann_train_data *train_data,
 		test_error = mean_error();
 		test_bit_fail = num_bit_fail;
 
+		report_error(total_elapsed, epochs, test_out, test_collector, num_neurons_hidden1+num_neurons_hidden2);
 
-		fprintf(train_out, "%f %.20e %d\n", total_elapsed, train_error, epochs);
-		fprintf(test_out, "%f %.20e %d\n", total_elapsed, test_error, epochs);
 		fprintf(stderr, "secs: %8.2f, train: %8.6f (%4d), test: %8.6f (%4d), epochs: %5d\r",
 				total_elapsed, train_error, train_bit_fail, test_error, test_bit_fail, epochs);
 	}
@@ -461,198 +484,219 @@ void quality_benchmark_lwnn(struct fann_train_data *train_data,
 int main(int argc, char *argv[])
 {
 	/* parameters */
-	unsigned int num_neurons_hidden1;
-	unsigned int num_neurons_hidden2;
-	unsigned int seconds_of_training;
-	double seconds_between_reports;
+	char output_file[256];
 
-	struct fann_train_data *train_data, *test_data;
-	FILE *train_out, *test_out;
-
-	if(argc != 10)
+	if(argc != 11)
 	{
 		printf
-			("usage %s net train_file test_file train_file_out test_file_out num_hidden1 num_hidden2 seconds_of_training seconds_between_reports\n",
+			("usage %s net train_file test_file train_file_out test_file_out num_hidden1 num_hidden2 seconds_of_training seconds_between_reports number_of_runs\n",
 			 argv[0]);
 		return -1;
 	}
 
-	num_neurons_hidden1 = atoi(argv[6]);
-	num_neurons_hidden2 = atoi(argv[7]);
-	seconds_of_training = atoi(argv[8]);
-	seconds_between_reports = atof(argv[9]);
+	unsigned int num_neurons_hidden1 = atoi(argv[6]);
+	unsigned int num_neurons_hidden2 = atoi(argv[7]);
+	unsigned int seconds_of_training = atoi(argv[8]);
+	double seconds_between_reports = atof(argv[9]);
+	unsigned int number_of_runs = atoi(argv[10]);
 
-	train_data = fann_read_train_from_file(argv[2]);
-	test_data = fann_read_train_from_file(argv[3]);
+	fann_train_data *train_data = fann_read_train_from_file(argv[2]);
+	fann_train_data *test_data = fann_read_train_from_file(argv[3]);
 
-	/*
-	fann *ann = fann_create_standard(2, train_data->num_input, train_data->num_output);
-	fann_set_scaling_params(ann, train_data, 0, 1, 0, 1);
-	fann_scale_train(ann, train_data);
-	fann_scale_train(ann, test_data);
-	fann_destroy(ann);
-	*/
+	char *train_out_file = argv[4];
+	char *test_out_file = argv[5];
+	FILE *train_out = 0;
+	FILE *test_out = 0;
 
-	if(strlen(argv[4]) == 1 && argv[4][0] == '-')
+	for(int i = 0; i < number_of_runs; i++)
 	{
-		train_out = stdout;
-	}
-	else
-	{
-		train_out = fopen(argv[4], "w");
-	}
+		test_collector->newCollection();
+		train_collector->newCollection();
+		
+		if(strlen(train_out_file) == 1 && train_out_file[0] == '-')
+			train_out = stdout;
+		else
+		{
+			if(number_of_runs == 1)
+				train_out = fopen(train_out_file, "w");
+			else
+			{
+				sprintf(output_file, "%s_%d_run", train_out_file, i);
+				train_out = fopen(output_file, "w");
+			}
+		}
+	
+		if(strlen(test_out_file) == 1 && test_out_file[0] == '-')
+			test_out = stdout;
+		else
+		{
+			if(number_of_runs == 1)
+				test_out = fopen(test_out_file, "w");
+			{
+				sprintf(output_file, "%s_%d_run", test_out_file, i);
+				test_out = fopen(output_file, "w");
+			}
+		}
 
-	if(strlen(argv[5]) == 1 && argv[5][0] == '-')
-	{
-		test_out = stdout;
-	}
-	else
-	{
-		test_out = fopen(argv[5], "w");
-	}
-
-	fprintf(stdout, "Quality test of %s %s\n", argv[1], argv[2]);
-
-	if(strcmp(argv[1], "fann_incremental") == 0)
-	{
-		quality_benchmark_fann(false, FANN_TRAIN_INCREMENTAL, NULL, train_data, test_data,
-							   train_out, test_out,
-							   train_data->num_input, num_neurons_hidden1,
-							   num_neurons_hidden2, train_data->num_output,
-							   seconds_of_training, seconds_between_reports);
-	}
-	else if(strcmp(argv[1], "fann_incremental_stepwise") == 0)
-	{
-		quality_benchmark_fann(true, FANN_TRAIN_INCREMENTAL, NULL, train_data, test_data,
-							   train_out, test_out,
-							   train_data->num_input, num_neurons_hidden1,
-							   num_neurons_hidden2, train_data->num_output,
-							   seconds_of_training, seconds_between_reports);
-	}
-	else if(strcmp(argv[1], "fann_incremental_momentum") == 0)
-	{
-		quality_benchmark_fann(false, FANN_TRAIN_INCREMENTAL, NULL, train_data, test_data,
-							   train_out, test_out,
-							   train_data->num_input, num_neurons_hidden1,
-							   num_neurons_hidden2, train_data->num_output,
-							   seconds_of_training, seconds_between_reports, 0.4);
-	}
-	else if(strcmp(argv[1], "fann_quickprop") == 0)
-	{
-		quality_benchmark_fann(false, FANN_TRAIN_QUICKPROP, NULL, train_data, test_data,
-							   train_out, test_out,
-							   train_data->num_input, num_neurons_hidden1,
-							   num_neurons_hidden2, train_data->num_output,
-							   seconds_of_training, seconds_between_reports);
-	}
-	else if(strcmp(argv[1], "fann_quickprop_stepwise") == 0)
-	{
-		quality_benchmark_fann(true, FANN_TRAIN_QUICKPROP, NULL, train_data, test_data,
-							   train_out, test_out,
-							   train_data->num_input, num_neurons_hidden1,
-							   num_neurons_hidden2, train_data->num_output,
-							   seconds_of_training, seconds_between_reports);
-	}
-	else if(strcmp(argv[1], "fann_batch") == 0)
-	{
-		quality_benchmark_fann(false, FANN_TRAIN_BATCH, NULL, train_data, test_data,
-							   train_out, test_out,
-							   train_data->num_input, num_neurons_hidden1,
-							   num_neurons_hidden2, train_data->num_output,
-							   seconds_of_training, seconds_between_reports);
-	}
-	else if(strcmp(argv[1], "fann_batch_stepwise") == 0)
-	{
-		quality_benchmark_fann(true, FANN_TRAIN_BATCH, NULL, train_data, test_data,
-							   train_out, test_out,
-							   train_data->num_input, num_neurons_hidden1,
-							   num_neurons_hidden2, train_data->num_output,
-							   seconds_of_training, seconds_between_reports);
-	}
-	else if(strcmp(argv[1], "fann_rprop") == 0)
-	{
-		quality_benchmark_fann(false, FANN_TRAIN_RPROP, NULL, train_data, test_data,
-							   train_out, test_out,
-							   train_data->num_input, num_neurons_hidden1,
-							   num_neurons_hidden2, train_data->num_output,
-							   seconds_of_training, seconds_between_reports);
-	}
-	else if(strcmp(argv[1], "fann_rprop_stepwise") == 0)
-	{
-		quality_benchmark_fann(true, FANN_TRAIN_RPROP, argv[4], train_data, test_data,
-							   train_out, test_out,
-							   train_data->num_input, num_neurons_hidden1,
-							   num_neurons_hidden2, train_data->num_output,
-							   seconds_of_training, seconds_between_reports);
-	}
-	else if(strcmp(argv[1], "fann_cascade_rprop_one_activation") == 0)
-	{
-		quality_benchmark_cascade(train_data, test_data,
-								  train_out, test_out,
-								  train_data->num_input, train_data->num_output,
-								  seconds_of_training, seconds_between_reports, FANN_TRAIN_RPROP, false);
-	}
-	else if(strcmp(argv[1], "fann_cascade_rprop_multi_activation") == 0)
-	{
-		quality_benchmark_cascade(train_data, test_data,
-								  train_out, test_out,
-								  train_data->num_input, train_data->num_output,
-								  seconds_of_training, seconds_between_reports, FANN_TRAIN_RPROP, true);
-	}
-	else if(strcmp(argv[1], "fann_cascade_quickprop_one_activation") == 0)
-	{
-		quality_benchmark_cascade(train_data, test_data,
-								  train_out, test_out,
-								  train_data->num_input, train_data->num_output,
-								  seconds_of_training, seconds_between_reports, FANN_TRAIN_QUICKPROP, false);
-	}
-	else if(strcmp(argv[1], "fann_cascade_quickprop_multi_activation") == 0)
-	{
-		quality_benchmark_cascade(train_data, test_data,
-								  train_out, test_out,
-								  train_data->num_input, train_data->num_output,
-								  seconds_of_training, seconds_between_reports, FANN_TRAIN_QUICKPROP, true);
-	}
-	else if(strcmp(argv[1], "fann_cascade_batch_one_activation") == 0)
-	{
-		quality_benchmark_cascade(train_data, test_data,
-								  train_out, test_out,
-								  train_data->num_input, train_data->num_output,
-								  seconds_of_training, seconds_between_reports, FANN_TRAIN_BATCH, false);
-	}
-	else if(strcmp(argv[1], "fann_cascade_batch_multi_activation") == 0)
-	{
-		quality_benchmark_cascade(train_data, test_data,
-								  train_out, test_out,
-								  train_data->num_input, train_data->num_output,
-								  seconds_of_training, seconds_between_reports, FANN_TRAIN_BATCH, true);
+		fprintf(stdout, "Quality test of %s %s\n", argv[1], argv[2]);
+	
+		if(strcmp(argv[1], "fann_incremental") == 0)
+		{
+			quality_benchmark_fann(false, FANN_TRAIN_INCREMENTAL, NULL, train_data, test_data,
+								   train_out, test_out,
+								   train_data->num_input, num_neurons_hidden1,
+								   num_neurons_hidden2, train_data->num_output,
+								   seconds_of_training, seconds_between_reports);
+		}
+		else if(strcmp(argv[1], "fann_incremental_stepwise") == 0)
+		{
+			quality_benchmark_fann(true, FANN_TRAIN_INCREMENTAL, NULL, train_data, test_data,
+								   train_out, test_out,
+								   train_data->num_input, num_neurons_hidden1,
+								   num_neurons_hidden2, train_data->num_output,
+								   seconds_of_training, seconds_between_reports);
+		}
+		else if(strcmp(argv[1], "fann_incremental_momentum") == 0)
+		{
+			quality_benchmark_fann(false, FANN_TRAIN_INCREMENTAL, NULL, train_data, test_data,
+								   train_out, test_out,
+								   train_data->num_input, num_neurons_hidden1,
+								   num_neurons_hidden2, train_data->num_output,
+								   seconds_of_training, seconds_between_reports, 0.4);
+		}
+		else if(strcmp(argv[1], "fann_quickprop") == 0)
+		{
+			quality_benchmark_fann(false, FANN_TRAIN_QUICKPROP, NULL, train_data, test_data,
+								   train_out, test_out,
+								   train_data->num_input, num_neurons_hidden1,
+								   num_neurons_hidden2, train_data->num_output,
+								   seconds_of_training, seconds_between_reports);
+		}
+		else if(strcmp(argv[1], "fann_quickprop_stepwise") == 0)
+		{
+			quality_benchmark_fann(true, FANN_TRAIN_QUICKPROP, NULL, train_data, test_data,
+								   train_out, test_out,
+								   train_data->num_input, num_neurons_hidden1,
+								   num_neurons_hidden2, train_data->num_output,
+								   seconds_of_training, seconds_between_reports);
+		}
+		else if(strcmp(argv[1], "fann_batch") == 0)
+		{
+			quality_benchmark_fann(false, FANN_TRAIN_BATCH, NULL, train_data, test_data,
+								   train_out, test_out,
+								   train_data->num_input, num_neurons_hidden1,
+								   num_neurons_hidden2, train_data->num_output,
+								   seconds_of_training, seconds_between_reports);
+		}
+		else if(strcmp(argv[1], "fann_batch_stepwise") == 0)
+		{
+			quality_benchmark_fann(true, FANN_TRAIN_BATCH, NULL, train_data, test_data,
+								   train_out, test_out,
+								   train_data->num_input, num_neurons_hidden1,
+								   num_neurons_hidden2, train_data->num_output,
+								   seconds_of_training, seconds_between_reports);
+		}
+		else if(strcmp(argv[1], "fann_rprop") == 0)
+		{
+			quality_benchmark_fann(false, FANN_TRAIN_RPROP, NULL, train_data, test_data,
+								   train_out, test_out,
+								   train_data->num_input, num_neurons_hidden1,
+								   num_neurons_hidden2, train_data->num_output,
+								   seconds_of_training, seconds_between_reports);
+		}
+		else if(strcmp(argv[1], "fann_rprop_stepwise") == 0)
+		{
+			quality_benchmark_fann(true, FANN_TRAIN_RPROP, argv[4], train_data, test_data,
+								   train_out, test_out,
+								   train_data->num_input, num_neurons_hidden1,
+								   num_neurons_hidden2, train_data->num_output,
+								   seconds_of_training, seconds_between_reports);
+		}
+		else if(strcmp(argv[1], "fann_cascade_rprop_one_activation") == 0)
+		{
+			quality_benchmark_cascade(train_data, test_data,
+									  train_out, test_out,
+									  train_data->num_input, train_data->num_output,
+									  seconds_of_training, seconds_between_reports, FANN_TRAIN_RPROP, false);
+		}
+		else if(strcmp(argv[1], "fann_cascade_rprop_multi_activation") == 0)
+		{
+			quality_benchmark_cascade(train_data, test_data,
+									  train_out, test_out,
+									  train_data->num_input, train_data->num_output,
+									  seconds_of_training, seconds_between_reports, FANN_TRAIN_RPROP, true);
+		}
+		else if(strcmp(argv[1], "fann_cascade_quickprop_one_activation") == 0)
+		{
+			quality_benchmark_cascade(train_data, test_data,
+									  train_out, test_out,
+									  train_data->num_input, train_data->num_output,
+									  seconds_of_training, seconds_between_reports, FANN_TRAIN_QUICKPROP, false);
+		}
+		else if(strcmp(argv[1], "fann_cascade_quickprop_multi_activation") == 0)
+		{
+			quality_benchmark_cascade(train_data, test_data,
+									  train_out, test_out,
+									  train_data->num_input, train_data->num_output,
+									  seconds_of_training, seconds_between_reports, FANN_TRAIN_QUICKPROP, true);
+		}
+		else if(strcmp(argv[1], "fann_cascade_batch_one_activation") == 0)
+		{
+			quality_benchmark_cascade(train_data, test_data,
+									  train_out, test_out,
+									  train_data->num_input, train_data->num_output,
+									  seconds_of_training, seconds_between_reports, FANN_TRAIN_BATCH, false);
+		}
+		else if(strcmp(argv[1], "fann_cascade_batch_multi_activation") == 0)
+		{
+			quality_benchmark_cascade(train_data, test_data,
+									  train_out, test_out,
+									  train_data->num_input, train_data->num_output,
+									  seconds_of_training, seconds_between_reports, FANN_TRAIN_BATCH, true);
 #ifdef LWNN
-	}
-	else if(strcmp(argv[1], "lwnn") == 0)
-	{
-		quality_benchmark_lwnn(train_data, test_data,
-							   train_out, test_out,
-							   train_data->num_input, num_neurons_hidden1,
-							   num_neurons_hidden2, train_data->num_output,
-							   seconds_of_training, seconds_between_reports);
+		}
+		else if(strcmp(argv[1], "lwnn") == 0)
+		{
+			quality_benchmark_lwnn(train_data, test_data,
+								   train_out, test_out,
+								   train_data->num_input, num_neurons_hidden1,
+								   num_neurons_hidden2, train_data->num_output,
+								   seconds_of_training, seconds_between_reports);
 #endif
-
+	
 #ifdef JNEURAL
-	}
-	else if(strcmp(argv[1], "jneural") == 0)
-	{
-		quality_benchmark_jneural(train_data, test_data,
-								  train_out, test_out,
-								  train_data->num_input, num_neurons_hidden1,
-								  num_neurons_hidden2, train_data->num_output,
-								  seconds_of_training, seconds_between_reports);
+		}
+		else if(strcmp(argv[1], "jneural") == 0)
+		{
+			quality_benchmark_jneural(train_data, test_data,
+									  train_out, test_out,
+									  train_data->num_input, num_neurons_hidden1,
+									  num_neurons_hidden2, train_data->num_output,
+									  seconds_of_training, seconds_between_reports);
 #endif
-	}
-	else
-	{
-		printf("unrecognized option %s\n", argv[1]);
+		}
+		else
+		{
+			printf("unrecognized option %s\n", argv[1]);
+		}
+		
+		fclose(train_out);
+		fclose(test_out);
 	}
 
+	if(strlen(train_out_file) == 1 && train_out_file[0] == '-')
+		train_out = stdout;
+	else
+		train_out = fopen(train_out_file, "w");
+	
+	if(strlen(test_out_file) == 1 && test_out_file[0] == '-')
+		test_out = stdout;
+	else
+		test_out = fopen(test_out_file, "w");
+
+	train_collector->printAvgCollection(train_out, train_out_file);
+	test_collector->printAvgCollection(test_out, test_out_file);
+		
 	fann_destroy_train(train_data);
 	fann_destroy_train(test_data);
 

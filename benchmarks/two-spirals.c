@@ -136,7 +136,10 @@ void printSet(int density, double maxRadius)
 
 		/* printf ("%8.5f, %8.5f  =>  +;\n", x, y ); */
 		/* printf ("%8.5f, %8.5f  =>  -;\n", -x, -y ); */
-		printf("%8.5f %8.5f 1\n", x, y);
-		printf("%8.5f %8.5f 0\n", -x, -y);
+		if(i % 2 == 1)
+		{
+			printf("%8.5f %8.5f 1\n", x, y);
+			printf("%8.5f %8.5f 0\n", -x, -y);
+		}
 	}
 }

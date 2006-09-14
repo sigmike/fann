@@ -41,7 +41,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    This algorithm adds neurons to the neural network while training, which means that it
    needs to start with an ANN without any hidden layers. The neural network should also use
    shortcut connections, so <fann_create_shortcut> should be used to create the ANN like this:
-   >struct fann *ann = fann_create_shortcut(2, fann_num_input_train_data(train_data), fann_num_input_train_data(train_data));
+   >struct fann *ann = fann_create_shortcut(2, fann_num_input_train_data(train_data), fann_num_output_train_data(train_data));
    
    This training uses the parameters set using the fann_set_cascade_..., but it also uses another
    training algorithm as it's internal training algorithm. This algorithm can be set to either

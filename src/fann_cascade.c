@@ -330,20 +330,14 @@ int fann_reallocate_neurons(struct fann *ann, unsigned int total_neurons)
 
 void initialize_candidate_weights(struct fann *ann, unsigned int first_con, unsigned int last_con, float scale_factor)
 {
-	fann_type initial_slope, prev_step;
+	fann_type prev_step;
 	unsigned int i = 0;
 	unsigned int bias_weight = first_con + (ann->first_layer->last_neuron - ann->first_layer->first_neuron) - 1;
 
 	if(ann->training_algorithm == FANN_TRAIN_RPROP)
-	{
-		initial_slope = ann->rprop_delta_zero;
-		prev_step = 0.1;
-	}
+		prev_step = ann->rprop_delta_zero;
 	else
-	{
 		prev_step = 0;
-		initial_slope = 0.0;
-	}
 
 	for(i = first_con; i < last_con; i++)
 	{
@@ -354,7 +348,7 @@ void initialize_candidate_weights(struct fann *ann, unsigned int first_con, unsi
 					
 		ann->train_slopes[i] = 0;
 		ann->prev_steps[i] = prev_step;
-		ann->prev_train_slopes[i] = initial_slope;
+		ann->prev_train_slopes[i] = 0;
 	}
 }
 
@@ -380,7 +374,6 @@ int fann_initialize_candidates(struct fann *ann)
 	unsigned int first_candidate_neuron = ann->total_neurons + 1;
 	unsigned int connection_it, i, j, k, candidate_index;
 	struct fann_neuron *neurons;
-	fann_type initial_slope;
 	float scale_factor;
 	
 	/* First make sure that there is enough room, and if not then allocate a
@@ -421,15 +414,9 @@ int fann_initialize_candidates(struct fann *ann)
 		}
 	}
 
-	if(ann->training_algorithm == FANN_TRAIN_RPROP)
-		initial_slope = ann->rprop_delta_zero;
-	else
-		initial_slope = 0.0;
-
 	/* Some test code to do semi Widrow + Nguyen initialization */
 	scale_factor = (float) 2.0f*(pow((double) (0.7f * (double) num_hidden_neurons),
 				                (double) (1.0f / (double) ann->num_input)));
-	printf("scale_factor=%f\n", scale_factor);
 	if(scale_factor > 8)
 		scale_factor = 8;
 	else if(scale_factor < 0.5)
