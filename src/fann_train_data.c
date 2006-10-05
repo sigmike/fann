@@ -227,6 +227,35 @@ float fann_train_epoch_irpropm(struct fann *ann, struct fann_train_data *data)
 /*
  * Internal train function 
  */
+float fann_train_epoch_sarprop(struct fann *ann, struct fann_train_data *data)
+{
+	unsigned int i;
+
+	if(ann->prev_train_slopes == NULL)
+	{
+		fann_clear_train_arrays(ann);
+	}
+
+	fann_reset_MSE(ann);
+
+	for(i = 0; i < data->num_data; i++)
+	{
+		fann_run(ann, data->input[i]);
+		fann_compute_MSE(ann, data->output[i]);
+		fann_backpropagate_MSE(ann);
+		fann_update_slopes_batch(ann, ann->first_layer + 1, ann->last_layer - 1);
+	}
+
+	fann_update_weights_sarprop(ann, ann->sarprop_epoch, 0, ann->total_connections);
+
+	++(ann->sarprop_epoch);
+
+	return fann_get_MSE(ann);
+}
+
+/*
+ * Internal train function 
+ */
 float fann_train_epoch_batch(struct fann *ann, struct fann_train_data *data)
 {
 	unsigned int i;
@@ -274,6 +303,8 @@ FANN_EXTERNAL float FANN_API fann_train_epoch(struct fann *ann, struct fann_trai
 		return fann_train_epoch_quickprop(ann, data);
 	case FANN_TRAIN_RPROP:
 		return fann_train_epoch_irpropm(ann, data);
+	case FANN_TRAIN_SARPROP:
+		return fann_train_epoch_sarprop(ann, data);
 	case FANN_TRAIN_BATCH:
 		return fann_train_epoch_batch(ann, data);
 	case FANN_TRAIN_INCREMENTAL:

@@ -1398,6 +1398,13 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->rprop_delta_max = 50.0;
 	ann->rprop_delta_zero = 0.1;
 	
+ 	/* Variables for use with SARPROP training (reasonable defaults) */
+ 	ann->sarprop_weight_decay_shift = -6.644;
+ 	ann->sarprop_step_error_threshold_factor = 0.1;
+ 	ann->sarprop_step_error_shift = 1.385;
+ 	ann->sarprop_temperature = 0.015;
+ 	ann->sarprop_epoch = 0;
+ 
 	fann_init_error_data((struct fann_error *) ann);
 
 #ifdef FIXEDFANN

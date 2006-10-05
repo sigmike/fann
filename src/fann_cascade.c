@@ -199,7 +199,7 @@ int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float des
 float fann_train_outputs_epoch(struct fann *ann, struct fann_train_data *data)
 {
 	unsigned int i;
-
+	
 	fann_reset_MSE(ann);
 
 	for(i = 0; i < data->num_data; i++)
@@ -214,6 +214,11 @@ float fann_train_outputs_epoch(struct fann *ann, struct fann_train_data *data)
 		case FANN_TRAIN_RPROP:
 			fann_update_weights_irpropm(ann, (ann->last_layer - 1)->first_neuron->first_con,
 										ann->total_connections);
+			break;
+		case FANN_TRAIN_SARPROP:
+			fann_update_weights_sarprop(ann, ann->sarprop_epoch, (ann->last_layer - 1)->first_neuron->first_con,
+										ann->total_connections);
+			++(ann->sarprop_epoch);
 			break;
 		case FANN_TRAIN_QUICKPROP:
 			fann_update_weights_quickprop(ann, data->num_data,
@@ -659,6 +664,11 @@ void fann_update_candidate_weights(struct fann *ann, unsigned int num_data)
 	{
 		case FANN_TRAIN_RPROP:
 			fann_update_weights_irpropm(ann, first_cand->first_con,
+										last_cand->last_con + ann->num_output);
+			break;
+		case FANN_TRAIN_SARPROP:
+			/* TODO: increase epoch? */
+			fann_update_weights_sarprop(ann, ann->sarprop_epoch, first_cand->first_con,
 										last_cand->last_con + ann->num_output);
 			break;
 		case FANN_TRAIN_QUICKPROP:

@@ -508,6 +508,8 @@ int main(int argc, char *argv[])
 	FILE *train_out = 0;
 	FILE *test_out = 0;
 
+	fann_seed_rand();
+
 	for(int i = 0; i < number_of_runs; i++)
 	{
 		test_collector->newCollection();
@@ -612,6 +614,14 @@ int main(int argc, char *argv[])
 								   num_neurons_hidden2, train_data->num_output,
 								   seconds_of_training, seconds_between_reports);
 		}
+		else if(strcmp(argv[1], "fann_sarprop") == 0)
+		{
+			quality_benchmark_fann(false, FANN_TRAIN_SARPROP, NULL, train_data, test_data,
+				train_out, test_out,
+				train_data->num_input, num_neurons_hidden1,
+				num_neurons_hidden2, train_data->num_output,
+				seconds_of_training, seconds_between_reports);
+		}
 		else if(strcmp(argv[1], "fann_cascade_rprop_one_activation") == 0)
 		{
 			quality_benchmark_cascade(train_data, test_data,
@@ -625,6 +635,20 @@ int main(int argc, char *argv[])
 									  train_out, test_out,
 									  train_data->num_input, train_data->num_output,
 									  seconds_of_training, seconds_between_reports, FANN_TRAIN_RPROP, true);
+		}
+		else if(strcmp(argv[1], "fann_cascade_sarprop_one_activation") == 0)
+		{
+			quality_benchmark_cascade(train_data, test_data,
+									  train_out, test_out,
+									  train_data->num_input, train_data->num_output,
+									  seconds_of_training, seconds_between_reports, FANN_TRAIN_SARPROP, false);
+		}
+		else if(strcmp(argv[1], "fann_cascade_sarprop_multi_activation") == 0)
+		{
+			quality_benchmark_cascade(train_data, test_data,
+									  train_out, test_out,
+									  train_data->num_input, train_data->num_output,
+									  seconds_of_training, seconds_between_reports, FANN_TRAIN_SARPROP, true);
 		}
 		else if(strcmp(argv[1], "fann_cascade_quickprop_one_activation") == 0)
 		{

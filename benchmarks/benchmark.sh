@@ -17,24 +17,27 @@ function benchmark_problem() {
     rm -f *_fixed.net
     #algo="fann_rprop_stepwise"; benchmark_algorithm;
     #echo "./quality_fixed $prob.$algo.train.out_fixed_train $prob.$algo.train.out_fixed_test $prob.$algo.fixed_train.out $prob.$algo.fixed_test.out *_fixed.net"    	
-    algo="fann_cascade_rprop_one_activation"; benchmark_algorithm;
-    algo="fann_cascade_rprop_multi_activation"; benchmark_algorithm;
-    algo="fann_cascade_quickprop_one_activation"; benchmark_algorithm;
-    algo="fann_cascade_quickprop_multi_activation"; benchmark_algorithm;
+#    algo="fann_cascade_rprop_one_activation"; benchmark_algorithm;
+#    algo="fann_cascade_rprop_multi_activation"; benchmark_algorithm;
+    algo="fann_cascade_sarprop_one_activation"; benchmark_algorithm;
+    algo="fann_cascade_sarprop_multi_activation"; benchmark_algorithm;
+#    algo="fann_cascade_quickprop_one_activation"; benchmark_algorithm;
+#    algo="fann_cascade_quickprop_multi_activation"; benchmark_algorithm;
     #algo="fann_cascade_batch_one_activation"; benchmark_algorithm;
     # algo="fann_cascade_batch_multi_activation"; benchmark_algorithm;
-    algo="fann_rprop"; benchmark_algorithm;
-    algo="fann_quickprop"; benchmark_algorithm;
+#    algo="fann_rprop"; benchmark_algorithm;
+#    algo="fann_sarprop"; benchmark_algorithm;
+#    algo="fann_quickprop"; benchmark_algorithm;
     #algo="fann_quickprop_stepwise"; benchmark_algorithm;
-    algo="fann_batch"; benchmark_algorithm;
+#    algo="fann_batch"; benchmark_algorithm;
     #algo="fann_batch_stepwise"; benchmark_algorithm;
     #algo="fann_incremental"; benchmark_algorithm;
-    algo="fann_incremental_momentum"; benchmark_algorithm;
+#    algo="fann_incremental_momentum"; benchmark_algorithm;
     #algo="fann_incremental_stepwise"; benchmark_algorithm;
 
     #comment out two following lines if the libraries are not available
-    algo="lwnn"; benchmark_algorithm;
-    algo="jneural"; benchmark_algorithm;
+#    algo="lwnn"; benchmark_algorithm;
+#    algo="jneural"; benchmark_algorithm;
 }
 
 prob="two-spiral"; n1=20; n2=10; sec_train=$max_seconds_training;

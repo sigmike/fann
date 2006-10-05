@@ -59,6 +59,8 @@ int main()
 	fann_set_train_stop_function(ann, FANN_STOPFUNC_BIT);
 	fann_set_bit_fail_limit(ann, 0.01f);
 
+	fann_set_training_algorithm(ann, FANN_TRAIN_RPROP);
+
 	fann_init_weights(ann, data);
 	
 	printf("Training network.\n");

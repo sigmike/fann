@@ -90,6 +90,8 @@ void fann_update_weights_batch(struct fann *ann, unsigned int num_data, unsigned
 							   unsigned int past_end);
 void fann_update_weights_irpropm(struct fann *ann, unsigned int first_weight,
 								 unsigned int past_end);
+void fann_update_weights_sarprop(struct fann *ann, unsigned int epoch, unsigned int first_weight,
+								unsigned int past_end);
 
 void fann_clear_train_arrays(struct fann *ann);
 
@@ -123,6 +125,7 @@ int fann_allocate_scale(struct fann *ann);
 #define fann_min(x, y) (((x) < (y)) ? (x) : (y))
 #define fann_safe_free(x) {if(x) { free(x); x = NULL; }}
 #define fann_clip(x, lo, hi) (((x) < (lo)) ? (lo) : (((x) > (hi)) ? (hi) : (x)))
+#define fann_exp2(x) exp(0.69314718055994530942*(x))
 /*#define fann_clip(x, lo, hi) (x)*/
 
 #define fann_rand(min_value, max_value) (((float)(min_value))+(((float)(max_value)-((float)(min_value)))*rand()/(RAND_MAX+1.0f)))
