@@ -70,10 +70,10 @@ sub print_plot_lines {
 #  print_plot_line("$train_file.fann_sarprop.$train_test.out", "SARPROP", $extra_title, $width, 0);
   #print_plot_line("$train_file.fann_rprop_stepwise.$train_test.out", "fann rprop (stepwise)", $extra_title, $width, 0);
   print_plot_line("$train_file.fann_quickprop.$train_test.out", "Quickprop", $extra_title, $width, 0);
-#  print_plot_line("$train_file.fann_batch.$train_test.out", "Batch", $extra_title, $width, 0);
+  print_plot_line("$train_file.fann_batch.$train_test.out", "Batch", $extra_title, $width, 0);
   #print_plot_line("$train_file.fann_incremental.$train_test.out", "fann incremental", $extra_title, $width, 0);
-#  print_plot_line("$train_file.fann_incremental_momentum.$train_test.out", "Incremental", $extra_title, $width, 0);
-#  print_plot_line("$train_file.lwnn.$train_test.out", "(External) Lwnn Incremental", $extra_title, $width, 0);
+  print_plot_line("$train_file.fann_incremental_momentum.$train_test.out", "Incremental", $extra_title, $width, 0);
+  print_plot_line("$train_file.lwnn.$train_test.out", "(External) Lwnn Incremental", $extra_title, $width, 0);
   print_plot_line("$train_file.jneural.$train_test.out", "(External) Jneural Incremental", $extra_title, $width, 1);
 }
 
