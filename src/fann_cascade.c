@@ -76,7 +76,7 @@ FANN_EXTERNAL void FANN_API fann_cascadetrain_on_data(struct fann *ann, struct f
 			{
 				printf
 					("Neurons     %3d. Current error: %.6f. Total error:%8.4f. Epochs %5d. Bit fail %3d",
-					 i, error, ann->MSE_value, total_epochs, ann->num_bit_fail);
+					 i-1, error, ann->MSE_value, total_epochs, ann->num_bit_fail);
 				if((ann->last_layer-2) != ann->first_layer)
 				{
 					printf(". candidate steepness %.2f. function %s", 

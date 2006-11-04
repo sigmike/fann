@@ -60,17 +60,20 @@ sub print_plot_lines {
   local($train_file, $train_test, $extra_title, $width) = @_;
   $linestyle = 1;
 
-  print_plot_line("$train_file.fann_cascade_rprop_one_activation.$train_test.out", "Cascade2 RPROP One", $extra_title, $width, 0);
+  print_plot_line("$train_file.fann_cascade_rprop_one_activation.$train_test.out", "Cascade2 RPROP Single", $extra_title, $width, 0);
   print_plot_line("$train_file.fann_cascade_rprop_multi_activation.$train_test.out", "Cascade2 RPROP Multi", $extra_title, $width, 0);
-  print_plot_line("$train_file.fann_cascade_quickprop_one_activation.$train_test.out", "Cascade2 Quickprop One", $extra_title, $width, 0);
+#  print_plot_line("$train_file.fann_cascade_sarprop_one_activation.$train_test.out", "Cascade2 SARPROP Single", $extra_title, $width, 0);
+#  print_plot_line("$train_file.fann_cascade_sarprop_multi_activation.$train_test.out", "Cascade2 SARPROP Multi", $extra_title, $width, 0);
+  print_plot_line("$train_file.fann_cascade_quickprop_one_activation.$train_test.out", "Cascade2 Quickprop Single", $extra_title, $width, 0);
   print_plot_line("$train_file.fann_cascade_quickprop_multi_activation.$train_test.out", "Cascade2 Quickprop Multi", $extra_title, $width, 0);
   print_plot_line("$train_file.fann_rprop.$train_test.out", "iRPROP-", $extra_title, $width, 0);
+#  print_plot_line("$train_file.fann_sarprop.$train_test.out", "SARPROP", $extra_title, $width, 0);
   #print_plot_line("$train_file.fann_rprop_stepwise.$train_test.out", "fann rprop (stepwise)", $extra_title, $width, 0);
   print_plot_line("$train_file.fann_quickprop.$train_test.out", "Quickprop", $extra_title, $width, 0);
-  print_plot_line("$train_file.fann_batch.$train_test.out", "Batch", $extra_title, $width, 0);
+#  print_plot_line("$train_file.fann_batch.$train_test.out", "Batch", $extra_title, $width, 0);
   #print_plot_line("$train_file.fann_incremental.$train_test.out", "fann incremental", $extra_title, $width, 0);
-  print_plot_line("$train_file.fann_incremental_momentum.$train_test.out", "Incremental", $extra_title, $width, 0);
-  print_plot_line("$train_file.lwnn.$train_test.out", "(External) Lwnn Incremental", $extra_title, $width, 0);
+#  print_plot_line("$train_file.fann_incremental_momentum.$train_test.out", "Incremental", $extra_title, $width, 0);
+#  print_plot_line("$train_file.lwnn.$train_test.out", "(External) Lwnn Incremental", $extra_title, $width, 0);
   print_plot_line("$train_file.jneural.$train_test.out", "(External) Jneural Incremental", $extra_title, $width, 1);
 }
 

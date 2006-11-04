@@ -214,9 +214,15 @@ void quality_benchmark_fann(bool stepwise, fann_train_enum training_algorithm,
 		fann_set_activation_function_output(ann, FANN_SIGMOID);
 	}
 
-	if(training_algorithm == FANN_TRAIN_INCREMENTAL || training_algorithm == FANN_TRAIN_QUICKPROP)
+	if(training_algorithm == FANN_TRAIN_INCREMENTAL /*|| training_algorithm == FANN_TRAIN_QUICKPROP*/)
 	{
 		fann_set_train_error_function(ann, FANN_ERRORFUNC_LINEAR);
+	}
+	
+	if(training_algorithm == FANN_TRAIN_QUICKPROP)
+	{
+		fann_set_learning_rate(ann, 0.35);
+		fann_randomize_weights(ann, -2.0,2.0);
 	}
 
 	calibrate_timer();
@@ -288,7 +294,7 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 							   FILE * train_out, FILE * test_out,
 							   unsigned int num_input, unsigned int num_output,
 							   unsigned int seconds_of_training, double seconds_between_reports, 
-							   enum fann_train_enum train_function, bool multi)
+							   enum fann_train_enum training_algorithm, bool multi)
 {
 	float train_error = 0;
 	float test_error = 0;
@@ -301,7 +307,7 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 
 	ann = fann_create_shortcut(2, num_input, num_output);
 
-	fann_set_training_algorithm(ann, train_function);
+	fann_set_training_algorithm(ann, training_algorithm);
 	fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
 	fann_set_activation_function_output(ann, FANN_LINEAR);
 	fann_set_train_error_function(ann, FANN_ERRORFUNC_LINEAR);
@@ -310,12 +316,18 @@ void quality_benchmark_cascade(struct fann_train_data *train_data,
 	{
 		fann_type steepness = 0.5;
 		fann_set_cascade_activation_steepnesses(ann, &steepness, 1);
-		fann_activationfunc_enum activation = FANN_SIGMOID;
+		/*fann_activationfunc_enum activation = FANN_SIGMOID;*/
+		fann_activationfunc_enum activation = FANN_SIN_SYMMETRIC;
 		fann_set_cascade_activation_functions(ann, &activation, 1);
 		
 		fann_set_cascade_num_candidate_groups(ann, 8);
 	}
 
+	if(training_algorithm == FANN_TRAIN_QUICKPROP)
+	{
+		fann_set_learning_rate(ann, 0.35);
+		fann_randomize_weights(ann, -2.0,2.0);
+	}
 /*
 	fann_set_activation_steepness_hidden(ann, 0.5);
 	fann_set_activation_steepness_output(ann, 0.5);

@@ -1,8 +1,8 @@
-# Anjuta Version 1.2.3 
+# Anjuta Version 1.2.4a 
 Compatibility Level: 1 
 
 <PROJECT_DESCRIPTION_START>
-Some description<PROJECT_DESCRIPTION_END>
+<PROJECT_DESCRIPTION_END>
 <CONFIG_PROGS_START>
 <CONFIG_PROGS_END>
 <CONFIG_LIBS_START>
@@ -22,15 +22,15 @@ Some description<PROJECT_DESCRIPTION_END>
 
 props.file.type=project
 
-anjuta.version=1.2.3
+anjuta.version=1.2.4a
 anjuta.compatibility.level=1
 
 project.name=fann
 project.type=GENERIC
 project.target.type=EXECUTABLE
-project.version=1.3.0
+project.version=2.1.0
 project.author=Steffen Nissen
-project.source.target=examples/cascade_train_debug
+project.source.target=unknown
 project.has.gettext=0
 project.gui.command=
 project.programming.language=C
@@ -41,9 +41,9 @@ project.config.extra.modules.after=
 project.config.blocked=1
 project.config.disable.overwriting=1 1 1 1 1 1 1 1 1 
 
-project.menu.entry=fann Version 1.2.0
+project.menu.entry=fann Version 2.1.0
 project.menu.group=Application
-project.menu.comment=fann Version 1.2.0
+project.menu.comment=fann Version 2.1.0
 project.menu.icon=
 project.menu.need.terminal=0
 
@@ -52,13 +52,12 @@ anjuta.program.arguments=
 preferences.build.option.jobs=0
 preferences.build.option.silent=0
 preferences.build.option.autosave=0
-preferences.anjuta.make.options=-k
 preferences.make=make
 preferences.build.option.keep.going=1
 preferences.build.option.warn.undef=0
-preferences.autoformat.custom.style=-l100 -lc100 -ts4 -i4 -bli0 -bl0 -cbi0 -ss -npcs -npsl -di2 -nbc -bls -lp -nbbo -nsaf -nsai -nsaw -bap
+preferences.autoformat.custom.style= -i8 -sc -bli0 -bl0 -cbi0 -ss
 preferences.indent.opening=0
-preferences.autoformat.disable=0
+preferences.autoformat.disable=1
 preferences.indent.automatic=1
 preferences.use.tabs=1
 preferences.indent.size=4
@@ -69,31 +68,67 @@ module.include.name=.
 module.include.type=
 module.include.files=\
 	benchmarks/ctimer.h\
-	src/include/config.h\
+	benchmarks/benchdata.h\
+	python/pyfann/fann_cpp_subclass.h\
 	src/include/compat_time.h\
 	src/include/doublefann.h\
 	src/include/fann.h\
 	src/include/fann_activation.h\
-	src/include/fann_data.h\
-	src/include/fann_errno.h\
-	src/include/fann_internal.h\
-	src/include/fixedfann.h\
-	src/include/floatfann.h\
 	src/include/fann_cascade.h\
+	src/include/fann_data.h\
 	src/include/fann_error.h\
+	src/include/fann_internal.h\
 	src/include/fann_io.h\
 	src/include/fann_train.h\
-	src/include/fann_train_data.h
+	src/include/fixedfann.h\
+	src/include/floatfann.h\
+	src/include/config.h\
+	src/include/fann_cpp.h\
+	fann-2.0.0/src/include/config.h\
+	fann-2.0.0/benchmarks/ctimer.h\
+	fann-2.0.0/benchmarks/benchdata.h\
+	fann-2.0.0/python/pyfann/fann_cpp_subclass.h\
+	translations/polish/2.0.0/include/compat_time.h\
+	translations/polish/2.0.0/include/config.h\
+	translations/polish/2.0.0/include/doublefann.h\
+	translations/polish/2.0.0/include/fann_activation.h\
+	translations/polish/2.0.0/include/fann_cascade.h\
+	translations/polish/2.0.0/include/fann_cpp.h\
+	translations/polish/2.0.0/include/fann_data.h\
+	translations/polish/2.0.0/include/fann_error.h\
+	translations/polish/2.0.0/include/fann.h\
+	translations/polish/2.0.0/include/fann_internal.h\
+	translations/polish/2.0.0/include/fann_io.h\
+	translations/polish/2.0.0/include/fann_train.h\
+	translations/polish/2.0.0/include/fixedfann.h\
+	translations/polish/2.0.0/include/floatfann.h\
+	fann-2.1.0/src/include/config.h\
+	fann-2.1.0/src/include/fann.h\
+	fann-2.1.0/src/include/doublefann.h\
+	fann-2.1.0/src/include/fann_internal.h\
+	fann-2.1.0/src/include/floatfann.h\
+	fann-2.1.0/src/include/fann_data.h\
+	fann-2.1.0/src/include/fixedfann.h\
+	fann-2.1.0/src/include/compat_time.h\
+	fann-2.1.0/src/include/fann_activation.h\
+	fann-2.1.0/src/include/fann_cascade.h\
+	fann-2.1.0/src/include/fann_error.h\
+	fann-2.1.0/src/include/fann_train.h\
+	fann-2.1.0/src/include/fann_io.h\
+	fann-2.1.0/benchmarks/ctimer.h\
+	fann-2.1.0/benchmarks/benchdata.h\
+	fann-2.1.0/python/pyfann/fann_cpp_subclass.h
 
 module.source.name=.
 module.source.type=
 module.source.files=\
+	benchmarks/parity.c\
 	benchmarks/performance.cc\
+	benchmarks/quality.cc\
 	benchmarks/quality_fixed.c\
 	benchmarks/shuffle.c\
-	benchmarks/quality.cc\
-	benchmarks/parity.c\
 	benchmarks/two-spirals.c\
+	examples/cascade_train.c\
 	examples/mushroom.c\
 	examples/robot.c\
 	examples/simple_test.c\
@@ -101,164 +136,99 @@ module.source.files=\
 	examples/steepness_train.c\
 	examples/xor_test.c\
 	examples/xor_train.c\
-	examples/cascade_train.c\
-	examples/train_ann.c\
+	examples/momentums.c\
+	examples/test.c\
+	examples/xor_sample.cpp\
+	examples/scaling_gen_data.cpp\
+	examples/scaling_test.c\
+	examples/scaling_train.c\
+	examples/census-house.c\
+	examples/activation_test.c\
 	src/doublefann.c\
 	src/fann.c\
+	src/fann_cascade.c\
 	src/fann_error.c\
 	src/fann_io.c\
 	src/fann_train.c\
 	src/fann_train_data.c\
 	src/fixedfann.c\
 	src/floatfann.c\
-	src/fann_cascade.c\
-	benchmarks/benchmark.sh
+	fann-2.0.0/benchmarks/parity.c\
+	fann-2.0.0/benchmarks/performance.cc\
+	fann-2.0.0/benchmarks/quality.cc\
+	fann-2.0.0/benchmarks/quality_fixed.c\
+	fann-2.0.0/benchmarks/shuffle.c\
+	fann-2.0.0/benchmarks/two-spirals.c\
+	fann-2.0.0/examples/cascade_train.c\
+	fann-2.0.0/examples/mushroom.c\
+	fann-2.0.0/examples/robot.c\
+	fann-2.0.0/examples/simple_test.c\
+	fann-2.0.0/examples/simple_train.c\
+	fann-2.0.0/examples/steepness_train.c\
+	fann-2.0.0/examples/xor_test.c\
+	fann-2.0.0/examples/xor_train.c\
+	fann-2.0.0/examples/momentums.c\
+	fann-2.0.0/examples/test.c\
+	fann-2.0.0/examples/xor_sample.cpp\
+	fann-2.0.0/examples/scaling_gen_data.cpp\
+	fann-2.0.0/examples/scaling_test.c\
+	fann-2.0.0/examples/scaling_train.c\
+	fann-2.0.0/examples/census-house.c\
+	fann-2.0.0/examples/activation_test.c\
+	fann.pc\
+	fann-2.1.0/src/doublefann.c\
+	fann-2.1.0/src/floatfann.c\
+	fann-2.1.0/src/fixedfann.c\
+	fann-2.1.0/src/fann.c\
+	fann-2.1.0/src/fann_io.c\
+	fann-2.1.0/src/fann_train.c\
+	fann-2.1.0/src/fann_train_data.c\
+	fann-2.1.0/src/fann_error.c\
+	fann-2.1.0/src/fann_cascade.c\
+	fann-2.1.0/benchmarks/parity.c\
+	fann-2.1.0/benchmarks/performance.cc\
+	fann-2.1.0/benchmarks/quality.cc\
+	fann-2.1.0/benchmarks/quality_fixed.c\
+	fann-2.1.0/benchmarks/shuffle.c\
+	fann-2.1.0/benchmarks/two-spirals.c\
+	fann-2.1.0/examples/cascade_train.c\
+	fann-2.1.0/examples/mushroom.c\
+	fann-2.1.0/examples/robot.c\
+	fann-2.1.0/examples/simple_test.c\
+	fann-2.1.0/examples/simple_train.c\
+	fann-2.1.0/examples/steepness_train.c\
+	fann-2.1.0/examples/xor_test.c\
+	fann-2.1.0/examples/xor_train.c\
+	fann-2.1.0/examples/momentums.c\
+	fann-2.1.0/examples/test.c\
+	fann-2.1.0/examples/xor_sample.cpp\
+	fann-2.1.0/examples/scaling_gen_data.cpp\
+	fann-2.1.0/examples/scaling_test.c\
+	fann-2.1.0/examples/scaling_train.c\
+	fann-2.1.0/examples/census-house.c\
+	fann-2.1.0/examples/activation_test.c
 
 module.pixmap.name=.
 module.pixmap.type=
 module.pixmap.files=\
-	doc/report/img4.png\
-	doc/report/img100.png\
-	doc/report/img95.png\
-	doc/report/img9.png\
-	doc/report/img34.png\
-	doc/report/img97.png\
-	doc/report/img2.png\
-	doc/report/img14.png\
-	doc/report/img86.png\
-	doc/report/img8.png\
-	doc/report/img103.png\
-	doc/report/img18.png\
-	doc/report/img99.png\
-	doc/report/img84.png\
-	doc/report/img6.png\
-	doc/report/img58.png\
-	doc/report/img7.png\
-	doc/report/img45.png\
-	doc/report/img98.png\
-	doc/report/img19.png\
-	doc/report/img66.png\
-	doc/report/img52.png\
-	doc/report/img53.png\
-	doc/report/img82.png\
-	doc/report/img88.png\
-	doc/report/img48.png\
-	doc/report/img49.png\
-	doc/report/img75.png\
-	doc/report/img3.png\
-	doc/report/img68.png\
-	doc/report/img56.png\
-	doc/report/img1.png\
-	doc/report/img39.png\
-	doc/report/img101.png\
-	doc/report/img62.png\
-	doc/report/img77.png\
-	doc/report/img64.png\
-	doc/report/img80.png\
-	doc/report/img5.png\
-	doc/report/img55.png\
-	doc/report/img33.png\
-	doc/report/img69.png\
-	doc/report/img50.png\
-	doc/report/img26.png\
-	doc/report/img90.png\
-	doc/report/img27.png\
-	doc/report/img23.png\
-	doc/report/img83.png\
-	doc/report/img92.png\
-	doc/report/img21.png\
-	doc/report/img59.png\
-	doc/report/img15.png\
-	doc/report/img91.png\
-	doc/report/img67.png\
-	doc/report/img54.png\
-	doc/report/img25.png\
-	doc/report/img22.png\
-	doc/report/img72.png\
-	doc/report/img12.png\
-	doc/report/img41.png\
-	doc/report/img29.png\
-	doc/report/img28.png\
-	doc/report/img51.png\
-	doc/report/img38.png\
-	doc/report/img70.png\
-	doc/report/img32.png\
-	doc/report/img31.png\
-	doc/report/img61.png\
-	doc/report/img47.png\
-	doc/report/img87.png\
-	doc/report/img44.png\
-	doc/report/img42.png\
-	doc/report/img46.png\
-	doc/report/img57.png\
-	doc/report/img16.png\
-	doc/report/img60.png\
-	doc/report/img71.png\
-	doc/report/img102.png\
-	doc/report/img79.png\
-	doc/report/img78.png\
-	doc/report/img74.png\
-	doc/report/img73.png\
-	doc/report/img94.png\
-	doc/report/img36.png\
-	doc/report/img76.png\
-	doc/report/img24.png\
-	doc/report/img63.png\
-	doc/report/img35.png\
-	doc/report/img65.png\
-	doc/report/img37.png\
-	doc/report/img85.png\
-	doc/report/img20.png\
-	doc/report/img89.png\
-	doc/report/img17.png\
-	doc/report/img96.png\
-	doc/report/img81.png\
-	doc/report/img40.png\
-	doc/report/img30.png\
-	doc/report/img11.png\
-	doc/report/img13.png\
-	doc/report/img43.png\
-	doc/report/img93.png\
-	doc/report/img10.png\
-	doc/report/blueball.png\
-	doc/report/next.png\
-	doc/report/prev.png\
-	doc/report/up_g.png\
-	doc/report/ch_begin.png\
-	doc/report/ch_beg_r.png\
-	doc/report/ch_delet.png\
-	doc/report/ch_del_r.png\
-	doc/report/ch_end.png\
-	doc/report/ch_end_r.png\
-	doc/report/contents.png\
-	doc/report/crossref.png\
-	doc/report/footnote.png\
-	doc/report/greenball.png\
-	doc/report/image.png\
-	doc/report/index.png\
-	doc/report/next_g.png\
-	doc/report/nx_grp_g.png\
-	doc/report/nx_grp.png\
-	doc/report/orangeball.png\
-	doc/report/pinkball.png\
-	doc/report/prev_g.png\
-	doc/report/purpleball.png\
-	doc/report/pv_grp_g.png\
-	doc/report/pv_grp.png\
-	doc/report/redball.png\
-	doc/report/up.png\
-	doc/report/whiteball.png\
-	doc/report/yellowball.png\
-	doc/report/building.png\
-	doc/report/card.png\
-	doc/report/gene.png\
-	doc/report/glass.png\
-	doc/report/mushroom.png\
-	doc/report/performance_arm.png\
-	doc/report/performance.png\
-	doc/report/soybean.png\
-	doc/report/thyroid.png\
-	doc/BesselAll.gif
+	doc/BesselAll.gif\
+	natural_docs/Help/favicon.ico\
+	natural_docs/Help/images/header/background.png\
+	natural_docs/Help/images/header/leftside.png\
+	natural_docs/Help/images/header/logo.png\
+	natural_docs/Help/images/header/overbody.png\
+	natural_docs/Help/images/header/overbodybg.png\
+	natural_docs/Help/images/header/overleftmargin.png\
+	natural_docs/Help/images/header/overmenu.png\
+	natural_docs/Help/images/header/overmenubg.png\
+	natural_docs/Help/images/header/rightside.png\
+	natural_docs/Help/images/menu/about.png\
+	natural_docs/Help/images/menu/background.png\
+	natural_docs/Help/images/menu/bottomleft.png\
+	natural_docs/Help/images/menu/bottomright.png\
+	natural_docs/Help/images/menu/community.png\
+	natural_docs/Help/images/menu/customizing.png\
+	natural_docs/Help/images/menu/using.png
 
 module.data.name=.
 module.data.type=
@@ -271,17 +241,107 @@ module.help.files=
 module.doc.name=.
 module.doc.type=
 module.doc.files=\
-	ChangeLog\
+	AUTHORS\
 	COPYING\
+	ChangeLog\
 	INSTALL\
 	NEWS\
 	README\
 	TODO\
 	benchmarks/README\
+	doc/index.html\
+	doc/intro.html\
+	doc/menu.html\
 	python/INSTALL\
 	python/README\
 	src/COPYING\
-	AUTHORS
+	fann-2.0.0/README\
+	fann-2.0.0/AUTHORS\
+	fann-2.0.0/COPYING\
+	fann-2.0.0/ChangeLog\
+	fann-2.0.0/INSTALL\
+	fann-2.0.0/NEWS\
+	fann-2.0.0/TODO\
+	fann-2.0.0/benchmarks/README\
+	fann-2.0.0/python/INSTALL\
+	fann-2.0.0/python/README\
+	natural_docs/Help/bugs.html\
+	natural_docs/Help/customizinglanguages.html\
+	natural_docs/Help/customizingtopics.html\
+	natural_docs/Help/documenting.html\
+	natural_docs/Help/example/showstyle.html\
+	natural_docs/Help/index.html\
+	natural_docs/Help/keywords.html\
+	natural_docs/Help/languages.html\
+	natural_docs/Help/menu.html\
+	natural_docs/Help/messageboards.html\
+	natural_docs/Help/output.html\
+	natural_docs/Help/running.html\
+	natural_docs/Help/styles.html\
+	natural_docs/Help/troubleshooting.html\
+	natural_docs/test/doc/index/General.html\
+	natural_docs/test/doc/index/General2.html\
+	natural_docs/test/doc/index/General3.html\
+	natural_docs/test/doc/index/Functions.html\
+	natural_docs/test/doc/index/Functions2.html\
+	natural_docs/test/doc/index/Classes.html\
+	natural_docs/test/doc/index/Constants.html\
+	natural_docs/test/doc/index/Types.html\
+	natural_docs/test/doc/index/General4.html\
+	natural_docs/test/doc/index/Functions3.html\
+	natural_docs/test/doc/index/Functions4.html\
+	natural_docs/test/doc/index/General5.html\
+	natural_docs/test/doc/index/General6.html\
+	natural_docs/test/doc/index.html\
+	natural_docs/test/doc/files/fann_cascade-h.html\
+	natural_docs/test/doc/files/fann_data-h.html\
+	natural_docs/test/doc/files/fann_io-h.html\
+	natural_docs/test/doc/files/fann-h.html\
+	natural_docs/test/doc/files/fann_train-h.html\
+	natural_docs/test/doc/files/fann_error-h.html\
+	natural_docs/test/doc/files/fann_cpp-h.html\
+	natural_docs/test/doc/files2/fixedpointusage-txt.html\
+	natural_docs/test/doc/files2/installation-txt.html\
+	natural_docs/test/doc/files2/gettingstarted-txt.html\
+	natural_docs/test/doc/files2/advancedusage-txt.html\
+	natural_docs/test/doc/files2/theory-txt.html\
+	natural_docs/polish/doc/index/General.html\
+	natural_docs/polish/doc/index/General2.html\
+	natural_docs/polish/doc/index/General3.html\
+	natural_docs/polish/doc/index/Functions.html\
+	natural_docs/polish/doc/index/Functions2.html\
+	natural_docs/polish/doc/index/Classes.html\
+	natural_docs/polish/doc/index/Constants.html\
+	natural_docs/polish/doc/index/Types.html\
+	natural_docs/polish/doc/index/General4.html\
+	natural_docs/polish/doc/index/Functions3.html\
+	natural_docs/polish/doc/index/Functions4.html\
+	natural_docs/polish/doc/index/General5.html\
+	natural_docs/polish/doc/index/General6.html\
+	natural_docs/polish/doc/index.html\
+	natural_docs/polish/doc/files/fann_io-h.html\
+	natural_docs/polish/doc/files/fann_data-h.html\
+	natural_docs/polish/doc/files/fann_train-h.html\
+	natural_docs/polish/doc/files/fann_error-h.html\
+	natural_docs/polish/doc/files/fann_cascade-h.html\
+	natural_docs/polish/doc/files/fann-h.html\
+	natural_docs/polish/doc/files/fann_cpp-h.html\
+	natural_docs/polish/doc/files2/advancedusage-txt.html\
+	natural_docs/polish/doc/files2/fixedpointusage-txt.html\
+	natural_docs/polish/doc/files2/gettingstarted-txt.html\
+	natural_docs/polish/doc/files2/installation-txt.html\
+	natural_docs/polish/doc/files2/theory-txt.html\
+	fann-2.1.0/src/COPYING\
+	fann-2.1.0/README\
+	fann-2.1.0/AUTHORS\
+	fann-2.1.0/COPYING\
+	fann-2.1.0/ChangeLog\
+	fann-2.1.0/INSTALL\
+	fann-2.1.0/NEWS\
+	fann-2.1.0/TODO\
+	fann-2.1.0/benchmarks/README\
+	fann-2.1.0/python/INSTALL\
+	fann-2.1.0/python/README
 
 module.po.files=
 
