@@ -57,9 +57,12 @@ int main()
 	
 	if(!multi)
 	{
-		steepness = 0.5;
+		/*steepness = 0.5;*/
+		steepness = 1;
 		fann_set_cascade_activation_steepnesses(ann, &steepness, 1);
-		activation = FANN_SIN_SYMMETRIC;
+		/*activation = FANN_SIN_SYMMETRIC;*/
+		activation = FANN_SIGMOID_SYMMETRIC;
+		
 		fann_set_cascade_activation_functions(ann, &activation, 1);		
 		fann_set_cascade_num_candidate_groups(ann, 8);
 	}	

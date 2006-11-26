@@ -59,3 +59,4 @@ benchmarks/summary2tex.pl
 benchmarks/summary.txt
 benchmarks/two-spirals.c
 examples/xor_sample.cpp
+benchmarks/benchdata.h
