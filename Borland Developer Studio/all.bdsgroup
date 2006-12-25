@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <PersonalityInfo>
+    <Option>
+      <Option Name="Personality">Default.Personality</Option>
+      <Option Name="ProjectType"></Option>
+      <Option Name="Version">1.0</Option>
+      <Option Name="GUID">{24305CAA-7F00-4DF5-9692-2E072AAA484D}</Option>
+    </Option>
+  </PersonalityInfo>
+  <Default.Personality>
+    
+    <Projects>
+      <Projects Name="libfann.lib">libfann.bdsproj</Projects>
+      <Projects Name="simple_train.exe">simple_train.bdsproj</Projects>
+      <Projects Name="simple_test.exe">simple_test.bdsproj</Projects>
+      <Projects Name="xor_train.exe">xor_train.bdsproj</Projects>
+      <Projects Name="xor_test.exe">xor_test.bdsproj</Projects>
+      <Projects Name="momentums.exe">momentums.bdsproj</Projects>
+      <Projects Name="mushroom.exe">mushroom.bdsproj</Projects>
+      <Projects Name="steepness_train.exe">steepness_train.bdsproj</Projects>
+      <Projects Name="robot.exe">robot.bdsproj</Projects>
+      <Projects Name="cascade_train.exe">cascade_train.bdsproj</Projects>
+      <Projects Name="Targets">libfann.lib simple_train.exe simple_test.exe xor_train.exe xor_test.exe momentums.exe mushroom.exe steepness_train.exe robot.exe cascade_train.exe</Projects>
+    </Projects>
+    <Dependencies/>
+  </Default.Personality>
+</BorlandProject>
