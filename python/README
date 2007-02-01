@@ -1,9 +1,11 @@
 This python binding is provided by Vincenzo Di Massa <hawk.it@tiscalinet.it>
 and Gil Megidish <gil@megidish.net>
 
+
 DESCRIPTION
 ===========
 Using this wrapper it is possible to use libfann from python scripts.
+
 
 USAGE
 =====
@@ -19,11 +21,23 @@ and then create libfann.neural_net and libfann.training_data objects
 Look at the examples in examples/ and at the FANN documentation and its 
 C++ bindings for further reference.
 
+
+FANN_TRAINER
+============
+There is also an easy and incomplete (but samewhat useful) fann_trainer.py 
+script to do trivial and common oprations.
+Feel free to extend it and to submit patches!!
+
+To learn how to use it type:
+$ python fann_trainer.py --help
+
+
 TESTING
 =======
 To test the python bindings type 
 $ make test
 to build the library and execute example scripts in the example directory.
+
 
 BUILDING
 ========
