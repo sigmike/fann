@@ -252,6 +252,17 @@ FANN_EXTERNAL float FANN_API fann_test_data(struct fann *ann, struct fann_train_
 FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(const char *filename);
 
 
+/* Function: fann_create_train
+   Creates an empty training data struct.
+  
+   See also:
+     <fann_read_train_from_file>, <fann_train_on_data>, <fann_destroy_train>,
+     <fann_save_train>
+
+    This function appears in FANN >= 2.2.0
+*/ 
+FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train(unsigned int num_data, unsigned int num_input, unsigned int num_output);
+
 /* Function: fann_create_train_from_callback
    Creates the training data struct from a user supplied function.
    As the training data are numerable (data 1, data 2...), the user must write

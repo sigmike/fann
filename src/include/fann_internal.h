@@ -113,6 +113,7 @@ int fann_train_candidates(struct fann *ann, struct fann_train_data *data);
 fann_type fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *data);
 
 void fann_install_candidate(struct fann *ann);
+int fann_check_input_output_sizes(struct fann *ann, struct fann_train_data *data);
 
 int fann_initialize_candidates(struct fann *ann);
 

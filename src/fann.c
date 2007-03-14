@@ -27,6 +27,8 @@
 #include "config.h"
 #include "fann.h"
 
+#define FANN_NO_SEED
+
 FANN_EXTERNAL struct fann *FANN_API fann_create_standard(unsigned int num_layers, ...)
 {
 	struct fann *ann;

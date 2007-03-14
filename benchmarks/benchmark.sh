@@ -9,7 +9,7 @@ secs_between_reports=0.1;
 number_of_runs=4;
 
 function benchmark_algorithm() {
-    ./quality $algo datasets/$prob.train datasets/$prob.test $prob.$algo.train.out $prob.$algo.test.out $n1 $n2 $sec_train $secs_between_reports $number_of_runs
+    echo "./quality $algo datasets/$prob.train datasets/$prob.test $prob.$algo.train.out $prob.$algo.test.out $n1 $n2 $sec_train $secs_between_reports $number_of_runs"
     date;
 }
 

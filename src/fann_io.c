@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "fann.h"
+#include "fann_data.h"
 
 /* Create a network from a configuration file.
  */
@@ -354,6 +355,7 @@ struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file
 struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 {
 	unsigned int num_layers, layer_size, input_neuron, i, num_connections;
+	unsigned int tmpVal;
 #ifdef FIXEDFANN
 	unsigned int decimal_point, multiplier;
 #else
@@ -422,11 +424,15 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 
     fann_scanf("%f", "learning_rate", &ann->learning_rate);
     fann_scanf("%f", "connection_rate", &ann->connection_rate);
-    fann_scanf("%u", "network_type", (unsigned int *)&ann->network_type);
+    fann_scanf("%u", "network_type", &tmpVal);
+    ann->network_type = (enum fann_nettype_enum)tmpVal;
 	fann_scanf("%f", "learning_momentum", &ann->learning_momentum);
-	fann_scanf("%u", "training_algorithm", (unsigned int *)&ann->training_algorithm);
-	fann_scanf("%u", "train_error_function", (unsigned int *)&ann->train_error_function);
-	fann_scanf("%u", "train_stop_function", (unsigned int *)&ann->train_stop_function);
+	fann_scanf("%u", "training_algorithm", &tmpVal);
+	ann->training_algorithm = (enum fann_train_enum)tmpVal;
+	fann_scanf("%u", "train_error_function", &tmpVal);
+	ann->train_error_function = (enum fann_errorfunc_enum)tmpVal;
+	fann_scanf("%u", "train_stop_function", &tmpVal);
+	ann->train_stop_function = (enum fann_stopfunc_enum)tmpVal;
 	fann_scanf("%f", "cascade_output_change_fraction", &ann->cascade_output_change_fraction);
 	fann_scanf("%f", "quickprop_decay", &ann->quickprop_decay);
 	fann_scanf("%f", "quickprop_mu", &ann->quickprop_mu);
@@ -572,13 +578,14 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 	for(neuron_it = ann->first_layer->first_neuron; neuron_it != last_neuron; neuron_it++)
 	{
 		if(fscanf
-		   (conf, "(%u, %u, " FANNSCANF ") ", &num_connections, (unsigned int *)&neuron_it->activation_function,
+		   (conf, "(%u, %u, " FANNSCANF ") ", &num_connections, &tmpVal,
 			&neuron_it->activation_steepness) != 3)
 		{
 			fann_error((struct fann_error *) ann, FANN_E_CANT_READ_NEURON, configuration_file);
 			fann_destroy(ann);
 			return NULL;
 		}
+		neuron_it->activation_function = (enum fann_activationfunc_enum)tmpVal;
 		neuron_it->first_con = ann->total_connections;
 		ann->total_connections += num_connections;
 		neuron_it->last_con = ann->total_connections;

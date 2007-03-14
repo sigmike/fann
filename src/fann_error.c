@@ -174,6 +174,12 @@ void fann_error(struct fann_error *errdat, const enum fann_errno_enum errno_f, .
 	case FANN_E_SCALE_NOT_PRESENT: 
 		sprintf(errstr, "Scaling parameters not present.\n");
 		break;
+    case FANN_E_INPUT_NO_MATCH:
+    	vsprintf(errstr, "The number of input neurons in the ann (%d) and data (%d) don't match\n", ap);
+    	break;
+    case FANN_E_OUTPUT_NO_MATCH:
+     	vsprintf(errstr, "The number of output neurons in the ann (%d) and data (%d) don't match\n", ap);
+     	break; 
 	}
 	va_end(ap);
 
