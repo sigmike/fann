@@ -651,6 +651,14 @@ struct fann
 	 */
 	unsigned int cascade_max_cand_epochs;	
 
+	/* Minimum epochs to train the output neurons during cascade training
+	 */
+	unsigned int cascade_min_out_epochs;
+	
+	/* Minimum epochs to train the candidate neurons during cascade training
+	 */
+	unsigned int cascade_min_cand_epochs;	
+
 	/* An array consisting of the activation functions used when doing
 	 * cascade training.
 	 */

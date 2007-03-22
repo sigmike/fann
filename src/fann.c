@@ -552,7 +552,7 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 	fann_type last_steepness = 0;
 	unsigned int last_activation_function = 0;
 #else
-	fann_type max_sum;	
+	fann_type max_sum = 0;	
 #endif
 
 	/* first set the input */
@@ -1028,7 +1028,9 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("Cascade output stagnation epochs     :%4d\n", ann->cascade_output_stagnation_epochs);
 	printf("Cascade candidate stagnation epochs  :%4d\n", ann->cascade_candidate_stagnation_epochs);
 	printf("Cascade max output epochs            :%4d\n", ann->cascade_max_out_epochs);
+	printf("Cascade min output epochs            :%4d\n", ann->cascade_min_out_epochs);
 	printf("Cascade max candidate epochs         :%4d\n", ann->cascade_max_cand_epochs);
+	printf("Cascade min candidate epochs         :%4d\n", ann->cascade_min_cand_epochs);
 	printf("Cascade weight multiplier            :%8.3f\n", ann->cascade_weight_multiplier);
 	printf("Cascade candidate limit              :%8.3f\n", ann->cascade_candidate_limit);
 	for(i = 0; i < ann->cascade_activation_functions_count; i++)
@@ -1349,6 +1351,8 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->cascade_candidate_limit = (fann_type)1000.0;
 	ann->cascade_max_out_epochs = 150;
 	ann->cascade_max_cand_epochs = 150;
+	ann->cascade_min_out_epochs = 50;
+	ann->cascade_min_cand_epochs = 50;
 	ann->cascade_candidate_scores = NULL;
 	ann->cascade_activation_functions_count = 10;
 	ann->cascade_activation_functions = 

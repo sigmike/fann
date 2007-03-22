@@ -147,6 +147,7 @@ int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float des
 	float backslide_improvement = -1.0e20f;
 	unsigned int i;
 	unsigned int max_epochs = ann->cascade_max_out_epochs;
+	unsigned int min_epochs = ann->cascade_min_out_epochs;
 	unsigned int stagnation = max_epochs;
 
 	/* TODO should perhaps not clear all arrays */
@@ -177,7 +178,11 @@ int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float des
 
 		/* After any significant change, set a new goal and
 		 * allow a new quota of epochs to reach it */
-		if((error_improvement > target_improvement) || (error_improvement < backslide_improvement))
+		
+		if((target_improvement >= 0 &&
+			(error_improvement > target_improvement || error_improvement < backslide_improvement)) ||
+		(target_improvement < 0 &&
+			(error_improvement < target_improvement || error_improvement > backslide_improvement)))
 		{
 			/*printf("error_improvement=%f, target_improvement=%f, backslide_improvement=%f, stagnation=%d\n", error_improvement, target_improvement, backslide_improvement, stagnation); */
 
@@ -187,7 +192,7 @@ int fann_train_outputs(struct fann *ann, struct fann_train_data *data, float des
 		}
 
 		/* No improvement in allotted period, so quit */
-		if(i >= stagnation)
+		if(i >= stagnation && i >= min_epochs)
 		{
 			return i + 1;
 		}
@@ -492,6 +497,7 @@ int fann_train_candidates(struct fann *ann, struct fann_train_data *data)
 	fann_type backslide_cand_score = -1.0e20f;
 	unsigned int i;
 	unsigned int max_epochs = ann->cascade_max_cand_epochs;
+	unsigned int min_epochs = ann->cascade_min_cand_epochs;
 	unsigned int stagnation = max_epochs;
 
 	if(ann->cascade_candidate_scores == NULL)
@@ -532,7 +538,7 @@ int fann_train_candidates(struct fann *ann, struct fann_train_data *data)
 		}
 
 		/* No improvement in allotted period, so quit */
-		if(i >= stagnation)
+		if(i >= stagnation && i >= min_epochs)
 		{
 #ifdef CASCADE_DEBUG
 			printf("Stagnation with %d epochs, best candidate score %f, real score: %f\n", i + 1,
@@ -983,6 +989,8 @@ FANN_GET_SET(fann_type, cascade_weight_multiplier)
 FANN_GET_SET(fann_type, cascade_candidate_limit)
 FANN_GET_SET(unsigned int, cascade_max_out_epochs)
 FANN_GET_SET(unsigned int, cascade_max_cand_epochs)
+FANN_GET_SET(unsigned int, cascade_min_out_epochs)
+FANN_GET_SET(unsigned int, cascade_min_cand_epochs)
 
 FANN_GET(unsigned int, cascade_activation_functions_count)
 FANN_GET(enum fann_activationfunc_enum *, cascade_activation_functions)

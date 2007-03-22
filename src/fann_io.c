@@ -196,7 +196,9 @@ int fann_save_internal_fd(struct fann *ann, FILE * conf, const char *configurati
 	fprintf(conf, "cascade_candidate_change_fraction=%f\n", ann->cascade_candidate_change_fraction);
 	fprintf(conf, "cascade_candidate_stagnation_epochs=%u\n", ann->cascade_candidate_stagnation_epochs);
 	fprintf(conf, "cascade_max_out_epochs=%u\n", ann->cascade_max_out_epochs);
+	fprintf(conf, "cascade_min_out_epochs=%u\n", ann->cascade_min_out_epochs);
 	fprintf(conf, "cascade_max_cand_epochs=%u\n", ann->cascade_max_cand_epochs);	
+	fprintf(conf, "cascade_min_cand_epochs=%u\n", ann->cascade_min_cand_epochs);	
 	fprintf(conf, "cascade_num_candidate_groups=%u\n", ann->cascade_num_candidate_groups);
 
 #ifndef FIXEDFANN
@@ -445,7 +447,9 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 	fann_scanf("%f", "cascade_candidate_change_fraction", &ann->cascade_candidate_change_fraction);
 	fann_scanf("%u", "cascade_candidate_stagnation_epochs", &ann->cascade_candidate_stagnation_epochs);
 	fann_scanf("%u", "cascade_max_out_epochs", &ann->cascade_max_out_epochs);
+	fann_scanf("%u", "cascade_min_out_epochs", &ann->cascade_min_out_epochs);
 	fann_scanf("%u", "cascade_max_cand_epochs", &ann->cascade_max_cand_epochs);	
+	fann_scanf("%u", "cascade_min_cand_epochs", &ann->cascade_min_cand_epochs);	
 	fann_scanf("%u", "cascade_num_candidate_groups", &ann->cascade_num_candidate_groups);
 
 	fann_scanf(FANNSCANF, "bit_fail_limit", &ann->bit_fail_limit);
