@@ -163,7 +163,8 @@ namespace FANN
         TRAIN_INCREMENTAL = FANN_TRAIN_INCREMENTAL,
         TRAIN_BATCH,
         TRAIN_RPROP,
-        TRAIN_QUICKPROP
+        TRAIN_QUICKPROP,
+	TRAIN_SARPROP
     };
 
     /* Enum: activation_function_enum
@@ -2013,6 +2014,43 @@ public:
             }
         }
 
+        /* Method: get_rprop_delta_zero
+
+           The initial step-size is a small positive number determining how small the initial step-size may be.
+
+           The default value delta zero is 0.1.
+
+           See also:
+   	        <set_rprop_delta_zero>, <fann_get_rprop_delta_zero>
+           	
+           This function appears in FANN >= 2.1.0.
+        */ 
+        float get_rprop_delta_zero()
+        {
+            float delta = 0.0f;
+            if (ann != NULL)
+            {
+                delta = fann_get_rprop_delta_zero(ann);
+            }
+            return delta;
+        }
+
+        /* Method: set_rprop_delta_zero
+
+           The initial step-size is a small positive number determining how small the initial step-size may be.
+
+           See also:
+   	        <get_rprop_delta_zero>, <fann_set_rprop_delta_zero>
+           	
+           This function appears in FANN >= 2.1.0.
+        */ 
+        void set_rprop_delta_zero(float rprop_delta_zero)
+        {
+            if (ann != NULL)
+            {
+                fann_set_rprop_delta_zero(ann, rprop_delta_zero);
+            }
+        }
         /* Method: get_rprop_delta_min
 
            The minimum step-size is a small positive number determining how small the minimum step-size may be.
@@ -2088,6 +2126,159 @@ public:
                 fann_set_rprop_delta_max(ann, rprop_delta_max);
             }
         }
+
+        /* Method: get_sarprop_weight_decay_shift
+
+           The sarprop weight decay shift.
+
+           The default delta max is -6.644.
+
+           See also:
+   	        <set_sarprop_weight_decay_shift>, <fann get_sarprop_weight_decay_shift>
+
+           This function appears in FANN >= 2.1.0.
+        */ 
+        float get_sarprop_weight_decay_shift()
+        {
+            float res = 0.0f;
+            if (ann != NULL)
+            {
+                res = fann_get_rprop_delta_max(ann);
+            }
+            return res;
+        }
+
+        /* Method: set_sarprop_weight_decay_shift
+
+           Set the sarprop weight decay shift.
+
+	        This function appears in FANN >= 2.1.0.
+           
+	    See also:
+   	        <get_sarprop_weight_decay_shift>, <fann_set_sarprop_weight_decay_shift>
+        */ 
+        void set_sarprop_weight_decay_shift(float sarprop_weight_decay_shift)
+        {
+            if (ann != NULL)
+            {
+                fann_set_sarprop_weight_decay_shift(ann, sarprop_weight_decay_shift);
+            }
+        }
+
+        /* Method: get_sarprop_step_error_threshold_factor
+
+           The sarprop step error threshold factor.
+
+           The default delta max is 0.1.
+
+           See also:
+   	        <set_sarprop_step_error_threshold_factor>, <fann get_sarprop_step_error_threshold_factor>
+
+           This function appears in FANN >= 2.1.0.
+        */ 
+        float get_sarprop_step_error_threshold_factor()
+        {
+            float res = 0.0f;
+            if (ann != NULL)
+            {
+                res = fann_get_rprop_delta_max(ann);
+            }
+            return res;
+        }
+
+        /* Method: set_sarprop_step_error_threshold_factor
+
+           Set the sarprop step error threshold factor.
+
+	        This function appears in FANN >= 2.1.0.
+           
+	    See also:
+   	        <get_sarprop_step_error_threshold_factor>, <fann_set_sarprop_step_error_threshold_factor>
+        */ 
+        void set_sarprop_step_error_threshold_factor(float sarprop_step_error_threshold_factor)
+        {
+            if (ann != NULL)
+            {
+                fann_set_sarprop_step_error_threshold_factor(ann, sarprop_step_error_threshold_factor);
+            }
+        }
+
+        /* Method: get_sarprop_step_error_shift
+
+           The get sarprop step error shift.
+
+           The default delta max is 1.385.
+
+           See also:
+   	        <set_sarprop_step_error_shift>, <fann get_sarprop_step_error_shift>
+
+           This function appears in FANN >= 2.1.0.
+        */ 
+        float get_sarprop_step_error_shift()
+        {
+            float res = 0.0f;
+            if (ann != NULL)
+            {
+                res = fann_get_rprop_delta_max(ann);
+            }
+            return res;
+        }
+
+        /* Method: set_sarprop_step_error_shift
+
+           Set the sarprop step error shift.
+
+	        This function appears in FANN >= 2.1.0.
+           
+	    See also:
+   	        <get_sarprop_step_error_shift>, <fann_set_sarprop_step_error_shift>
+        */ 
+        void set_sarprop_step_error_shift(float sarprop_step_error_shift)
+        {
+            if (ann != NULL)
+            {
+                fann_set_sarprop_step_error_shift(ann, sarprop_step_error_shift);
+            }
+        }
+        
+	/* Method: get_sarprop_temperature
+
+           The sarprop weight decay shift.
+
+           The default delta max is 0.015.
+
+           See also:
+   	        <set_sarprop_temperature>, <fann get_sarprop_temperature>
+
+           This function appears in FANN >= 2.1.0.
+        */ 
+        float get_sarprop_temperature()
+        {
+            float res = 0.0f;
+            if (ann != NULL)
+            {
+                res = fann_get_rprop_delta_max(ann);
+            }
+            return res;
+        }
+
+        /* Method: set_sarprop_temperature
+
+           Set the sarprop_temperature.
+
+	        This function appears in FANN >= 2.1.0.
+           
+	    See also:
+   	        <get_sarprop_temperature>, <fann_set_sarprop_temperature>
+        */ 
+        void set_sarprop_temperature(float sarprop_temperature)
+        {
+            if (ann != NULL)
+            {
+                fann_set_sarprop_temperature(ann, sarprop_temperature);
+            }
+        }
+
 
         /* Method: get_num_input
 
