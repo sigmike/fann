@@ -1,10 +1,65 @@
 AC_INIT(src/fann.c)
 AM_INIT_AUTOMAKE(fann, 2.1.0)
 AM_CONFIG_HEADER(src/include/config.h:config.in)
+AC_CANONICAL_HOST
 AC_PROG_CC
 AC_PROG_LIBTOOL
 AC_HEADER_STDC
 AC_C_CONST
 AC_HEADER_TIME
 AC_CHECK_FUNCS(gettimeofday)
+
+TARGET="unknown"
+case "$host" in
+	i*86-*-gnu*) TARGET=X86;;
+	i*86-*-linux*) TARGET=X86;;
+	i*86-*-solaris*) TARGET=X86;;
+	i*86-*-beos*) TARGET=X86;;
+	i*86-*-freebsd*) TARGET=X86;;
+	i*86-*-openbsd*) TARGET=X86;;
+	i*86-*-netbsdelf*) TARGET=X86;;
+	i*86-*-win32*) TARGET=X86_WIN32;;
+	i*86-*-cygwin*) TARGET=X86_WIN32;;
+	i*86-*-mingw*) TARGET=X86_WIN32;;
+	sparc-sun-4*) TARGET=SPARC;;
+	sparc*-sun-*) TARGET=SPARC;;
+	sparc-*-linux* | sparc-*-netbsdelf*) TARGET=SPARC;;
+	sparc64-*-linux* | sparc64-*-netbsd*) TARGET=SPARC;;
+	alpha*-*-linux* | alpha*-*-osf* | alpha*-*-freebsd* | alpha*-*-netbsd*) TARGET=ALPHA;;
+	ia64*-*-*) TARGET=IA64;;
+	m68k-*-linux*) TARGET=M68K;;
+	mips64*-*);;
+	mips*-*-linux*) TARGET=MIPS_LINUX;;
+	powerpc-*-linux* | powerpc-*-sysv*) TARGET=POWERPC;;
+	powerpc-*-beos*) TARGET=POWERPC;;
+	powerpc-*-darwin*) TARGET=POWERPC_DARWIN;;
+	powerpc-*-aix*) TARGET=POWERPC_AIX;;
+	rs6000-*-aix*) TARGET=POWERPC_AIX;;
+	arm*-*-linux-*) TARGET=ARM;;
+	cris*-*-linux-*) TARGET=CRIS32;;
+	s390-*-linux-*) TARGET=S390;;
+	s390x-*-linux-*) TARGET=S390;;
+	x86_64-*-linux*) TARGET=X86_64; AC_DEFINE(X86_64,"", Define for the x86_64 CPU famyly);;
+	sh-*-linux* | sh[[34]]*-*-linux*) TARGET=SH;;
+esac
+
+if test $TARGET = unknown; then
+	AC_ERROR("libfann2 has not been ported to $host.")
+fi
+
+AM_CONDITIONAL(SPARC, test x$TARGET = xSPARC)
+AM_CONDITIONAL(X86, test x$TARGET = xX86)
+AM_CONDITIONAL(X86_WIN32, test x$TARGET = xX86_WIN32)
+AM_CONDITIONAL(ALPHA, test x$TARGET = xALPHA)
+AM_CONDITIONAL(IA64, test x$TARGET = xIA64)
+AM_CONDITIONAL(M68K, test x$TARGET = xM68K)
+AM_CONDITIONAL(POWERPC, test x$TARGET = xPOWERPC)
+AM_CONDITIONAL(POWERPC_AIX, test x$TARGET = xPOWERPC_AIX)
+AM_CONDITIONAL(POWERPC_DARWIN, test x$TARGET = xPOWERPC_DARWIN)
+AM_CONDITIONAL(ARM, test x$TARGET = xARM)
+AM_CONDITIONAL(CRIS32, test x$TARGET = xCRIS32)
+AM_CONDITIONAL(S390, test x$TARGET = xS390)
+AM_CONDITIONAL(X86_64, test x$TARGET = xX86_64)
+AM_CONDITIONAL(SH, test x$TARGET = xSH)
+
 AC_OUTPUT(Makefile src/Makefile src/include/Makefile fann.pc fann.spec)
