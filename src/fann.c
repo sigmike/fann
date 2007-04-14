@@ -171,11 +171,11 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_ra
 		 * in the previous layer, and one neuron in the next layer.
 		 * and the bias node should be connected to the all neurons in the next layer.
 		 * Then this is the minimum amount of neurons */
-		min_connections = fann_max(num_neurons_in, num_neurons_out) + num_neurons_out;
-		max_connections = num_neurons_in * num_neurons_out;	/* not calculating bias */
+		min_connections = fann_max(num_neurons_in, num_neurons_out); /* not calculating bias */
+		max_connections = num_neurons_in * num_neurons_out;	     /* not calculating bias */
 		num_connections = fann_max(min_connections,
-								   (unsigned int) (0.5 + (connection_rate * max_connections)) +
-								   num_neurons_out);
+								   (unsigned int) (0.5 + (connection_rate * max_connections))) +
+								   num_neurons_out;
 
 		connections_per_neuron = num_connections / num_neurons_out;
 		allocated_connections = 0;
