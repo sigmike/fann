@@ -834,7 +834,7 @@ FANN_EXTERNAL void FANN_API fann_randomize_weights(struct fann *ann, fann_type m
 }
 
 /* deep copy of the fann structure */
-FANN_EXTERNAL struct fann* FANN_API fann_copy(struct fann* orig)
+FANN_EXTERNAL struct fann* FANN_API fann_copy(const struct fann* orig)
 {
     struct fann* copy;
     unsigned int num_layers = orig->last_layer - orig->first_layer;
