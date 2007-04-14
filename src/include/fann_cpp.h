@@ -847,6 +847,41 @@ public:
         {
         }
 
+	/* Constructor neural_net
+
+	    Creates a copy the other neural_net.
+            
+	    See also:
+	    		<copy_from_struct_fann>
+        */
+	neural_net(const neural_net& other)
+	{
+	    copy_from_struct_fann(other.ann);
+	}
+	
+	/* Constructor: neural_net
+
+	   Creates a copy the other neural_net.
+	    
+	   See also:
+	    		<copy_from_struct_fann>
+        */
+	neural_net(const struct fann* other)
+	{
+	    copy_from_struct_fann(other);
+	}
+
+	/* Method: copy_from_struct_fann
+	   
+	   Set the internal fann struct to a copy of other
+	*/
+	void copy_from_struct_fann(const struct fann* other)
+	{
+	    destroy();
+	    if (other != NULL)
+		ann=fann_copy(other);
+	}
+
         /* Destructor: ~neural_net
 
             Provides automatic cleanup of data.
