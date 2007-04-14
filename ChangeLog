@@ -1,3 +1,6 @@
+libfann (2.2.0) stable; urgency=low
+	* Added fann_copy
+
 libfann (2.1.0) stable; urgency=low
 	* Added fann_create_train_from_callback for creating training data from a callback function
 	* Amended fann_create_train_from_callback for dynamic link library compatibility

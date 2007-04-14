@@ -771,7 +771,7 @@ fann_type fann_train_candidates_epoch(struct fann *ann, struct fann_train_data *
 	}
 
 	ann->cascade_best_candidate = ann->total_neurons + best_candidate + 1;
-#ifdef CASCADE_DEBUG_FULL
+#ifdef CASCADE_DEBUG
 	printf("Best candidate[%d]: with score %f, real score: %f\n", best_candidate,
 		   ann->MSE_value - best_score, best_score);
 #endif

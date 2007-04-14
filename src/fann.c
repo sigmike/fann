@@ -833,6 +833,241 @@ FANN_EXTERNAL void FANN_API fann_randomize_weights(struct fann *ann, fann_type m
 #endif
 }
 
+/* deep copy of the fann structure */
+FANN_EXTERNAL struct fann* FANN_API fann_copy(struct fann* orig)
+{
+    struct fann* copy;
+    unsigned int num_layers = orig->last_layer - orig->first_layer;
+    struct fann_layer *orig_layer_it, *copy_layer_it;
+    unsigned int layer_size;
+    struct fann_neuron *last_neuron,*orig_neuron_it,*copy_neuron_it;
+    unsigned int i;
+    struct fann_neuron *orig_first_neuron,*copy_first_neuron;
+    unsigned int input_neuron;
+
+    copy = fann_allocate_structure(num_layers);
+    if (copy==NULL) {
+        fann_error((struct fann_error*)orig, FANN_E_CANT_ALLOCATE_MEM);
+        return NULL;
+    }
+    copy->errno_f = orig->errno_f;
+    if (orig->errstr)
+    {
+        copy->errstr = (char *) malloc(FANN_ERRSTR_MAX);
+        if (copy->errstr == NULL)
+        {
+            fann_destroy(copy);
+            return NULL;
+        }
+        strcpy(copy->errstr,orig->errstr);
+    }
+    copy->error_log = orig->error_log;
+
+    copy->learning_rate = orig->learning_rate;
+    copy->learning_momentum = orig->learning_momentum;
+    copy->connection_rate = orig->connection_rate;
+    copy->network_type = orig->network_type;
+    copy->num_MSE = orig->num_MSE;
+    copy->MSE_value = orig->MSE_value;
+    copy->num_bit_fail = orig->num_bit_fail;
+    copy->bit_fail_limit = orig->bit_fail_limit;
+    copy->train_error_function = orig->train_error_function;
+    copy->train_stop_function = orig->train_stop_function;
+    copy->callback = orig->callback;
+    copy->cascade_output_change_fraction = orig->cascade_output_change_fraction;
+    copy->cascade_output_stagnation_epochs = orig->cascade_output_stagnation_epochs;
+    copy->cascade_candidate_change_fraction = orig->cascade_candidate_change_fraction;
+    copy->cascade_candidate_stagnation_epochs = orig->cascade_candidate_stagnation_epochs;
+    copy->cascade_best_candidate = orig->cascade_best_candidate;
+    copy->cascade_candidate_limit = orig->cascade_candidate_limit;
+    copy->cascade_weight_multiplier = orig->cascade_weight_multiplier;
+    copy->cascade_max_out_epochs = orig->cascade_max_out_epochs;
+    copy->cascade_max_cand_epochs = orig->cascade_max_cand_epochs;
+	copy->user_data = orig->user_data;
+
+   /* copy cascade activation functions */
+    copy->cascade_activation_functions_count = orig->cascade_activation_functions_count;
+    copy->cascade_activation_functions = (enum fann_activationfunc_enum *)realloc(copy->cascade_activation_functions,
+        copy->cascade_activation_functions_count * sizeof(enum fann_activationfunc_enum));
+    if(copy->cascade_activation_functions == NULL)
+    {
+        fann_error((struct fann_error*)orig, FANN_E_CANT_ALLOCATE_MEM);
+        fann_destroy(copy);
+        return NULL;
+    }
+    memcpy(copy->cascade_activation_functions,orig->cascade_activation_functions,
+            copy->cascade_activation_functions_count * sizeof(enum fann_activationfunc_enum));
+
+    /* copy cascade activation steepnesses */
+    copy->cascade_activation_steepnesses_count = orig->cascade_activation_steepnesses_count;
+    copy->cascade_activation_steepnesses = (fann_type *)realloc(copy->cascade_activation_steepnesses, copy->cascade_activation_steepnesses_count * sizeof(fann_type));
+    if(copy->cascade_activation_steepnesses == NULL)
+    {
+        fann_error((struct fann_error*)orig, FANN_E_CANT_ALLOCATE_MEM);
+        fann_destroy(copy);
+        return NULL;
+    }
+    memcpy(copy->cascade_activation_steepnesses,orig->cascade_activation_steepnesses,copy->cascade_activation_steepnesses_count * sizeof(fann_type));
+
+    copy->cascade_num_candidate_groups = orig->cascade_num_candidate_groups;
+
+    /* copy candidate scores, if used */
+    if (orig->cascade_candidate_scores == NULL)
+    {
+        copy->cascade_candidate_scores = NULL;
+    }
+    else
+    {
+        copy->cascade_candidate_scores =
+            (fann_type *) malloc(fann_get_cascade_num_candidates(copy) * sizeof(fann_type));
+        if(copy->cascade_candidate_scores == NULL)
+        {
+            fann_error((struct fann_error *) orig, FANN_E_CANT_ALLOCATE_MEM);
+            fann_destroy(copy);
+            return NULL;
+        }
+        memcpy(copy->cascade_candidate_scores,orig->cascade_candidate_scores,fann_get_cascade_num_candidates(copy) * sizeof(fann_type));
+    }
+
+    copy->quickprop_decay = orig->quickprop_decay;
+    copy->quickprop_mu = orig->quickprop_mu;
+    copy->rprop_increase_factor = orig->rprop_increase_factor;
+    copy->rprop_decrease_factor = orig->rprop_decrease_factor;
+    copy->rprop_delta_min = orig->rprop_delta_min;
+    copy->rprop_delta_max = orig->rprop_delta_max;
+    copy->rprop_delta_zero = orig->rprop_delta_zero;
+
+    /* user_data is not deep copied.  user should use fann_copy_with_user_data() for that */
+    copy->user_data = orig->user_data;
+
+#ifdef FIXEDFANN
+    copy->decimal_point = orig->decimal_point;
+    copy->multiplier = orig->multiplier;
+    memcpy(copy->sigmoid_results,orig->sigmoid_results,6*sizeof(fann_type));
+    memcpy(copy->sigmoid_values,orig->sigmoid_values,6*sizeof(fann_type));
+    memcpy(copy->sigmoid_symmetric_results,orig->sigmoid_symmetric_results,6*sizeof(fann_type));
+    memcpy(copy->sigmoid_symmetric_values,orig->sigmoid_symmetric_values,6*sizeof(fann_type));
+#endif
+
+
+    /* copy layer sizes, prepare for fann_allocate_neurons */
+    for (orig_layer_it = orig->first_layer, copy_layer_it = copy->first_layer;
+            orig_layer_it != orig->last_layer; orig_layer_it++, copy_layer_it++)
+    {
+        layer_size = orig_layer_it->last_neuron - orig_layer_it->first_neuron;
+        copy_layer_it->first_neuron = NULL;
+        copy_layer_it->last_neuron = copy_layer_it->first_neuron + layer_size;
+        copy->total_neurons += layer_size;
+    }
+    copy->num_input = orig->num_input;
+    copy->num_output = orig->num_output;
+
+
+    /* copy scale parameters, when used */
+#ifndef FIXEDFANN
+    if (orig->scale_mean_in != NULL)
+    {
+        fann_allocate_scale(copy);
+        for (i=0; i < orig->num_input ; i++) {
+            copy->scale_mean_in[i] = orig->scale_mean_in[i];
+            copy->scale_deviation_in[i] = orig->scale_deviation_in[i];
+            copy->scale_new_min_in[i] = orig->scale_new_min_in[i];
+            copy->scale_factor_in[i] = orig->scale_factor_in[i];
+        }
+        for (i=0; i < orig->num_output ; i++) {
+            copy->scale_mean_out[i] = orig->scale_mean_out[i];
+            copy->scale_deviation_out[i] = orig->scale_deviation_out[i];
+            copy->scale_new_min_out[i] = orig->scale_new_min_out[i];
+            copy->scale_factor_out[i] = orig->scale_factor_out[i];
+        }
+    }
+#endif
+
+    /* copy the neurons */
+    fann_allocate_neurons(copy);
+    if (copy->errno_f == FANN_E_CANT_ALLOCATE_MEM)
+    {
+        fann_destroy(copy);
+        return NULL;
+    }
+    layer_size = (orig->last_layer-1)->last_neuron - (orig->last_layer-1)->first_neuron;
+    memcpy(copy->output,orig->output, layer_size * sizeof(fann_type));
+
+    last_neuron = (orig->last_layer - 1)->last_neuron;
+    for (orig_neuron_it = orig->first_layer->first_neuron, copy_neuron_it = copy->first_layer->first_neuron;
+            orig_neuron_it != last_neuron; orig_neuron_it++, copy_neuron_it++)
+    {
+        memcpy(copy_neuron_it,orig_neuron_it,sizeof(struct fann_neuron));
+    }
+ /* copy the connections */
+    copy->total_connections = orig->total_connections;
+    fann_allocate_connections(copy);
+    if (copy->errno_f == FANN_E_CANT_ALLOCATE_MEM)
+    {
+        fann_destroy(copy);
+        return NULL;
+    }
+
+    orig_first_neuron = orig->first_layer->first_neuron;
+    copy_first_neuron = copy->first_layer->first_neuron;
+    for (i=0; i < orig->total_connections; i++)
+    {
+        copy->weights[i] = orig->weights[i];
+        input_neuron = orig->connections[i] - orig_first_neuron;
+        copy->connections[i] = copy_first_neuron + input_neuron;
+    }
+
+    if (orig->train_slopes)
+    {
+        copy->train_slopes = (fann_type *) malloc(copy->total_connections_allocated * sizeof(fann_type));
+        if (copy->train_slopes == NULL)
+        {
+            fann_error((struct fann_error *) orig, FANN_E_CANT_ALLOCATE_MEM);
+            fann_destroy(copy);
+            return NULL;
+        }
+        memcpy(copy->train_slopes,orig->train_slopes,copy->total_connections_allocated * sizeof(fann_type));
+    }
+
+    if (orig->prev_steps)
+    {
+        copy->prev_steps = (fann_type *) malloc(copy->total_connections_allocated * sizeof(fann_type));
+        if (copy->prev_steps == NULL)
+        {
+            fann_error((struct fann_error *) orig, FANN_E_CANT_ALLOCATE_MEM);
+            fann_destroy(copy);
+            return NULL;
+        }
+        memcpy(copy->prev_steps, orig->prev_steps, copy->total_connections_allocated * sizeof(fann_type));
+    }
+
+    if (orig->prev_train_slopes)
+    {
+        copy->prev_train_slopes = (fann_type *) malloc(copy->total_connections_allocated * sizeof(fann_type));
+        if (copy->prev_train_slopes == NULL)
+        {
+            fann_error((struct fann_error *) orig, FANN_E_CANT_ALLOCATE_MEM);
+            fann_destroy(copy);
+            return NULL;
+        }
+        memcpy(copy->prev_train_slopes,orig->prev_train_slopes, copy->total_connections_allocated * sizeof(fann_type));
+    }
+
+    if (orig->prev_weights_deltas)
+    {
+        copy->prev_weights_deltas = (fann_type *) malloc(copy->total_connections_allocated * sizeof(fann_type));
+        if(copy->prev_weights_deltas == NULL)
+        {
+            fann_error((struct fann_error *) orig, FANN_E_CANT_ALLOCATE_MEM);
+            fann_destroy(copy);
+            return NULL;
+        }
+        memcpy(copy->prev_weights_deltas, orig->prev_weights_deltas,copy->total_connections_allocated * sizeof(fann_type));
+    }
+
+    return copy;
+}
+
 FANN_EXTERNAL void FANN_API fann_print_connections(struct fann *ann)
 {
 	struct fann_layer *layer_it;

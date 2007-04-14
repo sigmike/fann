@@ -207,6 +207,7 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_bit_fail(struct fann *ann)
  */
 FANN_EXTERNAL void FANN_API fann_reset_MSE(struct fann *ann)
 {
+/*printf("resetMSE %d %f\n", ann->num_MSE, ann->MSE_value);*/
 	ann->num_MSE = 0;
 	ann->MSE_value = 0;
 	ann->num_bit_fail = 0;

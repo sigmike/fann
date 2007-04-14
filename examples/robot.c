@@ -64,6 +64,7 @@ int main()
 	fann_destroy_train(train_data);
 	fann_destroy_train(test_data);
 	fann_destroy(ann);
+	fann_destroy(copy);
 
 	return 0;
 }

@@ -266,6 +266,16 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut_array(unsigned int num_
 FANN_EXTERNAL void FANN_API fann_destroy(struct fann *ann);
 
 
+/* Function: fann_copy
+   Creates a copy of a fann structure. 
+   
+   Data in the user data <fann_set_user_data> is not copied, but the user data pointer is copied.
+
+	This function appears in FANN >= 2.2.0.
+*/ 
+FANN_EXTERNAL struct fann * FANN_API fann_copy(struct fann *ann);
+
+
 /* Function: fann_run
 	Will run input through the neural network, returning an array of outputs, the number of which being 
 	equal to the number of neurons in the output layer.
