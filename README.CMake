@@ -1,8 +1,8 @@
-CMake support is added to FANN as an alternative to Autotools.
+CMake support has been added to FANN as an alternative to Autotools.
 
 To compile fann using CMake you need the cmake command from www.cmake.org.
 
-in order to build FANN follw theese steps:
+In order to build FANN follw theese steps:
 
 1) Install CMake 
 	$ sudo apt-get install cmake #if you are using ubuntu 
@@ -25,13 +25,13 @@ For further documentation read:
 1) http://www.cmake.org/HTML/RunningCMake.html
 2) http://www.cmake.org/HTML/Examples.html
 
-WARNING: cmake isn't the deafut tool to compile FANN. Vincenzo Di Massa <hawk.it@tiscali.it> 
-added fann support to FANN just because he likes CMake a lot :-)
+WARNING: CMake isn't the defalut tool to compile FANN. Vincenzo Di Massa <hawk.it@tiscali.it> 
+added CMake support to FANN just because he likes CMake a lot :-)
 Because of this the CMakeFiles.txt provided are to be considered work in progress
 (but they seem to work like a charm).
 Please provide feedback to the FANN-CMake maintainer hawk.it@tiscali.it using either of
 1) "FANN General and development discussion" <fann-general@lists.sourceforge.net>
-2) http://leenissen.dk/fann/forum/
+2) http://leenissen.dk/fann/forum/viewtopic.php?t=58
 3) "Vincenzo Di Massa" <hawk.it@tiscali.it>
 
 WARNING #2: CMake is addictive! Once you start using it you'll have the desire to port
