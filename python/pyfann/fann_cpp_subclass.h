@@ -292,6 +292,25 @@ namespace FANN
             return neural_net::create_shortcut_array( layers->array_len, layers->array);
         }
 
+        /* Method: output
+
+	        Returns the array the outputs.
+
+	        See also:
+		        <test>, <fann_run>
+
+	        This function appears in FANN >= 2.1.0.
+        */ 
+
+         helper_array<fann_type>* output()
+         {
+            helper_array<fann_type>* res= new helper_array<fann_type>;
+            res->array=ann->output;
+            res->array_len=ann->num_output;
+            res->can_delete=false;
+            return res;
+         }
+
         /* Method: run
 
 	        Will run input through the neural network, returning an array of outputs, the number of which being 
@@ -471,7 +490,6 @@ namespace FANN
 
         /*********************************************************************/
 
-#ifdef TODO
         /* Method: get_cascade_activation_functions
 
            The cascade activation functions array is an array of the different activation functions used by
@@ -486,14 +504,18 @@ namespace FANN
 
 	        This function appears in FANN >= 2.0.0.
          */
-        activation_function_enum * get_cascade_activation_functions()
+        helper_array<activation_function_enum> * get_cascade_activation_functions()
         {
-            enum fann_activationfunc_enum *activation_functions = NULL;
+	    helper_array<activation_function_enum>* res =NULL;
             if (ann != NULL)
-            {
-                activation_functions = fann_get_cascade_activation_functions(ann);
+            { 
+                res = new helper_array<activation_function_enum>;
+                res->array = reinterpret_cast<activation_function_enum *>( fann_get_cascade_activation_functions(ann) );
+                res->array_len=fann_get_cascade_activation_functions_count(ann);
+                res->can_delete=false;
             }
-            return reinterpret_cast<activation_function_enum *>(activation_functions);
+            
+            return res;
         }
 
         /* Method: set_cascade_activation_functions
@@ -510,17 +532,16 @@ namespace FANN
 
 	        This function appears in FANN >= 2.0.0.
          */
-        void set_cascade_activation_functions(activation_function_enum *cascade_activation_functions,
-            unsigned int cascade_activation_functions_count)
+        void set_cascade_activation_functions( helper_array<activation_function_enum>* helper)
         {
             if (ann != NULL)
             {
                 fann_set_cascade_activation_functions(ann,
-                    reinterpret_cast<enum fann_activationfunc_enum *>(cascade_activation_functions),
-                    cascade_activation_functions_count);
+                    reinterpret_cast<enum fann_activationfunc_enum *>(helper->array),
+                    helper->array_len);
             }
         }
-#endif
+        
         /* Method: get_cascade_activation_steepnesses
 
            The cascade activation steepnesses array is an array of the different activation functions used by
