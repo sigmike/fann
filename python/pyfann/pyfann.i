@@ -174,7 +174,6 @@
 
 HELPER_ARRAY_TEMPLATE( FANN::helper_array, unsigned int, PyInt_AsLong    , PyInt_FromLong    , long   );
 HELPER_ARRAY_TEMPLATE( FANN::helper_array, fann_type   , PyFloat_AsDouble, PyFloat_FromDouble, double );
-HELPER_ARRAY_TEMPLATE( FANN::helper_array, cascade_activation_functions  , PyInt_AsLong, PyInt_FromLong, long );
 
 HELPER_ARRAY_ARRAY_TEMPLATE( FANN::helper_array_array, fann_type   , PyFloat_AsDouble, PyFloat_FromDouble, double );
 

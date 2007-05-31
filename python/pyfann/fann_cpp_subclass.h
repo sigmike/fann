@@ -504,13 +504,13 @@ namespace FANN
 
 	        This function appears in FANN >= 2.0.0.
          */
-        helper_array<activation_function_enum> * get_cascade_activation_functions()
+        helper_array<unsigned int> * get_cascade_activation_functions()
         {
-	    helper_array<activation_function_enum>* res =NULL;
+	    helper_array<unsigned int>* res =NULL;
             if (ann != NULL)
             { 
-                res = new helper_array<activation_function_enum>;
-                res->array = reinterpret_cast<activation_function_enum *>( fann_get_cascade_activation_functions(ann) );
+                res = new helper_array<unsigned int>;
+                res->array = reinterpret_cast<unsigned int *>( fann_get_cascade_activation_functions(ann) );
                 res->array_len=fann_get_cascade_activation_functions_count(ann);
                 res->can_delete=false;
             }
@@ -532,7 +532,7 @@ namespace FANN
 
 	        This function appears in FANN >= 2.0.0.
          */
-        void set_cascade_activation_functions( helper_array<activation_function_enum>* helper)
+        void set_cascade_activation_functions( helper_array<unsigned int>* helper)
         {
             if (ann != NULL)
             {
